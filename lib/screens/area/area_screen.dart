@@ -45,28 +45,28 @@ class _AreaScreenState extends State<AreaScreen> {
           return false;
         }
         // Floor
-        if (filters.floor != null && apt.floor != filters.floor) {
+        if (filters.floors.isNotEmpty && !filters.floors.contains(apt.floor)) {
           return false;
         }
         // Finishing status
-        if (filters.finishingStatus != null) {
-          final statusName = apt.finishingStatus.name;
-          if (statusName != filters.finishingStatus) return false;
+        if (filters.finishingStatuses.isNotEmpty &&
+            !filters.finishingStatuses.contains(apt.finishingStatus.name)) {
+          return false;
         }
         // Rooms
-        if (filters.rooms != null && apt.rooms != filters.rooms) {
+        if (filters.rooms.isNotEmpty && !filters.rooms.contains(apt.rooms)) {
           return false;
         }
         // Bathrooms
-        if (filters.bathrooms != null && apt.bathrooms != filters.bathrooms) {
+        if (filters.bathrooms.isNotEmpty &&
+            !filters.bathrooms.contains(apt.bathrooms)) {
           return false;
         }
-        // Area (sqm)
-        if (filters.minArea != null && apt.areaSqm < filters.minArea!) {
-          return false;
-        }
-        if (filters.maxArea != null && apt.areaSqm > filters.maxArea!) {
-          return false;
+        // Area (sqm) — matches any of the selected ranges.
+        if (filters.areaRanges.isNotEmpty) {
+          final matchesArea = filters.areaRanges
+              .any((r) => apt.areaSqm >= r.$1 && apt.areaSqm <= r.$2);
+          if (!matchesArea) return false;
         }
         return true;
       }).toList();

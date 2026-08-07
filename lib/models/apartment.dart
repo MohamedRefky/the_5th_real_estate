@@ -131,7 +131,7 @@ class Apartment {
     if (floor == 3) return 'الثالث';
     if (floor == 4) return 'الرابع';
     if (floor == 5) return 'الخامس';
-    if (floor == 6) return 'الرووف';
+    if (floor == 6) return 'الروف';
     return 'الدور $floor';
   }
 

@@ -29,44 +29,53 @@ class _FilterSectionState extends State<FilterSection> {
 
   // Filter state
   RangeValues _priceRange = const RangeValues(0, 10000000);
-  int? _selectedFloor;
-  String? _selectedFinishing;
-  int? _selectedRooms;
-  int? _selectedBathrooms;
-  (double, double)? _selectedAreaRange;
+  final Set<int> _selectedFloors = {};
+  final Set<String> _selectedFinishingStatuses = {};
+  final Set<int> _selectedRooms = {};
+  final Set<int> _selectedBathrooms = {};
+  final Set<(double, double)> _selectedAreaRanges = {};
 
   int get _activeFilterCount {
     int count = 0;
     if (_priceRange.start > 0 || _priceRange.end < 10000000) count++;
-    if (_selectedFloor != null) count++;
-    if (_selectedFinishing != null) count++;
-    if (_selectedRooms != null) count++;
-    if (_selectedBathrooms != null) count++;
-    if (_selectedAreaRange != null) count++;
+    if (_selectedFloors.isNotEmpty) count++;
+    if (_selectedFinishingStatuses.isNotEmpty) count++;
+    if (_selectedRooms.isNotEmpty) count++;
+    if (_selectedBathrooms.isNotEmpty) count++;
+    if (_selectedAreaRanges.isNotEmpty) count++;
     return count;
+  }
+
+  /// Toggles a value in/out of [target] and re-applies the filters.
+  void _toggleValue<T>(Set<T> target, T value) {
+    setState(() {
+      if (!target.add(value)) {
+        target.remove(value);
+      }
+    });
+    _applyFilters();
   }
 
   void _applyFilters() {
     widget.onFiltersChanged(FilterValues(
       minPrice: _priceRange.start,
       maxPrice: _priceRange.end,
-      floor: _selectedFloor,
-      finishingStatus: _selectedFinishing,
+      floors: _selectedFloors,
+      finishingStatuses: _selectedFinishingStatuses,
       rooms: _selectedRooms,
       bathrooms: _selectedBathrooms,
-      minArea: _selectedAreaRange?.$1,
-      maxArea: _selectedAreaRange?.$2,
+      areaRanges: _selectedAreaRanges,
     ));
   }
 
   void _resetFilters() {
     setState(() {
       _priceRange = const RangeValues(0, 10000000);
-      _selectedFloor = null;
-      _selectedFinishing = null;
-      _selectedRooms = null;
-      _selectedBathrooms = null;
-      _selectedAreaRange = null;
+      _selectedFloors.clear();
+      _selectedFinishingStatuses.clear();
+      _selectedRooms.clear();
+      _selectedBathrooms.clear();
+      _selectedAreaRanges.clear();
     });
     widget.onReset();
   }
@@ -195,7 +204,7 @@ class _FilterSectionState extends State<FilterSection> {
       _chipGroup<int>(
         icon: Icons.layers_rounded,
         title: 'الدور',
-        selected: _selectedFloor,
+        selected: _selectedFloors,
         options: [
           ('أرضي', 0),
           ('الأول', 1),
@@ -203,25 +212,19 @@ class _FilterSectionState extends State<FilterSection> {
           ('الثالث', 3),
           ('الرابع', 4),
           ('الخامس', 5),
-          ('الرووف', 6),
+          ('الروف', 6),
         ],
-        onChanged: (v) {
-          setState(() => _selectedFloor = v);
-          _applyFilters();
-        },
+        onToggle: (v) => _toggleValue(_selectedFloors, v),
       ),
       _chipGroup<String>(
         icon: Icons.format_paint_rounded,
         title: 'التشطيب',
-        selected: _selectedFinishing,
+        selected: _selectedFinishingStatuses,
         options: [
-          ('تشطيب كامل', 'finished'),
-          ('تشطيب نص', 'semiFinished'),
+          ('متشطب كامل', 'finished'),
+          ('نص تشطيب', 'semiFinished'),
         ],
-        onChanged: (v) {
-          setState(() => _selectedFinishing = v);
-          _applyFilters();
-        },
+        onToggle: (v) => _toggleValue(_selectedFinishingStatuses, v),
       ),
       _chipGroup<int>(
         icon: Icons.bed_rounded,
@@ -230,10 +233,7 @@ class _FilterSectionState extends State<FilterSection> {
         options: [
           for (var i = 1; i <= 5; i++) ('$i غرف', i),
         ],
-        onChanged: (v) {
-          setState(() => _selectedRooms = v);
-          _applyFilters();
-        },
+        onToggle: (v) => _toggleValue(_selectedRooms, v),
       ),
       _chipGroup<int>(
         icon: Icons.bathtub_rounded,
@@ -242,15 +242,12 @@ class _FilterSectionState extends State<FilterSection> {
         options: [
           for (var i = 1; i <= 4; i++) ('$i حمام', i),
         ],
-        onChanged: (v) {
-          setState(() => _selectedBathrooms = v);
-          _applyFilters();
-        },
+        onToggle: (v) => _toggleValue(_selectedBathrooms, v),
       ),
       _chipGroup<(double, double)>(
         icon: Icons.straighten_rounded,
         title: 'المساحة',
-        selected: _selectedAreaRange,
+        selected: _selectedAreaRanges,
         options: [
           ('أقل من 150م²', (0, 150)),
           ('150 - 200م²', (150, 200)),
@@ -258,10 +255,7 @@ class _FilterSectionState extends State<FilterSection> {
           ('250 - 300م²', (250, 300)),
           ('أكثر من 300م²', (300, 99999)),
         ],
-        onChanged: (v) {
-          setState(() => _selectedAreaRange = v);
-          _applyFilters();
-        },
+        onToggle: (v) => _toggleValue(_selectedAreaRanges, v),
       ),
     ];
 
@@ -401,8 +395,8 @@ class _FilterSectionState extends State<FilterSection> {
     required IconData icon,
     required String title,
     required List<(String, T)> options,
-    required T? selected,
-    required ValueChanged<T?> onChanged,
+    required Set<T> selected,
+    required ValueChanged<T> onToggle,
   }) {
     return _groupCard(
       child: Column(
@@ -417,8 +411,8 @@ class _FilterSectionState extends State<FilterSection> {
               for (final (label, value) in options)
                 _FilterChipButton(
                   label: label,
-                  selected: selected == value,
-                  onTap: () => onChanged(selected == value ? null : value),
+                  selected: selected.contains(value),
+                  onTap: () => onToggle(value),
                 ),
             ],
           ),
@@ -504,21 +498,19 @@ class _FilterChipButton extends StatelessWidget {
 class FilterValues {
   final double minPrice;
   final double maxPrice;
-  final int? floor;
-  final String? finishingStatus;
-  final int? rooms;
-  final int? bathrooms;
-  final double? minArea;
-  final double? maxArea;
+  final Set<int> floors;
+  final Set<String> finishingStatuses;
+  final Set<int> rooms;
+  final Set<int> bathrooms;
+  final Set<(double, double)> areaRanges;
 
   const FilterValues({
     this.minPrice = 0,
     this.maxPrice = 10000000,
-    this.floor,
-    this.finishingStatus,
-    this.rooms,
-    this.bathrooms,
-    this.minArea,
-    this.maxArea,
+    this.floors = const {},
+    this.finishingStatuses = const {},
+    this.rooms = const {},
+    this.bathrooms = const {},
+    this.areaRanges = const {},
   });
 }
