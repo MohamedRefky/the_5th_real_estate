@@ -1,104 +1,105 @@
 import 'package:flutter/material.dart';
 
-/// The 5th Estate — Luxurious Color Palette
+/// The 5th Estate — Luxurious Dark Mode Palette
 ///
-/// All colors used throughout the app must come from this file.
-/// Never hardcode color values in widgets.
+/// Ultra-prestigious Obsidian Midnight Navy & Radiant Champagne Gold.
+/// Sleek, high-contrast, futuristic, and luxurious.
 class AppColors {
   AppColors._();
 
-  // ─── Brand Colors ───────────────────────────────────────────────
-  /// Deep Navy Blue — Primary brand color (headers, nav, CTAs)
-  static const Color primary = Color(0xFF1B263B);
+  // ─── Dark Brand Colors ──────────────────────────────────────────
+  /// Obsidian Midnight — Main dark background
+  static const Color background = Color(0xFF0B0F19);
 
-  /// Darker Navy — For gradients and depth
-  static const Color primaryDark = Color(0xFF0D1B2A);
+  /// Dark Slate Surface — Card backgrounds
+  static const Color surface = Color(0xFF111827);
 
-  /// Lighter Navy — For hover states on dark backgrounds
-  static const Color primaryMedium = Color(0xFF243B53);
+  /// Dark Sapphire Surface Alt — Secondary section backgrounds
+  static const Color cream = Color(0xFF162032);
 
-  /// Elegant Gold — Accent color (buttons, highlights, badges)
-  static const Color accent = Color(0xFFC5A059);
+  /// Deep Navy Accent — Brand header & elevated surfaces
+  static const Color primary = Color(0xFF1E293B);
 
-  /// Lighter Gold — For gradient endpoints
-  static const Color accentLight2 = Color(0xFFD4B36A);
+  /// Dark Anchor — Gradient endpoint
+  static const Color primaryDark = Color(0xFF070A10);
 
-  /// Darker Gold — For gradient starts and pressed states
-  static const Color accentDark = Color(0xFFB08C42);
+  /// Active Dark Sapphire — Hover / interactive states
+  static const Color primaryMedium = Color(0xFF1E3A8A);
 
-  // ─── Background & Surface ──────────────────────────────────────
-  /// Off-White — Main scaffold background
-  static const Color background = Color(0xFFF8F9FA);
+  // ─── Accent Colors (Champagne Gold) ─────────────────────────────
+  /// Radiant Champagne Gold — Primary accent & CTAs
+  static const Color accent = Color(0xFFF59E0B);
 
-  /// Pure white — Card surfaces, dialogs
-  static const Color surface = Color(0xFFFFFFFF);
+  /// Bright Gold — Highlights & gradient endpoints
+  static const Color accentLight2 = Color(0xFFFBBF24);
 
-  /// Light grey — Dividers, subtle borders
-  static const Color divider = Color(0xFFE0E0E0);
+  /// Rich Bronze Gold — Borders & shadows
+  static const Color accentDark = Color(0xFFD97706);
 
-  /// Soft cream — Alternative card background for variety
-  static const Color cream = Color(0xFFFAF7F2);
+  /// Dark Gold Tint — Badge backgrounds & icon containers
+  static const Color accentLight = Color(0xFF281E0D);
 
-  // ─── Text Colors ───────────────────────────────────────────────
-  /// Dark Charcoal — Primary text
-  static const Color textPrimary = Color(0xFF333333);
+  // ─── Divider & Borders ─────────────────────────────────────────
+  /// Dark Slate Divider
+  static const Color divider = Color(0xFF1E293B);
 
-  /// Medium grey — Secondary / caption text
-  static const Color textSecondary = Color(0xFF757575);
+  // ─── Text Colors (Dark Mode High Contrast) ─────────────────────
+  /// Crisp White Slate — Primary body text
+  static const Color textPrimary = Color(0xFFF8FAFC);
 
-  /// Hint grey — Placeholder text
-  static const Color textHint = Color(0xFFBDBDBD);
+  /// Muted Slate Grey — Secondary text
+  static const Color textSecondary = Color(0xFF94A3B8);
 
-  /// White text — On dark/primary backgrounds
+  /// Dark Slate Hint — Placeholder text
+  static const Color textHint = Color(0xFF64748B);
+
+  /// Pure White — Buttons & badges
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
   // ─── Status Colors ─────────────────────────────────────────────
-  static const Color success = Color(0xFF4CAF50);
-  static const Color error = Color(0xFFE53935);
-  static const Color warning = Color(0xFFFFA726);
-  static const Color info = Color(0xFF29B6F6);
+  static const Color success = Color(0xFF10B981);
+  static const Color error = Color(0xFFEF4444);
+  static const Color warning = Color(0xFFF59E0B);
+  static const Color info = Color(0xFF3B82F6);
 
   // ─── Computed Variants ─────────────────────────────────────────
-  /// A lighter shade of the primary for hover states / chips
-  static Color get primaryLight => primary.withValues(alpha: 0.08);
-
-  /// A lighter shade of gold for tag backgrounds
-  static Color get accentLight => accent.withValues(alpha: 0.15);
+  /// Hover state light overlay
+  static Color get primaryLight => accent.withValues(alpha: 0.15);
 
   /// Shimmer placeholder color
-  static const Color shimmer = Color(0xFFEEEEEE);
+  static const Color shimmer = Color(0xFF1E293B);
 
-  // ─── Premium Gradients ─────────────────────────────────────────
-  /// Hero header gradient (vertical, deep navy)
+  // ─── Dark Gradients ────────────────────────────────────────────
+  /// Deep Obsidian Hero Gradient
   static const LinearGradient heroGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF1B263B),
-      Color(0xFF0D1B2A),
-      Color(0xFF101D30),
+      Color(0xFF070A10),
+      Color(0xFF0B0F19),
+      Color(0xFF111827),
     ],
-    stops: [0.0, 0.6, 1.0],
+    stops: [0.0, 0.5, 1.0],
   );
 
-  /// Gold button / accent gradient
+  /// Radiant Gold Gradient
   static const LinearGradient goldGradient = LinearGradient(
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
     colors: [
-      Color(0xFFD4B36A),
-      Color(0xFFC5A059),
-      Color(0xFFB08C42),
+      Color(0xFFFBBF24),
+      Color(0xFFF59E0B),
+      Color(0xFFD97706),
     ],
   );
 
-  /// Subtle section background gradient (light)
+  /// Dark Section Gradient
   static const LinearGradient sectionGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFFF8F9FA),
-      Color(0xFFF0F1F3),
+      Color(0xFF0B0F19),
+      Color(0xFF111827),
     ],
   );
 }

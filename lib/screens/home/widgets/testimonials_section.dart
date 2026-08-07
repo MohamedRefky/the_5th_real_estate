@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
-/// Premium Testimonials section.
+/// Testimonials section — Dark Mode.
 class TestimonialsSection extends StatelessWidget {
   const TestimonialsSection({super.key});
 
@@ -37,19 +37,22 @@ class TestimonialsSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
       decoration: const BoxDecoration(
-        gradient: AppColors.sectionGradient,
+        color: AppColors.background,
       ),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             children: [
-              // Section icon
+              // Section icon badge
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.accentLight,
                   borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: const Icon(
                   Icons.format_quote_rounded,
@@ -61,7 +64,7 @@ class TestimonialsSection extends StatelessWidget {
               Text(
                 'آراء العملاء',
                 style: theme.textTheme.headlineLarge?.copyWith(
-                  color: AppColors.primary,
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -115,11 +118,11 @@ class TestimonialsSection extends StatelessWidget {
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: AppColors.divider.withValues(alpha: 0.5),
+            color: AppColors.divider,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.05),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),
@@ -134,22 +137,18 @@ class TestimonialsSection extends StatelessWidget {
               children: [
                 Icon(
                   Icons.format_quote_rounded,
-                  color: AppColors.accent.withValues(alpha: 0.3),
+                  color: AppColors.accent.withValues(alpha: 0.5),
                   size: 32,
                 ),
                 Row(
                   children: List.generate(
                     testimonial.rating,
-                    (i) => Padding(
-                      padding: const EdgeInsets.only(left: 2),
-                      child: ShaderMask(
-                        shaderCallback: (bounds) =>
-                            AppColors.goldGradient.createShader(bounds),
-                        child: const Icon(
-                          Icons.star_rounded,
-                          color: Colors.white,
-                          size: 18,
-                        ),
+                    (i) => const Padding(
+                      padding: EdgeInsets.only(left: 2),
+                      child: Icon(
+                        Icons.star_rounded,
+                        color: AppColors.accent,
+                        size: 18,
                       ),
                     ),
                   ),
@@ -174,7 +173,7 @@ class TestimonialsSection extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.accent.withValues(alpha: 0.3),
+                    AppColors.accent.withValues(alpha: 0.4),
                     AppColors.accent.withValues(alpha: 0),
                   ],
                 ),
@@ -218,7 +217,7 @@ class TestimonialsSection extends StatelessWidget {
                       testimonial.name,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     Text(

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/animated_background.dart';
 
-/// How It Works section — premium design with animated background.
+/// How It Works section — Dark Mode.
 class HowItWorksSection extends StatelessWidget {
   const HowItWorksSection({super.key});
 
@@ -34,92 +33,85 @@ class HowItWorksSection extends StatelessWidget {
       ),
     ];
 
-    return AnimatedBackground(
-      shapeColor: AppColors.accent,
-      shapeCount: 12,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
-        decoration: const BoxDecoration(
-          gradient: AppColors.heroGradient,
-        ),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1200),
-            child: Column(
-              children: [
-                // Section icon
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColors.accent.withValues(alpha: 0.4),
-                    ),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Icon(
-                    Icons.rocket_launch_rounded,
-                    color: AppColors.accent,
-                    size: 28,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
+      decoration: const BoxDecoration(
+        color: AppColors.cream,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Column(
+            children: [
+              // Section icon badge
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.accentLight,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.3),
                   ),
                 ),
-                const SizedBox(height: 20),
-                ShaderMask(
-                  shaderCallback: (bounds) =>
-                      AppColors.goldGradient.createShader(bounds),
-                  child: Text(
-                    'خطوات الشراء',
-                    style: theme.textTheme.headlineLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                child: const Icon(
+                  Icons.rocket_launch_rounded,
+                  color: AppColors.accent,
+                  size: 26,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'امتلك وحدتك العقارية في 3 خطوات بسيطة ومباشرة',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textOnPrimary.withValues(alpha: 0.6),
-                  ),
-                  textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 18),
+              Text(
+                'خطوات الشراء',
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w800,
                 ),
-                const SizedBox(height: 48),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final isDesktop = constraints.maxWidth >= 800;
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'امتلك وحدتك العقارية في 3 خطوات بسيطة ومباشرة',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 48),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isDesktop = constraints.maxWidth >= 800;
 
-                    if (isDesktop) {
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (int i = 0; i < steps.length; i++) ...[
-                            Expanded(child: _buildStepCard(context, steps[i])),
-                            if (i < steps.length - 1)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 60),
-                                child: Icon(
-                                  Icons.arrow_back_rounded,
-                                  color: AppColors.accent.withValues(alpha: 0.4),
-                                  size: 28,
-                                ),
+                  if (isDesktop) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (int i = 0; i < steps.length; i++) ...[
+                          Expanded(child: _buildStepCard(context, steps[i])),
+                          if (i < steps.length - 1)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 70),
+                              child: Icon(
+                                Icons.arrow_back_rounded,
+                                color: AppColors.accent,
+                                size: 28,
                               ),
-                          ],
+                            ),
                         ],
-                      );
-                    }
-
-                    return Column(
-                      children: steps
-                          .map((s) => Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
-                                child: _buildStepCard(context, s),
-                              ))
-                          .toList(),
+                      ],
                     );
-                  },
-                ),
-              ],
-            ),
+                  }
+
+                  return Column(
+                    children: steps
+                        .map((s) => Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: _buildStepCard(context, s),
+                            ))
+                        .toList(),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -133,31 +125,37 @@ class HowItWorksSection extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
         padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
-          color: AppColors.textOnPrimary.withValues(alpha: 0.06),
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: AppColors.accent.withValues(alpha: 0.2),
-            width: 1,
+            color: AppColors.divider,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Column(
           children: [
-            // Step number badge
+            // Step number badge with gold gradient
             Container(
-              width: 36,
-              height: 36,
+              width: 42,
+              height: 42,
               decoration: BoxDecoration(
                 gradient: AppColors.goldGradient,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.4),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    color: AppColors.accent.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
@@ -166,8 +164,8 @@ class HowItWorksSection extends StatelessWidget {
                   step.stepNumber,
                   style: const TextStyle(
                     color: AppColors.textOnPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
@@ -179,11 +177,11 @@ class HowItWorksSection extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
+                color: AppColors.accentLight,
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: AppColors.accent.withValues(alpha: 0.3),
-                  width: 2,
                 ),
-                borderRadius: BorderRadius.circular(18),
               ),
               child: Icon(
                 step.icon,
@@ -197,18 +195,18 @@ class HowItWorksSection extends StatelessWidget {
             Text(
               '${step.title} ${step.emoji}',
               style: theme.textTheme.titleLarge?.copyWith(
-                color: AppColors.textOnPrimary,
-                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w800,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
             // Description
             Text(
               step.desc,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textOnPrimary.withValues(alpha: 0.6),
+                color: AppColors.textSecondary,
                 height: 1.7,
               ),
               textAlign: TextAlign.center,

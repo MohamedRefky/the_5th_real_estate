@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
-/// Trust Indicators / "Why Choose Us" section — premium design.
+/// Trust Indicators / "Why Choose Us" section — Dark Mode.
 class WhyUsSection extends StatelessWidget {
   const WhyUsSection({super.key});
 
@@ -34,10 +34,10 @@ class WhyUsSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 24),
       decoration: BoxDecoration(
-        color: AppColors.cream,
+        color: AppColors.background,
         border: Border(
           bottom: BorderSide(
-            color: AppColors.accent.withValues(alpha: 0.15),
+            color: AppColors.divider.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -47,12 +47,15 @@ class WhyUsSection extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             children: [
-              // Section header
+              // Section header badge
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: AppColors.accentLight,
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: const Icon(
                   Icons.verified_rounded,
@@ -64,7 +67,7 @@ class WhyUsSection extends StatelessWidget {
               Text(
                 'لماذا العقار الخامس؟',
                 style: theme.textTheme.headlineLarge?.copyWith(
-                  color: AppColors.primary,
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -116,9 +119,12 @@ class WhyUsSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppColors.divider,
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.04),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -126,7 +132,7 @@ class WhyUsSection extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Icon with gradient background
+            // Icon with gold gradient
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -152,7 +158,7 @@ class WhyUsSection extends StatelessWidget {
               item.value,
               style: theme.textTheme.displaySmall?.copyWith(
                 fontWeight: FontWeight.w800,
-                color: AppColors.primary,
+                color: AppColors.accent,
               ),
             ),
             const SizedBox(height: 4),
@@ -160,7 +166,7 @@ class WhyUsSection extends StatelessWidget {
               item.title,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: AppColors.accent,
+                color: AppColors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
