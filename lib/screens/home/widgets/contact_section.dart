@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../core/theme/app_colors.dart';
 import 'section_bar.dart';
@@ -25,7 +26,8 @@ class ContactSection extends StatelessWidget {
               const SectionBar(
                 icon: Icons.headset_mic_rounded,
                 title: 'تواصل معنا',
-                subtitle: 'يسعدنا تواصلك المباشر لمساعدتك في اختيار وتحديد معاينة وحدتك العقارية المثالية',
+                subtitle:
+                    'يسعدنا تواصلك المباشر لمساعدتك في اختيار وتحديد معاينة وحدتك العقارية المثالية',
               ),
 
               const SizedBox(height: 40),
@@ -40,8 +42,13 @@ class ContactSection extends StatelessWidget {
                         Expanded(
                           child: _ContactCard(
                             title: 'تواصل عبر واتساب',
-                            subtitle: 'استجابة فورية واستشارات عقارية مباشرة 24/7',
-                            icon: Icons.chat_rounded,
+                            subtitle:
+                                'استجابة فورية واستشارات عقارية مباشرة 24/7',
+                            iconWidget: const FaIcon(
+                              FontAwesomeIcons.whatsapp,
+                              size: 32,
+                              color: Color(0xFF25D366),
+                            ),
                             badgeText: 'واتساب',
                             accentColor: const Color(0xFF25D366),
                             onTap: () {
@@ -53,8 +60,13 @@ class ContactSection extends StatelessWidget {
                         Expanded(
                           child: _ContactCard(
                             title: 'تابعنا على فيسبوك',
-                            subtitle: 'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
-                            icon: Icons.facebook_rounded,
+                            subtitle:
+                                'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
+                            iconWidget: const FaIcon(
+                              FontAwesomeIcons.facebookF,
+                              size: 28,
+                              color: Color(0xFF1877F2),
+                            ),
                             badgeText: 'فيسبوك',
                             accentColor: const Color(0xFF1877F2),
                             onTap: () {
@@ -70,8 +82,13 @@ class ContactSection extends StatelessWidget {
                     children: [
                       _ContactCard(
                         title: 'تواصل عبر واتساب',
-                        subtitle: 'استجابة فورية واستشارات عقارية مباشرة 24/7',
-                        icon: Icons.chat_rounded,
+                        subtitle:
+                            'استجابة فورية واستشارات عقارية مباشرة 24/7',
+                        iconWidget: const FaIcon(
+                          FontAwesomeIcons.whatsapp,
+                          size: 32,
+                          color: Color(0xFF25D366),
+                        ),
                         badgeText: 'واتساب',
                         accentColor: const Color(0xFF25D366),
                         onTap: () {
@@ -81,8 +98,13 @@ class ContactSection extends StatelessWidget {
                       const SizedBox(height: 20),
                       _ContactCard(
                         title: 'تابعنا على فيسبوك',
-                        subtitle: 'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
-                        icon: Icons.facebook_rounded,
+                        subtitle:
+                            'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
+                        iconWidget: const FaIcon(
+                          FontAwesomeIcons.facebookF,
+                          size: 28,
+                          color: Color(0xFF1877F2),
+                        ),
                         badgeText: 'فيسبوك',
                         accentColor: const Color(0xFF1877F2),
                         onTap: () {
@@ -104,7 +126,7 @@ class ContactSection extends StatelessWidget {
 class _ContactCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final IconData icon;
+  final Widget iconWidget;
   final String badgeText;
   final Color accentColor;
   final VoidCallback onTap;
@@ -112,7 +134,7 @@ class _ContactCard extends StatelessWidget {
   const _ContactCard({
     required this.title,
     required this.subtitle,
-    required this.icon,
+    required this.iconWidget,
     required this.badgeText,
     required this.accentColor,
     required this.onTap,
@@ -150,7 +172,8 @@ class _ContactCard extends StatelessWidget {
               children: [
                 // Glowing Platform Icon Badge
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  width: 60,
+                  height: 60,
                   decoration: BoxDecoration(
                     color: accentColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(18),
@@ -165,11 +188,7 @@ class _ContactCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    icon,
-                    size: 32,
-                    color: accentColor,
-                  ),
+                  child: Center(child: iconWidget),
                 ),
 
                 const SizedBox(width: 18),
