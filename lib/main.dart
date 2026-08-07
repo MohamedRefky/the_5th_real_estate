@@ -6,5 +6,6 @@ import 'app/app.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   GoogleFonts.config.allowRuntimeFetching = true;
+
   runApp(const TheApp());
 }

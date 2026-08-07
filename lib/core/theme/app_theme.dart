@@ -7,77 +7,98 @@ import 'app_colors.dart';
 class AppTheme {
   AppTheme._();
 
-  static TextTheme get _textTheme {
-    return GoogleFonts.cairoTextTheme().copyWith(
-      displayLarge: GoogleFonts.cairo(
-        fontSize: 36,
-        fontWeight: FontWeight.w800,
-        color: AppColors.textPrimary,
-      ),
-      displayMedium: GoogleFonts.cairo(
-        fontSize: 28,
-        fontWeight: FontWeight.w800,
-        color: AppColors.textPrimary,
-      ),
-      displaySmall: GoogleFonts.cairo(
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      ),
-      headlineLarge: GoogleFonts.cairo(
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      ),
-      headlineMedium: GoogleFonts.cairo(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      ),
-      headlineSmall: GoogleFonts.cairo(
-        fontSize: 18,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      ),
-      titleLarge: GoogleFonts.cairo(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
-      ),
-      titleMedium: GoogleFonts.cairo(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      bodyLarge: GoogleFonts.cairo(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textPrimary,
-      ),
-      bodyMedium: GoogleFonts.cairo(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-      ),
-      bodySmall: GoogleFonts.cairo(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: AppColors.textSecondary,
-      ),
-      labelLarge: GoogleFonts.cairo(
-        fontSize: 14,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textOnPrimary,
-      ),
-    );
+  static String? get cairoFontFamily {
+    try {
+      return GoogleFonts.cairo().fontFamily;
+    } catch (_) {
+      return null;
+    }
   }
+
+  static final TextTheme _textTheme = TextTheme(
+    displayLarge: TextStyle(
+      fontSize: 36,
+      fontWeight: FontWeight.w800,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    displayMedium: TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w800,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    displaySmall: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    headlineLarge: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    headlineMedium: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    headlineSmall: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    titleLarge: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    titleMedium: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    bodyLarge: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: AppColors.textPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+    bodyMedium: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: AppColors.textSecondary,
+      fontFamily: cairoFontFamily,
+    ),
+    bodySmall: TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: AppColors.textSecondary,
+      fontFamily: cairoFontFamily,
+    ),
+    labelLarge: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      color: AppColors.textOnPrimary,
+      fontFamily: cairoFontFamily,
+    ),
+  );
 
   static ThemeData get light => dark;
 
   static ThemeData get dark {
+    final fontFamily = cairoFontFamily;
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      fontFamily: fontFamily,
 
       // Colors
       colorScheme: const ColorScheme.dark(
@@ -102,10 +123,11 @@ class AppTheme {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.cairo(
+        titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
+          fontFamily: fontFamily,
         ),
       ),
 
@@ -129,9 +151,10 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          textStyle: GoogleFonts.cairo(
+          textStyle: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w800,
+            fontFamily: fontFamily,
           ),
         ),
       ),
@@ -154,9 +177,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.accent, width: 2),
         ),
-        hintStyle: GoogleFonts.cairo(
+        hintStyle: TextStyle(
           fontSize: 14,
           color: AppColors.textHint,
+          fontFamily: fontFamily,
         ),
       ),
     );
