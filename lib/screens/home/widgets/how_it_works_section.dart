@@ -1,8 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import 'section_bar.dart';
 
-/// How It Works section — Dark Mode.
+/// How It Works section — Transparent & Glassmorphic.
 class HowItWorksSection extends StatelessWidget {
   const HowItWorksSection({super.key});
 
@@ -34,9 +37,9 @@ class HowItWorksSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       decoration: const BoxDecoration(
-        color: AppColors.cream,
+        color: Colors.transparent,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -44,7 +47,6 @@ class HowItWorksSection extends StatelessWidget {
           child: Column(
             children: [
               const SectionBar(
-                index: 5,
                 icon: Icons.rocket_launch_rounded,
                 title: 'خطوات الشراء',
                 subtitle: 'امتلك وحدتك العقارية في 3 خطوات بسيطة ومباشرة',
@@ -99,92 +101,77 @@ class HowItWorksSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Container(
-        padding: const EdgeInsets.all(28),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: AppColors.divider,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            // Step number badge with gold gradient
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                gradient: AppColors.accentGradient,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: AppColors.surface.withValues(alpha: 0.65),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.25),
+                width: 0.8,
               ),
-              child: Center(
-                child: Text(
-                  step.stepNumber,
-                  style: const TextStyle(
-                    color: AppColors.textOnPrimary,
-                    fontSize: 18,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Step icon
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: AppColors.accentLight,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.4),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.accent.withValues(alpha: 0.2),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    step.icon,
+                    size: 30,
+                    color: AppColors.accent,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Title with emoji
+                Text(
+                  '${step.title} ${step.emoji}',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-            ),
-            const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
-            // Icon
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: AppColors.accentLight,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.accent.withValues(alpha: 0.3),
+                // Description
+                Text(
+                  step.desc,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.7,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              child: Icon(
-                step.icon,
-                size: 30,
-                color: AppColors.accent,
-              ),
+              ],
             ),
-            const SizedBox(height: 20),
-
-            // Title with emoji
-            Text(
-              '${step.title} ${step.emoji}',
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w800,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-
-            // Description
-            Text(
-              step.desc,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-                height: 1.7,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+          ),
         ),
       ),
     );
