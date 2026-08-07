@@ -128,7 +128,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: count,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            separatorBuilder: (_, _) => const SizedBox(width: 10),
             itemBuilder: (context, index) {
               final isSelected = index == _selectedIndex;
               return GestureDetector(
