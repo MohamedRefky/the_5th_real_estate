@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
-/// Placeholder image gallery using styled containers with icons.
-///
-/// Displays a main "image" and thumbnail strip below.
-/// Will be replaced with real images (cached_network_image + Firebase Storage)
-/// once the backend is set up.
+/// Ultra-premium placeholder image gallery with room navigation.
 class ImageGalleryPlaceholder extends StatefulWidget {
-  /// Number of placeholder "images" to show.
   final int imageCount;
 
   const ImageGalleryPlaceholder({super.key, this.imageCount = 5});
@@ -21,7 +16,6 @@ class ImageGalleryPlaceholder extends StatefulWidget {
 class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
   int _selectedIndex = 0;
 
-  /// Different icons for each "image" to add visual variety.
   static const _icons = [
     Icons.living_rounded,
     Icons.kitchen_rounded,
@@ -31,11 +25,11 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
   ];
 
   static const _labels = [
-    'الصالة',
-    'المطبخ',
-    'غرفة النوم',
-    'الحمام',
-    'البلكونة',
+    'الريسبشن / الصالة',
+    'المطبخ الرئيسي',
+    'غرفة النوم الماستر',
+    'الحمام الرئيسي',
+    'التراس والفيو',
   ];
 
   @override
@@ -45,73 +39,108 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
 
     return Column(
       children: [
-        // ── Main Image ─────────────────────────────────────────
-        Container(
-          height: 350,
+        // ── Main Image Box ─────────────────────────────────────
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          height: 380,
           width: double.infinity,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                AppColors.primary,
-                AppColors.primary.withValues(alpha: 0.8),
-              ],
+            gradient: AppColors.heroGradient,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.3),
+              width: 1.5,
             ),
-            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.15),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Background pattern
+              // Subtle background icon
               Icon(
                 _icons[_selectedIndex],
-                size: 120,
-                color: AppColors.textOnPrimary.withValues(alpha: 0.1),
+                size: 160,
+                color: AppColors.textOnPrimary.withValues(alpha: 0.05),
               ),
-              // Foreground icon
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    _icons[_selectedIndex],
-                    size: 56,
-                    color: AppColors.accent,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _labels[_selectedIndex],
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: AppColors.textOnPrimary,
+
+              // Room info
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: Column(
+                  key: ValueKey(_selectedIndex),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Icon(
+                        _icons[_selectedIndex],
+                        size: 52,
+                        color: AppColors.accent,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'صورة تجريبية — سيتم استبدالها لاحقاً',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textOnPrimary.withValues(alpha: 0.5),
+                    const SizedBox(height: 16),
+                    Text(
+                      _labels[_selectedIndex],
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'معاينة افتراضية للتصميم الداخلي',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.textOnPrimary.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               // Image counter badge
               Positioned(
-                bottom: 12,
-                left: 12,
+                bottom: 16,
+                left: 16,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
+                    horizontal: 14,
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black54,
+                    color: Colors.black.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.5),
+                    ),
                   ),
                   child: Text(
                     '${_selectedIndex + 1} / $count',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.textOnPrimary,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -120,33 +149,45 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
 
-        // ── Thumbnails ─────────────────────────────────────────
+        // ── Thumbnails Strip ───────────────────────────────────
         SizedBox(
-          height: 72,
+          height: 76,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: count,
-            separatorBuilder: (_, _) => const SizedBox(width: 10),
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final isSelected = index == _selectedIndex;
               return GestureDetector(
                 onTap: () => setState(() => _selectedIndex = index),
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 72,
+                  duration: const Duration(milliseconds: 250),
+                  width: 76,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: isSelected
-                          ? [AppColors.accent, AppColors.accent.withValues(alpha: 0.8)]
-                          : [AppColors.primary.withValues(alpha: 0.15), AppColors.primary.withValues(alpha: 0.08)],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
+                    gradient: isSelected
+                        ? AppColors.goldGradient
+                        : LinearGradient(
+                            colors: [
+                              AppColors.primary.withValues(alpha: 0.1),
+                              AppColors.primary.withValues(alpha: 0.05),
+                            ],
+                          ),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected ? AppColors.accent : AppColors.divider,
                       width: isSelected ? 2 : 1,
                     ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: AppColors.accent.withValues(alpha: 0.4),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                        : [],
                   ),
                   child: Icon(
                     _icons[index],
