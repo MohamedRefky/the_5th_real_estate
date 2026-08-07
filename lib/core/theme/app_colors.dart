@@ -1,60 +1,60 @@
 import 'package:flutter/material.dart';
 
-/// The 5th Estate — Luxurious Dark Mode Palette
+/// The 5th Estate — World-Class Real Estate Color Palette
 ///
-/// Ultra-prestigious Obsidian Midnight Navy & Radiant Champagne Gold.
-/// Sleek, high-contrast, futuristic, and luxurious.
+/// Refined Slate 900 (#0F172A) and Warm Luxury Gold (#EAB308).
+/// Clean, harmonious contrast with crisp typography.
 class AppColors {
   AppColors._();
 
-  // ─── Dark Brand Colors ──────────────────────────────────────────
-  /// Obsidian Midnight — Main dark background
-  static const Color background = Color(0xFF0B0F19);
+  // ─── Core Brand Tones ───────────────────────────────────────────
+  /// Rich Dark Slate Background — Main scaffold background
+  static const Color background = Color(0xFF0F172A);
 
-  /// Dark Slate Surface — Card backgrounds
-  static const Color surface = Color(0xFF111827);
+  /// Card Surface — Elevated card background
+  static const Color surface = Color(0xFF1E293B);
 
-  /// Dark Sapphire Surface Alt — Secondary section backgrounds
-  static const Color cream = Color(0xFF162032);
+  /// Section Alt Surface — Secondary cards & containers
+  static const Color cream = Color(0xFF1E293B);
 
-  /// Deep Navy Accent — Brand header & elevated surfaces
-  static const Color primary = Color(0xFF1E293B);
+  /// Primary Brand Anchor
+  static const Color primary = Color(0xFF0F172A);
 
-  /// Dark Anchor — Gradient endpoint
-  static const Color primaryDark = Color(0xFF070A10);
+  /// Deep Navy Anchor
+  static const Color primaryDark = Color(0xFF020617);
 
-  /// Active Dark Sapphire — Hover / interactive states
-  static const Color primaryMedium = Color(0xFF1E3A8A);
+  /// Medium Slate Accent
+  static const Color primaryMedium = Color(0xFF334155);
 
-  // ─── Accent Colors (Champagne Gold) ─────────────────────────────
-  /// Radiant Champagne Gold — Primary accent & CTAs
-  static const Color accent = Color(0xFFF59E0B);
+  // ─── Luxury Gold Accents ────────────────────────────────────────
+  /// Refined Luxury Gold — Highlights, icons, primary buttons
+  static const Color accent = Color(0xFFEAB308);
 
-  /// Bright Gold — Highlights & gradient endpoints
-  static const Color accentLight2 = Color(0xFFFBBF24);
+  /// Light Champagne Gold
+  static const Color accentLight2 = Color(0xFFFACC15);
 
-  /// Rich Bronze Gold — Borders & shadows
-  static const Color accentDark = Color(0xFFD97706);
+  /// Rich Bronze Gold
+  static const Color accentDark = Color(0xFFCA8A04);
 
-  /// Dark Gold Tint — Badge backgrounds & icon containers
-  static const Color accentLight = Color(0xFF281E0D);
+  /// Translucent Gold Tint — Badges & icon backgrounds (12% gold opacity)
+  static const Color accentLight = Color(0x1FEAB308);
 
-  // ─── Divider & Borders ─────────────────────────────────────────
-  /// Dark Slate Divider
-  static const Color divider = Color(0xFF1E293B);
+  // ─── Dividers & Borders ─────────────────────────────────────────
+  /// Crisp 1px Border Slate
+  static const Color divider = Color(0xFF334155);
 
-  // ─── Text Colors (Dark Mode High Contrast) ─────────────────────
-  /// Crisp White Slate — Primary body text
+  // ─── Text Hierarchy ─────────────────────────────────────────────
+  /// Crisp Bright Slate White — Main titles & body
   static const Color textPrimary = Color(0xFFF8FAFC);
 
-  /// Muted Slate Grey — Secondary text
+  /// Smooth Slate Grey — Subtitles & metadata
   static const Color textSecondary = Color(0xFF94A3B8);
 
-  /// Dark Slate Hint — Placeholder text
+  /// Dark Slate Hint — Search placeholders
   static const Color textHint = Color(0xFF64748B);
 
-  /// Pure White — Buttons & badges
-  static const Color textOnPrimary = Color(0xFFFFFFFF);
+  /// Contrast Text — On dark gold / primary buttons
+  static const Color textOnPrimary = Color(0xFF0F172A);
 
   // ─── Status Colors ─────────────────────────────────────────────
   static const Color success = Color(0xFF10B981);
@@ -63,43 +63,41 @@ class AppColors {
   static const Color info = Color(0xFF3B82F6);
 
   // ─── Computed Variants ─────────────────────────────────────────
-  /// Hover state light overlay
-  static Color get primaryLight => accent.withValues(alpha: 0.15);
+  static Color get primaryLight => accent.withValues(alpha: 0.12);
 
-  /// Shimmer placeholder color
-  static const Color shimmer = Color(0xFF1E293B);
+  static const Color shimmer = Color(0xFF334155);
 
-  // ─── Dark Gradients ────────────────────────────────────────────
-  /// Deep Obsidian Hero Gradient
+  // ─── Harmonious Gradients ───────────────────────────────────────
+  /// Smooth Hero Gradient
   static const LinearGradient heroGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF070A10),
-      Color(0xFF0B0F19),
-      Color(0xFF111827),
+      Color(0xFF020617),
+      Color(0xFF0F172A),
+      Color(0xFF1E293B),
     ],
     stops: [0.0, 0.5, 1.0],
   );
 
-  /// Radiant Gold Gradient
+  /// Gold Accent Gradient
   static const LinearGradient goldGradient = LinearGradient(
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
     colors: [
-      Color(0xFFFBBF24),
-      Color(0xFFF59E0B),
-      Color(0xFFD97706),
+      Color(0xFFFACC15),
+      Color(0xFFEAB308),
+      Color(0xFFCA8A04),
     ],
   );
 
-  /// Dark Section Gradient
+  /// Section Background Gradient
   static const LinearGradient sectionGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF0B0F19),
-      Color(0xFF111827),
+      Color(0xFF0F172A),
+      Color(0xFF0F172A),
     ],
   );
 }

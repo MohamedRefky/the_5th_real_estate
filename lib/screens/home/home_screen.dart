@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/animated_background.dart';
@@ -10,7 +11,7 @@ import 'widgets/recent_properties_section.dart';
 import 'widgets/testimonials_section.dart';
 import 'widgets/why_us_section.dart';
 
-/// Home Screen — Premium landing page for "The 5th Estate".
+/// Home Screen — World-Class Real Estate Landing Page.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -22,7 +23,7 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ── 1. Hero Header with Animated Background ─────────
+            // ── 1. Hero Header with Ambient Glow ────────────────
             _HeroSection(theme: theme),
 
             // ── 2. Why Choose Us (Trust Indicators) ─────────────
@@ -45,6 +46,9 @@ class HomeScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.accentLight,
                       borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.accent.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: const Icon(
                       Icons.location_city_rounded,
@@ -56,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     'اختر الحي',
                     style: theme.textTheme.headlineLarge?.copyWith(
-                      color: AppColors.primary,
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -192,7 +196,7 @@ class _SectionDivider extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Hero Section — with Animated Background
+// Hero Section
 // ═══════════════════════════════════════════════════════════════════
 
 class _HeroSection extends StatelessWidget {
@@ -202,8 +206,6 @@ class _HeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBackground(
-      shapeColor: AppColors.accent,
-      shapeCount: 18,
       child: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
@@ -217,72 +219,64 @@ class _HeroSection extends StatelessWidget {
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: Column(
                   children: [
-                    // ── Gold decorative line ───────────────────
                     _GoldLine(),
 
                     const SizedBox(height: 32),
 
-                    // ── Brand icon ─────────────────────────────
+                    // Brand Icon Container
                     Container(
                       width: 80,
                       height: 80,
                       decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.5),
-                          width: 2,
-                        ),
+                        gradient: AppColors.goldGradient,
                         borderRadius: BorderRadius.circular(22),
-                        gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          colors: [
-                            AppColors.accent.withValues(alpha: 0.15),
-                            AppColors.accent.withValues(alpha: 0.05),
-                          ],
-                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.accent.withValues(alpha: 0.35),
+                            blurRadius: 20,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
                       ),
                       child: const Icon(
                         Icons.domain_rounded,
-                        size: 38,
-                        color: AppColors.accent,
+                        size: 40,
+                        color: AppColors.textOnPrimary,
                       ),
                     ),
 
                     const SizedBox(height: 28),
 
-                    // ── App title ──────────────────────────────
-                    ShaderMask(
-                      shaderCallback: (bounds) =>
-                          AppColors.goldGradient.createShader(bounds),
-                      child: Text(
-                        'العقار الخامس',
-                        style: theme.textTheme.displayLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.5,
-                        ),
+                    // App Title
+                    Text(
+                      'العقار الخامس',
+                      style: theme.textTheme.displayLarge?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
                       ),
                     ),
 
                     const SizedBox(height: 16),
 
-                    // ── Tagline ────────────────────────────────
+                    // Tagline Pill
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.3),
-                        ),
+                        color: AppColors.accentLight,
                         borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.4),
+                        ),
                       ),
                       child: Text(
                         '✦  وجهتك الأولى للعقارات الفاخرة  ✦',
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: AppColors.accent,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           letterSpacing: 0.8,
                         ),
                       ),
@@ -294,14 +288,14 @@ class _HeroSection extends StatelessWidget {
                       'اكتشف أرقى الشقق في أفضل الأحياء السكنية\nبأسعار تنافسية وخطط سداد مرنة',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textOnPrimary.withValues(alpha: 0.7),
+                        color: AppColors.textSecondary,
                         height: 1.8,
                       ),
                     ),
 
                     const SizedBox(height: 32),
 
-                    // ── Stats Row ──────────────────────────────
+                    // Stats Row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -364,7 +358,7 @@ class _HeroStat extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.textOnPrimary.withValues(alpha: 0.6),
+              color: AppColors.textSecondary,
             ),
           ),
         ],
@@ -379,7 +373,7 @@ class _HeroStatDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 36,
-      color: AppColors.accent.withValues(alpha: 0.3),
+      color: AppColors.divider,
     );
   }
 }
@@ -396,40 +390,39 @@ class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 32),
+      padding: const EdgeInsets.symmetric(vertical: 36),
       decoration: const BoxDecoration(
-        gradient: AppColors.heroGradient,
+        color: AppColors.surface,
+        border: Border(
+          top: BorderSide(color: AppColors.divider),
+        ),
       ),
       child: Center(
         child: Column(
           children: [
-            ShaderMask(
-              shaderCallback: (bounds) =>
-                  AppColors.goldGradient.createShader(bounds),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.domain_rounded,
-                    color: Colors.white,
-                    size: 20,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.domain_rounded,
+                  color: AppColors.accent,
+                  size: 22,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'العقار الخامس',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'العقار الخامس',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             Text(
               '© 2026 العقار الخامس — جميع الحقوق محفوظة',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.textOnPrimary.withValues(alpha: 0.5),
+                color: AppColors.textSecondary,
               ),
             ),
           ],

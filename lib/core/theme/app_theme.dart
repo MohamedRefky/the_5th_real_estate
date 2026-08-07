@@ -3,11 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
 
-/// Centralised theme configuration for "The 5th Estate" (Dark Mode).
+/// Centralised theme configuration for "The 5th Estate".
 class AppTheme {
   AppTheme._();
 
-  // ─── Typography Base (Crisp Dark Mode Text) ─────────────────────
   static TextTheme get _textTheme {
     return GoogleFonts.cairoTextTheme().copyWith(
       displayLarge: GoogleFonts.cairo(
@@ -73,8 +72,7 @@ class AppTheme {
     );
   }
 
-  // ─── Dark Theme ───────────────────────────────────────────────
-  static ThemeData get light => dark; // Default everything to Dark Mode
+  static ThemeData get light => dark;
 
   static ThemeData get dark {
     return ThemeData(
@@ -121,19 +119,19 @@ class AppTheme {
         ),
       ),
 
-      // Elevated Buttons (Gold CTA)
+      // Elevated Buttons (Gold CTA with Dark Slate Text)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.accent,
           foregroundColor: AppColors.textOnPrimary,
-          elevation: 4,
+          elevation: 2,
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           textStyle: GoogleFonts.cairo(
             fontSize: 16,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
