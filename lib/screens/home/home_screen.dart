@@ -210,7 +210,7 @@ class _HeroSection extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Animated Ambient Emerald Glow Backdrop
+          // Animated Ambient Gold Glow Backdrop
           Positioned.fill(
             child: AnimatedBackground(
               shapeColor: AppColors.accent,
