@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../core/theme/app_theme.dart';
 import 'app_router.dart';
 
-/// Root widget for "The 5th Estate" — العقار الخامس
+/// Root widget for The 5th Real Estate.
 ///
 /// Configured with:
 /// - Arabic (ar) locale and RTL directionality
@@ -16,7 +16,7 @@ class TheApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'العقار الخامس',
+      title: 'The 5th Real Estate',
       debugShowCheckedModeBanner: false,
 
       // ── Arabic & RTL ──────────────────────────────────────────

@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -45,7 +45,7 @@ class WhyUsSection extends StatelessWidget {
             children: [
               const SectionBar(
                 icon: Icons.verified_rounded,
-                title: 'لماذا العقار الخامس؟',
+                title: 'لماذا The 5th Real Estate؟',
                 subtitle: 'نلتزم بتقديم أفضل خدمة عقارية بتجربة استثنائية',
               ),
               const SizedBox(height: 40),

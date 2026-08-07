@@ -20,14 +20,22 @@ class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RoutesNames.home:
-        return _buildRoute(const HomeScreen(), settings);
+        return _buildRoute(HomeScreen(), settings);
 
       case RoutesNames.area:
-        final areaName = settings.arguments as String;
+        final areaName = settings.arguments;
+        if (areaName is! String) {
+          // Restored route without arguments (e.g. after an app restart).
+          return _buildRoute(HomeScreen(), settings);
+        }
         return _buildRoute(AreaScreen(areaName: areaName), settings);
 
       case RoutesNames.apartmentDetails:
-        final apartmentId = settings.arguments as String;
+        final apartmentId = settings.arguments;
+        if (apartmentId is! String) {
+          // Restored route without arguments (e.g. after an app restart).
+          return _buildRoute(HomeScreen(), settings);
+        }
         return _buildRoute(
           ApartmentDetailsScreen(apartmentId: apartmentId),
           settings,

@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
@@ -23,7 +23,7 @@ class TestimonialsSection extends StatelessWidget {
         name: 'م. سارة حسن',
         role: 'مستثمرة في الأندلس',
         comment:
-            'التواصل عبر الواتساب المباشر والسريع وفر عليّ وقت طويل. أنصح بشركة العقار الخامس لراغبي الفخامة.',
+            'التواصل عبر الواتساب المباشر والسريع وفر عليّ وقت طويل. أنصح بشركة The 5th Real Estate لراغبي الفخامة.',
         rating: 5,
       ),
       (
@@ -49,7 +49,7 @@ class TestimonialsSection extends StatelessWidget {
               const SectionBar(
                 icon: Icons.format_quote_rounded,
                 title: 'آراء العملاء',
-                subtitle: 'ماذا يقول عملاؤنا عن تجربتهم مع العقار الخامس',
+                subtitle: 'ماذا يقول عملاؤنا عن تجربتهم مع The 5th Real Estate',
               ),
               const SizedBox(height: 44),
               LayoutBuilder(

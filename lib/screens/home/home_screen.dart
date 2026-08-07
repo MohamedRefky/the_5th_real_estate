@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../app/app_router.dart';
@@ -71,7 +71,21 @@ class GlassContainer extends StatelessWidget {
 
 /// Home Screen — Ultra-Premium Landing Page with Full Glassmorphism & Gold Glow.
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  final GlobalKey _browseKey = GlobalKey();
+  final GlobalKey _contactKey = GlobalKey();
+
+  void _scrollTo(GlobalKey key) {
+    final context = key.currentContext;
+    if (context == null) return;
+    Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 750),
+      curve: Curves.easeOutCubic,
+      alignment: 0.08,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +103,11 @@ class HomeScreen extends StatelessWidget {
               RevealOnScroll(
                 duration: const Duration(milliseconds: 900),
                 offset: 20,
-                child: _HeroSection(theme: theme),
+                child: _HeroSection(
+                  theme: theme,
+                  onBrowseAll: () => _scrollTo(_browseKey),
+                  onContact: () => _scrollTo(_contactKey),
+                ),
               ),
 
               const SizedBox(height: 64),
@@ -100,7 +118,10 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 64),
 
               // ── 3. Featured Properties Carousel ──────────────────────
-              const RevealOnScroll(child: FeaturedPropertiesSection()),
+              RevealOnScroll(
+                key: _browseKey,
+                child: const FeaturedPropertiesSection(),
+              ),
 
               const SizedBox(height: 64),
 
@@ -178,7 +199,10 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 64),
 
               // ── 8. Contact Us (WhatsApp & Facebook) ──────────────────
-              const RevealOnScroll(child: ContactSection()),
+              RevealOnScroll(
+                key: _contactKey,
+                child: const ContactSection(),
+              ),
 
               const SizedBox(height: 64),
 
@@ -204,7 +228,14 @@ class HomeScreen extends StatelessWidget {
 
 class _HeroSection extends StatelessWidget {
   final ThemeData theme;
-  const _HeroSection({required this.theme});
+  final VoidCallback? onBrowseAll;
+  final VoidCallback? onContact;
+
+  const _HeroSection({
+    required this.theme,
+    this.onBrowseAll,
+    this.onContact,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -244,49 +275,57 @@ class _HeroSection extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 36),
+                      const SizedBox(height: 26),
 
-                      // Brand Icon Container with Glassmorphism
+                      // Brand Chip
                       GlassContainer(
-                        borderRadius: 24,
-                        padding: const EdgeInsets.all(20),
+                        borderRadius: 30,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 9,
+                        ),
                         borderColor: AppColors.accent.withValues(alpha: 0.4),
                         borderWidth: 0.5,
-                        child: Container(
-                          width: 84,
-                          height: 84,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.accentGradient,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.accent.withValues(alpha: 0.4),
-                                blurRadius: 24,
-                                offset: const Offset(0, 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.workspace_premium_rounded,
+                              color: AppColors.accent,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'The 5th Real Estate',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: AppColors.accent,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 15,
+                                letterSpacing: 0.5,
                               ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.domain_rounded,
-                            size: 44,
-                            color: AppColors.textOnPrimary,
-                          ),
+                            ),
+                          ],
                         ),
                       ),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 26),
 
                       // Main Title with Shader Mask Gold Gradient
                       ShaderMask(
                         shaderCallback: (bounds) =>
                             AppColors.accentGradient.createShader(bounds),
-                        child: Text(
-                          'العقار الخامس',
-                          style: theme.textTheme.displayLarge?.copyWith(
-                            fontSize: 48,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.8,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'عقارات\nالتجمع الخامس',
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.displayLarge?.copyWith(
+                              fontSize: 58,
+                              height: 1.12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                       ),
@@ -297,26 +336,27 @@ class _HeroSection extends StatelessWidget {
                       GlassContainer(
                         borderRadius: 30,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 28,
+                          horizontal: 26,
                           vertical: 10,
                         ),
                         borderColor: AppColors.accent.withValues(alpha: 0.5),
                         borderWidth: 0.5,
                         child: Text(
-                          '✦  وجهتك الأولى للعقارات الفاخرة  ✦',
+                          '✦  كل العقارات المتاحة في مكان واحد  ✦',
+                          textAlign: TextAlign.center,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: AppColors.accent,
                             fontWeight: FontWeight.w800,
-                            fontSize: 16,
-                            letterSpacing: 1.0,
+                            fontSize: 15,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ),
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 22),
 
                       Text(
-                        'اكتشف أرقى الشقق والوحدات السكنية في أفضل أحياء التجمع الخامس\nبأسعار تنافسية وخيارات سداد مرنة لمستقبل فاخر',
+                        'تصفح كل شقق وبنتهاوس وفيّلات التجمع الخامس من منصة واحدة —\nأسعار مباشرة، صور حقيقية، وتواصل فوري لتحديد معاينتك اليوم',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: AppColors.textSecondary,
@@ -325,51 +365,78 @@ class _HeroSection extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 34),
 
                       // Stats Row with Glassmorphism Cards
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        spacing: 16,
+                        runSpacing: 12,
+                        alignment: WrapAlignment.center,
                         children: [
                           _GlassHeroStat(value: '+50', label: 'مشروع فاخر'),
-                          const SizedBox(width: 16),
-                          _GlassHeroStat(value: '+1000', label: 'عميل سعيد'),
-                          const SizedBox(width: 16),
                           _GlassHeroStat(value: '5', label: 'أحياء راقية'),
+                          _GlassHeroStat(value: '+1000', label: 'عميل سعيد'),
                         ],
                       ),
 
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 36),
 
-                      // Primary CTA Button with Gold Glow
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.accent.withValues(alpha: 0.4),
-                              blurRadius: 24,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.explore_rounded, size: 22),
-                          label: const Text('تصفح جميع العقارات المتاحة'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accent,
-                            foregroundColor: AppColors.textOnPrimary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 36,
-                              vertical: 18,
-                            ),
-                            shape: RoundedRectangleBorder(
+                      // CTA Buttons
+                      Wrap(
+                        spacing: 14,
+                        runSpacing: 14,
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(18),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.accent.withValues(alpha: 0.4),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
                             ),
-                            elevation: 0,
+                            child: ElevatedButton.icon(
+                              onPressed: onBrowseAll,
+                              icon: const Icon(Icons.explore_rounded, size: 22),
+                              label: const Text('تصفح جميع العقارات'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.accent,
+                                foregroundColor: AppColors.textOnPrimary,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 34,
+                                  vertical: 18,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                elevation: 0,
+                              ),
+                            ),
                           ),
-                        ),
+                          OutlinedButton.icon(
+                            onPressed: onContact,
+                            icon: const Icon(Icons.chat_rounded, size: 20),
+                            label: const Text('تواصل معنا'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.accent,
+                              side: BorderSide(
+                                color: AppColors.accent.withValues(alpha: 0.55),
+                                width: 1.2,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 30,
+                                vertical: 18,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: 36),
@@ -472,7 +539,7 @@ class _Footer extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  'العقار الخامس',
+                  'The 5th Real Estate',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
@@ -483,7 +550,7 @@ class _Footer extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              '© 2026 العقار الخامس — جميع الحقوق محفوظة',
+              '© 2026 The 5th Real Estate — جميع الحقوق محفوظة',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.textSecondary,
               ),
