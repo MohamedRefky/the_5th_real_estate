@@ -11,8 +11,20 @@ class AppColors {
   /// Deep Navy Blue — Primary brand color (headers, nav, CTAs)
   static const Color primary = Color(0xFF1B263B);
 
+  /// Darker Navy — For gradients and depth
+  static const Color primaryDark = Color(0xFF0D1B2A);
+
+  /// Lighter Navy — For hover states on dark backgrounds
+  static const Color primaryMedium = Color(0xFF243B53);
+
   /// Elegant Gold — Accent color (buttons, highlights, badges)
   static const Color accent = Color(0xFFC5A059);
+
+  /// Lighter Gold — For gradient endpoints
+  static const Color accentLight2 = Color(0xFFD4B36A);
+
+  /// Darker Gold — For gradient starts and pressed states
+  static const Color accentDark = Color(0xFFB08C42);
 
   // ─── Background & Surface ──────────────────────────────────────
   /// Off-White — Main scaffold background
@@ -23,6 +35,9 @@ class AppColors {
 
   /// Light grey — Dividers, subtle borders
   static const Color divider = Color(0xFFE0E0E0);
+
+  /// Soft cream — Alternative card background for variety
+  static const Color cream = Color(0xFFFAF7F2);
 
   // ─── Text Colors ───────────────────────────────────────────────
   /// Dark Charcoal — Primary text
@@ -52,4 +67,38 @@ class AppColors {
 
   /// Shimmer placeholder color
   static const Color shimmer = Color(0xFFEEEEEE);
+
+  // ─── Premium Gradients ─────────────────────────────────────────
+  /// Hero header gradient (vertical, deep navy)
+  static const LinearGradient heroGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF1B263B),
+      Color(0xFF0D1B2A),
+      Color(0xFF101D30),
+    ],
+    stops: [0.0, 0.6, 1.0],
+  );
+
+  /// Gold button / accent gradient
+  static const LinearGradient goldGradient = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [
+      Color(0xFFD4B36A),
+      Color(0xFFC5A059),
+      Color(0xFFB08C42),
+    ],
+  );
+
+  /// Subtle section background gradient (light)
+  static const LinearGradient sectionGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFFF8F9FA),
+      Color(0xFFF0F1F3),
+    ],
+  );
 }
