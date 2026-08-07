@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
-/// Testimonials section for Home Screen.
+/// Premium Testimonials section.
 class TestimonialsSection extends StatelessWidget {
   const TestimonialsSection({super.key});
 
@@ -14,14 +14,14 @@ class TestimonialsSection extends StatelessWidget {
         name: 'أحمد محمود',
         role: 'مشتري في بيت الوطن',
         comment:
-            'تجربة شريعة وممتازة للغاية. المعاينة كانت دقيقة والمعلومات المطروحة عن جدول الإنشاءات صادقة 100%.',
+            'تجربة ممتازة للغاية. المعاينة كانت دقيقة والمعلومات المطروحة عن جدول الإنشاءات صادقة 100%.',
         rating: 5,
       ),
       (
         name: 'م. سارة حسن',
         role: 'مستثمرة في الأندلس',
         comment:
-            'التواصل عبر الواتساب مباشر والسريع وفر عليا وقت طويل. أنصح بشركة العقار الخامس لراغبي الفخامة.',
+            'التواصل عبر الواتساب المباشر والسريع وفر عليّ وقت طويل. أنصح بشركة العقار الخامس لراغبي الفخامة.',
         rating: 5,
       ),
       (
@@ -33,30 +33,37 @@ class TestimonialsSection extends StatelessWidget {
       ),
     ];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
+      decoration: const BoxDecoration(
+        gradient: AppColors.sectionGradient,
+      ),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.format_quote_rounded,
-                    color: AppColors.accent,
-                    size: 32,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'آراء العملاء',
-                    style: theme.textTheme.headlineLarge?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
+              // Section icon
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.accentLight,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.format_quote_rounded,
+                  color: AppColors.accent,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'آراء العملاء',
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -64,7 +71,7 @@ class TestimonialsSection extends StatelessWidget {
                 style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 44),
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isDesktop = constraints.maxWidth >= 900;
@@ -72,7 +79,8 @@ class TestimonialsSection extends StatelessWidget {
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: testimonials
-                          .map((t) => Expanded(child: _buildCard(context, t)))
+                          .map(
+                              (t) => Expanded(child: _buildCard(context, t)))
                           .toList(),
                     );
                   }
@@ -102,52 +110,103 @@ class TestimonialsSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.divider),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: AppColors.divider.withValues(alpha: 0.5),
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: AppColors.primary.withValues(alpha: 0.05),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Quote icon + stars
             Row(
-              children: List.generate(
-                testimonial.rating,
-                (i) => const Icon(
-                  Icons.star_rounded,
-                  color: AppColors.accent,
-                  size: 20,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  Icons.format_quote_rounded,
+                  color: AppColors.accent.withValues(alpha: 0.3),
+                  size: 32,
+                ),
+                Row(
+                  children: List.generate(
+                    testimonial.rating,
+                    (i) => Padding(
+                      padding: const EdgeInsets.only(left: 2),
+                      child: ShaderMask(
+                        shaderCallback: (bounds) =>
+                            AppColors.goldGradient.createShader(bounds),
+                        child: const Icon(
+                          Icons.star_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Comment
+            Text(
+              '"${testimonial.comment}"',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                height: 1.8,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Divider
+            Container(
+              height: 1,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.accent.withValues(alpha: 0.3),
+                    AppColors.accent.withValues(alpha: 0),
+                  ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              '"${testimonial.comment}"',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                height: 1.7,
-                fontStyle: FontStyle.italic,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 20),
+
+            // Author
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: AppColors.primary,
-                  radius: 20,
-                  child: Text(
-                    testimonial.name[0],
-                    style: const TextStyle(
-                      color: AppColors.accent,
-                      fontWeight: FontWeight.bold,
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.goldGradient,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.accent.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      testimonial.name[0],
+                      style: const TextStyle(
+                        color: AppColors.textOnPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),
