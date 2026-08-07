@@ -4,13 +4,23 @@ import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/dummy_data.dart';
 import 'widgets/area_card.dart';
+import 'widgets/featured_properties_section.dart';
+import 'widgets/how_it_works_section.dart';
+import 'widgets/recent_properties_section.dart';
+import 'widgets/testimonials_section.dart';
+import 'widgets/why_us_section.dart';
 
 /// Home Screen — the main landing page of "The 5th Estate".
 ///
-/// Layout (top to bottom):
-/// 1. Hero header with brand name, tagline, and decorative icon
-/// 2. Responsive grid of [AreaCard]s for each neighborhood
-/// 3. Footer note
+/// Complete Landing Page Flow:
+/// 1. Hero Header
+/// 2. Trust Indicators (Why Choose Us)
+/// 3. Featured Properties Carousel
+/// 4. Neighborhood Grid (Choose Area)
+/// 5. Recently Added Properties
+/// 6. How It Works (3 Steps)
+/// 7. Customer Testimonials
+/// 8. Footer
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -22,18 +32,27 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ── Hero Header ──────────────────────────────────────
+            // ── 1. Hero Header ──────────────────────────────────────
             _HeroSection(theme: theme),
 
-            const SizedBox(height: 48),
+            // ── 2. Why Choose Us (Trust Indicators) ─────────────────
+            const WhyUsSection(),
 
-            // ── Section Title ────────────────────────────────────
+            const SizedBox(height: 32),
+
+            // ── 3. Featured Properties ──────────────────────────────
+            const FeaturedPropertiesSection(),
+
+            const SizedBox(height: 32),
+
+            // ── 4. Neighborhood Grid (Choose Area) ──────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
                 'اختر الحي',
                 style: theme.textTheme.headlineLarge?.copyWith(
                   color: AppColors.primary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ),
@@ -43,14 +62,14 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                'تصفح الشقق المتاحة في أرقى أحياء المدينة',
+                'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
                 style: theme.textTheme.bodyMedium,
+                textAlign: TextAlign.center,
               ),
             ),
 
             const SizedBox(height: 32),
 
-            // ── Area Cards Grid ──────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Center(
@@ -93,7 +112,20 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 48),
 
-            // ── Footer ───────────────────────────────────────────
+            // ── 5. Recently Added Properties ────────────────────────
+            const RecentPropertiesSection(),
+
+            const SizedBox(height: 32),
+
+            // ── 6. How It Works ─────────────────────────────────────
+            const HowItWorksSection(),
+
+            // ── 7. Testimonials ─────────────────────────────────────
+            const TestimonialsSection(),
+
+            const SizedBox(height: 32),
+
+            // ── 8. Footer ───────────────────────────────────────────
             _Footer(theme: theme),
           ],
         ),
@@ -133,7 +165,7 @@ class _HeroSection extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 56),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 800),
@@ -203,7 +235,7 @@ class _HeroSection extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
                   // ── Gold decorative line ───────────────────────
                   Container(
@@ -236,14 +268,37 @@ class _Footer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: const EdgeInsets.symmetric(vertical: 32),
       color: AppColors.primary,
       child: Center(
-        child: Text(
-          '© 2026 العقار الخامس — جميع الحقوق محفوظة',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: AppColors.textOnPrimary.withValues(alpha: 0.6),
-          ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.domain_rounded,
+                  color: AppColors.accent,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'العقار الخامس',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: AppColors.textOnPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '© 2026 العقار الخامس — جميع الحقوق محفوظة',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.textOnPrimary.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
         ),
       ),
     );
