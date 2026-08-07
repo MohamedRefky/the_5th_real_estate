@@ -6,6 +6,10 @@ import '../../../core/theme/app_colors.dart';
 ///
 /// Each filter is grouped under a clear labelled header with selectable chips,
 /// so it is always obvious which filter is which.
+///
+/// Responsive: on phones the filter groups are shown as compact horizontally
+/// scrollable cards to save vertical space; on larger screens they flow into a
+/// grid.
 class FilterSection extends StatefulWidget {
   final void Function(FilterValues filters) onFiltersChanged;
   final VoidCallback onReset;
@@ -187,13 +191,87 @@ class _FilterSectionState extends State<FilterSection> {
   }
 
   Widget _buildFilterContent(ThemeData theme) {
+    final groups = <Widget>[
+      _chipGroup<int>(
+        icon: Icons.layers_rounded,
+        title: 'الدور',
+        selected: _selectedFloor,
+        options: [
+          ('أرضي', 0),
+          ('الأول', 1),
+          ('الثاني', 2),
+          ('الثالث', 3),
+          ('الرابع', 4),
+          ('الخامس', 5),
+          ('الرووف', 6),
+        ],
+        onChanged: (v) {
+          setState(() => _selectedFloor = v);
+          _applyFilters();
+        },
+      ),
+      _chipGroup<String>(
+        icon: Icons.format_paint_rounded,
+        title: 'التشطيب',
+        selected: _selectedFinishing,
+        options: [
+          ('تشطيب كامل', 'finished'),
+          ('تشطيب نص', 'semiFinished'),
+        ],
+        onChanged: (v) {
+          setState(() => _selectedFinishing = v);
+          _applyFilters();
+        },
+      ),
+      _chipGroup<int>(
+        icon: Icons.bed_rounded,
+        title: 'الغرف',
+        selected: _selectedRooms,
+        options: [
+          for (var i = 1; i <= 5; i++) ('$i غرف', i),
+        ],
+        onChanged: (v) {
+          setState(() => _selectedRooms = v);
+          _applyFilters();
+        },
+      ),
+      _chipGroup<int>(
+        icon: Icons.bathtub_rounded,
+        title: 'الحمامات',
+        selected: _selectedBathrooms,
+        options: [
+          for (var i = 1; i <= 4; i++) ('$i حمام', i),
+        ],
+        onChanged: (v) {
+          setState(() => _selectedBathrooms = v);
+          _applyFilters();
+        },
+      ),
+      _chipGroup<(double, double)>(
+        icon: Icons.straighten_rounded,
+        title: 'المساحة',
+        selected: _selectedAreaRange,
+        options: [
+          ('أقل من 150م²', (0, 150)),
+          ('150 - 200م²', (150, 200)),
+          ('200 - 250م²', (200, 250)),
+          ('250 - 300م²', (250, 300)),
+          ('أكثر من 300م²', (300, 99999)),
+        ],
+        onChanged: (v) {
+          setState(() => _selectedAreaRange = v);
+          _applyFilters();
+        },
+      ),
+    ];
+
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Divider(color: AppColors.divider.withValues(alpha: 0.5)),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
 
           // ── Price Range ───────────────────────────────────────
           Row(
@@ -212,7 +290,7 @@ class _FilterSectionState extends State<FilterSection> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 4),
           RangeSlider(
             values: _priceRange,
             min: 0,
@@ -226,90 +304,44 @@ class _FilterSectionState extends State<FilterSection> {
             },
           ),
 
-          const SizedBox(height: 26),
+          const SizedBox(height: 14),
 
-          // ── Floor ─────────────────────────────────────────────
-          _chipGroup<int>(
-            icon: Icons.layers_rounded,
-            title: 'الدور',
-            selected: _selectedFloor,
-            options: [
-              ('أرضي', 0),
-              ('الأول', 1),
-              ('الثاني', 2),
-              ('الثالث', 3),
-              ('الرابع', 4),
-              ('الخامس', 5),
-              ('الرووف', 6),
-            ],
-            onChanged: (v) {
-              setState(() => _selectedFloor = v);
-              _applyFilters();
+          // ── Responsive Filter Groups ───────────────────────────
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+
+              // Phones: single compact horizontally-scrollable row.
+              if (width < 620) {
+                return SizedBox(
+                  height: 214,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: groups.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 12),
+                    itemBuilder: (context, index) =>
+                        SizedBox(width: 200, child: groups[index]),
+                  ),
+                );
+              }
+
+              // Tablets / desktop: flow into a grid.
+              final cols = width >= 960 ? 5 : (width >= 700 ? 3 : 2);
+              const gap = 12.0;
+              final colWidth = (width - gap * (cols - 1)) / cols;
+              return Wrap(
+                spacing: gap,
+                runSpacing: gap,
+                children: [
+                  for (final group in groups)
+                    SizedBox(width: colWidth, child: group),
+                ],
+              );
             },
           ),
 
-          // ── Finishing Status ──────────────────────────────────
-          _chipGroup<String>(
-            icon: Icons.format_paint_rounded,
-            title: 'التشطيب',
-            selected: _selectedFinishing,
-            options: [
-              ('تشطيب كامل', 'finished'),
-              ('تشطيب نص', 'semiFinished'),
-            ],
-            onChanged: (v) {
-              setState(() => _selectedFinishing = v);
-              _applyFilters();
-            },
-          ),
-
-          // ── Rooms ─────────────────────────────────────────────
-          _chipGroup<int>(
-            icon: Icons.bed_rounded,
-            title: 'الغرف',
-            selected: _selectedRooms,
-            options: [
-              for (var i = 1; i <= 5; i++) ('$i غرف', i),
-            ],
-            onChanged: (v) {
-              setState(() => _selectedRooms = v);
-              _applyFilters();
-            },
-          ),
-
-          // ── Bathrooms ─────────────────────────────────────────
-          _chipGroup<int>(
-            icon: Icons.bathtub_rounded,
-            title: 'الحمامات',
-            selected: _selectedBathrooms,
-            options: [
-              for (var i = 1; i <= 4; i++) ('$i حمام', i),
-            ],
-            onChanged: (v) {
-              setState(() => _selectedBathrooms = v);
-              _applyFilters();
-            },
-          ),
-
-          // ── Area (sqm) ────────────────────────────────────────
-          _chipGroup<(double, double)>(
-            icon: Icons.straighten_rounded,
-            title: 'المساحة',
-            selected: _selectedAreaRange,
-            options: [
-              ('أقل من 150م²', (0, 150)),
-              ('150 - 200م²', (150, 200)),
-              ('200 - 250م²', (200, 250)),
-              ('250 - 300م²', (250, 300)),
-              ('أكثر من 300م²', (300, 99999)),
-            ],
-            onChanged: (v) {
-              setState(() => _selectedAreaRange = v);
-              _applyFilters();
-            },
-          ),
-
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
 
           // ── Reset Button ──────────────────────────────────────
           Align(
@@ -328,6 +360,18 @@ class _FilterSectionState extends State<FilterSection> {
     );
   }
 
+  Widget _groupCard({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.divider.withValues(alpha: 0.6)),
+      ),
+      child: child,
+    );
+  }
+
   Widget _groupLabel({required IconData icon, required String title}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -338,13 +382,13 @@ class _FilterSectionState extends State<FilterSection> {
             color: AppColors.accentLight,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, size: 16, color: AppColors.accent),
+          child: Icon(icon, size: 15, color: AppColors.accent),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 7),
         Text(
           title,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
           ),
@@ -360,25 +404,26 @@ class _FilterSectionState extends State<FilterSection> {
     required T? selected,
     required ValueChanged<T?> onChanged,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _groupLabel(icon: icon, title: title),
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            for (final (label, value) in options)
-              _FilterChipButton(
-                label: label,
-                selected: selected == value,
-                onTap: () => onChanged(selected == value ? null : value),
-              ),
-          ],
-        ),
-        const SizedBox(height: 24),
-      ],
+    return _groupCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _groupLabel(icon: icon, title: title),
+          const SizedBox(height: 9),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final (label, value) in options)
+                _FilterChipButton(
+                  label: label,
+                  selected: selected == value,
+                  onTap: () => onChanged(selected == value ? null : value),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -409,10 +454,10 @@ class _FilterChipButton extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
           color: selected ? AppColors.accent : AppColors.background,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: selected ? AppColors.accent : AppColors.divider,
             width: selected ? 1.4 : 1,
@@ -433,15 +478,15 @@ class _FilterChipButton extends StatelessWidget {
             if (selected) ...[
               const Icon(
                 Icons.check_rounded,
-                size: 15,
+                size: 14,
                 color: AppColors.textOnPrimary,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 5),
             ],
             Text(
               label,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 12.5,
                 fontWeight: selected ? FontWeight.bold : FontWeight.normal,
                 color: selected
                     ? AppColors.textOnPrimary
