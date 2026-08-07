@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../app/app_router.dart';
@@ -7,6 +7,7 @@ import '../../core/widgets/animated_background.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
 import 'widgets/area_card.dart';
+import 'widgets/contact_section.dart';
 import 'widgets/featured_properties_section.dart';
 import 'widgets/how_it_works_section.dart';
 import 'widgets/recent_properties_section.dart';
@@ -176,7 +177,12 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 64),
 
-              // ── 8. Footer ───────────────────────────────────────────
+              // ── 8. Contact Us (WhatsApp & Facebook) ──────────────────
+              const RevealOnScroll(child: ContactSection()),
+
+              const SizedBox(height: 64),
+
+              // ── 9. Footer ───────────────────────────────────────────
               const RevealOnScroll(child: _Footer()),
             ],
           ),
