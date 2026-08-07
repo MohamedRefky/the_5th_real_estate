@@ -6,9 +6,10 @@ import '../theme/app_colors.dart';
 
 /// Understated luxury ambient animation.
 ///
-/// Tiny gold building silhouettes drift gently upward like glowing sparks,
-/// while a couple of soft gold light pools "breathe" slowly behind them —
-/// premium, calm and never distracting.
+/// Realistic gold buildings (outline + gold gradient fill with lit windows,
+/// floor separators and balconies — echoing the app icon) drift gently upward
+/// like glowing sparks, while soft gold light pools "breathe" slowly behind
+/// them.
 class AmbientParticles extends StatefulWidget {
   final Color color;
   final int particleCount;
@@ -34,7 +35,7 @@ class _AmbientParticlesState extends State<AmbientParticles>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 28),
+      duration: const Duration(seconds: 30),
     )..repeat();
     _buildings = List.generate(
       math.max(1, widget.particleCount),
@@ -72,7 +73,7 @@ class _AmbientParticlesState extends State<AmbientParticles>
   }
 }
 
-/// A tiny gold building silhouette that drifts upward.
+/// A realistic gold building that drifts upward.
 class _Building {
   late final double fx;
   late final double speed;
@@ -81,18 +82,24 @@ class _Building {
   late final double swayFreq;
   late final double alpha;
   late final double heightFactor;
+  late final int floors;
+  late final int windowCols;
   late final bool hasAntenna;
+  late final bool hasBalconies;
 
   _Building(int seed) {
     final r = math.Random(seed * 101 + 5);
     fx = r.nextDouble();
     speed = 0.04 + r.nextDouble() * 0.10;
-    size = 2.2 + r.nextDouble() * 2.6;
+    size = 3.2 + r.nextDouble() * 3.0;
     phase = r.nextDouble();
     swayFreq = 0.3 + r.nextDouble() * 0.7;
     alpha = 0.30 + r.nextDouble() * 0.22;
-    heightFactor = 3.2 + r.nextDouble() * 3.4;
+    heightFactor = 3.0 + r.nextDouble() * 2.5;
+    floors = 4 + r.nextInt(3);
+    windowCols = 2 + r.nextInt(2);
     hasAntenna = r.nextBool();
+    hasBalconies = r.nextBool();
   }
 }
 
@@ -180,69 +187,142 @@ class _AmbientPainter extends CustomPainter {
     double a,
   ) {
     if (a <= 0.004) return;
-    final bw = b.size * 2.4;
+    final bw = b.size * 2.2;
     final bh = b.size * b.heightFactor;
     final top = baseY - bh;
-    final rect = Rect.fromLTWH(x - bw / 2, top, bw, bh);
+    final left = x - bw / 2;
+    final rect = Rect.fromLTWH(left, top, bw, bh);
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(3));
 
     // Soft glow halo behind the building.
     canvas.drawCircle(
-      Offset(x, baseY - bh / 2),
-      bh * 0.9,
+      Offset(x, top + bh * 0.45),
+      bh * 0.95,
       Paint()
         ..shader = RadialGradient(
           colors: [
-            color.withValues(alpha: a * 0.20),
+            color.withValues(alpha: a * 0.18),
             Colors.transparent,
           ],
         ).createShader(
-          Rect.fromCircle(
-            center: Offset(x, baseY - bh / 2),
-            radius: bh * 0.9,
-          ),
+          Rect.fromCircle(center: Offset(x, top + bh * 0.45), radius: bh * 0.95),
         ),
     );
 
-    // Faint fill + thin outline.
-    canvas.drawRect(rect, Paint()..color = color.withValues(alpha: a * 0.12));
-    canvas.drawRect(
-      rect,
+    // Gold gradient body fill.
+    canvas.drawRRect(
+      rrect,
       Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2
-        ..color = color.withValues(alpha: a * 0.85),
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.accentLight.withValues(alpha: a * 0.60),
+            color.withValues(alpha: a * 0.50),
+            AppColors.accentDark.withValues(alpha: a * 0.55),
+          ],
+          stops: const [0.0, 0.45, 1.0],
+        ).createShader(rect),
     );
 
-    // A couple of lit windows.
-    final win = Paint()
-      ..strokeWidth = math.max(1.0, b.size * 0.8)
-      ..strokeCap = StrokeCap.round
-      ..color = color.withValues(alpha: a * 0.8);
-    final rows = 3;
-    for (var r = 0; r < rows; r++) {
-      final wy = top + bh * (r + 0.6) / rows;
-      for (var c = 0; c < 2; c++) {
-        if ((r + c).isEven) continue;
-        final wx = x - bw * 0.22 + c * bw * 0.44;
-        canvas.drawLine(Offset(wx - 1.4, wy), Offset(wx + 1.4, wy), win);
+    // Floor separators.
+    final floorH = bh / b.floors;
+    final sep = Paint()
+      ..strokeWidth = 0.7
+      ..color = AppColors.accentDark.withValues(alpha: a * 0.35);
+    for (var r = 1; r < b.floors; r++) {
+      final fy = top + floorH * r;
+      canvas.drawLine(Offset(left, fy), Offset(left + bw, fy), sep);
+    }
+
+    // Window grid — alternating lit / dark glass.
+    final cellW = bw / b.windowCols;
+    final ww = cellW * 0.5;
+    final wh = floorH * 0.42;
+    final litPaint = Paint()
+      ..color = AppColors.accentLight2.withValues(alpha: a * 0.95);
+    final darkPaint = Paint()
+      ..color = AppColors.primaryDark.withValues(alpha: a * 0.55);
+    final shinePaint = Paint()
+      ..color = Colors.white.withValues(alpha: a * 0.35);
+    for (var r = 0; r < b.floors; r++) {
+      for (var c = 0; c < b.windowCols; c++) {
+        final wx = left + cellW * c + (cellW - ww) / 2;
+        final wy = top + floorH * r + (floorH - wh) / 2;
+        final wr = Rect.fromLTWH(wx, wy, ww, wh);
+        final lit = (r + c).isEven;
+        canvas.drawRect(wr, lit ? litPaint : darkPaint);
+        if (lit) {
+          canvas.drawRect(
+            Rect.fromLTWH(wx, wy, ww * 0.3, wh),
+            shinePaint,
+          );
+        }
       }
     }
 
+    // Gold outline.
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = color.withValues(alpha: a * 0.9),
+    );
+
+    // Roof parapet ledge.
+    final parapetH = math.max(2.0, bh * 0.05);
+    final parapetRect = Rect.fromLTWH(left - 1, top - parapetH, bw + 2, parapetH);
+    canvas.drawRect(
+      parapetRect,
+      Paint()..color = color.withValues(alpha: a * 0.85),
+    );
+    canvas.drawRect(
+      parapetRect,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8
+        ..color = AppColors.accentLight.withValues(alpha: a * 0.9),
+    );
+
+    // Balcony railings on both sides of some buildings.
+    if (b.hasBalconies) {
+      final bc = Paint()
+        ..strokeWidth = 1.0
+        ..color = color.withValues(alpha: a * 0.75);
+      for (var r = 0; r < b.floors; r++) {
+        final fy = top + floorH * r + floorH * 0.28;
+        canvas.drawLine(Offset(left - 2, fy), Offset(left - 2, fy + floorH * 0.42), bc);
+        canvas.drawLine(Offset(left + bw + 2, fy), Offset(left + bw + 2, fy + floorH * 0.42), bc);
+      }
+    }
+
+    // Subtle glass streak on the facade.
+    final streak = Path()
+      ..moveTo(left, top)
+      ..lineTo(left + bw * 0.45, top)
+      ..lineTo(left, top + bh * 0.4)
+      ..close();
+    canvas.drawPath(
+      streak,
+      Paint()..color = AppColors.accentLight.withValues(alpha: a * 0.10),
+    );
+
     // Antenna with a blinking beacon on some buildings.
     if (b.hasAntenna) {
-      final tip = Offset(x, top - b.size * 1.5);
+      final tip = Offset(x, top - parapetH - b.size * 1.2);
       canvas.drawLine(
-        Offset(x, top),
+        Offset(x, top - parapetH),
         tip,
         Paint()
-          ..strokeWidth = 0.7
-          ..color = color.withValues(alpha: a * 0.55),
+          ..strokeWidth = 0.8
+          ..color = color.withValues(alpha: a * 0.6),
       );
       final blink =
           0.5 + 0.5 * math.sin(time * 2 * math.pi * 1.4 + b.phase * 2 * math.pi);
       canvas.drawCircle(
         tip,
-        math.max(0.8, b.size * 0.55),
+        math.max(0.9, b.size * 0.5),
         Paint()..color = color.withValues(alpha: blink * a * 0.9),
       );
     }
