@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../data/dummy_data.dart';
 import '../../area/widgets/apartment_card.dart';
+import 'section_bar.dart';
 
 /// Featured Properties section (horizontal carousel/list of luxury properties).
 class FeaturedPropertiesSection extends StatelessWidget {
@@ -9,7 +9,6 @@ class FeaturedPropertiesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     // Filter featured apartments (e.g., price >= 3.5M or penthouse)
     final featuredApartments = DummyData.apartments.where((apt) => apt.price >= 3500000).toList();
 
@@ -21,41 +20,11 @@ class FeaturedPropertiesSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.accentLight,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.star_rounded,
-                        color: AppColors.accent,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'عقارات مميزة',
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          'تصفح باقة من أفخم الوحدات المتاحة حالياً',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              const SectionBar(
+                index: 2,
+                icon: Icons.star_rounded,
+                title: 'عقارات مميزة',
+                subtitle: 'تصفح باقة من أفخم الوحدات المتاحة حالياً',
               ),
               const SizedBox(height: 20),
               SizedBox(

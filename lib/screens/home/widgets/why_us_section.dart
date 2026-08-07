@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import 'section_bar.dart';
 
 /// Trust Indicators / "Why Choose Us" section — Dark Mode.
 class WhyUsSection extends StatelessWidget {
@@ -7,8 +8,6 @@ class WhyUsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final items = [
       (
         icon: Icons.business_rounded,
@@ -47,35 +46,11 @@ class WhyUsSection extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             children: [
-              // Section header badge
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.accentLight,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.accent.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.verified_rounded,
-                  color: AppColors.accent,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'لماذا العقار الخامس؟',
-                style: theme.textTheme.headlineLarge?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'نلتزم بتقديم أفضل خدمة عقارية بتجربة استثنائية',
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
+              const SectionBar(
+                index: 1,
+                icon: Icons.verified_rounded,
+                title: 'لماذا العقار الخامس؟',
+                subtitle: 'نلتزم بتقديم أفضل خدمة عقارية بتجربة استثنائية',
               ),
               const SizedBox(height: 40),
               LayoutBuilder(

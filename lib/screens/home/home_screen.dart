@@ -10,6 +10,7 @@ import 'widgets/area_card.dart';
 import 'widgets/featured_properties_section.dart';
 import 'widgets/how_it_works_section.dart';
 import 'widgets/recent_properties_section.dart';
+import 'widgets/section_bar.dart';
 import 'widgets/testimonials_section.dart';
 import 'widgets/why_us_section.dart';
 
@@ -104,7 +105,8 @@ class HomeScreen extends StatelessWidget {
 
               // ── 4. Neighborhood Grid (Choose Area) ───────────────────
               const RevealOnScroll(
-                child: _SectionHeaderBadge(
+                child: SectionBar(
+                  index: 4,
                   icon: Icons.location_city_rounded,
                   title: 'اختر الحي',
                   subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
@@ -187,72 +189,6 @@ class HomeScreen extends StatelessWidget {
     if (width >= 900) return 3;
     if (width >= 550) return 2;
     return 1;
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Section Header Badge
-// ═══════════════════════════════════════════════════════════════════
-
-class _SectionHeaderBadge extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _SectionHeaderBadge({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.accentLight,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.4),
-              width: 0.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.2),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Icon(icon, color: AppColors.accent, size: 30),
-        ),
-        const SizedBox(height: 18),
-        ShaderMask(
-          shaderCallback: (bounds) =>
-              AppColors.accentGradient.createShader(bounds),
-          child: Text(
-            title,
-            style: theme.textTheme.headlineLarge?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 30,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          subtitle,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
   }
 }
 

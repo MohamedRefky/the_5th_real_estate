@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import 'section_bar.dart';
 
 /// How It Works section — Dark Mode.
 class HowItWorksSection extends StatelessWidget {
@@ -7,8 +8,6 @@ class HowItWorksSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final steps = [
       (
         stepNumber: '1',
@@ -44,37 +43,11 @@ class HowItWorksSection extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             children: [
-              // Section icon badge
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.accentLight,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.accent.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.rocket_launch_rounded,
-                  color: AppColors.accent,
-                  size: 26,
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                'خطوات الشراء',
-                style: theme.textTheme.headlineLarge?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'امتلك وحدتك العقارية في 3 خطوات بسيطة ومباشرة',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
+              const SectionBar(
+                index: 5,
+                icon: Icons.rocket_launch_rounded,
+                title: 'خطوات الشراء',
+                subtitle: 'امتلك وحدتك العقارية في 3 خطوات بسيطة ومباشرة',
               ),
               const SizedBox(height: 48),
               LayoutBuilder(

@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import 'section_bar.dart';
 
 /// Testimonials section — Dark Mode.
 class TestimonialsSection extends StatelessWidget {
@@ -7,8 +8,6 @@ class TestimonialsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final testimonials = [
       (
         name: 'أحمد محمود',
@@ -44,35 +43,11 @@ class TestimonialsSection extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             children: [
-              // Section icon badge
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.accentLight,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: AppColors.accent.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.format_quote_rounded,
-                  color: AppColors.accent,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'آراء العملاء',
-                style: theme.textTheme.headlineLarge?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'ماذا يقول عملاؤنا عن تجربتهم مع العقار الخامس',
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
+              const SectionBar(
+                index: 6,
+                icon: Icons.format_quote_rounded,
+                title: 'آراء العملاء',
+                subtitle: 'ماذا يقول عملاؤنا عن تجربتهم مع العقار الخامس',
               ),
               const SizedBox(height: 44),
               LayoutBuilder(
