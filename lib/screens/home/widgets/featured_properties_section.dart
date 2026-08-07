@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/dummy_data.dart';
-import '../../../models/apartment.dart';
 import '../../area/widgets/apartment_card.dart';
 
 /// Featured Properties section (horizontal carousel/list of luxury properties).
@@ -66,7 +64,7 @@ class FeaturedPropertiesSection extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   scrollDirection: Axis.horizontal,
                   itemCount: featuredApartments.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 20),
+                  separatorBuilder: (_, _) => const SizedBox(width: 20),
                   itemBuilder: (context, index) {
                     final apt = featuredApartments[index];
                     return SizedBox(
