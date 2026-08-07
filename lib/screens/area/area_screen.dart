@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/animated_background.dart';
 import '../../data/dummy_data.dart';
 import '../../models/apartment.dart';
 import 'widgets/apartment_card.dart';
 import 'widgets/filter_section.dart';
 
-/// Area Screen — displays apartment listings for a specific neighborhood.
-///
-/// Features:
-/// - Collapsible filter section (price, floor, finishing, rooms, bathrooms)
-/// - Responsive grid of [ApartmentCard]s
-/// - Empty state when no apartments match filters
-/// - Result count indicator
+/// Ultra-premium Area Screen with animated header and search bar.
 class AreaScreen extends StatefulWidget {
   final String areaName;
 
@@ -24,6 +19,7 @@ class AreaScreen extends StatefulWidget {
 
 class _AreaScreenState extends State<AreaScreen> {
   List<Apartment> _filteredApartments = [];
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -35,6 +31,14 @@ class _AreaScreenState extends State<AreaScreen> {
     final all = DummyData.getByArea(widget.areaName);
     setState(() {
       _filteredApartments = all.where((apt) {
+        // Search query keyword filter
+        if (_searchQuery.isNotEmpty) {
+          final query = _searchQuery.toLowerCase();
+          final titleMatch = apt.title.toLowerCase().contains(query);
+          final descMatch = apt.description.toLowerCase().contains(query);
+          if (!titleMatch && !descMatch) return false;
+        }
+
         // Price range
         if (apt.price < filters.minPrice || apt.price > filters.maxPrice) {
           return false;
@@ -63,6 +67,7 @@ class _AreaScreenState extends State<AreaScreen> {
 
   void _resetFilters() {
     setState(() {
+      _searchQuery = '';
       _filteredApartments = DummyData.getByArea(widget.areaName);
     });
   }
@@ -73,109 +78,187 @@ class _AreaScreenState extends State<AreaScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.areaName),
+        title: Text('شقق ${widget.areaName}'),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1200),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Page Title ───────────────────────────────────
-                  Text(
-                    'شقق ${widget.areaName}',
-                    style: theme.textTheme.headlineLarge?.copyWith(
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'تصفح الشقق المتاحة واستخدم الفلاتر للوصول لطلبك',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // ── Filters ──────────────────────────────────────
-                  FilterSection(
-                    onFiltersChanged: _applyFilters,
-                    onReset: _resetFilters,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // ── Result Count ─────────────────────────────────
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentLight,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+        child: Column(
+          children: [
+            // ── Animated Header Banner ────────────────────────────
+            AnimatedBackground(
+              shapeColor: AppColors.accent,
+              shapeCount: 10,
+              child: Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+                decoration: const BoxDecoration(
+                  gradient: AppColors.heroGradient,
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 800),
+                    child: Column(
                       children: [
-                        const Icon(
-                          Icons.search_rounded,
-                          size: 18,
-                          color: AppColors.accent,
+                        ShaderMask(
+                          shaderCallback: (bounds) =>
+                              AppColors.goldGradient.createShader(bounds),
+                          child: Text(
+                            'شقق ${widget.areaName}',
+                            style: theme.textTheme.displaySmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(height: 8),
                         Text(
-                          'تم العثور على ${_filteredApartments.length} شقة',
+                          'تصفح أرقى الوحدات السكنية المتاحة واستخدم أدوات الفلترة للوصول لطلبك',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w600,
+                            color:
+                                AppColors.textOnPrimary.withValues(alpha: 0.7),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Search input bar inside header
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.accent.withValues(alpha: 0.2),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            onChanged: (value) {
+                              _searchQuery = value;
+                              _applyFilters(const FilterValues());
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'ابحث باسم الشقة أو الوصف...',
+                              hintStyle: const TextStyle(
+                                color: AppColors.textHint,
+                                fontSize: 14,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search_rounded,
+                                color: AppColors.accent,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 24),
-
-                  // ── Apartment List ───────────────────────────────
-                  if (_filteredApartments.isEmpty)
-                    _EmptyState(theme: theme)
-                  else
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final crossAxisCount =
-                            constraints.maxWidth >= 800 ? 2 : 1;
-                        return GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
-                            childAspectRatio: crossAxisCount == 2 ? 0.85 : 1.2,
-                          ),
-                          itemCount: _filteredApartments.length,
-                          itemBuilder: (context, index) {
-                            return ApartmentCard(
-                              apartment: _filteredApartments[index],
-                            );
-                          },
-                        );
-                      },
-                    ),
-
-                  const SizedBox(height: 48),
-                ],
+                ),
               ),
             ),
-          ),
+
+            // ── Main Content Area ─────────────────────────────────
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ── Filters Section ──────────────────────────────
+                      FilterSection(
+                        onFiltersChanged: _applyFilters,
+                        onReset: _resetFilters,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── Result Count Badge ───────────────────────────
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentLight,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppColors.accent.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.location_on_rounded,
+                              size: 18,
+                              color: AppColors.accent,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'تم العثور على ${_filteredApartments.length} شقة في ${widget.areaName}',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AppColors.accent,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── Apartment Grid ───────────────────────────────
+                      if (_filteredApartments.isEmpty)
+                        _EmptyState(theme: theme)
+                      else
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final crossAxisCount =
+                                constraints.maxWidth >= 800 ? 2 : 1;
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 24,
+                                mainAxisSpacing: 24,
+                                childAspectRatio:
+                                    crossAxisCount == 2 ? 0.82 : 1.1,
+                              ),
+                              itemCount: _filteredApartments.length,
+                              itemBuilder: (context, index) {
+                                return ApartmentCard(
+                                  apartment: _filteredApartments[index],
+                                );
+                              },
+                            );
+                          },
+                        ),
+
+                      const SizedBox(height: 48),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -198,21 +281,29 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.search_off_rounded,
-              size: 72,
-              color: AppColors.textHint,
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.accentLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.search_off_rounded,
+                size: 56,
+                color: AppColors.accent,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
-              'لا توجد شقق مطابقة',
+              'لا توجد شقق مطابقة للبحث',
               style: theme.textTheme.headlineSmall?.copyWith(
-                color: AppColors.textSecondary,
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'جرب تغيير الفلاتر للحصول على نتائج أخرى',
+              'جرب تغيير الفلاتر أو إعادة تعيين البحث للحصول على نتائج أخرى',
               style: theme.textTheme.bodyMedium,
             ),
           ],

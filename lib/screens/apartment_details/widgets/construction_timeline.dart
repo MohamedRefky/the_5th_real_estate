@@ -3,13 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../models/apartment.dart';
 
-/// Visual construction timeline with progress indicator.
-///
-/// Displays milestones as a vertical stepper with:
-/// - Completed steps (gold filled circle + checkmark)
-/// - Pending steps (outlined circle)
-/// - Connecting lines between steps
-/// - Overall progress bar at the top
+/// Ultra-premium visual construction timeline with progress indicator.
 class ConstructionTimeline extends StatelessWidget {
   final Apartment apartment;
 
@@ -20,16 +14,18 @@ class ConstructionTimeline extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.divider),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.divider.withValues(alpha: 0.6),
+        ),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -40,34 +36,42 @@ class ConstructionTimeline extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.accentLight,
-                  borderRadius: BorderRadius.circular(12),
+                  gradient: AppColors.goldGradient,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.accent.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: const Icon(
                   Icons.construction_rounded,
-                  color: AppColors.accent,
-                  size: 22,
+                  color: AppColors.textOnPrimary,
+                  size: 24,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'مراحل البناء',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
+                      'مراحل البناء والإنشاءات',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.primary,
                       ),
                     ),
                     if (apartment.formattedDeliveryDate != null)
                       Text(
-                        'هيتسلم ${apartment.formattedDeliveryDate}',
+                        'موعد التسليم المتوقع: ${apartment.formattedDeliveryDate}',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: AppColors.accent,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                   ],
@@ -76,48 +80,66 @@ class ConstructionTimeline extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
-
-          // ── Progress Bar ─────────────────────────────────────
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'نسبة الإنجاز',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    '${(apartment.constructionProgress * 100).toInt()}%',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: AppColors.accent,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: LinearProgressIndicator(
-                  value: apartment.constructionProgress,
-                  minHeight: 10,
-                  backgroundColor: AppColors.divider,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    _progressColor(apartment.constructionProgress),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
           const SizedBox(height: 28),
 
-          // ── Milestones ───────────────────────────────────────
+          // ── Progress Bar ─────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'نسبة الإنجاز الكلية',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.goldGradient,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${(apartment.constructionProgress * 100).toInt()}%',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: AppColors.textOnPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: apartment.constructionProgress,
+                    minHeight: 12,
+                    backgroundColor: AppColors.divider,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      _progressColor(apartment.constructionProgress),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // ── Milestones Stepper ───────────────────────────────
           ...List.generate(apartment.milestones.length, (index) {
             final milestone = apartment.milestones[index];
             final isLast = index == apartment.milestones.length - 1;
@@ -160,17 +182,20 @@ class _MilestoneItem extends StatelessWidget {
         children: [
           // ── Timeline indicator ───────────────────────────────
           SizedBox(
-            width: 32,
+            width: 36,
             child: Column(
               children: [
                 // Circle
                 Container(
-                  width: 28,
-                  height: 28,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
+                    gradient: milestone.isCompleted
+                        ? AppColors.goldGradient
+                        : null,
                     color: milestone.isCompleted
-                        ? AppColors.accent
+                        ? null
                         : AppColors.surface,
                     border: Border.all(
                       color: milestone.isCompleted
@@ -178,18 +203,27 @@ class _MilestoneItem extends StatelessWidget {
                           : AppColors.divider,
                       width: 2,
                     ),
+                    boxShadow: milestone.isCompleted
+                        ? [
+                            BoxShadow(
+                              color: AppColors.accent.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : [],
                   ),
                   child: milestone.isCompleted
                       ? const Icon(
                           Icons.check_rounded,
-                          size: 16,
+                          size: 18,
                           color: AppColors.textOnPrimary,
                         )
                       : Center(
                           child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
+                            width: 10,
+                            height: 10,
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: AppColors.divider,
                             ),
@@ -202,31 +236,33 @@ class _MilestoneItem extends StatelessWidget {
                   Expanded(
                     child: Container(
                       width: 2,
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      color: milestone.isCompleted
-                          ? AppColors.accent
-                          : AppColors.divider,
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        color: milestone.isCompleted
+                            ? AppColors.accent
+                            : AppColors.divider,
+                      ),
                     ),
                   ),
               ],
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
 
           // ── Content ──────────────────────────────────────────
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0 : 24),
+              padding: EdgeInsets.only(bottom: isLast ? 0 : 28),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     milestone.title,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
                       color: milestone.isCompleted
-                          ? AppColors.textPrimary
+                          ? AppColors.primary
                           : AppColors.textSecondary,
                     ),
                   ),
@@ -237,6 +273,7 @@ class _MilestoneItem extends StatelessWidget {
                       color: milestone.isCompleted
                           ? AppColors.accent
                           : AppColors.textHint,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -247,33 +284,39 @@ class _MilestoneItem extends StatelessWidget {
           // ── Status badge ─────────────────────────────────────
           if (milestone.isCompleted)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.1),
+                color: AppColors.success.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.success.withValues(alpha: 0.3),
+                ),
               ),
               child: Text(
                 'مكتمل',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.success,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
                 ),
               ),
             )
           else
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.warning.withValues(alpha: 0.1),
+                color: AppColors.warning.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.warning.withValues(alpha: 0.3),
+                ),
               ),
               child: Text(
                 'قيد التنفيذ',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.warning,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
                 ),
               ),
             ),

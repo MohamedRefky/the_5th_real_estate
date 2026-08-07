@@ -2,17 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
-/// Filter section displayed at the top of the Area Screen.
-///
-/// Provides filter controls for:
-/// - Price range (min / max)
-/// - Floor number
-/// - Finishing status (finished / semi / unfinished)
-/// - Area in sqm (min / max)
-/// - Number of rooms
-/// - Number of bathrooms
-///
-/// All filter values are passed back via [onFiltersChanged].
+/// Ultra-premium filter section displayed at the top of the Area Screen.
 class FilterSection extends StatefulWidget {
   final void Function(FilterValues filters) onFiltersChanged;
   final VoidCallback onReset;
@@ -36,6 +26,16 @@ class _FilterSectionState extends State<FilterSection> {
   String? _selectedFinishing;
   int? _selectedRooms;
   int? _selectedBathrooms;
+
+  int get _activeFilterCount {
+    int count = 0;
+    if (_priceRange.start > 0 || _priceRange.end < 10000000) count++;
+    if (_selectedFloor != null) count++;
+    if (_selectedFinishing != null) count++;
+    if (_selectedRooms != null) count++;
+    if (_selectedBathrooms != null) count++;
+    return count;
+  }
 
   void _applyFilters() {
     widget.onFiltersChanged(FilterValues(
@@ -63,14 +63,23 @@ class _FilterSectionState extends State<FilterSection> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: _activeFilterCount > 0
+              ? AppColors.accent
+              : AppColors.divider.withValues(alpha: 0.6),
+          width: _activeFilterCount > 0 ? 1.5 : 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.06),
-            blurRadius: 12,
+            color: _activeFilterCount > 0
+                ? AppColors.accent.withValues(alpha: 0.1)
+                : AppColors.primary.withValues(alpha: 0.05),
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
@@ -80,30 +89,74 @@ class _FilterSectionState extends State<FilterSection> {
           // ── Header (always visible) ────────────────────────────
           InkWell(
             onTap: () => setState(() => _isExpanded = !_isExpanded),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.tune_rounded,
-                    color: AppColors.accent,
-                    size: 22,
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.goldGradient,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.accent.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.tune_rounded,
+                      color: AppColors.textOnPrimary,
+                      size: 20,
+                    ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
                   Text(
                     'فلترة النتائج',
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
                     ),
                   ),
+                  if (_activeFilterCount > 0) ...[
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '$_activeFilterCount نشط',
+                        style: const TextStyle(
+                          color: AppColors.textOnPrimary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                   const Spacer(),
                   AnimatedRotation(
                     turns: _isExpanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 200),
-                    child: const Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.textSecondary,
+                    duration: const Duration(milliseconds: 300),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: AppColors.primary,
+                        size: 22,
+                      ),
                     ),
                   ),
                 ],
@@ -127,15 +180,33 @@ class _FilterSectionState extends State<FilterSection> {
 
   Widget _buildFilterContent(ThemeData theme) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Divider(),
-          const SizedBox(height: 8),
+          Divider(color: AppColors.divider.withValues(alpha: 0.5)),
+          const SizedBox(height: 12),
 
           // ── Price Range ───────────────────────────────────────
-          Text('السعر (جنيه)', style: theme.textTheme.titleSmall),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'السعر (جنيه)',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+              Text(
+                '${_formatPrice(_priceRange.start)} - ${_formatPrice(_priceRange.end)}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
           RangeSlider(
             values: _priceRange,
@@ -144,27 +215,10 @@ class _FilterSectionState extends State<FilterSection> {
             divisions: 100,
             activeColor: AppColors.accent,
             inactiveColor: AppColors.divider,
-            labels: RangeLabels(
-              _formatPrice(_priceRange.start),
-              _formatPrice(_priceRange.end),
-            ),
             onChanged: (values) {
               setState(() => _priceRange = values);
               _applyFilters();
             },
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _formatPrice(_priceRange.start),
-                style: theme.textTheme.bodySmall,
-              ),
-              Text(
-                _formatPrice(_priceRange.end),
-                style: theme.textTheme.bodySmall,
-              ),
-            ],
           ),
 
           const SizedBox(height: 20),
@@ -186,7 +240,8 @@ class _FilterSectionState extends State<FilterSection> {
                         ))
                     .toList(),
                 onChanged: (val) {
-                  setState(() => _selectedFloor = val != null ? int.parse(val) : null);
+                  setState(() =>
+                      _selectedFloor = val != null ? int.parse(val) : null);
                   _applyFilters();
                 },
               ),
@@ -197,9 +252,12 @@ class _FilterSectionState extends State<FilterSection> {
                 icon: Icons.format_paint_rounded,
                 value: _selectedFinishing,
                 items: const [
-                  DropdownMenuItem(value: 'finished', child: Text('تشطيب كامل')),
-                  DropdownMenuItem(value: 'semiFinished', child: Text('نصف تشطيب')),
-                  DropdownMenuItem(value: 'unfinished', child: Text('بدون تشطيب')),
+                  DropdownMenuItem(
+                      value: 'finished', child: Text('تشطيب كامل')),
+                  DropdownMenuItem(
+                      value: 'semiFinished', child: Text('نصف تشطيب')),
+                  DropdownMenuItem(
+                      value: 'unfinished', child: Text('بدون تشطيب')),
                 ],
                 onChanged: (val) {
                   setState(() => _selectedFinishing = val);
@@ -219,7 +277,8 @@ class _FilterSectionState extends State<FilterSection> {
                         ))
                     .toList(),
                 onChanged: (val) {
-                  setState(() => _selectedRooms = val != null ? int.parse(val) : null);
+                  setState(() =>
+                      _selectedRooms = val != null ? int.parse(val) : null);
                   _applyFilters();
                 },
               ),
@@ -236,14 +295,15 @@ class _FilterSectionState extends State<FilterSection> {
                         ))
                     .toList(),
                 onChanged: (val) {
-                  setState(() => _selectedBathrooms = val != null ? int.parse(val) : null);
+                  setState(() => _selectedBathrooms =
+                      val != null ? int.parse(val) : null);
                   _applyFilters();
                 },
               ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           // ── Reset Button ──────────────────────────────────────
           Align(
@@ -251,7 +311,7 @@ class _FilterSectionState extends State<FilterSection> {
             child: TextButton.icon(
               onPressed: _resetFilters,
               icon: const Icon(Icons.restart_alt_rounded, size: 18),
-              label: const Text('مسح الفلاتر'),
+              label: const Text('مسح جميع الفلاتر'),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.error,
               ),
@@ -262,7 +322,6 @@ class _FilterSectionState extends State<FilterSection> {
     );
   }
 
-  /// Builds a styled dropdown wrapped in a chip-like container.
   Widget _buildDropdownChip({
     required String label,
     required IconData icon,
@@ -270,13 +329,17 @@ class _FilterSectionState extends State<FilterSection> {
     required List<DropdownMenuItem<String>> items,
     required ValueChanged<String?> onChanged,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    final isSelected = value != null;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
-        color: value != null ? AppColors.accentLight : AppColors.background,
-        borderRadius: BorderRadius.circular(12),
+        color: isSelected ? AppColors.accentLight : AppColors.background,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: value != null ? AppColors.accent : AppColors.divider,
+          color: isSelected ? AppColors.accent : AppColors.divider,
+          width: isSelected ? 1.5 : 1,
         ),
       ),
       child: DropdownButtonHideUnderline(
@@ -285,23 +348,33 @@ class _FilterSectionState extends State<FilterSection> {
           hint: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 18, color: AppColors.textSecondary),
-              const SizedBox(width: 6),
+              Icon(
+                icon,
+                size: 18,
+                color: isSelected ? AppColors.accent : AppColors.textSecondary,
+              ),
+              const SizedBox(width: 8),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: AppColors.textSecondary,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected ? AppColors.accent : AppColors.textSecondary,
                 ),
               ),
             ],
           ),
-          icon: const Icon(Icons.arrow_drop_down, size: 20),
+          icon: Icon(
+            Icons.arrow_drop_down,
+            size: 20,
+            color: isSelected ? AppColors.accent : AppColors.textSecondary,
+          ),
           isDense: true,
           items: [
             DropdownMenuItem<String>(
               value: null,
-              child: Text('الكل', style: TextStyle(color: AppColors.textHint)),
+              child: Text('الكل',
+                  style: TextStyle(color: AppColors.textHint, fontSize: 13)),
             ),
             ...items,
           ],
@@ -313,9 +386,9 @@ class _FilterSectionState extends State<FilterSection> {
 
   String _formatPrice(double price) {
     if (price >= 1000000) {
-      return '${(price / 1000000).toStringAsFixed(1)} مليون';
+      return '${(price / 1000000).toStringAsFixed(1)}M';
     }
-    return '${(price / 1000).toStringAsFixed(0)} ألف';
+    return '${(price / 1000).toStringAsFixed(0)}K';
   }
 }
 

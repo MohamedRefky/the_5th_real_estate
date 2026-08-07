@@ -8,16 +8,7 @@ import '../../models/apartment.dart';
 import 'widgets/construction_timeline.dart';
 import 'widgets/image_gallery_placeholder.dart';
 
-/// Apartment Details Screen — the full listing page.
-///
-/// Layout (scrollable):
-/// 1. Image gallery placeholder
-/// 2. Title, price, and badges
-/// 3. Key stats row (rooms, bath, sqm, floor)
-/// 4. Description
-/// 5. Amenities
-/// 6. Construction timeline (if under construction)
-/// 7. WhatsApp CTA button (sticky bottom)
+/// Apartment Details Screen — Ultra-premium listing page.
 class ApartmentDetailsScreen extends StatelessWidget {
   final String apartmentId;
 
@@ -40,6 +31,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(apartment.area),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
@@ -52,7 +44,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900),
+            constraints: const BoxConstraints(maxWidth: 950),
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -61,17 +53,17 @@ class ApartmentDetailsScreen extends StatelessWidget {
                   // ── Image Gallery ──────────────────────────────
                   const ImageGalleryPlaceholder(),
 
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 32),
 
                   // ── Title & Price Header ───────────────────────
                   _TitleSection(apartment: apartment, theme: theme),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
                   // ── Key Stats ──────────────────────────────────
                   _StatsSection(apartment: apartment),
 
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 32),
 
                   // ── Description ────────────────────────────────
                   _SectionHeader(
@@ -79,14 +71,23 @@ class ApartmentDetailsScreen extends StatelessWidget {
                     icon: Icons.description_rounded,
                     theme: theme,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.divider),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: AppColors.divider.withValues(alpha: 0.6),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.04),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Text(
                       apartment.description,
@@ -97,40 +98,40 @@ class ApartmentDetailsScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 32),
 
                   // ── Amenities ──────────────────────────────────
                   if (apartment.amenities.isNotEmpty) ...[
                     _SectionHeader(
-                      title: 'المميزات',
+                      title: 'المميزات والتسهيلات',
                       icon: Icons.star_rounded,
                       theme: theme,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
                     _AmenitiesGrid(
                       amenities: apartment.amenities,
                       theme: theme,
                     ),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 32),
                   ],
 
                   // ── Construction Timeline ──────────────────────
                   if (apartment.isUnderConstruction &&
                       apartment.milestones.isNotEmpty) ...[
                     ConstructionTimeline(apartment: apartment),
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 32),
                   ],
 
                   // ── Details Table ──────────────────────────────
                   _SectionHeader(
-                    title: 'تفاصيل الشقة',
-                    icon: Icons.info_outline_rounded,
+                    title: 'جدول التفاصيل',
+                    icon: Icons.assignment_rounded,
                     theme: theme,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   _DetailsTable(apartment: apartment, theme: theme),
 
-                  const SizedBox(height: 100), // Space for sticky CTA
+                  const SizedBox(height: 120), // Space for sticky CTA
                 ],
               ),
             ),
@@ -158,8 +159,8 @@ class _TitleSection extends StatelessWidget {
       children: [
         // Badges row
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 10,
+          runSpacing: 10,
           children: [
             _Badge(
               label: apartment.finishingStatus.label,
@@ -170,14 +171,14 @@ class _TitleSection extends StatelessWidget {
               color: AppColors.primary,
             ),
             if (apartment.isUnderConstruction)
-              _Badge(
+              const _Badge(
                 label: 'تحت الإنشاء',
                 color: AppColors.warning,
               ),
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 18),
 
         // Title
         Text(
@@ -188,22 +189,27 @@ class _TitleSection extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
 
-        // Price
+        // Price Badge with Gold Gradient
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppColors.accent, Color(0xFFD4B36A)],
-            ),
-            borderRadius: BorderRadius.circular(12),
+            gradient: AppColors.goldGradient,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Text(
             apartment.formattedPrice,
-            style: theme.textTheme.headlineSmall?.copyWith(
+            style: theme.textTheme.headlineMedium?.copyWith(
               color: AppColors.textOnPrimary,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ),
@@ -211,23 +217,34 @@ class _TitleSection extends StatelessWidget {
         // Delivery date
         if (apartment.isUnderConstruction &&
             apartment.formattedDeliveryDate != null) ...[
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Icon(
-                Icons.event_rounded,
-                size: 20,
-                color: AppColors.accent,
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.3),
               ),
-              const SizedBox(width: 8),
-              Text(
-                'هيتسلم ${apartment.formattedDeliveryDate}',
-                style: theme.textTheme.titleMedium?.copyWith(
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.event_rounded,
+                  size: 20,
                   color: AppColors.accent,
-                  fontWeight: FontWeight.w600,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Text(
+                  'موعد التسليم المتوقع: ${apartment.formattedDeliveryDate}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ],
@@ -246,10 +263,6 @@ class _TitleSection extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// Badge
-// ═══════════════════════════════════════════════════════════════════
-
 class _Badge extends StatelessWidget {
   final String label;
   final Color color;
@@ -259,16 +272,23 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppColors.textOnPrimary,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
             ),
       ),
     );
@@ -287,8 +307,8 @@ class _StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 12,
-      runSpacing: 12,
+      spacing: 14,
+      runSpacing: 14,
       children: [
         _StatCard(
           icon: Icons.bed_rounded,
@@ -335,21 +355,37 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      width: 130,
-      padding: const EdgeInsets.all(16),
+      width: 140,
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.divider.withValues(alpha: 0.6),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(icon, size: 28, color: AppColors.accent),
-          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 24, color: AppColors.accent),
+          ),
+          const SizedBox(height: 12),
           Text(
             value,
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
               color: AppColors.primary,
             ),
           ),
@@ -358,6 +394,7 @@ class _StatCard extends StatelessWidget {
             label,
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
           ),
@@ -387,18 +424,26 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.accentLight,
-            borderRadius: BorderRadius.circular(10),
+            gradient: AppColors.goldGradient,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Icon(icon, color: AppColors.accent, size: 20),
+          child: Icon(icon, color: AppColors.textOnPrimary, size: 20),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
         Text(
           title,
           style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
+            color: AppColors.primary,
           ),
         ),
       ],
@@ -419,8 +464,8 @@ class _AmenitiesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 10,
-      runSpacing: 10,
+      spacing: 12,
+      runSpacing: 12,
       children: amenities
           .map((amenity) => InfoChip(
                 icon: Icons.check_circle_rounded,
@@ -454,26 +499,47 @@ class _DetailsTable extends StatelessWidget {
       ('التشطيب', apartment.finishingStatus.label),
       ('السعر', apartment.formattedPrice),
       if (apartment.formattedDeliveryDate != null)
-        ('موعد التسليم', apartment.formattedDeliveryDate!),
+        ('موعد التسليم المتوقع', apartment.formattedDeliveryDate!),
     ];
 
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.divider.withValues(alpha: 0.6),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: List.generate(details.length, (index) {
           final (label, value) = details[index];
           final isLast = index == details.length - 1;
+          final isEven = index.isEven;
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             decoration: BoxDecoration(
+              color: isEven
+                  ? AppColors.surface
+                  : AppColors.background.withValues(alpha: 0.5),
+              borderRadius: isLast
+                  ? const BorderRadius.vertical(bottom: Radius.circular(20))
+                  : (index == 0
+                      ? const BorderRadius.vertical(top: Radius.circular(20))
+                      : null),
               border: isLast
                   ? null
-                  : const Border(
-                      bottom: BorderSide(color: AppColors.divider, width: 0.5),
+                  : Border(
+                      bottom: BorderSide(
+                        color: AppColors.divider.withValues(alpha: 0.4),
+                        width: 0.5,
+                      ),
                     ),
             ),
             child: Row(
@@ -483,13 +549,14 @@ class _DetailsTable extends StatelessWidget {
                   label,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   value,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
                   ),
                 ),
               ],
@@ -513,7 +580,7 @@ class _WhatsAppCTA extends StatelessWidget {
   Future<void> _openWhatsApp() async {
     final message = Uri.encodeComponent(
       'مرحبًا، أنا مهتم بـ "${apartment.title}" في ${apartment.area}. '
-      'هل يمكنني الحصول على مزيد من المعلومات؟',
+      'هل يمكنني الحصول على مزيد من المعلومات وتحديد موعد معاينة؟',
     );
     final url = Uri.parse(
       'https://wa.me/${apartment.whatsappNumber}?text=$message',
@@ -533,9 +600,9 @@ class _WhatsAppCTA extends StatelessWidget {
         color: AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+            color: AppColors.primary.withValues(alpha: 0.12),
+            blurRadius: 24,
+            offset: const Offset(0, -6),
           ),
         ],
       ),
@@ -548,21 +615,23 @@ class _WhatsAppCTA extends StatelessWidget {
               height: 56,
               child: ElevatedButton.icon(
                 onPressed: _openWhatsApp,
-                icon: const Icon(Icons.chat_rounded, size: 22),
+                icon: const Icon(Icons.chat_rounded, size: 24),
                 label: Text(
-                  'تواصل مع المالك',
+                  'تواصل مع المالك لتحديد معاينة',
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontSize: 16,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF25D366), // WhatsApp green
-                  foregroundColor: AppColors.textOnPrimary,
+                  backgroundColor: const Color(0xFF25D366),
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                  elevation: 0,
+                  elevation: 6,
+                  shadowColor: const Color(0xFF25D366).withValues(alpha: 0.4),
                 ),
               ),
             ),
