@@ -1,10 +1,10 @@
 /// Finishing status of an apartment.
 enum FinishingStatus {
   /// Fully finished and ready to move in.
-  finished('تشطيب كامل'),
+  finished('متشطب كامل'),
 
   /// Semi-finished (basic utilities, no cosmetics).
-  semiFinished('نصف تشطيب'),
+  semiFinished('نص تشطيب'),
 
   /// Shell & core only.
   unfinished('بدون تشطيب');
@@ -131,6 +131,7 @@ class Apartment {
     if (floor == 3) return 'الثالث';
     if (floor == 4) return 'الرابع';
     if (floor == 5) return 'الخامس';
+    if (floor == 6) return 'الرووف';
     return 'الدور $floor';
   }
 

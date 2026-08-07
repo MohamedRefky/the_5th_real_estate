@@ -3,6 +3,9 @@
 import '../../../core/theme/app_colors.dart';
 
 /// Ultra-premium filter section displayed at the top of the Area Screen.
+///
+/// Each filter is grouped under a clear labelled header with selectable chips,
+/// so it is always obvious which filter is which.
 class FilterSection extends StatefulWidget {
   final void Function(FilterValues filters) onFiltersChanged;
   final VoidCallback onReset;
@@ -26,6 +29,7 @@ class _FilterSectionState extends State<FilterSection> {
   String? _selectedFinishing;
   int? _selectedRooms;
   int? _selectedBathrooms;
+  (double, double)? _selectedAreaRange;
 
   int get _activeFilterCount {
     int count = 0;
@@ -34,6 +38,7 @@ class _FilterSectionState extends State<FilterSection> {
     if (_selectedFinishing != null) count++;
     if (_selectedRooms != null) count++;
     if (_selectedBathrooms != null) count++;
+    if (_selectedAreaRange != null) count++;
     return count;
   }
 
@@ -45,6 +50,8 @@ class _FilterSectionState extends State<FilterSection> {
       finishingStatus: _selectedFinishing,
       rooms: _selectedRooms,
       bathrooms: _selectedBathrooms,
+      minArea: _selectedAreaRange?.$1,
+      maxArea: _selectedAreaRange?.$2,
     ));
   }
 
@@ -55,6 +62,7 @@ class _FilterSectionState extends State<FilterSection> {
       _selectedFinishing = null;
       _selectedRooms = null;
       _selectedBathrooms = null;
+      _selectedAreaRange = null;
     });
     widget.onReset();
   }
@@ -185,18 +193,15 @@ class _FilterSectionState extends State<FilterSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Divider(color: AppColors.divider.withValues(alpha: 0.5)),
-          const SizedBox(height: 12),
+          const SizedBox(height: 18),
 
           // ── Price Range ───────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'السعر (جنيه)',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
+              _groupLabel(
+                icon: Icons.payments_rounded,
+                title: 'السعر (جنيه)',
               ),
               Text(
                 '${_formatPrice(_priceRange.start)} - ${_formatPrice(_priceRange.end)}',
@@ -207,7 +212,7 @@ class _FilterSectionState extends State<FilterSection> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           RangeSlider(
             values: _priceRange,
             min: 0,
@@ -221,89 +226,90 @@ class _FilterSectionState extends State<FilterSection> {
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 26),
 
-          // ── Chip Filters Row ──────────────────────────────────
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              // Floor
-              _buildDropdownChip(
-                label: 'الدور',
-                icon: Icons.layers_rounded,
-                value: _selectedFloor?.toString(),
-                items: List.generate(6, (i) => i)
-                    .map((f) => DropdownMenuItem(
-                          value: f.toString(),
-                          child: Text(f == 0 ? 'أرضي' : 'الدور $f'),
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  setState(() =>
-                      _selectedFloor = val != null ? int.parse(val) : null);
-                  _applyFilters();
-                },
-              ),
-
-              // Finishing Status
-              _buildDropdownChip(
-                label: 'التشطيب',
-                icon: Icons.format_paint_rounded,
-                value: _selectedFinishing,
-                items: const [
-                  DropdownMenuItem(
-                      value: 'finished', child: Text('تشطيب كامل')),
-                  DropdownMenuItem(
-                      value: 'semiFinished', child: Text('نصف تشطيب')),
-                  DropdownMenuItem(
-                      value: 'unfinished', child: Text('بدون تشطيب')),
-                ],
-                onChanged: (val) {
-                  setState(() => _selectedFinishing = val);
-                  _applyFilters();
-                },
-              ),
-
-              // Rooms
-              _buildDropdownChip(
-                label: 'الغرف',
-                icon: Icons.bed_rounded,
-                value: _selectedRooms?.toString(),
-                items: List.generate(5, (i) => i + 1)
-                    .map((r) => DropdownMenuItem(
-                          value: r.toString(),
-                          child: Text('$r غرف'),
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  setState(() =>
-                      _selectedRooms = val != null ? int.parse(val) : null);
-                  _applyFilters();
-                },
-              ),
-
-              // Bathrooms
-              _buildDropdownChip(
-                label: 'الحمامات',
-                icon: Icons.bathtub_rounded,
-                value: _selectedBathrooms?.toString(),
-                items: List.generate(4, (i) => i + 1)
-                    .map((b) => DropdownMenuItem(
-                          value: b.toString(),
-                          child: Text('$b حمام'),
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  setState(() => _selectedBathrooms =
-                      val != null ? int.parse(val) : null);
-                  _applyFilters();
-                },
-              ),
+          // ── Floor ─────────────────────────────────────────────
+          _chipGroup<int>(
+            icon: Icons.layers_rounded,
+            title: 'الدور',
+            selected: _selectedFloor,
+            options: [
+              ('أرضي', 0),
+              ('الأول', 1),
+              ('الثاني', 2),
+              ('الثالث', 3),
+              ('الرابع', 4),
+              ('الخامس', 5),
+              ('الرووف', 6),
             ],
+            onChanged: (v) {
+              setState(() => _selectedFloor = v);
+              _applyFilters();
+            },
           ),
 
-          const SizedBox(height: 20),
+          // ── Finishing Status ──────────────────────────────────
+          _chipGroup<String>(
+            icon: Icons.format_paint_rounded,
+            title: 'التشطيب',
+            selected: _selectedFinishing,
+            options: [
+              ('تشطيب كامل', 'finished'),
+              ('تشطيب نص', 'semiFinished'),
+            ],
+            onChanged: (v) {
+              setState(() => _selectedFinishing = v);
+              _applyFilters();
+            },
+          ),
+
+          // ── Rooms ─────────────────────────────────────────────
+          _chipGroup<int>(
+            icon: Icons.bed_rounded,
+            title: 'الغرف',
+            selected: _selectedRooms,
+            options: [
+              for (var i = 1; i <= 5; i++) ('$i غرف', i),
+            ],
+            onChanged: (v) {
+              setState(() => _selectedRooms = v);
+              _applyFilters();
+            },
+          ),
+
+          // ── Bathrooms ─────────────────────────────────────────
+          _chipGroup<int>(
+            icon: Icons.bathtub_rounded,
+            title: 'الحمامات',
+            selected: _selectedBathrooms,
+            options: [
+              for (var i = 1; i <= 4; i++) ('$i حمام', i),
+            ],
+            onChanged: (v) {
+              setState(() => _selectedBathrooms = v);
+              _applyFilters();
+            },
+          ),
+
+          // ── Area (sqm) ────────────────────────────────────────
+          _chipGroup<(double, double)>(
+            icon: Icons.straighten_rounded,
+            title: 'المساحة',
+            selected: _selectedAreaRange,
+            options: [
+              ('أقل من 150م²', (0, 150)),
+              ('150 - 200م²', (150, 200)),
+              ('200 - 250م²', (200, 250)),
+              ('250 - 300م²', (250, 300)),
+              ('أكثر من 300م²', (300, 99999)),
+            ],
+            onChanged: (v) {
+              setState(() => _selectedAreaRange = v);
+              _applyFilters();
+            },
+          ),
+
+          const SizedBox(height: 4),
 
           // ── Reset Button ──────────────────────────────────────
           Align(
@@ -322,65 +328,57 @@ class _FilterSectionState extends State<FilterSection> {
     );
   }
 
-  Widget _buildDropdownChip({
-    required String label,
-    required IconData icon,
-    required String? value,
-    required List<DropdownMenuItem<String>> items,
-    required ValueChanged<String?> onChanged,
-  }) {
-    final isSelected = value != null;
+  Widget _groupLabel({required IconData icon, required String title}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: AppColors.accentLight,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 16, color: AppColors.accent),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ],
+    );
+  }
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.accentLight : AppColors.background,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isSelected ? AppColors.accent : AppColors.divider,
-          width: isSelected ? 1.5 : 1,
-        ),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          hint: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color: isSelected ? AppColors.accent : AppColors.textSecondary,
+  Widget _chipGroup<T>({
+    required IconData icon,
+    required String title,
+    required List<(String, T)> options,
+    required T? selected,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _groupLabel(icon: icon, title: title),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: [
+            for (final (label, value) in options)
+              _FilterChipButton(
+                label: label,
+                selected: selected == value,
+                onTap: () => onChanged(selected == value ? null : value),
               ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected ? AppColors.accent : AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-          icon: Icon(
-            Icons.arrow_drop_down,
-            size: 20,
-            color: isSelected ? AppColors.accent : AppColors.textSecondary,
-          ),
-          isDense: true,
-          items: [
-            DropdownMenuItem<String>(
-              value: null,
-              child: Text('الكل',
-                  style: TextStyle(color: AppColors.textHint, fontSize: 13)),
-            ),
-            ...items,
           ],
-          onChanged: onChanged,
         ),
-      ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 
@@ -392,6 +390,71 @@ class _FilterSectionState extends State<FilterSection> {
   }
 }
 
+/// A single selectable gold chip used inside each filter group.
+class _FilterChipButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _FilterChipButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.accent : AppColors.background,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected ? AppColors.accent : AppColors.divider,
+            width: selected ? 1.4 : 1,
+          ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.accent.withValues(alpha: 0.25),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (selected) ...[
+              const Icon(
+                Icons.check_rounded,
+                size: 15,
+                color: AppColors.textOnPrimary,
+              ),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                color: selected
+                    ? AppColors.textOnPrimary
+                    : AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Holds the current filter values.
 class FilterValues {
   final double minPrice;
@@ -400,6 +463,8 @@ class FilterValues {
   final String? finishingStatus;
   final int? rooms;
   final int? bathrooms;
+  final double? minArea;
+  final double? maxArea;
 
   const FilterValues({
     this.minPrice = 0,
@@ -408,5 +473,7 @@ class FilterValues {
     this.finishingStatus,
     this.rooms,
     this.bathrooms,
+    this.minArea,
+    this.maxArea,
   });
 }

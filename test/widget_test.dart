@@ -10,6 +10,6 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pump(const Duration(seconds: 2));
 
-    expect(find.text('العقار الخامس'), findsWidgets);
+    expect(find.text('The 5th Real Estate'), findsWidgets);
   });
 }

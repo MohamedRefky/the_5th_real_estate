@@ -61,6 +61,13 @@ class _AreaScreenState extends State<AreaScreen> {
         if (filters.bathrooms != null && apt.bathrooms != filters.bathrooms) {
           return false;
         }
+        // Area (sqm)
+        if (filters.minArea != null && apt.areaSqm < filters.minArea!) {
+          return false;
+        }
+        if (filters.maxArea != null && apt.areaSqm > filters.maxArea!) {
+          return false;
+        }
         return true;
       }).toList();
     });

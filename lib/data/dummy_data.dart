@@ -173,7 +173,7 @@ class DummyData {
           'لمحبي الفخامة والخصوصية.',
       area: 'النرجس',
       price: 5500000,
-      floor: 5,
+      floor: 6,
       totalFloors: 5,
       areaSqm: 250,
       rooms: 4,
