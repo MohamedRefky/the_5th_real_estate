@@ -176,80 +176,91 @@ class _ApartmentCardState extends State<ApartmentCard> {
               ),
 
               // ── Card Body ──────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    Text(
-                      apt.title,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // Description
-                    Text(
-                      apt.description,
-                      style: theme.textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Info chips
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        InfoChip(
-                          icon: Icons.bed_rounded,
-                          label: '${apt.rooms} غرف',
-                        ),
-                        InfoChip(
-                          icon: Icons.bathtub_rounded,
-                          label: '${apt.bathrooms} حمام',
-                        ),
-                        InfoChip(
-                          icon: Icons.square_foot_rounded,
-                          label: '${apt.areaSqm.toInt()} م²',
-                        ),
-                        InfoChip(
-                          icon: Icons.layers_rounded,
-                          label: apt.floorLabel,
-                        ),
-                      ],
-                    ),
-
-                    // Delivery date (if under construction)
-                    if (apt.isUnderConstruction &&
-                        apt.formattedDeliveryDate != null) ...[
-                      const SizedBox(height: 12),
-                      Row(
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
-                            Icons.calendar_today_rounded,
-                            size: 16,
-                            color: AppColors.accent,
-                          ),
-                          const SizedBox(width: 6),
+                          // Title
                           Text(
-                            'التسليم: ${apt.formattedDeliveryDate}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w600,
+                            apt.title,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+
+                          const SizedBox(height: 6),
+
+                          // Description
+                          Text(
+                            apt.description,
+                            style: theme.textTheme.bodyMedium,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Info chips
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: [
+                              InfoChip(
+                                icon: Icons.bed_rounded,
+                                label: '${apt.rooms} غرف',
+                              ),
+                              InfoChip(
+                                icon: Icons.bathtub_rounded,
+                                label: '${apt.bathrooms} حمام',
+                              ),
+                              InfoChip(
+                                icon: Icons.square_foot_rounded,
+                                label: '${apt.areaSqm.toInt()} م²',
+                              ),
+                              InfoChip(
+                                icon: Icons.layers_rounded,
+                                label: apt.floorLabel,
+                              ),
+                            ],
+                          ),
+
+                          // Delivery date (if under construction)
+                          if (apt.isUnderConstruction &&
+                              apt.formattedDeliveryDate != null) ...[
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.calendar_today_rounded,
+                                  size: 14,
+                                  color: AppColors.accent,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'التسليم: ${apt.formattedDeliveryDate}',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
                     ],
-                  ],
+                  ),
                 ),
               ),
             ],
