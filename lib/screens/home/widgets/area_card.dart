@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/dummy_data.dart';
@@ -86,7 +86,7 @@ class _AreaCardState extends State<AreaCard> {
                   height: 84,
                   decoration: BoxDecoration(
                     gradient: _isHovered
-                        ? AppColors.goldGradient
+                        ? AppColors.accentGradient
                         : LinearGradient(
                             begin: Alignment.topRight,
                             end: Alignment.bottomLeft,
@@ -109,7 +109,9 @@ class _AreaCardState extends State<AreaCard> {
                   child: Icon(
                     _areaIcon,
                     size: 42,
-                    color: AppColors.textOnPrimary,
+                    color: _isHovered
+                        ? AppColors.textOnPrimary
+                        : AppColors.textPrimary,
                   ),
                 ),
 
@@ -120,7 +122,7 @@ class _AreaCardState extends State<AreaCard> {
                   widget.areaName,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: _isHovered ? AppColors.accent : AppColors.primary,
+                    color: _isHovered ? AppColors.accent : AppColors.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../models/apartment.dart';
@@ -38,7 +38,7 @@ class ConstructionTimeline extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: AppColors.goldGradient,
+                  gradient: AppColors.accentGradient,
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
@@ -63,7 +63,7 @@ class ConstructionTimeline extends StatelessWidget {
                       'مراحل البناء والإنشاءات',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: AppColors.primary,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     if (apartment.formattedDeliveryDate != null)
@@ -99,7 +99,7 @@ class ConstructionTimeline extends StatelessWidget {
                       'نسبة الإنجاز الكلية',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     Container(
@@ -108,7 +108,7 @@ class ConstructionTimeline extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        gradient: AppColors.goldGradient,
+                        gradient: AppColors.accentGradient,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -192,7 +192,7 @@ class _MilestoneItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: milestone.isCompleted
-                        ? AppColors.goldGradient
+                        ? AppColors.accentGradient
                         : null,
                     color: milestone.isCompleted
                         ? null
@@ -262,7 +262,7 @@ class _MilestoneItem extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                       color: milestone.isCompleted
-                          ? AppColors.primary
+                          ? AppColors.textPrimary
                           : AppColors.textSecondary,
                     ),
                   ),

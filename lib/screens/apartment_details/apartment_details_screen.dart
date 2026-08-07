@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/animated_background.dart';
 import '../../core/widgets/info_chip.dart';
+import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
 import '../../models/apartment.dart';
 import 'widgets/construction_timeline.dart';
@@ -41,98 +43,126 @@ class ApartmentDetailsScreen extends StatelessWidget {
       // ── Sticky WhatsApp CTA ──────────────────────────────────
       bottomNavigationBar: _WhatsAppCTA(apartment: apartment),
 
-      body: SingleChildScrollView(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 950),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Image Gallery ──────────────────────────────
-                  const ImageGalleryPlaceholder(),
-
-                  const SizedBox(height: 32),
-
-                  // ── Title & Price Header ───────────────────────
-                  _TitleSection(apartment: apartment, theme: theme),
-
-                  const SizedBox(height: 28),
-
-                  // ── Key Stats ──────────────────────────────────
-                  _StatsSection(apartment: apartment),
-
-                  const SizedBox(height: 32),
-
-                  // ── Description ────────────────────────────────
-                  _SectionHeader(
-                    title: 'الوصف',
-                    icon: Icons.description_rounded,
-                    theme: theme,
-                  ),
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.divider.withValues(alpha: 0.6),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.04),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+      body: AnimatedBackground(
+        shapeColor: AppColors.accent,
+        shapeCount: 8,
+        child: SingleChildScrollView(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 950),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Image Gallery ──────────────────────────────
+                    const RevealOnScroll(
+                      duration: Duration(milliseconds: 800),
+                      offset: 16,
+                      child: ImageGalleryPlaceholder(),
                     ),
-                    child: Text(
-                      apartment.description,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        height: 1.8,
-                        color: AppColors.textPrimary,
-                      ),
+
+                    const SizedBox(height: 32),
+
+                    // ── Title & Price Header ───────────────────────
+                    RevealOnScroll(
+                      child: _TitleSection(apartment: apartment, theme: theme),
                     ),
-                  ),
 
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 28),
 
-                  // ── Amenities ──────────────────────────────────
-                  if (apartment.amenities.isNotEmpty) ...[
-                    _SectionHeader(
-                      title: 'المميزات والتسهيلات',
-                      icon: Icons.star_rounded,
-                      theme: theme,
+                    // ── Key Stats ──────────────────────────────────
+                    RevealOnScroll(
+                      delayMilliseconds: 80,
+                      child: _StatsSection(apartment: apartment),
+                    ),
+
+                    const SizedBox(height: 32),
+
+                    // ── Description ────────────────────────────────
+                    RevealOnScroll(
+                      child: _SectionHeader(
+                        title: 'الوصف',
+                        icon: Icons.description_rounded,
+                        theme: theme,
+                      ),
                     ),
                     const SizedBox(height: 14),
-                    _AmenitiesGrid(
-                      amenities: apartment.amenities,
-                      theme: theme,
+                    RevealOnScroll(
+                      delayMilliseconds: 100,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppColors.divider.withValues(alpha: 0.6),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.04),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          apartment.description,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            height: 1.8,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
                     ),
+
                     const SizedBox(height: 32),
+
+                    // ── Amenities ──────────────────────────────────
+                    if (apartment.amenities.isNotEmpty) ...[
+                      RevealOnScroll(
+                        child: _SectionHeader(
+                          title: 'المميزات والتسهيلات',
+                          icon: Icons.star_rounded,
+                          theme: theme,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      RevealOnScroll(
+                        delayMilliseconds: 100,
+                        child: _AmenitiesGrid(
+                          amenities: apartment.amenities,
+                          theme: theme,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+
+                    // ── Construction Timeline ──────────────────────
+                    if (apartment.isUnderConstruction &&
+                        apartment.milestones.isNotEmpty) ...[
+                      RevealOnScroll(child: ConstructionTimeline(apartment: apartment)),
+                      const SizedBox(height: 32),
+                    ],
+
+                    // ── Details Table ──────────────────────────────
+                    RevealOnScroll(
+                      child: _SectionHeader(
+                        title: 'جدول التفاصيل',
+                        icon: Icons.assignment_rounded,
+                        theme: theme,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    RevealOnScroll(
+                      delayMilliseconds: 100,
+                      child: _DetailsTable(apartment: apartment, theme: theme),
+                    ),
+
+                    const SizedBox(height: 120), // Space for sticky CTA
                   ],
-
-                  // ── Construction Timeline ──────────────────────
-                  if (apartment.isUnderConstruction &&
-                      apartment.milestones.isNotEmpty) ...[
-                    ConstructionTimeline(apartment: apartment),
-                    const SizedBox(height: 32),
-                  ],
-
-                  // ── Details Table ──────────────────────────────
-                  _SectionHeader(
-                    title: 'جدول التفاصيل',
-                    icon: Icons.assignment_rounded,
-                    theme: theme,
-                  ),
-                  const SizedBox(height: 14),
-                  _DetailsTable(apartment: apartment, theme: theme),
-
-                  const SizedBox(height: 120), // Space for sticky CTA
-                ],
+                ),
               ),
             ),
           ),
@@ -168,7 +198,7 @@ class _TitleSection extends StatelessWidget {
             ),
             _Badge(
               label: apartment.area,
-              color: AppColors.primary,
+              color: AppColors.accentLight2,
             ),
             if (apartment.isUnderConstruction)
               const _Badge(
@@ -185,7 +215,7 @@ class _TitleSection extends StatelessWidget {
           apartment.title,
           style: theme.textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.w800,
-            color: AppColors.primary,
+            color: AppColors.textPrimary,
           ),
         ),
 
@@ -195,7 +225,7 @@ class _TitleSection extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           decoration: BoxDecoration(
-            gradient: AppColors.goldGradient,
+            gradient: AppColors.accentGradient,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -386,7 +416,7 @@ class _StatCard extends StatelessWidget {
             value,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
-              color: AppColors.primary,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -426,7 +456,7 @@ class _SectionHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            gradient: AppColors.goldGradient,
+            gradient: AppColors.accentGradient,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -443,7 +473,7 @@ class _SectionHeader extends StatelessWidget {
           title,
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
-            color: AppColors.primary,
+            color: AppColors.textPrimary,
           ),
         ),
       ],
@@ -556,7 +586,7 @@ class _DetailsTable extends StatelessWidget {
                   value,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],

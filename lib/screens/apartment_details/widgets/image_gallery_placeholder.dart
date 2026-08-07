@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
@@ -66,7 +66,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
               Icon(
                 _icons[_selectedIndex],
                 size: 160,
-                color: AppColors.textOnPrimary.withValues(alpha: 0.05),
+                color: AppColors.textPrimary.withValues(alpha: 0.07),
               ),
 
               // Room info
@@ -95,7 +95,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
                     Text(
                       _labels[_selectedIndex],
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        color: AppColors.textOnPrimary,
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -112,7 +112,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
                       child: Text(
                         'معاينة افتراضية للتصميم الداخلي',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.textOnPrimary.withValues(alpha: 0.7),
+                          color: AppColors.textPrimary.withValues(alpha: 0.8),
                         ),
                       ),
                     ),
@@ -139,7 +139,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
                   child: Text(
                     '${_selectedIndex + 1} / $count',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textOnPrimary,
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -167,7 +167,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
                   width: 76,
                   decoration: BoxDecoration(
                     gradient: isSelected
-                        ? AppColors.goldGradient
+                        ? AppColors.accentGradient
                         : LinearGradient(
                             colors: [
                               AppColors.primary.withValues(alpha: 0.1),
@@ -194,7 +194,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
                     size: 28,
                     color: isSelected
                         ? AppColors.textOnPrimary
-                        : AppColors.primary,
+                        : AppColors.textSecondary,
                   ),
                 ),
               );

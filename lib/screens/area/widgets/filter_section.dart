@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
@@ -97,7 +97,7 @@ class _FilterSectionState extends State<FilterSection> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      gradient: AppColors.goldGradient,
+                      gradient: AppColors.accentGradient,
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -118,7 +118,7 @@ class _FilterSectionState extends State<FilterSection> {
                     'فلترة النتائج',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: AppColors.primary,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   if (_activeFilterCount > 0) ...[
@@ -154,7 +154,7 @@ class _FilterSectionState extends State<FilterSection> {
                       ),
                       child: const Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: AppColors.primary,
+                        color: AppColors.textPrimary,
                         size: 22,
                       ),
                     ),
@@ -195,7 +195,7 @@ class _FilterSectionState extends State<FilterSection> {
                 'السعر (جنيه)',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
+                  color: AppColors.textPrimary,
                 ),
               ),
               Text(

@@ -85,7 +85,7 @@ class _ApartmentCardState extends State<ApartmentCard> {
                       child: Icon(
                         Icons.apartment_rounded,
                         size: 64,
-                        color: AppColors.textOnPrimary.withValues(alpha: 0.15),
+                        color: AppColors.textPrimary.withValues(alpha: 0.12),
                       ),
                     ),
 

@@ -44,7 +44,7 @@ class FeaturedPropertiesSection extends StatelessWidget {
                         Text(
                           'عقارات مميزة',
                           style: theme.textTheme.headlineMedium?.copyWith(
-                            color: AppColors.primary,
+                            color: AppColors.textPrimary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),

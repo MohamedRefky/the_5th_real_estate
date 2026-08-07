@@ -41,7 +41,7 @@ class RecentPropertiesSection extends StatelessWidget {
                       Text(
                         'أحدث العقارات المضافة',
                         style: theme.textTheme.headlineMedium?.copyWith(
-                          color: AppColors.primary,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

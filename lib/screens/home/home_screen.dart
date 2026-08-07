@@ -1,8 +1,10 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/widgets/animated_background.dart';
+import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
 import 'widgets/area_card.dart';
 import 'widgets/featured_properties_section.dart';
@@ -75,94 +77,107 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // ── 1. Massive Full-Width Hero Section ───────────────────
-            _HeroSection(theme: theme),
+      body: AnimatedBackground(
+        shapeColor: AppColors.accent,
+        shapeCount: 8,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // ── 1. Massive Full-Width Hero Section ───────────────────
+              RevealOnScroll(
+                duration: const Duration(milliseconds: 900),
+                offset: 20,
+                child: _HeroSection(theme: theme),
+              ),
 
-            const SizedBox(height: 64),
+              const SizedBox(height: 64),
 
-            // ── 2. Why Choose Us (Trust Indicators) ──────────────────
-            const WhyUsSection(),
+              // ── 2. Why Choose Us (Trust Indicators) ──────────────────
+              const RevealOnScroll(child: WhyUsSection()),
 
-            const SizedBox(height: 64),
+              const SizedBox(height: 64),
 
-            // ── 3. Featured Properties Carousel ──────────────────────
-            const FeaturedPropertiesSection(),
+              // ── 3. Featured Properties Carousel ──────────────────────
+              const RevealOnScroll(child: FeaturedPropertiesSection()),
 
-            const SizedBox(height: 64),
+              const SizedBox(height: 64),
 
-            // ── 4. Neighborhood Grid (Choose Area) ───────────────────
-            _SectionHeaderBadge(
-              icon: Icons.location_city_rounded,
-              title: 'اختر الحي',
-              subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
-              theme: theme,
-            ),
+              // ── 4. Neighborhood Grid (Choose Area) ───────────────────
+              const RevealOnScroll(
+                child: _SectionHeaderBadge(
+                  icon: Icons.location_city_rounded,
+                  title: 'اختر الحي',
+                  subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
+                ),
+              ),
 
-            const SizedBox(height: 36),
+              const SizedBox(height: 36),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final crossAxisCount = _getCrossAxisCount(
-                        constraints.maxWidth,
-                      );
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: 24,
-                          mainAxisSpacing: 24,
-                          childAspectRatio: 1.05,
-                        ),
-                        itemCount: DummyData.areas.length,
-                        itemBuilder: (context, index) {
-                          final area = DummyData.areas[index];
-                          return AreaCard(
-                            areaName: area,
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                RoutesNames.area,
-                                arguments: area,
+              RevealOnScroll(
+                delayMilliseconds: 150,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final crossAxisCount = _getCrossAxisCount(
+                            constraints.maxWidth,
+                          );
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                              crossAxisSpacing: 24,
+                              mainAxisSpacing: 24,
+                              childAspectRatio: 1.05,
+                            ),
+                            itemCount: DummyData.areas.length,
+                            itemBuilder: (context, index) {
+                              final area = DummyData.areas[index];
+                              return AreaCard(
+                                areaName: area,
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    RoutesNames.area,
+                                    arguments: area,
+                                  );
+                                },
                               );
                             },
                           );
                         },
-                      );
-                    },
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 64),
+              const SizedBox(height: 64),
 
-            // ── 5. Recently Added Properties ────────────────────────
-            const RecentPropertiesSection(),
+              // ── 5. Recently Added Properties ────────────────────────
+              const RevealOnScroll(child: RecentPropertiesSection()),
 
-            const SizedBox(height: 64),
+              const SizedBox(height: 64),
 
-            // ── 6. How It Works (3 Steps) ────────────────────────────
-            const HowItWorksSection(),
+              // ── 6. How It Works (3 Steps) ────────────────────────────
+              const RevealOnScroll(child: HowItWorksSection()),
 
-            const SizedBox(height: 64),
+              const SizedBox(height: 64),
 
-            // ── 7. Testimonials ─────────────────────────────────────
-            const TestimonialsSection(),
+              // ── 7. Testimonials ─────────────────────────────────────
+              const RevealOnScroll(child: TestimonialsSection()),
 
-            const SizedBox(height: 64),
+              const SizedBox(height: 64),
 
-            // ── 8. Footer ───────────────────────────────────────────
-            _Footer(theme: theme),
-          ],
+              // ── 8. Footer ───────────────────────────────────────────
+              const RevealOnScroll(child: _Footer()),
+            ],
+          ),
         ),
       ),
     );
@@ -183,17 +198,17 @@ class _SectionHeaderBadge extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final ThemeData theme;
 
   const _SectionHeaderBadge({
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.theme,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         Container(
@@ -218,7 +233,7 @@ class _SectionHeaderBadge extends StatelessWidget {
         const SizedBox(height: 18),
         ShaderMask(
           shaderCallback: (bounds) =>
-              AppColors.goldGradient.createShader(bounds),
+              AppColors.accentGradient.createShader(bounds),
           child: Text(
             title,
             style: theme.textTheme.headlineLarge?.copyWith(
@@ -254,33 +269,17 @@ class _HeroSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF040711),
-            Color(0xFF0F172A),
-            Color(0xFF1E293B),
-          ],
-          stops: [0.0, 0.6, 1.0],
-        ),
+        gradient: AppColors.heroGradient,
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Geometric Ambient Radial Glow Backdrop
+          // Animated Ambient Emerald Glow Backdrop
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0.0, -0.4),
-                  radius: 1.0,
-                  colors: [
-                    AppColors.accent.withValues(alpha: 0.15),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
+            child: AnimatedBackground(
+              shapeColor: AppColors.accent,
+              shapeCount: 6,
+              child: const SizedBox.expand(),
             ),
           ),
 
@@ -298,7 +297,7 @@ class _HeroSection extends StatelessWidget {
                         width: 90,
                         height: 3,
                         decoration: BoxDecoration(
-                          gradient: AppColors.goldGradient,
+                          gradient: AppColors.accentGradient,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -315,7 +314,7 @@ class _HeroSection extends StatelessWidget {
                           width: 84,
                           height: 84,
                           decoration: BoxDecoration(
-                            gradient: AppColors.goldGradient,
+                            gradient: AppColors.accentGradient,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
@@ -338,7 +337,7 @@ class _HeroSection extends StatelessWidget {
                       // Main Title with Shader Mask Gold Gradient
                       ShaderMask(
                         shaderCallback: (bounds) =>
-                            AppColors.goldGradient.createShader(bounds),
+                            AppColors.accentGradient.createShader(bounds),
                         child: Text(
                           'العقار الخامس',
                           style: theme.textTheme.displayLarge?.copyWith(
@@ -437,7 +436,7 @@ class _HeroSection extends StatelessWidget {
                         width: 90,
                         height: 3,
                         decoration: BoxDecoration(
-                          gradient: AppColors.goldGradient,
+                          gradient: AppColors.accentGradient,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -496,11 +495,12 @@ class _GlassHeroStat extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════
 
 class _Footer extends StatelessWidget {
-  final ThemeData theme;
-  const _Footer({required this.theme});
+  const _Footer();
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40),
@@ -519,7 +519,7 @@ class _Footer extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    gradient: AppColors.goldGradient,
+                    gradient: AppColors.accentGradient,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(

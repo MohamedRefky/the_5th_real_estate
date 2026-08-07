@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
 /// How It Works section — Dark Mode.
@@ -149,7 +149,7 @@ class HowItWorksSection extends StatelessWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                gradient: AppColors.goldGradient,
+                gradient: AppColors.accentGradient,
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
