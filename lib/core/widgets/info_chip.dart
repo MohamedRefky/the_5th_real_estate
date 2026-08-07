@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/theme/app_colors.dart';
 
 /// A compact, styled chip used for displaying apartment info
