@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 
@@ -42,7 +42,7 @@ class _ImageGalleryPlaceholderState extends State<ImageGalleryPlaceholder> {
         // ── Main Image Box ─────────────────────────────────────
         AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          height: 380,
+          height: 480,
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: AppColors.heroGradient,

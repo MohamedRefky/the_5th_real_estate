@@ -31,21 +31,19 @@ class RecentPropertiesSection extends StatelessWidget {
                   final isDesktop = constraints.maxWidth >= 900;
                   final isTablet = constraints.maxWidth >= 600;
 
-                  final crossAxisCount = isDesktop ? 3 : (isTablet ? 2 : 1);
+                  final count = isDesktop ? 3 : (isTablet ? 2 : 1);
+                  final spacing = 20.0;
+                  final cardWidth = (constraints.maxWidth - (spacing * (count - 1))) / count;
 
-                  return GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      childAspectRatio: crossAxisCount == 1 ? 1.05 : 0.82,
-                    ),
-                    itemCount: recentApartments.length,
-                    itemBuilder: (context, index) {
-                      return ApartmentCard(apartment: recentApartments[index]);
-                    },
+                  return Wrap(
+                    spacing: spacing,
+                    runSpacing: spacing,
+                    children: recentApartments.map((apt) {
+                      return SizedBox(
+                        width: cardWidth,
+                        child: ApartmentCard(apartment: apt),
+                      );
+                    }).toList(),
                   );
                 },
               ),

@@ -50,9 +50,9 @@ class ApartmentDetailsScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 950),
+              constraints: const BoxConstraints(maxWidth: 800),
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -63,14 +63,14 @@ class ApartmentDetailsScreen extends StatelessWidget {
                       child: ImageGalleryPlaceholder(),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
 
                     // ── Title & Price Header ───────────────────────
                     RevealOnScroll(
                       child: _TitleSection(apartment: apartment, theme: theme),
                     ),
 
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 18),
 
                     // ── Key Stats ──────────────────────────────────
                     RevealOnScroll(
@@ -78,9 +78,9 @@ class ApartmentDetailsScreen extends StatelessWidget {
                       child: _StatsSection(apartment: apartment),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
 
-                    // ── Description ────────────────────────────────
+                    // ── Description ────────────────----------------
                     RevealOnScroll(
                       child: _SectionHeader(
                         title: 'الوصف والتفاصيل',
@@ -88,15 +88,15 @@ class ApartmentDetailsScreen extends StatelessWidget {
                         theme: theme,
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     RevealOnScroll(
                       delayMilliseconds: 100,
                       child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: AppColors.divider.withValues(alpha: 0.6),
                           ),
@@ -111,14 +111,14 @@ class ApartmentDetailsScreen extends StatelessWidget {
                         child: Text(
                           apartment.description,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            height: 1.8,
+                            height: 1.7,
                             color: AppColors.textPrimary,
                           ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
 
                     // ── Amenities ──────────────────────────────────
                     if (apartment.amenities.isNotEmpty) ...[
@@ -129,7 +129,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
                           theme: theme,
                         ),
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 10),
                       RevealOnScroll(
                         delayMilliseconds: 100,
                         child: _AmenitiesGrid(
@@ -137,14 +137,14 @@ class ApartmentDetailsScreen extends StatelessWidget {
                           theme: theme,
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
                     ],
 
                     // ── Construction Timeline ──────────────────────
                     if (apartment.isUnderConstruction &&
                         apartment.milestones.isNotEmpty) ...[
                       RevealOnScroll(child: ConstructionTimeline(apartment: apartment)),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
                     ],
 
                     // ── Details Table ──────────────────────────────
@@ -155,7 +155,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
                         theme: theme,
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     RevealOnScroll(
                       delayMilliseconds: 100,
                       child: _DetailsTable(apartment: apartment, theme: theme),
@@ -163,7 +163,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
 
                     // ── Other Available Units in the Same Building ───
                     if (apartment.buildingName != null) ...[
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
                       RevealOnScroll(
                         child: _BuildingUnitsSection(
                           currentApartment: apartment,
@@ -172,7 +172,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
                       ),
                     ],
 
-                    const SizedBox(height: 120), // Space for sticky CTA
+                    const SizedBox(height: 90), // Space for sticky CTA
                   ],
                 ),
               ),

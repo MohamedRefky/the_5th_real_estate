@@ -250,29 +250,25 @@ class _AreaScreenState extends State<AreaScreen> {
                         else
                           LayoutBuilder(
                             builder: (context, constraints) {
-                              final crossAxisCount =
-                                  constraints.maxWidth >= 800 ? 2 : 1;
-                              return GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 24,
-                                  mainAxisSpacing: 24,
-                                  childAspectRatio:
-                                      crossAxisCount == 2 ? 0.82 : 1.1,
-                                ),
-                                itemCount: _filteredApartments.length,
-                                itemBuilder: (context, index) {
-                                  return RevealOnScroll(
-                                    delayMilliseconds: (index % 4) * 80,
-                                    child: ApartmentCard(
-                                      apartment:
-                                          _filteredApartments[index],
+                              final isWide = constraints.maxWidth >= 800;
+                              final cardWidth = isWide
+                                  ? (constraints.maxWidth - 24) / 2
+                                  : constraints.maxWidth;
+
+                              return Wrap(
+                                spacing: 24,
+                                runSpacing: 24,
+                                children: _filteredApartments.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final apt = entry.value;
+                                  return SizedBox(
+                                    width: cardWidth,
+                                    child: RevealOnScroll(
+                                      delayMilliseconds: (index % 4) * 80,
+                                      child: ApartmentCard(apartment: apt),
                                     ),
                                   );
-                                },
+                                }).toList(),
                               );
                             },
                           ),
