@@ -15,23 +15,23 @@ class HowItWorksSection extends StatelessWidget {
       (
         stepNumber: '1',
         icon: Icons.search_rounded,
-        title: 'تصفح العقارات',
+        title: 'تصفح واختر عقارك',
         emoji: '🔍',
-        desc: 'استكشف الوحدات المتاحة بالفلاتر والأدوار والمساحات المناسبة لك'
+        desc: 'استكشف كل وحدات التجمع الخامس المتاحة، وفلتر حسب الدور والتشطيب والمساحة للوصول لاختيارك المثالي'
       ),
       (
         stepNumber: '2',
         icon: Icons.mark_chat_read_rounded,
-        title: 'تواصل معى لتحديد معاينه',
+        title: 'احجز معاينة فورية',
         emoji: '💬',
-        desc: 'تواصل مباشرة عبر واتساب لتحديد موعد المعاينة والإجابة على كل استفساراتك'
+        desc: 'تواصل مباشرة عبر واتساب لتحديد موعد المعاينة المناسب لك، واحصل على إجابة فورية عن كل استفساراتك'
       ),
       (
         stepNumber: '3',
         icon: Icons.vpn_key_rounded,
         title: 'استلم مفتاحك',
         emoji: '🔑',
-        desc: 'أكمل إجراءات التعاقد بسهولة واستلم وحدتك السكنية الجديدة'
+        desc: 'أكمل إجراءات التعاقد بسهولة وأمان، واستلم مفتاح وحدتك السكنية الجديدة'
       ),
     ];
 
@@ -49,7 +49,7 @@ class HowItWorksSection extends StatelessWidget {
               const SectionBar(
                 icon: Icons.rocket_launch_rounded,
                 title: 'خطوات الشراء',
-                subtitle: 'امتلك وحدتك العقارية في 3 خطوات بسيطة ومباشرة',
+                subtitle: 'امتلك وحدتك العقارية في 3 خطوات واضحة — من الاختيار حتى استلام المفتاح',
               ),
               const SizedBox(height: 48),
               LayoutBuilder(
@@ -66,7 +66,7 @@ class HowItWorksSection extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 70),
                               child: Icon(
-                                Icons.arrow_back_rounded,
+                                Icons.arrow_forward_rounded,
                                 color: AppColors.accent,
                                 size: 28,
                               ),
