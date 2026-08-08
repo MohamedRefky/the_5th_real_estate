@@ -28,7 +28,7 @@ class FeaturedPropertiesSection extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               SizedBox(
-                height: 385,
+                height: 410,
                 child: ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   scrollDirection: Axis.horizontal,
