@@ -48,6 +48,7 @@ class _FilterSectionState extends State<FilterSection> {
   String get _floorLabel {
     if (_selectedFloors.isEmpty) return 'الدور';
     final list = _selectedFloors.map((f) {
+      if (f == -1) return 'بيزمنت';
       if (f == 0) return 'أرضي';
       if (f == 6) return 'روف';
       return '$f';
@@ -435,12 +436,12 @@ class _FilterSectionState extends State<FilterSection> {
 
   Widget _buildFloorOptions() {
     final floors = [
+      ('بيزمنت', -1),
       ('أرضي', 0),
       ('الأول', 1),
       ('الثاني', 2),
       ('الثالث', 3),
       ('الرابع', 4),
-      ('الخامس', 5),
       ('الروف', 6),
     ];
     return Wrap(

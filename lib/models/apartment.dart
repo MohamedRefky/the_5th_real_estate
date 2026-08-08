@@ -125,6 +125,7 @@ class Apartment {
 
   /// Human-readable floor label.
   String get floorLabel {
+    if (floor == -1) return 'بيزمنت';
     if (floor == 0) return 'أرضي';
     if (floor == 1) return 'الأول';
     if (floor == 2) return 'الثاني';
