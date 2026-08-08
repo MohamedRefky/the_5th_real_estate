@@ -58,13 +58,10 @@ class WhyUsSection extends StatelessWidget {
                       children: items.asMap().entries.map((entry) {
                         final idx = entry.key;
                         final item = entry.value;
-                        final direction = idx == 0
-                            ? RevealDirection.fromRight
-                            : (idx == 1 ? RevealDirection.scale : RevealDirection.fromLeft);
                         return Expanded(
                           child: RevealOnScroll(
-                            direction: direction,
-                            delayMilliseconds: idx * 80,
+                            direction: RevealDirection.flip3D,
+                            delayMilliseconds: idx * 90,
                             child: _buildItem(context, item),
                           ),
                         );
@@ -75,14 +72,11 @@ class WhyUsSection extends StatelessWidget {
                     children: items.asMap().entries.map((entry) {
                       final idx = entry.key;
                       final item = entry.value;
-                      final direction = idx % 2 == 0
-                          ? RevealDirection.fromRight
-                          : RevealDirection.fromLeft;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 20),
                         child: RevealOnScroll(
-                          direction: direction,
-                          delayMilliseconds: idx * 80,
+                          direction: RevealDirection.flip3D,
+                          delayMilliseconds: idx * 90,
                           child: _buildItem(context, item),
                         ),
                       );

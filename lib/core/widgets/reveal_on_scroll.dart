@@ -15,10 +15,11 @@ enum RevealDirection {
   fromTop,
   scale,
   flip3D,
-  perspectiveTilt,
+  polaroidTilt,
+  elasticPop,
 }
 
-/// Hardware-Accelerated 60 FPS Scroll Reveal Engine — Butter-smooth, zero-lag card entrances.
+/// Hardware-Accelerated 60 FPS Scroll Reveal Engine — Distinct Animation Styles per Section.
 class RevealOnScroll extends StatefulWidget {
   final Widget child;
   final Duration duration;
@@ -51,11 +52,15 @@ class _RevealOnScrollState extends State<RevealOnScroll>
   @override
   void initState() {
     super.initState();
+    final effectiveCurve = widget.direction == RevealDirection.elasticPop
+        ? Curves.easeOutBack
+        : widget.curve;
+
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
     );
-    _animation = CurvedAnimation(parent: _controller, curve: widget.curve);
+    _animation = CurvedAnimation(parent: _controller, curve: effectiveCurve);
     WidgetsBinding.instance.addPostFrameCallback((_) => _attachListener());
   }
 
@@ -128,37 +133,61 @@ class _RevealOnScrollState extends State<RevealOnScroll>
       child: RepaintBoundary(child: widget.child),
       builder: (context, child) {
         final progress = _animation.value;
-        final invProgress = 1.0 - progress;
+        final invProgress = (1.0 - progress).clamp(0.0, 1.0);
 
         double dx = 0;
         double dy = 0;
         double scale = 1.0;
+        final matrix = Matrix4.identity();
 
         switch (widget.direction) {
           case RevealDirection.fromRight:
             dx = invProgress * widget.offset;
             break;
+
           case RevealDirection.fromLeft:
             dx = -invProgress * widget.offset;
             break;
+
           case RevealDirection.fromBottom:
-          case RevealDirection.flip3D:
             dy = invProgress * widget.offset;
             break;
+
           case RevealDirection.fromTop:
             dy = -invProgress * widget.offset;
             break;
+
           case RevealDirection.scale:
-          case RevealDirection.perspectiveTilt:
+            scale = 0.85 + (0.15 * progress);
+            dy = invProgress * (widget.offset * 0.4);
+            break;
+
+          case RevealDirection.flip3D:
+            matrix.setEntry(3, 2, 0.0012);
+            matrix.rotateX(0.35 * invProgress);
+            dy = invProgress * 40;
+            scale = 0.90 + (0.10 * progress);
+            break;
+
+          case RevealDirection.polaroidTilt:
+            matrix.rotateZ(-0.06 * invProgress);
+            dy = invProgress * 45;
             scale = 0.92 + (0.08 * progress);
-            dy = invProgress * (widget.offset * 0.5);
+            break;
+
+          case RevealDirection.elasticPop:
+            scale = 0.70 + (0.30 * progress.clamp(0.0, 1.2));
+            dy = invProgress * 30;
             break;
         }
 
+        matrix.translateByDouble(dx, dy, 0.0, 1.0);
+
         return Opacity(
           opacity: progress.clamp(0.0, 1.0),
-          child: Transform.translate(
-            offset: Offset(dx, dy),
+          child: Transform(
+            transform: matrix,
+            alignment: Alignment.center,
             child: Transform.scale(
               scale: scale,
               child: child,

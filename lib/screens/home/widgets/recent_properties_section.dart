@@ -42,14 +42,11 @@ class RecentPropertiesSection extends StatelessWidget {
                     children: recentApartments.asMap().entries.map((entry) {
                       final idx = entry.key;
                       final apt = entry.value;
-                      final direction = idx == 0
-                          ? RevealDirection.fromRight
-                          : (idx == 1 ? RevealDirection.fromBottom : RevealDirection.fromLeft);
                       return SizedBox(
                         width: cardWidth,
                         child: RevealOnScroll(
-                          direction: direction,
-                          delayMilliseconds: idx * 80,
+                          direction: RevealDirection.fromBottom,
+                          delayMilliseconds: idx * 90,
                           child: ApartmentCard(apartment: apt),
                         ),
                       );

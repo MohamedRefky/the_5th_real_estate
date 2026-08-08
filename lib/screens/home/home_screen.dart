@@ -287,14 +287,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemCount: DummyData.areas.length,
                             itemBuilder: (context, index) {
                               final area = DummyData.areas[index];
-                              final direction = index == 2
-                                  ? RevealDirection.scale
-                                  : (index % 2 == 0
-                                      ? RevealDirection.fromRight
-                                      : RevealDirection.fromLeft);
                               return RevealOnScroll(
-                                direction: direction,
-                                delayMilliseconds: index * 70,
+                                direction: RevealDirection.elasticPop,
+                                delayMilliseconds: index * 80,
                                 child: AreaCard(
                                   areaName: area,
                                   onTap: () {
