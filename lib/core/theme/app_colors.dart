@@ -93,12 +93,12 @@ class AppColors {
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
     colors: [
-      Color(0xFFFCFDFE),
+      Color(0xFFFFFFFF),
       Color(0xFFF0F2F6),
       Color(0xFFC9CDD6),
       Color(0xFF7D8494),
     ],
-    stops: [0.0, 0.4, 0.72, 1.0],
+    stops: [0.0, 0.38, 0.7, 1.0],
   );
 
   /// Platinum Halo Fade — Subtle silver light leaking across section ties

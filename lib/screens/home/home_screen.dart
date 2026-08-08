@@ -6,6 +6,7 @@ import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 // ignore: unused_import
 import '../../core/widgets/animated_background.dart';
+import '../../core/widgets/metallic_gloss.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
 import 'widgets/area_card.dart';
@@ -360,10 +361,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.keyboard_arrow_up_rounded,
-                        color: AppColors.textOnPrimary,
-                        size: 28,
+                      child: Stack(
+                        children: [
+                          const Center(
+                            child: Icon(
+                              Icons.keyboard_arrow_up_rounded,
+                              color: AppColors.textOnPrimary,
+                              size: 28,
+                            ),
+                          ),
+                          Positioned.fill(
+                            child: IgnorePointer(
+                              child: MetallicGloss(
+                                borderRadius: 16,
+                                strength: 0.85,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -475,6 +490,12 @@ class _HeroSection extends StatelessWidget {
                             blurRadius: 30,
                             offset: const Offset(0, 2),
                           ),
+                          Shadow(
+                            color:
+                                AppColors.accentLight2.withValues(alpha: 0.32),
+                            blurRadius: 44,
+                            offset: const Offset(0, 0),
+                          ),
                         ],
                       ),
                     ),
@@ -549,22 +570,34 @@ class _HeroSection extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: ElevatedButton.icon(
-                          onPressed: onBrowseAll,
-                          icon: const Icon(Icons.explore_rounded, size: 22),
-                          label: const Text('تصفح جميع العقارات'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accent,
-                            foregroundColor: AppColors.textOnPrimary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 34,
-                              vertical: 18,
+                        child: Stack(
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: onBrowseAll,
+                              icon: const Icon(Icons.explore_rounded, size: 22),
+                              label: const Text('تصفح جميع العقارات'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.accent,
+                                foregroundColor: AppColors.textOnPrimary,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 34,
+                                  vertical: 18,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                elevation: 0,
+                              ),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: MetallicGloss(
+                                  borderRadius: 18,
+                                  strength: 0.9,
+                                ),
+                              ),
                             ),
-                            elevation: 0,
-                          ),
+                          ],
                         ),
                       ),
                       OutlinedButton.icon(

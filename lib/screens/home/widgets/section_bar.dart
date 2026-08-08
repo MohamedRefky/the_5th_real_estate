@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/metallic_gloss.dart';
 
 /// Ultra-premium section header bar.
 ///
@@ -52,10 +53,23 @@ class SectionBar extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(
-                  icon,
-                  color: AppColors.accent,
-                  size: 28,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Icon(
+                      icon,
+                      color: AppColors.accent,
+                      size: 28,
+                    ),
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: MetallicGloss(
+                          borderRadius: 20,
+                          strength: 0.75,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -77,6 +91,11 @@ class SectionBar extends StatelessWidget {
                   color: Colors.black.withValues(alpha: 0.4),
                   blurRadius: 12,
                   offset: const Offset(0, 2),
+                ),
+                Shadow(
+                  color: AppColors.accentLight2.withValues(alpha: 0.25),
+                  blurRadius: 24,
+                  offset: const Offset(0, 0),
                 ),
               ],
             ),

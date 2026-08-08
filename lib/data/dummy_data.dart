@@ -14,7 +14,7 @@ class DummyData {
     'الأندلس',
     'جاردينيا',
     'بيت الوطن',
-    'النرجس',
+    'النرجس الجديدة',
   ];
 
   /// Mock apartment listings.
@@ -38,7 +38,13 @@ class DummyData {
       isUnderConstruction: false,
       constructionProgress: 1.0,
       whatsappNumber: '+201000000001',
-      amenities: ['مصعد', 'حارس أمن', 'جراج خاص', 'حديقة مركزية', 'تكييف مركزي'],
+      amenities: [
+        'مصعد',
+        'حارس أمن',
+        'جراج خاص',
+        'حديقة مركزية',
+        'تكييف مركزي',
+      ],
     ),
 
     // ─── 2. الأندلس ────────────────────────────────────────────
@@ -182,7 +188,13 @@ class DummyData {
       isUnderConstruction: false,
       constructionProgress: 1.0,
       whatsappNumber: '+201000000005',
-      amenities: ['تراس بانورامي', 'جاكوزي', 'غرفة خادمة', 'مصعد خاص', '٢ جراج'],
+      amenities: [
+        'تراس بانورامي',
+        'جاكوزي',
+        'غرفة خادمة',
+        'مصعد خاص',
+        '٢ جراج',
+      ],
     ),
   ];
 
