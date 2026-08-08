@@ -83,8 +83,34 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _browseKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
+  final GlobalKey _neighborhoodKey = GlobalKey();
+  final GlobalKey _recentKey = GlobalKey();
+  final GlobalKey _howKey = GlobalKey();
+  final GlobalKey _testimonialsKey = GlobalKey();
+  final GlobalKey _whyKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   double _scrollOffset = 0;
+  String? _activeSection;
+
+  static const List<String> _navOrder = [
+    'لماذا نحن',
+    'المميزة',
+    'الأحياء',
+    'أحدث العقارات',
+    'كيف نعمل',
+    'آراء العملاء',
+    'تواصل معنا',
+  ];
+
+  Map<String, GlobalKey> get _sectionKeys => {
+    'لماذا نحن': _whyKey,
+    'المميزة': _browseKey,
+    'الأحياء': _neighborhoodKey,
+    'أحدث العقارات': _recentKey,
+    'كيف نعمل': _howKey,
+    'آراء العملاء': _testimonialsKey,
+    'تواصل معنا': _contactKey,
+  };
 
   @override
   void initState() {
@@ -93,9 +119,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    setState(() {
-      _scrollOffset = _scrollController.offset;
-    });
+    if (!_scrollController.hasClients) return;
+    final offset = _scrollController.offset;
+    String? active;
+    for (final label in _navOrder) {
+      final key = _sectionKeys[label];
+      if (key == null) continue;
+      final ctx = key.currentContext;
+      if (ctx == null) continue;
+      final renderObject = ctx.findRenderObject();
+      if (renderObject is! RenderBox) continue;
+      final dy = renderObject.localToGlobal(Offset.zero).dy;
+      if (dy <= 160) active = label;
+    }
+    if (active != _activeSection || offset != _scrollOffset) {
+      setState(() {
+        _scrollOffset = offset;
+        _activeSection = active;
+      });
+    }
   }
 
   @override
@@ -110,10 +152,15 @@ class _HomeScreenState extends State<HomeScreen> {
     if (ctx == null) return;
     Scrollable.ensureVisible(
       ctx,
-      duration: const Duration(milliseconds: 750),
-      curve: Curves.easeOutCubic,
-      alignment: 0.08,
+      duration: const Duration(milliseconds: 700),
+      curve: Curves.easeInOutCubic,
+      alignment: 0.0,
     );
+  }
+
+  void _scrollToSection(String label) {
+    final key = _sectionKeys[label];
+    if (key != null) _scrollTo(key);
   }
 
   void _scrollToTop() {
@@ -242,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 64),
 
                 // ── Why Choose Us ─────────────────────────────────────
-                const WhyUsSection(),
+                SizedBox(key: _whyKey, child: const WhyUsSection()),
 
                 const SizedBox(height: 64),
 
@@ -269,6 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // ── Neighborhood Grid ─────────────────────────────────
                 Padding(
+                  key: _neighborhoodKey,
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Center(
                     child: ConstrainedBox(
@@ -316,17 +364,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 64),
 
                 // ── Recently Added ────────────────────────────────────
-                const RecentPropertiesSection(),
+                SizedBox(
+                  key: _recentKey,
+                  child: const RecentPropertiesSection(),
+                ),
 
                 const SizedBox(height: 64),
 
                 // ── How It Works ──────────────────────────────────────
-                const HowItWorksSection(),
+                SizedBox(key: _howKey, child: const HowItWorksSection()),
 
                 const SizedBox(height: 64),
 
                 // ── Testimonials ──────────────────────────────────────
-                const TestimonialsSection(),
+                SizedBox(
+                  key: _testimonialsKey,
+                  child: const TestimonialsSection(),
+                ),
 
                 const SizedBox(height: 64),
 
@@ -344,7 +398,20 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // ── 5. Animated Scroll-to-Top FAB ──────────────────────────
+          // ── 5. Floating Glass Top Navigation Bar ────────────────
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: _HomeTopBar(
+              activeSection: _activeSection,
+              labels: _navOrder,
+              onSelect: _scrollToSection,
+              onHomeTap: _scrollToTop,
+            ),
+          ),
+
+          // ── 6. Animated Scroll-to-Top FAB ──────────────────────────
           Positioned(
             bottom: 28,
             right: 28,
@@ -408,6 +475,179 @@ class _HomeScreenState extends State<HomeScreen> {
     if (width >= 900) return 3;
     if (width >= 550) return 2;
     return 1;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Floating Glass Top Navigation Bar
+// ═══════════════════════════════════════════════════════════════════
+
+class _HomeTopBar extends StatelessWidget {
+  final String? activeSection;
+  final List<String> labels;
+  final ValueChanged<String> onSelect;
+  final VoidCallback onHomeTap;
+
+  const _HomeTopBar({
+    required this.activeSection,
+    required this.labels,
+    required this.onSelect,
+    required this.onHomeTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SafeArea(
+      bottom: false,
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            height: 58,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.background.withValues(alpha: 0.35),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  width: 0.6,
+                ),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // Brand — tap to scroll to top
+                InkWell(
+                  onTap: onHomeTap,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.accentGradient,
+                            borderRadius: BorderRadius.circular(11),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.accent.withValues(alpha: 0.35),
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.domain_rounded,
+                            color: AppColors.textOnPrimary,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'The 5th',
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            color: AppColors.accentLight2,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 12),
+
+                // Section links — horizontally scrollable
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: Row(
+                      children: [
+                        for (final label in labels)
+                          _NavPill(
+                            label: label,
+                            active: label == activeSection,
+                            onTap: () => onSelect(label),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavPill extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _NavPill({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+            decoration: BoxDecoration(
+              color: active
+                  ? AppColors.accent.withValues(alpha: 0.22)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: active
+                    ? AppColors.accent.withValues(alpha: 0.55)
+                    : Colors.transparent,
+                width: 0.8,
+              ),
+            ),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: active
+                    ? AppColors.accentLight2
+                    : Colors.white.withValues(alpha: 0.85),
+                fontWeight: active ? FontWeight.w800 : FontWeight.w600,
+                fontSize: 13.5,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
