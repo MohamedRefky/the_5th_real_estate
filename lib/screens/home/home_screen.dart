@@ -1,4 +1,4 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../app/app_router.dart';
@@ -70,17 +70,43 @@ class GlassContainer extends StatelessWidget {
 }
 
 /// Home Screen — Ultra-Premium Landing Page with Full Glassmorphism & Gold Glow.
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _browseKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
+  final ScrollController _scrollController = ScrollController();
+  double _scrollOffset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    setState(() {
+      _scrollOffset = _scrollController.offset;
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _scrollTo(GlobalKey key) {
-    final context = key.currentContext;
-    if (context == null) return;
+    final ctx = key.currentContext;
+    if (ctx == null) return;
     Scrollable.ensureVisible(
-      context,
+      ctx,
       duration: const Duration(milliseconds: 750),
       curve: Curves.easeOutCubic,
       alignment: 0.08,
@@ -97,6 +123,7 @@ class HomeScreen extends StatelessWidget {
         shapeColor: AppColors.accent,
         shapeCount: 8,
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Column(
             children: [
               // ── 1. Massive Full-Width Hero Section ───────────────────
@@ -105,6 +132,7 @@ class HomeScreen extends StatelessWidget {
                 offset: 20,
                 child: _HeroSection(
                   theme: theme,
+                  scrollOffset: _scrollOffset,
                   onBrowseAll: () => _scrollTo(_browseKey),
                   onContact: () => _scrollTo(_contactKey),
                 ),
@@ -228,26 +256,75 @@ class HomeScreen extends StatelessWidget {
 
 class _HeroSection extends StatelessWidget {
   final ThemeData theme;
+  final double scrollOffset;
   final VoidCallback? onBrowseAll;
   final VoidCallback? onContact;
 
+  /// Parallax speed factor: 0.0 = background is fixed, 1.0 = scrolls normally.
+  /// 0.4 gives a natural, smooth depth illusion on web.
+  static const double _parallaxFactor = 0.4;
+
   const _HeroSection({
     required this.theme,
+    required this.scrollOffset,
     this.onBrowseAll,
     this.onContact,
   });
 
   @override
   Widget build(BuildContext context) {
+    // The parallax translation: the image shifts UP at a fraction of scroll.
+    final double parallaxOffset = scrollOffset * _parallaxFactor;
+
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: AppColors.heroGradient,
-      ),
+      // clipBehavior prevents the over-sized background from bleeding out.
+      clipBehavior: Clip.hardEdge,
+      decoration: const BoxDecoration(),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Animated Ambient Gold Glow Backdrop
+          // ── Parallax Background Image ────────────────────────
+          // The image is 30% taller than the container so it has
+          // room to translate without exposing blank space.
+          Positioned(
+            top: -parallaxOffset,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Transform.translate(
+              offset: Offset(0, -parallaxOffset * 0.2),
+              child: Image.asset(
+                'assets/image/background.jpeg',
+                fit: BoxFit.cover,
+                width: double.infinity,
+                // Height exceeds container to allow upward shift.
+                height: double.infinity,
+                alignment: Alignment.center,
+              ),
+            ),
+          ),
+
+          // ── Dark Gradient Overlay ─────────────────────────────
+          // Preserves readability of the gold text/glass elements.
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.background.withValues(alpha: 0.70),
+                    AppColors.background.withValues(alpha: 0.80),
+                    AppColors.background.withValues(alpha: 0.92),
+                  ],
+                  stops: const [0.0, 0.5, 1.0],
+                ),
+              ),
+            ),
+          ),
+
+          // ── Animated Ambient Gold Glow Backdrop ───────────────
           Positioned.fill(
             child: AnimatedBackground(
               shapeColor: AppColors.accent,
@@ -256,6 +333,7 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
 
+          // ── Foreground Content ────────────────────────────────
           SafeArea(
             child: Padding(
               padding:
