@@ -111,7 +111,9 @@ class ApartmentDetailsScreen extends StatelessWidget {
                         child: Text(
                           apartment.description,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            height: 1.7,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w500,
+                            height: 1.8,
                             color: AppColors.textPrimary,
                           ),
                         ),

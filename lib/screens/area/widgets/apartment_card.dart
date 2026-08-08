@@ -256,9 +256,11 @@ class _ApartmentCardState extends State<ApartmentCard> {
                       // Description directly below title
                       Text(
                         apt.description,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
-                          height: 1.45,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          height: 1.5,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
