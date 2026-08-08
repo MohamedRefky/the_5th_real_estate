@@ -29,6 +29,9 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/image/
     - assets/image/background.jpeg
+    - assets/image/bait_elwatan.webp
+    - assets/image/gardenia.webp
 
  
