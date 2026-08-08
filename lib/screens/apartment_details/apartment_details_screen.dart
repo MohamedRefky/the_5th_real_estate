@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/app_router.dart';
@@ -10,6 +11,26 @@ import 'widgets/construction_timeline.dart';
 import 'widgets/facade_cover.dart';
 import 'widgets/image_gallery_placeholder.dart';
 import 'widgets/video_placeholder.dart';
+
+/// Helper launcher for WhatsApp messaging with cross-platform fallback.
+Future<void> openWhatsAppForApartment(Apartment apartment) async {
+  final message = Uri.encodeComponent(
+    'مرحبًا، أنا مهتم بـ "${apartment.title}" في ${apartment.area}. '
+    'هل يمكنني الحصول على مزيد من المعلومات وتحديد موعد معاينة؟',
+  );
+  final url = Uri.parse(
+    'https://wa.me/${apartment.whatsappNumber}?text=$message',
+  );
+  try {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  } catch (_) {
+    await launchUrl(url);
+  }
+}
 
 /// Apartment Details Screen — Ultra-premium listing page.
 class ApartmentDetailsScreen extends StatelessWidget {
@@ -127,6 +148,11 @@ class ApartmentDetailsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    const SizedBox(height: 20),
+
+                    // ── WhatsApp Direct Callout Banner ───────────────
+                    _WhatsAppBannerCard(apartment: apartment, theme: theme),
 
                     const SizedBox(height: 20),
 
@@ -259,27 +285,59 @@ class _TitleSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        // Price Badge with Gold Gradient
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: AppColors.accentGradient,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.35),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
+        // Price Tag & Direct WhatsApp CTA
+        Wrap(
+          spacing: 14,
+          runSpacing: 14,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: AppColors.accentGradient,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.accent.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Text(
-            apartment.formattedPrice,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: AppColors.textOnPrimary,
-              fontWeight: FontWeight.w800,
+              child: Text(
+                apartment.formattedPrice,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: AppColors.textOnPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ),
-          ),
+            ElevatedButton.icon(
+              onPressed: () => openWhatsAppForApartment(apartment),
+              icon: const FaIcon(
+                FontAwesomeIcons.whatsapp,
+                size: 22,
+                color: Colors.white,
+              ),
+              label: Text(
+                'تواصل عبر واتساب',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF25D366),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+                shadowColor: const Color(0xFF25D366).withValues(alpha: 0.4),
+              ),
+            ),
+          ],
         ),
 
         // Delivery date
@@ -645,19 +703,6 @@ class _WhatsAppCTA extends StatelessWidget {
 
   const _WhatsAppCTA({required this.apartment});
 
-  Future<void> _openWhatsApp() async {
-    final message = Uri.encodeComponent(
-      'مرحبًا، أنا مهتم بـ "${apartment.title}" في ${apartment.area}. '
-      'هل يمكنني الحصول على مزيد من المعلومات وتحديد موعد معاينة؟',
-    );
-    final url = Uri.parse(
-      'https://wa.me/${apartment.whatsappNumber}?text=$message',
-    );
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -682,10 +727,14 @@ class _WhatsAppCTA extends StatelessWidget {
               width: double.infinity,
               height: 56,
               child: ElevatedButton.icon(
-                onPressed: _openWhatsApp,
-                icon: const Icon(Icons.chat_rounded, size: 24),
+                onPressed: () => openWhatsAppForApartment(apartment),
+                icon: const FaIcon(
+                  FontAwesomeIcons.whatsapp,
+                  size: 24,
+                  color: Colors.white,
+                ),
                 label: Text(
-                  'تواصل مع المالك لتحديد معاينة',
+                  'تواصل عبر واتساب لتحديد معاينة',
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
@@ -705,6 +754,86 @@ class _WhatsAppCTA extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _WhatsAppBannerCard extends StatelessWidget {
+  final Apartment apartment;
+  final ThemeData theme;
+
+  const _WhatsAppBannerCard({required this.apartment, required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF25D366).withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: const Color(0xFF25D366).withValues(alpha: 0.4),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFF25D366),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF25D366).withValues(alpha: 0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const FaIcon(
+              FontAwesomeIcons.whatsapp,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'مهتم بهذه الشقة؟',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'تواصل مباشرة مع المالك عبر واتساب للاستفسار وحجز المعاينة',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          ElevatedButton(
+            onPressed: () => openWhatsAppForApartment(apartment),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF25D366),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            child: const Text('تواصل الآن', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
   }

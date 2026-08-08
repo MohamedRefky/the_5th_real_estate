@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
 import 'section_bar.dart';
@@ -9,6 +10,35 @@ import 'section_bar.dart';
 /// Contact Us section — WhatsApp & Facebook UI Cards.
 class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
+
+  Future<void> _openWhatsApp() async {
+    final message = Uri.encodeComponent(
+      'مرحبًا، أريد الاستفسار عن العقارات المتاحة في التجمع الخامس وتحديد موعد معاينة',
+    );
+    final url = Uri.parse('https://wa.me/+201000000001?text=$message');
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {
+      await launchUrl(url);
+    }
+  }
+
+  Future<void> _openFacebook() async {
+    final url = Uri.parse('https://facebook.com');
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } catch (_) {
+      await launchUrl(url);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +81,7 @@ class ContactSection extends StatelessWidget {
                             ),
                             badgeText: 'واتساب',
                             accentColor: const Color(0xFF25D366),
-                            onTap: () {
-                              // TODO: Add WhatsApp link here
-                            },
+                            onTap: _openWhatsApp,
                           ),
                         ),
                         const SizedBox(width: 24),
@@ -69,9 +97,7 @@ class ContactSection extends StatelessWidget {
                             ),
                             badgeText: 'فيسبوك',
                             accentColor: const Color(0xFF1877F2),
-                            onTap: () {
-                              // TODO: Add Facebook link here
-                            },
+                            onTap: _openFacebook,
                           ),
                         ),
                       ],
@@ -91,9 +117,7 @@ class ContactSection extends StatelessWidget {
                         ),
                         badgeText: 'واتساب',
                         accentColor: const Color(0xFF25D366),
-                        onTap: () {
-                          // TODO: Add WhatsApp link here
-                        },
+                        onTap: _openWhatsApp,
                       ),
                       const SizedBox(height: 20),
                       _ContactCard(
@@ -107,9 +131,7 @@ class ContactSection extends StatelessWidget {
                         ),
                         badgeText: 'فيسبوك',
                         accentColor: const Color(0xFF1877F2),
-                        onTap: () {
-                          // TODO: Add Facebook link here
-                        },
+                        onTap: _openFacebook,
                       ),
                     ],
                   );
