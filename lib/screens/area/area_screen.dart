@@ -116,16 +116,18 @@ class _AreaScreenState extends State<AreaScreen> {
                         constraints: const BoxConstraints(maxWidth: 800),
                         child: Column(
                           children: [
-                            ShaderMask(
-                              blendMode: BlendMode.srcIn,
-                              shaderCallback: (bounds) =>
-                                  AppColors.accentGradient.createShader(bounds),
-                              child: Text(
-                                'شقق ${widget.areaName}',
-                                style: theme.textTheme.displaySmall?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            Text(
+                              'شقق ${widget.areaName}',
+                              style: theme.textTheme.displaySmall?.copyWith(
+                                color: AppColors.accent,
+                                fontWeight: FontWeight.w800,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 8),

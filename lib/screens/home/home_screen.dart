@@ -452,23 +452,30 @@ class _HeroSection extends StatelessWidget {
 
                   const SizedBox(height: 26),
 
-                  // Main Title with Shader Mask Gold Gradient
-                  ShaderMask(
-                    blendMode: BlendMode.srcIn,
-                    shaderCallback: (bounds) =>
-                        AppColors.accentGradient.createShader(bounds),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        'عقارات\nالتجمع الخامس',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.displayLarge?.copyWith(
-                          fontSize: 58,
-                          height: 1.12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.5,
-                        ),
+                  // Main Title — Rich Champagne Gold with Luxury Depth Shadows
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      'عقارات\nالتجمع الخامس',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.displayLarge?.copyWith(
+                        fontSize: 58,
+                        height: 1.12,
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                          Shadow(
+                            color: AppColors.accentDark.withValues(alpha: 0.4),
+                            blurRadius: 30,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                     ),
                   ),
