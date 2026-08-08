@@ -23,19 +23,15 @@ class AppRouter {
         return _buildRoute(HomeScreen(), settings);
 
       case RoutesNames.area:
-        final areaName = settings.arguments;
-        if (areaName is! String) {
-          // Restored route without arguments (e.g. after an app restart).
-          return _buildRoute(HomeScreen(), settings);
-        }
+        final areaName = (settings.arguments is String)
+            ? (settings.arguments as String)
+            : 'المستثمرين';
         return _buildRoute(AreaScreen(areaName: areaName), settings);
 
       case RoutesNames.apartmentDetails:
-        final apartmentId = settings.arguments;
-        if (apartmentId is! String) {
-          // Restored route without arguments (e.g. after an app restart).
-          return _buildRoute(HomeScreen(), settings);
-        }
+        final apartmentId = (settings.arguments is String)
+            ? (settings.arguments as String)
+            : 'apt_001';
         return _buildRoute(
           ApartmentDetailsScreen(apartmentId: apartmentId),
           settings,
