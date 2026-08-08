@@ -524,7 +524,7 @@ class _HeroSectionState extends State<_HeroSection>
 
                   const SizedBox(height: 26),
 
-                  // Main Title — Glowing Champagne Gold Focal Point
+                  // Main Title — Ultra-Bright Luminous Font Color (Sharp & Pure)
                   _HeroEntrance(
                     animation: _steps[2],
                     child: FittedBox(
@@ -535,24 +535,14 @@ class _HeroSectionState extends State<_HeroSection>
                         style: theme.textTheme.displayLarge?.copyWith(
                           fontSize: 58,
                           height: 1.12,
-                          color: AppColors.accent,
+                          color: const Color(0xFFFFF6DF),
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.5,
                           shadows: [
                             Shadow(
-                              color: Colors.black.withValues(alpha: 0.85),
-                              blurRadius: 24,
-                              offset: const Offset(0, 4),
-                            ),
-                            Shadow(
-                              color: AppColors.accent.withValues(alpha: 0.55),
-                              blurRadius: 36,
-                              offset: const Offset(0, 2),
-                            ),
-                            Shadow(
-                              color: AppColors.accentLight2.withValues(alpha: 0.45),
-                              blurRadius: 54,
-                              offset: const Offset(0, 0),
+                              color: Colors.black.withValues(alpha: 0.90),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
                             ),
                           ],
                         ),
