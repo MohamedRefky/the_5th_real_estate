@@ -26,18 +26,13 @@ class AppColors {
   /// Medium Twilight Slate
   static const Color primaryMedium = Color(0xFF1D3050);
 
-  // ─── Refined Warm Gold Accents ──────────────────────────────────
-  /// Warm Gold — Matches the golden building lights in the image
-  static const Color accent = Color(0xFFDCBB6E);
-
-  /// Light Warm Gold
-  static const Color accentLight2 = Color(0xFFF0DDA6);
-
-  /// Rich Amber Gold
-  static const Color accentDark = Color(0xFFB8923A);
-
-  /// Translucent Gold Tint — Badges & icon backgrounds (12% opacity)
-  static const Color accentLight = Color(0x1FDCBB6E);
+  // ─── Modern Emerald Teal Accents ────────────────────────────────
+  /// Modern Emerald Teal — Highlights, icons, primary buttons
+// ─── Cool Platinum Accents ──────────────────────────────────────
+static const Color accent = Color(0xFFC9CDD6);
+static const Color accentLight2 = Color(0xFFE8EAEE);
+static const Color accentDark = Color(0xFF8E94A0);
+static const Color accentLight = Color(0x1FC9CDD6);
 
   // ─── Dividers & Borders ─────────────────────────────────────────
   /// Warm Navy Border
@@ -80,14 +75,14 @@ class AppColors {
     stops: [0.0, 0.5, 1.0],
   );
 
-  /// Warm Gold Accent Gradient
+  /// Modern Emerald Teal Accent Gradient
   static const LinearGradient accentGradient = LinearGradient(
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
     colors: [
-      Color(0xFFE5C878),
-      Color(0xFFDCBB6E),
-      Color(0xFFB8923A),
+      Color(0xFF7FE5D8),
+      Color(0xFF2DD4BF),
+      Color(0xFF0F9488),
     ],
   );
 
