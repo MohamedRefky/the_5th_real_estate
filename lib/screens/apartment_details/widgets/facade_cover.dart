@@ -26,19 +26,24 @@ class FacadeCoverPlaceholder extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      height: 320,
+      height: 360,
       decoration: BoxDecoration(
         gradient: AppColors.heroGradient,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.35),
+          color: AppColors.accent.withValues(alpha: 0.45),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.2),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
+            color: AppColors.accent.withValues(alpha: 0.15),
+            blurRadius: 32,
+            offset: const Offset(0, 12),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.5),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -69,39 +74,81 @@ class FacadeCoverPlaceholder extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.2),
-                    Colors.black.withValues(alpha: 0.65),
+                    Colors.black.withValues(alpha: 0.25),
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.8),
                   ],
+                  stops: const [0.0, 0.4, 1.0],
                 ),
               ),
             ),
           ),
+          // Top right gold badge
           Positioned(
-            top: 16,
-            right: 16,
+            top: 18,
+            right: 18,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                gradient: AppColors.accentGradient,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.workspace_premium_rounded,
+                    size: 16,
+                    color: AppColors.textOnPrimary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'صورة واجهة العمارة الحقيقية',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.textOnPrimary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Top left location pill
+          Positioned(
+            top: 18,
+            left: 18,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.65),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: AppColors.accent.withValues(alpha: 0.6),
+                  color: AppColors.accent.withValues(alpha: 0.5),
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
-                    Icons.domain_rounded,
-                    size: 16,
+                    Icons.location_on_rounded,
+                    size: 15,
                     color: AppColors.accent,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 5),
                   Text(
-                    'صورة واجهة العمارة',
+                    area ?? 'التجمع الخامس',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textPrimary,
+                      color: AppColors.accent,
                       fontWeight: FontWeight.w700,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -120,10 +167,21 @@ class FacadeCoverPlaceholder extends StatelessWidget {
       children: [
         // Large soft building silhouette icon
         Center(
-          child: Icon(
-            Icons.apartment_rounded,
-            size: 150,
-            color: AppColors.accent.withValues(alpha: 0.12),
+          child: Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: AppColors.accent.withValues(alpha: 0.06),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.15),
+                width: 1.5,
+              ),
+            ),
+            child: Icon(
+              Icons.apartment_rounded,
+              size: 110,
+              color: AppColors.accent.withValues(alpha: 0.25),
+            ),
           ),
         ),
 
@@ -132,14 +190,14 @@ class FacadeCoverPlaceholder extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.55),
+                  Colors.black.withValues(alpha: 0.85),
                 ],
               ),
             ),
@@ -149,32 +207,39 @@ class FacadeCoverPlaceholder extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.18),
+                    gradient: AppColors.accentGradient,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.accent.withValues(alpha: 0.5),
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.accent.withValues(alpha: 0.3),
+                        blurRadius: 14,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: const Icon(
                     Icons.photo_camera_front_rounded,
-                    size: 26,
-                    color: AppColors.accent,
+                    size: 24,
+                    color: AppColors.textOnPrimary,
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 Text(
-                  'صورة واجهة الشقة',
+                  'غلاف وواجهة الشقة',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 17,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'سيتم إضافة صورة الواجهة الحقيقية قريبًا',
+                  'مكان مخصص لعرض صور واجهة العمائر والمشاريع المعمارية',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
+                    fontSize: 13,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),

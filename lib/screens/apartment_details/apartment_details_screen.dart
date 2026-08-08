@@ -487,32 +487,41 @@ class _StatCard extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: AppColors.divider.withValues(alpha: 0.6),
+          color: AppColors.accent.withValues(alpha: 0.35),
+          width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            color: AppColors.accent.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.accentLight,
-              borderRadius: BorderRadius.circular(12),
+              gradient: AppColors.accentGradient,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.accent.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-            child: Icon(icon, size: 24, color: AppColors.accent),
+            child: Icon(icon, size: 22, color: AppColors.textOnPrimary),
           ),
           const SizedBox(height: 12),
           Text(
             value,
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
               color: AppColors.textPrimary,
+              fontSize: 18,
             ),
           ),
           const SizedBox(height: 4),
@@ -616,73 +625,92 @@ class _DetailsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final details = [
-      ('الحي', apartment.area),
-      ('المساحة', '${apartment.areaSqm.toInt()} م²'),
-      ('الغرف', '${apartment.rooms} غرف'),
-      ('الحمامات', '${apartment.bathrooms} حمام'),
-      ('الدور', apartment.floorLabel),
-      ('إجمالي الأدوار', '${apartment.totalFloors} أدوار'),
-      ('التشطيب', apartment.finishingStatus.label),
-      ('السعر', apartment.formattedPrice),
+      (Icons.location_on_rounded, 'الحي', apartment.area),
+      (Icons.square_foot_rounded, 'المساحة الإجمالية', '${apartment.areaSqm.toInt()} م²'),
+      (Icons.bed_rounded, 'عدد غرف النوم', '${apartment.rooms} غرف'),
+      (Icons.bathtub_rounded, 'عدد الحمامات', '${apartment.bathrooms} حمام'),
+      (Icons.layers_rounded, 'الدور الحالي', apartment.floorLabel),
+      (Icons.apartment_rounded, 'إجمالي أدوار المبنى', '${apartment.totalFloors} أدوار'),
+      (Icons.brush_rounded, 'مستوى التشطيب', apartment.finishingStatus.label),
+      (Icons.monetization_on_rounded, 'السعر الإجمالي', apartment.formattedPrice),
       if (apartment.formattedDeliveryDate != null)
-        ('موعد التسليم المتوقع', apartment.formattedDeliveryDate!),
+        (Icons.event_rounded, 'موعد التسليم المتوقع', apartment.formattedDeliveryDate!),
+      (Icons.phone_iphone_rounded, 'رقم التواصل والمعاينة', apartment.whatsappNumber),
     ];
 
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: AppColors.divider.withValues(alpha: 0.6),
+          color: AppColors.accent.withValues(alpha: 0.35),
+          width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            color: AppColors.accent.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Column(
         children: List.generate(details.length, (index) {
-          final (label, value) = details[index];
+          final (icon, label, value) = details[index];
           final isLast = index == details.length - 1;
           final isEven = index.isEven;
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
             decoration: BoxDecoration(
               color: isEven
                   ? AppColors.surface
-                  : AppColors.background.withValues(alpha: 0.5),
+                  : AppColors.cream.withValues(alpha: 0.7),
               borderRadius: isLast
-                  ? const BorderRadius.vertical(bottom: Radius.circular(20))
+                  ? const BorderRadius.vertical(bottom: Radius.circular(22))
                   : (index == 0
-                      ? const BorderRadius.vertical(top: Radius.circular(20))
+                      ? const BorderRadius.vertical(top: Radius.circular(22))
                       : null),
               border: isLast
                   ? null
                   : Border(
                       bottom: BorderSide(
-                        color: AppColors.divider.withValues(alpha: 0.4),
-                        width: 0.5,
+                        color: AppColors.accent.withValues(alpha: 0.15),
+                        width: 0.8,
                       ),
                     ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  label,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        icon,
+                        size: 18,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      label,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
                   value,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
+                    color: label == 'السعر الإجمالي' ? AppColors.accent : AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -707,35 +735,40 @@ class _WhatsAppCTA extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.12),
-            blurRadius: 24,
-            offset: const Offset(0, -6),
+    return SizedBox(
+      height: 84,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          border: const Border(
+            top: BorderSide(color: AppColors.divider, width: 1),
           ),
-        ],
-      ),
-      child: SafeArea(
-        child: Center(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: Align(
+          alignment: Alignment.center,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 500),
             child: SizedBox(
               width: double.infinity,
-              height: 56,
+              height: 52,
               child: ElevatedButton.icon(
                 onPressed: () => openWhatsAppForApartment(apartment),
                 icon: const FaIcon(
                   FontAwesomeIcons.whatsapp,
-                  size: 24,
+                  size: 22,
                   color: Colors.white,
                 ),
                 label: Text(
                   'تواصل عبر واتساب لتحديد معاينة',
-                  style: theme.textTheme.labelLarge?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
@@ -745,9 +778,9 @@ class _WhatsAppCTA extends StatelessWidget {
                   backgroundColor: const Color(0xFF25D366),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  elevation: 6,
+                  elevation: 4,
                   shadowColor: const Color(0xFF25D366).withValues(alpha: 0.4),
                 ),
               ),
