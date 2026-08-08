@@ -62,8 +62,9 @@ class ApartmentDetailsScreen extends StatelessWidget {
         ),
       ),
 
-      // ── Sticky WhatsApp CTA ──────────────────────────────────
-      bottomNavigationBar: _WhatsAppCTA(apartment: apartment),
+      // ── Floating Side WhatsApp CTA ────────────────────────────
+      floatingActionButton: _FloatingWhatsAppButton(apartment: apartment),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
 
       body: SingleChildScrollView(
         child: Center(
@@ -285,59 +286,27 @@ class _TitleSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        // Price Tag & Direct WhatsApp CTA
-        Wrap(
-          spacing: 14,
-          runSpacing: 14,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              decoration: BoxDecoration(
-                gradient: AppColors.accentGradient,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.35),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+        // Price Tag Badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: AppColors.accentGradient,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
-              child: Text(
-                apartment.formattedPrice,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: AppColors.textOnPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+            ],
+          ),
+          child: Text(
+            apartment.formattedPrice,
+            style: theme.textTheme.headlineMedium?.copyWith(
+              color: AppColors.textOnPrimary,
+              fontWeight: FontWeight.w800,
             ),
-            ElevatedButton.icon(
-              onPressed: () => openWhatsAppForApartment(apartment),
-              icon: const FaIcon(
-                FontAwesomeIcons.whatsapp,
-                size: 22,
-                color: Colors.white,
-              ),
-              label: Text(
-                'تواصل عبر واتساب',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF25D366),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 4,
-                shadowColor: const Color(0xFF25D366).withValues(alpha: 0.4),
-              ),
-            ),
-          ],
+          ),
         ),
 
         // Delivery date
@@ -433,33 +402,28 @@ class _StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 14,
-      runSpacing: 14,
+      spacing: 10,
+      runSpacing: 10,
       children: [
         _StatCard(
           icon: Icons.bed_rounded,
-          value: '${apartment.rooms}',
-          label: 'غرف نوم',
+          value: '${apartment.rooms} غرف',
+          label: 'غرف النوم',
         ),
         _StatCard(
           icon: Icons.bathtub_rounded,
-          value: '${apartment.bathrooms}',
-          label: 'حمامات',
+          value: '${apartment.bathrooms} حمامات',
+          label: 'الحمامات',
         ),
         _StatCard(
           icon: Icons.square_foot_rounded,
-          value: '${apartment.areaSqm.toInt()}',
-          label: 'متر مربع',
+          value: '${apartment.areaSqm.toInt()} م²',
+          label: 'المساحة',
         ),
         _StatCard(
           icon: Icons.layers_rounded,
           value: apartment.floorLabel,
           label: 'الدور',
-        ),
-        _StatCard(
-          icon: Icons.apartment_rounded,
-          value: '${apartment.totalFloors}',
-          label: 'إجمالي الأدوار',
         ),
       ],
     );
@@ -481,57 +445,54 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      width: 140,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.35),
-          width: 1.2,
+          color: AppColors.accent.withValues(alpha: 0.3),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
+            color: AppColors.accent.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
               gradient: AppColors.accentGradient,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.accent.withValues(alpha: 0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 16, color: AppColors.textOnPrimary),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                value,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                  fontSize: 13,
                 ),
-              ],
-            ),
-            child: Icon(icon, size: 22, color: AppColors.textOnPrimary),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
+              ),
+              Text(
+                label,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 11,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -726,64 +687,63 @@ class _DetailsTable extends StatelessWidget {
 // WhatsApp CTA
 // ═══════════════════════════════════════════════════════════════════
 
-class _WhatsAppCTA extends StatelessWidget {
+class _FloatingWhatsAppButton extends StatelessWidget {
   final Apartment apartment;
 
-  const _WhatsAppCTA({required this.apartment});
+  const _FloatingWhatsAppButton({required this.apartment});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return SizedBox(
-      height: 84,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: const Border(
-            top: BorderSide(color: AppColors.divider, width: 1),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: Align(
-          alignment: Alignment.center,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: () => openWhatsAppForApartment(apartment),
-                icon: const FaIcon(
-                  FontAwesomeIcons.whatsapp,
-                  size: 22,
-                  color: Colors.white,
-                ),
-                label: Text(
-                  'تواصل عبر واتساب لتحديد معاينة',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF25D366),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 4,
-                  shadowColor: const Color(0xFF25D366).withValues(alpha: 0.4),
-                ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => openWhatsAppForApartment(apartment),
+          borderRadius: BorderRadius.circular(30),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF25D366),
+                  Color(0xFF128C7E),
+                ],
               ),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.35),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF25D366).withValues(alpha: 0.5),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                FaIcon(
+                  FontAwesomeIcons.whatsapp,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'تواصل معنا',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
