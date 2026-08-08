@@ -76,9 +76,9 @@ class _ApartmentCardState extends State<ApartmentCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ── 1. Dominant Image Box (210px Height) ──────────────────
+                // ── 1. Dominant Image Box (190px Height) ──────────────────
                 SizedBox(
-                  height: 210,
+                  height: 190,
                   width: double.infinity,
                   child: Stack(
                     children: [

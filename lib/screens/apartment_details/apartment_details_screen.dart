@@ -5,11 +5,12 @@ import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/animated_background.dart';
 import '../../core/widgets/info_chip.dart';
-import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
 import '../../models/apartment.dart';
 import 'widgets/construction_timeline.dart';
+import 'widgets/facade_cover.dart';
 import 'widgets/image_gallery_placeholder.dart';
+import 'widgets/video_placeholder.dart';
 
 /// Apartment Details Screen — Ultra-premium listing page.
 class ApartmentDetailsScreen extends StatelessWidget {
@@ -56,66 +57,77 @@ class ApartmentDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Image Gallery ──────────────────────────────
-                    const RevealOnScroll(
-                      duration: Duration(milliseconds: 800),
-                      offset: 16,
-                      child: ImageGalleryPlaceholder(),
+                    // ── Facade Cover Photo ─────────────────────────
+                    FacadeCoverPlaceholder(
+                      imageUrl: apartment.coverImageUrl,
+                      area: apartment.area,
                     ),
 
                     const SizedBox(height: 20),
 
                     // ── Title & Price Header ───────────────────────
-                    RevealOnScroll(
-                      child: _TitleSection(apartment: apartment, theme: theme),
-                    ),
+                    _TitleSection(apartment: apartment, theme: theme),
 
                     const SizedBox(height: 18),
 
                     // ── Key Stats ──────────────────────────────────
-                    RevealOnScroll(
-                      delayMilliseconds: 80,
-                      child: _StatsSection(apartment: apartment),
+                    _StatsSection(apartment: apartment),
+
+                    const SizedBox(height: 20),
+
+                    // ── Walkthrough Video ──────────────────────────
+                    _SectionHeader(
+                      title: 'فيديو معاينة الشقة',
+                      icon: Icons.videocam_rounded,
+                      theme: theme,
                     ),
+                    const SizedBox(height: 10),
+                    VideoPlaceholder(videoUrl: apartment.videoUrl),
+
+                    const SizedBox(height: 20),
+
+                    // ── Interior Gallery ──────────────────────────
+                    _SectionHeader(
+                      title: 'معاينة الغرف والتصميم الداخلي',
+                      icon: Icons.photo_library_rounded,
+                      theme: theme,
+                    ),
+                    const SizedBox(height: 10),
+                    const ImageGalleryPlaceholder(),
 
                     const SizedBox(height: 20),
 
                     // ── Description ────────────────----------------
-                    RevealOnScroll(
-                      child: _SectionHeader(
-                        title: 'الوصف والتفاصيل',
-                        icon: Icons.description_rounded,
-                        theme: theme,
-                      ),
+                    _SectionHeader(
+                      title: 'الوصف والتفاصيل الكاملة',
+                      icon: Icons.description_rounded,
+                      theme: theme,
                     ),
                     const SizedBox(height: 10),
-                    RevealOnScroll(
-                      delayMilliseconds: 100,
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: AppColors.divider.withValues(alpha: 0.6),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.04),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: AppColors.divider.withValues(alpha: 0.6),
                         ),
-                        child: Text(
-                          apartment.description,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontSize: 19,
-                            fontWeight: FontWeight.w500,
-                            height: 1.8,
-                            color: AppColors.textPrimary,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.04),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
                           ),
+                        ],
+                      ),
+                      child: Text(
+                        apartment.description,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w500,
+                          height: 1.8,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                     ),
@@ -124,20 +136,15 @@ class ApartmentDetailsScreen extends StatelessWidget {
 
                     // ── Amenities ──────────────────────────────────
                     if (apartment.amenities.isNotEmpty) ...[
-                      RevealOnScroll(
-                        child: _SectionHeader(
-                          title: 'المميزات والتسهيلات',
-                          icon: Icons.star_rounded,
-                          theme: theme,
-                        ),
+                      _SectionHeader(
+                        title: 'المميزات والتسهيلات',
+                        icon: Icons.star_rounded,
+                        theme: theme,
                       ),
                       const SizedBox(height: 10),
-                      RevealOnScroll(
-                        delayMilliseconds: 100,
-                        child: _AmenitiesGrid(
-                          amenities: apartment.amenities,
-                          theme: theme,
-                        ),
+                      _AmenitiesGrid(
+                        amenities: apartment.amenities,
+                        theme: theme,
                       ),
                       const SizedBox(height: 20),
                     ],
@@ -145,32 +152,25 @@ class ApartmentDetailsScreen extends StatelessWidget {
                     // ── Construction Timeline ──────────────────────
                     if (apartment.isUnderConstruction &&
                         apartment.milestones.isNotEmpty) ...[
-                      RevealOnScroll(child: ConstructionTimeline(apartment: apartment)),
+                      ConstructionTimeline(apartment: apartment),
                       const SizedBox(height: 20),
                     ],
 
                     // ── Details Table ──────────────────────────────
-                    RevealOnScroll(
-                      child: _SectionHeader(
-                        title: 'جدول التفاصيل الكاملة',
-                        icon: Icons.assignment_rounded,
-                        theme: theme,
-                      ),
+                    _SectionHeader(
+                      title: 'جدول التفاصيل الكاملة',
+                      icon: Icons.assignment_rounded,
+                      theme: theme,
                     ),
                     const SizedBox(height: 10),
-                    RevealOnScroll(
-                      delayMilliseconds: 100,
-                      child: _DetailsTable(apartment: apartment, theme: theme),
-                    ),
+                    _DetailsTable(apartment: apartment, theme: theme),
 
                     // ── Other Available Units in the Same Building ───
                     if (apartment.buildingName != null) ...[
                       const SizedBox(height: 20),
-                      RevealOnScroll(
-                        child: _BuildingUnitsSection(
-                          currentApartment: apartment,
-                          theme: theme,
-                        ),
+                      _BuildingUnitsSection(
+                        currentApartment: apartment,
+                        theme: theme,
                       ),
                     ],
 

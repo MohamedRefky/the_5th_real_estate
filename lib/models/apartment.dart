@@ -85,6 +85,12 @@ class Apartment {
   /// Will be replaced with actual image URLs when Firebase Storage is set up.
   final List<String> imagePlaceholders;
 
+  /// Building facade / cover photo URL (added later, null for now).
+  final String? coverImageUrl;
+
+  /// Apartment walkthrough video URL (added later, null for now).
+  final String? videoUrl;
+
   /// Key amenities / features (e.g., "مصعد", "حديقة خاصة").
   final List<String> amenities;
 
@@ -110,6 +116,8 @@ class Apartment {
     this.milestones = const [],
     required this.whatsappNumber,
     this.imagePlaceholders = const [],
+    this.coverImageUrl,
+    this.videoUrl,
     this.amenities = const [],
   });
 

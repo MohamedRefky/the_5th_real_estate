@@ -60,6 +60,13 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     _position = scrollable.position;
     _position!.addListener(_checkVisibility);
     _checkVisibility();
+
+    // Safety fallback: Ensure widget reveals within 150ms even if viewport dimension checks lag
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted && !_started) {
+        _trigger();
+      }
+    });
   }
 
   void _checkVisibility() {
