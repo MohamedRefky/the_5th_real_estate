@@ -39,7 +39,7 @@ class FeaturedPropertiesSection extends StatelessWidget {
                     final apt = featuredApartments[index];
                     return RevealOnScroll(
                       direction: RevealDirection.fromRight,
-                      delayMilliseconds: index * 140,
+                      delayMilliseconds: index * 65,
                       child: SizedBox(
                         width: 340,
                         child: ApartmentCard(apartment: apt),

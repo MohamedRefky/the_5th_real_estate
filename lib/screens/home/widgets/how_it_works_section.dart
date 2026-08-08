@@ -63,7 +63,7 @@ class HowItWorksSection extends StatelessWidget {
                           Expanded(
                             child: RevealOnScroll(
                               direction: RevealDirection.fromRight,
-                              delayMilliseconds: i * 160,
+                              delayMilliseconds: i * 70,
                               child: _buildStepCard(context, steps[i]),
                             ),
                           ),
@@ -90,7 +90,7 @@ class HowItWorksSection extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 20),
                             child: RevealOnScroll(
                               direction: RevealDirection.fromRight,
-                              delayMilliseconds: idx * 160,
+                              delayMilliseconds: idx * 70,
                               child: _buildStepCard(context, s),
                             ),
                           );

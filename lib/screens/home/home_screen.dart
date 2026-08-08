@@ -296,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 final area = DummyData.areas[index];
                                 return RevealOnScroll(
                                   direction: RevealDirection.fromRight,
-                                  delayMilliseconds: index * 120,
+                                  delayMilliseconds: index * 60,
                                   child: AreaCard(
                                     areaName: area,
                                     onTap: () {

@@ -61,7 +61,7 @@ class WhyUsSection extends StatelessWidget {
                         return Expanded(
                           child: RevealOnScroll(
                             direction: RevealDirection.fromRight,
-                            delayMilliseconds: idx * 150,
+                            delayMilliseconds: idx * 70,
                             child: _buildItem(context, item),
                           ),
                         );
@@ -76,7 +76,7 @@ class WhyUsSection extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 20),
                         child: RevealOnScroll(
                           direction: RevealDirection.fromRight,
-                          delayMilliseconds: idx * 150,
+                          delayMilliseconds: idx * 70,
                           child: _buildItem(context, item),
                         ),
                       );

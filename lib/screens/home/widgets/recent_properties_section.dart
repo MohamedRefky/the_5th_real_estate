@@ -46,7 +46,7 @@ class RecentPropertiesSection extends StatelessWidget {
                         width: cardWidth,
                         child: RevealOnScroll(
                           direction: RevealDirection.fromRight,
-                          delayMilliseconds: idx * 150,
+                          delayMilliseconds: idx * 65,
                           child: ApartmentCard(apartment: apt),
                         ),
                       );

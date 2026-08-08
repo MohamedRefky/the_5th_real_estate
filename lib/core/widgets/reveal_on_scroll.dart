@@ -92,8 +92,8 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     final dimension = position.viewportDimension;
     final distance = revealOffset - scrollOffset;
 
-    // Trigger when item enters viewport (with 40px buffer)
-    if (distance < dimension - 40 && (distance + renderObject.size.height) > 0) {
+    // Early trigger: start animation 120px before item hits screen edge
+    if (distance < dimension + 120 && (distance + renderObject.size.height) > -50) {
       _position?.removeListener(_checkVisibility);
       _trigger();
     }
