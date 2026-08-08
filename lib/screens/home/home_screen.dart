@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
+
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 // ignore: unused_import
@@ -139,23 +141,28 @@ class _HomeScreenState extends State<HomeScreen> {
         // Fallback safely if scroll position is not attached yet
       }
     }
-    final double scrollProgress =
-        (_scrollOffset / maxScroll).clamp(0.0, 1.0);
+    final double scrollProgress = (_scrollOffset / maxScroll).clamp(0.0, 1.0);
 
     // Background: gentle zoom as you scroll (1.0 → 1.20)
     final double imageScale = 1.0 + (scrollProgress * 0.20);
 
     // Hero content: fades out and drifts up as user scrolls past it
-    final double heroScrollRatio =
-        (_scrollOffset / (size.height * 0.65)).clamp(0.0, 1.0);
+    final double heroScrollRatio = (_scrollOffset / (size.height * 0.65)).clamp(
+      0.0,
+      1.0,
+    );
     final double heroOpacity = (1.0 - heroScrollRatio).clamp(0.0, 1.0);
     final double heroDriftY = heroScrollRatio * -60;
 
     // Overlay: darkens gradually as you scroll deeper into content
-    final double overlayTopAlpha =
-        (0.35 + scrollProgress * 0.30).clamp(0.0, 1.0);
-    final double overlayBottomAlpha =
-        (0.88 + scrollProgress * 0.08).clamp(0.0, 1.0);
+    final double overlayTopAlpha = (0.35 + scrollProgress * 0.30).clamp(
+      0.0,
+      1.0,
+    );
+    final double overlayBottomAlpha = (0.88 + scrollProgress * 0.08).clamp(
+      0.0,
+      1.0,
+    );
 
     // Scroll-to-top FAB visibility
     final bool showScrollToTop = _scrollOffset > size.height * 0.8;
@@ -189,12 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.background
-                          .withValues(alpha: overlayTopAlpha),
+                      AppColors.background.withValues(alpha: overlayTopAlpha),
                       AppColors.background.withValues(alpha: 0.55),
                       AppColors.background.withValues(alpha: 0.78),
-                      AppColors.background
-                          .withValues(alpha: overlayBottomAlpha),
+                      AppColors.background.withValues(
+                        alpha: overlayBottomAlpha,
+                      ),
                     ],
                     stops: const [0.0, 0.35, 0.7, 1.0],
                   ),
@@ -254,8 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     index: 4,
                     icon: Icons.location_city_rounded,
                     title: 'اختر الحي',
-                    subtitle:
-                        'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
+                    subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
                   ),
                 ),
 
@@ -277,11 +283,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: crossAxisCount,
-                              crossAxisSpacing: 24,
-                              mainAxisSpacing: 24,
-                              childAspectRatio: 1.05,
-                            ),
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 24,
+                                  mainAxisSpacing: 24,
+                                  childAspectRatio: 1.05,
+                                ),
                             itemCount: DummyData.areas.length,
                             itemBuilder: (context, index) {
                               final area = DummyData.areas[index];
@@ -325,10 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 64),
 
                 // ── Contact Us ────────────────────────────────────────
-                SizedBox(
-                  key: _contactKey,
-                  child: const ContactSection(),
-                ),
+                SizedBox(key: _contactKey, child: const ContactSection()),
 
                 const SizedBox(height: 64),
 
@@ -423,7 +426,8 @@ class _HeroSection extends StatefulWidget {
   State<_HeroSection> createState() => _HeroSectionState();
 }
 
-class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderStateMixin {
+class _HeroSectionState extends State<_HeroSection>
+    with SingleTickerProviderStateMixin {
   /// One-shot staggered entrance controller (completes, never repeats).
   late final AnimationController _entrance = AnimationController(
     vsync: this,
@@ -441,13 +445,13 @@ class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderSta
   ];
 
   Animation<double> _step(double start) => CurvedAnimation(
-        parent: _entrance,
-        curve: Interval(
-          start,
-          (start + 0.42).clamp(0.0, 1.0),
-          curve: Curves.easeOutCubic,
-        ),
-      );
+    parent: _entrance,
+    curve: Interval(
+      start,
+      (start + 0.42).clamp(0.0, 1.0),
+      curve: Curves.easeOutCubic,
+    ),
+  );
 
   @override
   void dispose() {
@@ -520,7 +524,7 @@ class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderSta
 
                   const SizedBox(height: 26),
 
-                  // Main Title — Rich Champagne Gold with Luxury Depth Shadows
+                  // Main Title — Glowing Champagne Gold Focal Point
                   _HeroEntrance(
                     animation: _steps[2],
                     child: FittedBox(
@@ -536,19 +540,18 @@ class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderSta
                           letterSpacing: 0.5,
                           shadows: [
                             Shadow(
-                              color: Colors.black.withValues(alpha: 0.6),
-                              blurRadius: 20,
+                              color: Colors.black.withValues(alpha: 0.85),
+                              blurRadius: 24,
                               offset: const Offset(0, 4),
                             ),
                             Shadow(
-                              color: AppColors.accentDark.withValues(alpha: 0.4),
-                              blurRadius: 30,
+                              color: AppColors.accent.withValues(alpha: 0.55),
+                              blurRadius: 36,
                               offset: const Offset(0, 2),
                             ),
                             Shadow(
-                              color:
-                                  AppColors.accentLight2.withValues(alpha: 0.32),
-                              blurRadius: 44,
+                              color: AppColors.accentLight2.withValues(alpha: 0.45),
+                              blurRadius: 54,
                               offset: const Offset(0, 0),
                             ),
                           ],
@@ -585,16 +588,24 @@ class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderSta
 
                   const SizedBox(height: 22),
 
-                  // Subtitle
+                  // Subtitle Description — Calm, Soft, Crystal-Clear & Elegant
                   _HeroEntrance(
                     animation: _steps[4],
                     child: Text(
-                      'تصفح كل شقق وبنتهاوس وفيّلات التجمع الخامس من منصة واحدة —\nأسعار مباشرة، صور حقيقية، وتواصل فوري لتحديد معاينتك اليوم',
+                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والفيلات\nبأسعار محدثة لحظة بلحظة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                        height: 1.9,
+                        color: Colors.white.withValues(alpha: 0.88),
+                        fontWeight: FontWeight.w500,
+                        height: 1.85,
                         fontSize: 16,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.75),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -642,8 +653,10 @@ class _HeroSectionState extends State<_HeroSection> with SingleTickerProviderSta
                             children: [
                               ElevatedButton.icon(
                                 onPressed: widget.onBrowseAll,
-                                icon:
-                                    const Icon(Icons.explore_rounded, size: 22),
+                                icon: const Icon(
+                                  Icons.explore_rounded,
+                                  size: 22,
+                                ),
                                 label: const Text('تصفح جميع العقارات'),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.accent,
