@@ -62,8 +62,10 @@ class HowItWorksSection extends StatelessWidget {
                         for (int i = 0; i < steps.length; i++) ...[
                           Expanded(
                             child: RevealOnScroll(
-                              direction: RevealDirection.fromRight,
-                              delayMilliseconds: i * 70,
+                              direction: i == 0
+                                  ? RevealDirection.fromRight
+                                  : (i == 1 ? RevealDirection.fromBottom : RevealDirection.fromLeft),
+                              delayMilliseconds: i * 80,
                               child: _buildStepCard(context, steps[i]),
                             ),
                           ),
@@ -86,11 +88,14 @@ class HowItWorksSection extends StatelessWidget {
                         .map((entry) {
                           final idx = entry.key;
                           final s = entry.value;
+                          final direction = idx % 2 == 0
+                              ? RevealDirection.fromRight
+                              : RevealDirection.fromLeft;
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: RevealOnScroll(
-                              direction: RevealDirection.fromRight,
-                              delayMilliseconds: idx * 70,
+                              direction: direction,
+                              delayMilliseconds: idx * 80,
                               child: _buildStepCard(context, s),
                             ),
                           );

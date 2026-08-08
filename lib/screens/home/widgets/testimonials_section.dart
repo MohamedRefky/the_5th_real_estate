@@ -63,8 +63,10 @@ class TestimonialsSection extends StatelessWidget {
                           .map(
                               (entry) => Expanded(
                                 child: RevealOnScroll(
-                                  direction: RevealDirection.fromRight,
-                                  delayMilliseconds: entry.key * 70,
+                                  direction: entry.key == 0
+                                      ? RevealDirection.fromRight
+                                      : (entry.key == 1 ? RevealDirection.scale : RevealDirection.fromLeft),
+                                  delayMilliseconds: entry.key * 80,
                                   child: _buildCard(context, entry.value),
                                 ),
                               ))
@@ -76,8 +78,10 @@ class TestimonialsSection extends StatelessWidget {
                         .map((entry) => Padding(
                               padding: const EdgeInsets.only(bottom: 20),
                               child: RevealOnScroll(
-                                direction: RevealDirection.fromRight,
-                                delayMilliseconds: entry.key * 70,
+                                direction: entry.key % 2 == 0
+                                    ? RevealDirection.fromRight
+                                    : RevealDirection.fromLeft,
+                                delayMilliseconds: entry.key * 80,
                                 child: _buildCard(context, entry.value),
                               ),
                             ))

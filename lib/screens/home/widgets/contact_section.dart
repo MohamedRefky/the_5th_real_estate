@@ -92,8 +92,8 @@ class ContactSection extends StatelessWidget {
                         const SizedBox(width: 24),
                         Expanded(
                           child: RevealOnScroll(
-                            direction: RevealDirection.fromRight,
-                            delayMilliseconds: 160,
+                            direction: RevealDirection.fromLeft,
+                            delayMilliseconds: 80,
                             child: _ContactCard(
                               title: 'تابعنا على فيسبوك',
                               subtitle:
@@ -134,8 +134,8 @@ class ContactSection extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       RevealOnScroll(
-                        direction: RevealDirection.fromRight,
-                        delayMilliseconds: 160,
+                        direction: RevealDirection.fromLeft,
+                        delayMilliseconds: 80,
                         child: _ContactCard(
                           title: 'تابعنا على فيسبوك',
                           subtitle:

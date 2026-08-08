@@ -37,9 +37,12 @@ class FeaturedPropertiesSection extends StatelessWidget {
                   separatorBuilder: (_, _) => const SizedBox(width: 20),
                   itemBuilder: (context, index) {
                     final apt = featuredApartments[index];
+                    final direction = index % 2 == 0
+                        ? RevealDirection.fromRight
+                        : RevealDirection.fromBottom;
                     return RevealOnScroll(
-                      direction: RevealDirection.fromRight,
-                      delayMilliseconds: index * 65,
+                      direction: direction,
+                      delayMilliseconds: index * 75,
                       child: SizedBox(
                         width: 340,
                         child: ApartmentCard(apartment: apt),

@@ -236,18 +236,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Why Choose Us (3D Perspective Tilt) ──────────────
-                const RevealOnScroll(
-                  direction: RevealDirection.perspectiveTilt,
-                  child: WhyUsSection(),
-                ),
+                // ── Why Choose Us ─────────────────────────────────────
+                const WhyUsSection(),
 
                 const SizedBox(height: 64),
 
-                // ── Featured Properties (3D Flip Unfold) ───────────────
-                RevealOnScroll(
+                // ── Featured Properties ───────────────────────────────
+                SizedBox(
                   key: _browseKey,
-                  direction: RevealDirection.flip3D,
                   child: const FeaturedPropertiesSection(),
                 ),
 
@@ -267,51 +263,52 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 36),
 
-                // ── Neighborhood Grid (3D Perspective Tilt) ───────────
-                RevealOnScroll(
-                  direction: RevealDirection.perspectiveTilt,
-                  delayMilliseconds: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1200),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            final crossAxisCount = _getCrossAxisCount(
-                              constraints.maxWidth,
-                            );
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                crossAxisSpacing: 24,
-                                mainAxisSpacing: 24,
-                                childAspectRatio: 1.05,
-                              ),
-                              itemCount: DummyData.areas.length,
-                              itemBuilder: (context, index) {
-                                final area = DummyData.areas[index];
-                                return RevealOnScroll(
-                                  direction: RevealDirection.fromRight,
-                                  delayMilliseconds: index * 60,
-                                  child: AreaCard(
-                                    areaName: area,
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        RoutesNames.area,
-                                        arguments: area,
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
+                // ── Neighborhood Grid ─────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final crossAxisCount = _getCrossAxisCount(
+                            constraints.maxWidth,
+                          );
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                              crossAxisSpacing: 24,
+                              mainAxisSpacing: 24,
+                              childAspectRatio: 1.05,
+                            ),
+                            itemCount: DummyData.areas.length,
+                            itemBuilder: (context, index) {
+                              final area = DummyData.areas[index];
+                              final direction = index == 2
+                                  ? RevealDirection.scale
+                                  : (index % 2 == 0
+                                      ? RevealDirection.fromRight
+                                      : RevealDirection.fromLeft);
+                              return RevealOnScroll(
+                                direction: direction,
+                                delayMilliseconds: index * 70,
+                                child: AreaCard(
+                                  areaName: area,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      RoutesNames.area,
+                                      arguments: area,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -319,34 +316,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Recently Added (3D Flip Unfold) ───────────────────
-                const RevealOnScroll(
-                  direction: RevealDirection.flip3D,
-                  child: RecentPropertiesSection(),
-                ),
+                // ── Recently Added ────────────────────────────────────
+                const RecentPropertiesSection(),
 
                 const SizedBox(height: 64),
 
-                // ── How It Works (3D Perspective Tilt) ────────────────
-                const RevealOnScroll(
-                  direction: RevealDirection.perspectiveTilt,
-                  child: HowItWorksSection(),
-                ),
+                // ── How It Works ──────────────────────────────────────
+                const HowItWorksSection(),
 
                 const SizedBox(height: 64),
 
-                // ── Testimonials (3D Scale Reveal) ────────────────────
-                const RevealOnScroll(
-                  direction: RevealDirection.scale,
-                  child: TestimonialsSection(),
-                ),
+                // ── Testimonials ──────────────────────────────────────
+                const TestimonialsSection(),
 
                 const SizedBox(height: 64),
 
-                // ── Contact Us (3D Perspective Tilt) ──────────────────
-                RevealOnScroll(
+                // ── Contact Us ────────────────────────────────────────
+                SizedBox(
                   key: _contactKey,
-                  direction: RevealDirection.perspectiveTilt,
                   child: const ContactSection(),
                 ),
 

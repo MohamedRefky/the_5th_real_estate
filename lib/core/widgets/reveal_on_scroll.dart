@@ -92,8 +92,8 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     final dimension = position.viewportDimension;
     final distance = revealOffset - scrollOffset;
 
-    // Trigger animation right as item enters 70px inside the visible viewport
-    if (distance < dimension - 70 && (distance + renderObject.size.height) > 0) {
+    // Trigger animation when item reaches eye-level in lower viewport (180px above bottom edge)
+    if (distance < (dimension - 180) && (distance + renderObject.size.height) > 0) {
       _position?.removeListener(_checkVisibility);
       _trigger();
     }
