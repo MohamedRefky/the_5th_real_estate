@@ -84,15 +84,13 @@ class _FilterSectionState extends State<FilterSection> {
 
   String get _areaLabel {
     if (_selectedAreaRanges.isEmpty) return 'المساحة';
-    final list =
-        _selectedAreaRanges.map((r) => _formatAreaRange(r)).toList();
+    final list = _selectedAreaRanges.map((r) => _formatAreaRange(r)).toList();
     if (list.length <= 1) return 'المساحة: ${list.first}';
     return 'المساحة: ${list.first} (+${list.length - 1})';
   }
 
   String get _priceLabel {
-    final hasPriceFilter =
-        _priceRange.start > 0 || _priceRange.end < 10000000;
+    final hasPriceFilter = _priceRange.start > 0 || _priceRange.end < 10000000;
     if (!hasPriceFilter) return 'السعر';
     return 'السعر: ${_formatPrice(_priceRange.start)}-${_formatPrice(_priceRange.end)}';
   }
@@ -108,15 +106,17 @@ class _FilterSectionState extends State<FilterSection> {
   }
 
   void _applyFilters() {
-    widget.onFiltersChanged(FilterValues(
-      minPrice: _priceRange.start,
-      maxPrice: _priceRange.end,
-      floors: _selectedFloors,
-      finishingStatuses: _selectedFinishingStatuses,
-      rooms: _selectedRooms,
-      bathrooms: _selectedBathrooms,
-      areaRanges: _selectedAreaRanges,
-    ));
+    widget.onFiltersChanged(
+      FilterValues(
+        minPrice: _priceRange.start,
+        maxPrice: _priceRange.end,
+        floors: _selectedFloors,
+        finishingStatuses: _selectedFinishingStatuses,
+        rooms: _selectedRooms,
+        bathrooms: _selectedBathrooms,
+        areaRanges: _selectedAreaRanges,
+      ),
+    );
   }
 
   void _resetFilters() {
@@ -171,8 +171,10 @@ class _FilterSectionState extends State<FilterSection> {
               children: [
                 // ── Explicit "فلترة النتائج" Header Badge ────────────
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.accentLight,
                     borderRadius: BorderRadius.circular(12),
@@ -467,10 +469,7 @@ class _FilterSectionState extends State<FilterSection> {
   }
 
   Widget _buildFinishingOptions() {
-    final options = [
-      ('متشطب كامل', 'finished'),
-      ('نصف تشطيب', 'semiFinished'),
-    ];
+    final options = [('متشطب كامل', 'finished'), ('نصف تشطيب', 'semiFinished')];
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -541,11 +540,13 @@ class _FilterSectionState extends State<FilterSection> {
 
   Widget _buildAreaOptions() {
     final ranges = [
-      ('أقل من 150م²', (0.0, 150.0)),
-      ('150-200م²', (150.0, 200.0)),
-      ('200-250م²', (250.0, 250.0)),
-      ('250-300م²', (250.0, 300.0)),
-      ('أكثر من 300م²', (300.0, 99999.0)),
+      ('115م²', (115.0, 115.0)),
+      ('125م²', (125.0, 125.0)),
+      ('125 : 150م²', (125.0, 150.0)),
+      ('150 : 200م²', (150.0, 200.0)),
+      ('200 : 250م²', (200.0, 250.0)),
+      ('250 : 300م²', (250.0, 300.0)),
+      ('+300م²', (300.0, 99999.0)),
     ];
     return Wrap(
       spacing: 8,
@@ -619,9 +620,10 @@ class _FilterSectionState extends State<FilterSection> {
   }
 
   String _formatAreaRange((double, double) range) {
-    if (range.$1 == 0.0) return '<150م²';
-    if (range.$2 >= 99999.0) return '>300م²';
-    return '${range.$1.toInt()}-${range.$2.toInt()}م²';
+    if (range.$1 == range.$2) return '${range.$1.toInt()}م²';
+    if (range.$1 == 0.0) return '<${range.$2.toInt()}م²';
+    if (range.$2 >= 99999.0) return '+${range.$1.toInt()}م²';
+    return '${range.$1.toInt()} – ${range.$2.toInt()}م²';
   }
 
   String _formatPrice(double price) {
@@ -694,16 +696,13 @@ class _FilterPill extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.5,
                 fontWeight: active ? FontWeight.bold : FontWeight.w600,
-                color: active
-                    ? AppColors.textOnPrimary
-                    : AppColors.textPrimary,
+                color: active ? AppColors.textOnPrimary : AppColors.textPrimary,
               ),
             ),
             if (badgeText != null) ...[
               const SizedBox(width: 6),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: AppColors.textOnPrimary,
                   borderRadius: BorderRadius.circular(8),
@@ -725,8 +724,9 @@ class _FilterPill extends StatelessWidget {
               child: Icon(
                 Icons.keyboard_arrow_down_rounded,
                 size: 16,
-                color:
-                    active ? AppColors.textOnPrimary : AppColors.textSecondary,
+                color: active
+                    ? AppColors.textOnPrimary
+                    : AppColors.textSecondary,
               ),
             ),
           ],
