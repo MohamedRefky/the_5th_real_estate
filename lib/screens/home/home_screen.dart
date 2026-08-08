@@ -130,10 +130,17 @@ class _HomeScreenState extends State<HomeScreen> {
     final size = MediaQuery.of(context).size;
 
     // ── Scroll-driven animation parameters ──────────────────────────
-    final double maxScroll = _scrollController.hasClients &&
-            _scrollController.position.maxScrollExtent > 0
-        ? _scrollController.position.maxScrollExtent
-        : (size.height * 3);
+    double maxScroll = size.height * 3;
+    if (_scrollController.hasClients) {
+      try {
+        final pos = _scrollController.position;
+        if (pos.hasContentDimensions && pos.maxScrollExtent > 0) {
+          maxScroll = pos.maxScrollExtent;
+        }
+      } catch (_) {
+        // Fallback safely if scroll position is not attached yet
+      }
+    }
     final double scrollProgress =
         (_scrollOffset / maxScroll).clamp(0.0, 1.0);
 

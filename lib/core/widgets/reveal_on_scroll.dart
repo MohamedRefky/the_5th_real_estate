@@ -65,11 +65,17 @@ class _RevealOnScrollState extends State<RevealOnScroll>
   void _checkVisibility() {
     if (_started || !mounted) return;
     final renderObject = context.findRenderObject();
-    if (renderObject is! RenderBox || !renderObject.attached) return;
+    if (renderObject is! RenderBox ||
+        !renderObject.attached ||
+        !renderObject.hasSize) {
+      return;
+    }
 
     final viewport = RenderAbstractViewport.maybeOf(renderObject);
     final position = _position;
-    if (viewport == null || position == null) return;
+    if (viewport == null || position == null || !position.hasContentDimensions) {
+      return;
+    }
 
     final revealOffset = viewport.getOffsetToReveal(renderObject, 0.0).offset;
     final scrollOffset = position.pixels;
