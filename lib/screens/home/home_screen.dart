@@ -69,7 +69,7 @@ class GlassContainer extends StatelessWidget {
   }
 }
 
-/// Home Screen — Ultra-Premium Landing Page with Full Glassmorphism & Gold Glow.
+/// Home Screen — Ultra-Premium Landing Page with Full Glassmorphism & 3D Scroll Zoom Effect.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -116,129 +116,204 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
+
+    // Calculate scroll progress (normalized 0.0 to 1.0 based on screen height or content length)
+    final double maxScrollExtent = _scrollController.hasClients &&
+            _scrollController.position.maxScrollExtent > 0
+        ? _scrollController.position.maxScrollExtent
+        : (size.height * 3);
+    final double scrollProgress = (_scrollOffset / maxScrollExtent).clamp(0.0, 1.0);
+
+    // 3D Depth Parameters & Safe Parallax Buffer:
+    // Extra vertical buffer (250px top & bottom) so background never exposes blank space
+    const double extraBuffer = 250.0;
+    
+    // Scale smoothly zooms from 1.05 to 1.35 as user scrolls
+    final double imageScale = 1.05 + (scrollProgress * 0.30);
+    
+    // Parallax movement clamped safely within the buffer height
+    final double imageTranslationY = scrollProgress * extraBuffer;
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: AnimatedBackground(
-        shapeColor: AppColors.accent,
-        shapeCount: 8,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            children: [
-              // ── 1. Massive Full-Width Hero Section ───────────────────
-              RevealOnScroll(
-                duration: const Duration(milliseconds: 900),
-                offset: 20,
-                child: _HeroSection(
-                  theme: theme,
-                  scrollOffset: _scrollOffset,
-                  onBrowseAll: () => _scrollTo(_browseKey),
-                  onContact: () => _scrollTo(_contactKey),
-                ),
-              ),
-
-              const SizedBox(height: 64),
-
-              // ── 2. Why Choose Us (Trust Indicators) ──────────────────
-              const RevealOnScroll(child: WhyUsSection()),
-
-              const SizedBox(height: 64),
-
-              // ── 3. Featured Properties Carousel ──────────────────────
-              RevealOnScroll(
-                key: _browseKey,
-                child: const FeaturedPropertiesSection(),
-              ),
-
-              const SizedBox(height: 64),
-
-              // ── 4. Neighborhood Grid (Choose Area) ───────────────────
-              const RevealOnScroll(
-                child: SectionBar(
-                  index: 4,
-                  icon: Icons.location_city_rounded,
-                  title: 'اختر الحي',
-                  subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
-                ),
-              ),
-
-              const SizedBox(height: 36),
-
-              RevealOnScroll(
-                delayMilliseconds: 150,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1200),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final crossAxisCount = _getCrossAxisCount(
-                            constraints.maxWidth,
-                          );
-                          return GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: crossAxisCount,
-                              crossAxisSpacing: 24,
-                              mainAxisSpacing: 24,
-                              childAspectRatio: 1.05,
-                            ),
-                            itemCount: DummyData.areas.length,
-                            itemBuilder: (context, index) {
-                              final area = DummyData.areas[index];
-                              return AreaCard(
-                                areaName: area,
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    RoutesNames.area,
-                                    arguments: area,
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                      ),
+      body: Stack(
+        children: [
+          // ── 1. Full-Page Immersive 3D Zoom & Parallax Background ─────
+          Positioned(
+            top: -extraBuffer,
+            left: -60,
+            right: -60,
+            bottom: -extraBuffer,
+            child: IgnorePointer(
+              child: ClipRect(
+                child: Transform.translate(
+                  offset: Offset(0, -imageTranslationY),
+                  child: Transform.scale(
+                    scale: imageScale,
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'assets/image/background.jpeg',
+                      fit: BoxFit.cover,
+                      width: size.width + 120,
+                      height: size.height + (extraBuffer * 2),
                     ),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 64),
-
-              // ── 5. Recently Added Properties ────────────────────────
-              const RevealOnScroll(child: RecentPropertiesSection()),
-
-              const SizedBox(height: 64),
-
-              // ── 6. How It Works (3 Steps) ────────────────────────────
-              const RevealOnScroll(child: HowItWorksSection()),
-
-              const SizedBox(height: 64),
-
-              // ── 7. Testimonials ─────────────────────────────────────
-              const RevealOnScroll(child: TestimonialsSection()),
-
-              const SizedBox(height: 64),
-
-              // ── 8. Contact Us (WhatsApp & Facebook) ──────────────────
-              RevealOnScroll(
-                key: _contactKey,
-                child: const ContactSection(),
-              ),
-
-              const SizedBox(height: 64),
-
-              // ── 9. Footer ───────────────────────────────────────────
-              const RevealOnScroll(child: _Footer()),
-            ],
+            ),
           ),
-        ),
+
+          // ── 2. Full-Page Dark Gradient Overlay for Readability ────────
+          Positioned.fill(
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.background.withValues(alpha: 0.65),
+                      AppColors.background.withValues(alpha: 0.85),
+                      AppColors.background.withValues(alpha: 0.92),
+                      AppColors.background.withValues(alpha: 0.96),
+                    ],
+                    stops: const [0.0, 0.3, 0.7, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // ── 3. Ambient Gold Particles & Glow Layer ────────────────────
+          Positioned.fill(
+            child: IgnorePointer(
+              child: AnimatedBackground(
+                shapeColor: AppColors.accent,
+                shapeCount: 8,
+                child: const SizedBox.expand(),
+              ),
+            ),
+          ),
+
+          // ── 4. Main Scrollable Page Content ───────────────────────────
+          SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              children: [
+                // ── 1. Massive Full-Width Hero Section ───────────────────
+                RevealOnScroll(
+                  duration: const Duration(milliseconds: 900),
+                  offset: 20,
+                  child: _HeroSection(
+                    theme: theme,
+                    onBrowseAll: () => _scrollTo(_browseKey),
+                    onContact: () => _scrollTo(_contactKey),
+                  ),
+                ),
+
+                const SizedBox(height: 64),
+
+                // ── 2. Why Choose Us (Trust Indicators) ──────────────────
+                const RevealOnScroll(child: WhyUsSection()),
+
+                const SizedBox(height: 64),
+
+                // ── 3. Featured Properties Carousel ──────────────────────
+                RevealOnScroll(
+                  key: _browseKey,
+                  child: const FeaturedPropertiesSection(),
+                ),
+
+                const SizedBox(height: 64),
+
+                // ── 4. Neighborhood Grid (Choose Area) ───────────────────
+                const RevealOnScroll(
+                  child: SectionBar(
+                    index: 4,
+                    icon: Icons.location_city_rounded,
+                    title: 'اختر الحي',
+                    subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
+                  ),
+                ),
+
+                const SizedBox(height: 36),
+
+                RevealOnScroll(
+                  delayMilliseconds: 150,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1200),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final crossAxisCount = _getCrossAxisCount(
+                              constraints.maxWidth,
+                            );
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 24,
+                                mainAxisSpacing: 24,
+                                childAspectRatio: 1.05,
+                              ),
+                              itemCount: DummyData.areas.length,
+                              itemBuilder: (context, index) {
+                                final area = DummyData.areas[index];
+                                return AreaCard(
+                                  areaName: area,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      RoutesNames.area,
+                                      arguments: area,
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 64),
+
+                // ── 5. Recently Added Properties ────────────────────────
+                const RevealOnScroll(child: RecentPropertiesSection()),
+
+                const SizedBox(height: 64),
+
+                // ── 6. How It Works (3 Steps) ────────────────────────────
+                const RevealOnScroll(child: HowItWorksSection()),
+
+                const SizedBox(height: 64),
+
+                // ── 7. Testimonials ─────────────────────────────────────
+                const RevealOnScroll(child: TestimonialsSection()),
+
+                const SizedBox(height: 64),
+
+                // ── 8. Contact Us (WhatsApp & Facebook) ──────────────────
+                RevealOnScroll(
+                  key: _contactKey,
+                  child: const ContactSection(),
+                ),
+
+                const SizedBox(height: 64),
+
+                // ── 9. Footer ───────────────────────────────────────────
+                const RevealOnScroll(child: _Footer()),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -256,93 +331,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _HeroSection extends StatelessWidget {
   final ThemeData theme;
-  final double scrollOffset;
   final VoidCallback? onBrowseAll;
   final VoidCallback? onContact;
 
-  /// Parallax speed factor: 0.0 = background is fixed, 1.0 = scrolls normally.
-  /// 0.4 gives a natural, smooth depth illusion on web.
-  static const double _parallaxFactor = 0.4;
-
   const _HeroSection({
     required this.theme,
-    required this.scrollOffset,
     this.onBrowseAll,
     this.onContact,
   });
 
   @override
   Widget build(BuildContext context) {
-    // The parallax translation: the image shifts UP at a fraction of scroll.
-    final double parallaxOffset = scrollOffset * _parallaxFactor;
-
     return Container(
       width: double.infinity,
-      // clipBehavior prevents the over-sized background from bleeding out.
-      clipBehavior: Clip.hardEdge,
-      decoration: const BoxDecoration(),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // ── Parallax Background Image ────────────────────────
-          // The image is 30% taller than the container so it has
-          // room to translate without exposing blank space.
-          Positioned(
-            top: -parallaxOffset,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Transform.translate(
-              offset: Offset(0, -parallaxOffset * 0.2),
-              child: Image.asset(
-                'assets/image/background.jpeg',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                // Height exceeds container to allow upward shift.
-                height: double.infinity,
-                alignment: Alignment.center,
-              ),
-            ),
-          ),
-
-          // ── Dark Gradient Overlay ─────────────────────────────
-          // Preserves readability of the gold text/glass elements.
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.background.withValues(alpha: 0.70),
-                    AppColors.background.withValues(alpha: 0.80),
-                    AppColors.background.withValues(alpha: 0.92),
-                  ],
-                  stops: const [0.0, 0.5, 1.0],
-                ),
-              ),
-            ),
-          ),
-
-          // ── Animated Ambient Gold Glow Backdrop ───────────────
-          Positioned.fill(
-            child: AnimatedBackground(
-              shapeColor: AppColors.accent,
-              shapeCount: 6,
-              child: const SizedBox.expand(),
-            ),
-          ),
-
-          // ── Foreground Content ────────────────────────────────
-          SafeArea(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 850),
-                  child: Column(
-                    children: [
+      color: Colors.transparent,
+      child: SafeArea(
+        child: Padding(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 850),
+              child: Column(
+                children: [
                       // Gold Decorative Line
                       Container(
                         width: 90,
@@ -533,9 +544,7 @@ class _HeroSection extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
+        );
   }
 }
 
