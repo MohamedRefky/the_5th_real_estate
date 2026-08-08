@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
+// ignore: unused_import
 import '../../core/widgets/animated_background.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
@@ -196,16 +197,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // ── 3. Ambient Gold Particles & Glow ────────────────────────
-          Positioned.fill(
-            child: IgnorePointer(
-              child: AnimatedBackground(
-                shapeColor: AppColors.accent,
-                shapeCount: 8,
-                child: const SizedBox.expand(),
-              ),
-            ),
-          ),
+          // ── 3. Ambient Gold Particles & Glow (Disabled) ──────────────
+          // Positioned.fill(
+          //   child: IgnorePointer(
+          //     child: AnimatedBackground(
+          //       shapeColor: AppColors.accent,
+          //       shapeCount: 8,
+          //       child: const SizedBox.expand(),
+          //     ),
+          //   ),
+          // ),
 
           // ── 4. Main Scrollable Content ──────────────────────────────
           SingleChildScrollView(
@@ -453,6 +454,7 @@ class _HeroSection extends StatelessWidget {
 
                   // Main Title with Shader Mask Gold Gradient
                   ShaderMask(
+                    blendMode: BlendMode.srcIn,
                     shaderCallback: (bounds) =>
                         AppColors.accentGradient.createShader(bounds),
                     child: FittedBox(

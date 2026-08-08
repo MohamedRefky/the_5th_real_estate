@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/animated_background.dart';
@@ -117,6 +117,7 @@ class _AreaScreenState extends State<AreaScreen> {
                         child: Column(
                           children: [
                             ShaderMask(
+                              blendMode: BlendMode.srcIn,
                               shaderCallback: (bounds) =>
                                   AppColors.accentGradient.createShader(bounds),
                               child: Text(

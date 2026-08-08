@@ -65,6 +65,7 @@ class SectionBar extends StatelessWidget {
 
           // ── 2. Gradient Shader Mask Title ──────────────────────────
           ShaderMask(
+            blendMode: BlendMode.srcIn,
             shaderCallback: (bounds) =>
                 AppColors.accentGradient.createShader(bounds),
             child: Text(
