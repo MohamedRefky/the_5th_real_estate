@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/animated_background.dart';
 import '../../core/widgets/info_chip.dart';
@@ -82,7 +83,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
                     // ── Description ────────────────────────────────
                     RevealOnScroll(
                       child: _SectionHeader(
-                        title: 'الوصف',
+                        title: 'الوصف والتفاصيل',
                         icon: Icons.description_rounded,
                         theme: theme,
                       ),
@@ -149,7 +150,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
                     // ── Details Table ──────────────────────────────
                     RevealOnScroll(
                       child: _SectionHeader(
-                        title: 'جدول التفاصيل',
+                        title: 'جدول التفاصيل الكاملة',
                         icon: Icons.assignment_rounded,
                         theme: theme,
                       ),
@@ -159,6 +160,17 @@ class ApartmentDetailsScreen extends StatelessWidget {
                       delayMilliseconds: 100,
                       child: _DetailsTable(apartment: apartment, theme: theme),
                     ),
+
+                    // ── Other Available Units in the Same Building ───
+                    if (apartment.buildingName != null) ...[
+                      const SizedBox(height: 32),
+                      RevealOnScroll(
+                        child: _BuildingUnitsSection(
+                          currentApartment: apartment,
+                          theme: theme,
+                        ),
+                      ),
+                    ],
 
                     const SizedBox(height: 120), // Space for sticky CTA
                   ],
@@ -200,6 +212,35 @@ class _TitleSection extends StatelessWidget {
               label: apartment.area,
               color: AppColors.accentLight2,
             ),
+            if (apartment.buildingName != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.domain_rounded,
+                      size: 16,
+                      color: AppColors.accent,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      apartment.buildingName!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             if (apartment.isUnderConstruction)
               const _Badge(
                 label: 'تحت الإنشاء',
@@ -668,6 +709,141 @@ class _WhatsAppCTA extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Other Available Units in the Same Building
+// ═══════════════════════════════════════════════════════════════════
+
+class _BuildingUnitsSection extends StatelessWidget {
+  final Apartment currentApartment;
+  final ThemeData theme;
+
+  const _BuildingUnitsSection({
+    required this.currentApartment,
+    required this.theme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final buildingUnits = DummyData.getByBuilding(currentApartment.buildingName!)
+        .where((apt) => apt.id != currentApartment.id)
+        .toList();
+
+    if (buildingUnits.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(
+          title: 'شقق أخرى متاحة في ${currentApartment.buildingName}',
+          icon: Icons.apartment_rounded,
+          theme: theme,
+        ),
+        const SizedBox(height: 14),
+        Column(
+          children: buildingUnits.map((apt) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      RoutesNames.apartmentDetails,
+                      arguments: apt.id,
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.accent.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.accentLight,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.home_work_rounded,
+                            color: AppColors.accent,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                apt.title,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'الدور: ${apt.floorLabel} • ${apt.areaSqm.toInt()} م² • ${apt.rooms} غرف',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              apt.formattedPrice,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: AppColors.accent,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'عرض',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 12,
+                                  color: AppColors.accent,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }

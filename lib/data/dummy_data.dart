@@ -97,26 +97,71 @@ class DummyData {
       amenities: ['مصعد', 'روف خاص', 'قريب من المحور', 'نادي رياضي'],
     ),
 
-    // ─── 3. جاردينيا ───────────────────────────────────────────
+    // ─── 3. جاردينيا (عمارة جاردينيا هايتس ١ - حرف ت) ─────────────
+    // 🏢 الشقة 1: بيزمنت 180م²
     Apartment(
-      id: 'apt_003',
-      title: 'شقة أرضي بحديقة في جاردينيا',
+      id: 'apt_gardenia_001',
+      title: 'شقة بيزمنت 180م² - جاردينيا هايتس ١ (حرف ت)',
       description:
-          'شقة أرضي بحديقة خاصة واسعة في كمبوند جاردينيا. '
-          'مثالية للعائلات، بالقرب من المدارس والمستشفيات. '
-          'تشطيب كامل جاهزة للسكن الفوري.',
+          'شقة بيزمنت بمساحة ١٨٠ متر مربع في عمارتك بحي جاردينيا هايتس ١ (حرف ت). '
+          'موقع متميز بالحي وقريب من الخدمات والمحاور الرئيسية. السعر: ٢ مليون جنيه.',
       area: 'جاردينيا',
-      price: 2800000,
-      floor: 0,
-      totalFloors: 4,
-      areaSqm: 160,
+      buildingName: 'جاردينيا هايتس ١ - حرف ت',
+      price: 2000000,
+      floor: -1,
+      totalFloors: 5,
+      areaSqm: 180,
       rooms: 3,
       bathrooms: 2,
-      finishingStatus: FinishingStatus.finished,
+      finishingStatus: FinishingStatus.semiFinished,
       isUnderConstruction: false,
       constructionProgress: 1.0,
       whatsappNumber: '+201000000003',
-      amenities: ['حديقة خاصة', 'مدخل مستقل', 'قريب من المدارس', 'أمن 24 ساعة'],
+      amenities: ['دور بيزمنت', 'جراج خاص', 'مصعد', 'حارس أمن', 'قريب من الخدمات'],
+    ),
+
+    // 🏢 الشقة 2: أرضي 170م²
+    Apartment(
+      id: 'apt_gardenia_002',
+      title: 'شقة أرضي 170م² (3 غرف + ريسبشن) - جاردينيا هايتس ١ (حرف ت)',
+      description:
+          'شقة بالدور الأرضي بمساحة ١٧٠ متر مربع بحي جاردينيا هايتس ١ (حرف ت). '
+          'تتكون من ٣ غرف وريسبشن واسع و٢ حمام ومطبخ، نصف تشطيب. السعر: ٣ مليون و٣٠٠ ألف جنيه.',
+      area: 'جاردينيا',
+      buildingName: 'جاردينيا هايتس ١ - حرف ت',
+      price: 3300000,
+      floor: 0,
+      totalFloors: 5,
+      areaSqm: 170,
+      rooms: 3,
+      bathrooms: 2,
+      finishingStatus: FinishingStatus.semiFinished,
+      isUnderConstruction: false,
+      constructionProgress: 1.0,
+      whatsappNumber: '+201000000003',
+      amenities: ['دور أرضي', 'ريسبشن واسع', '٢ حمام ومطبخ', 'مصعد', 'حارس أمن'],
+    ),
+
+    // 🏢 الشقة 3: الثاني خلفي 120م²
+    Apartment(
+      id: 'apt_gardenia_003',
+      title: 'شقة الدور الثاني خلفي 120م² - جاردينيا هايتس ١ (حرف ت)',
+      description:
+          'شقة بالدور الثاني خلفي بمساحة ١٢٠ متر مربع بحي جاردينيا هايتس ١ (حرف ت). '
+          'تتكون من غرفتين وريسبشن وحمام ومطبخ، نصف تشطيب. السعر: ٢ مليون و٣٥٠ ألف جنيه.',
+      area: 'جاردينيا',
+      buildingName: 'جاردينيا هايتس ١ - حرف ت',
+      price: 2350000,
+      floor: 2,
+      totalFloors: 5,
+      areaSqm: 120,
+      rooms: 2,
+      bathrooms: 1,
+      finishingStatus: FinishingStatus.semiFinished,
+      isUnderConstruction: false,
+      constructionProgress: 1.0,
+      whatsappNumber: '+201000000003',
+      amenities: ['دور ثاني خلفي', 'ريسبشن', 'مطبخ وحمام', 'مصعد', 'إطلالة هادئة'],
     ),
 
     // ─── 4. بيت الوطن ──────────────────────────────────────────
@@ -210,5 +255,10 @@ class DummyData {
     } catch (_) {
       return null;
     }
+  }
+
+  /// Get all apartments in a specific building.
+  static List<Apartment> getByBuilding(String buildingName) {
+    return apartments.where((apt) => apt.buildingName == buildingName).toList();
   }
 }

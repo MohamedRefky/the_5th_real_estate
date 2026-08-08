@@ -88,11 +88,15 @@ class Apartment {
   /// Key amenities / features (e.g., "مصعد", "حديقة خاصة").
   final List<String> amenities;
 
+  /// Building or project name (e.g., "جاردينيا هايتس ١ - حرف ت").
+  final String? buildingName;
+
   const Apartment({
     required this.id,
     required this.title,
     required this.description,
     required this.area,
+    this.buildingName,
     required this.price,
     required this.floor,
     required this.totalFloors,
