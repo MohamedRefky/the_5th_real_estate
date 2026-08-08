@@ -2,56 +2,56 @@ import 'package:flutter/material.dart';
 
 /// The 5th Estate — World-Class Real Estate Color Palette
 ///
-/// Deep Midnight Navy (#081120) and Refined Champagne Gold (#D4B06A).
-/// Clean, harmonious contrast with crisp typography.
+/// Warm Dusky Twilight Blues and Refined Warm Gold — designed to
+/// harmonize perfectly with the twilight compound background image.
 class AppColors {
   AppColors._();
 
-  // ─── Core Brand Tones ───────────────────────────────────────────
-  /// Rich Deep Midnight Navy Background — Main scaffold background
-  static const Color background = Color(0xFF081120);
+  // ─── Core Brand Tones (Warm Twilight Blues) ─────────────────────
+  /// Deep Twilight Blue — Main scaffold background
+  static const Color background = Color(0xFF0C1A2E);
 
-  /// Card Surface — Elevated card background
-  static const Color surface = Color(0xFF0F1B2D);
+  /// Card Surface — Elevated card background (warm navy)
+  static const Color surface = Color(0xFF122240);
 
   /// Section Alt Surface — Secondary cards & containers
-  static const Color cream = Color(0xFF0C1626);
+  static const Color cream = Color(0xFF0F1D34);
 
   /// Primary Brand Anchor
-  static const Color primary = Color(0xFF0A1526);
+  static const Color primary = Color(0xFF0E1C32);
 
-  /// Deepest Navy Anchor
-  static const Color primaryDark = Color(0xFF040914);
+  /// Deepest Twilight Anchor
+  static const Color primaryDark = Color(0xFF070F1E);
 
-  /// Medium Navy Slate Accent
-  static const Color primaryMedium = Color(0xFF1B2A40);
+  /// Medium Twilight Slate
+  static const Color primaryMedium = Color(0xFF1D3050);
 
-  // ─── Refined Gold Accents ───────────────────────────────────────
-  /// Refined Champagne Gold — Highlights, icons, primary buttons
-  static const Color accent = Color(0xFFD4B06A);
+  // ─── Refined Warm Gold Accents ──────────────────────────────────
+  /// Warm Gold — Matches the golden building lights in the image
+  static const Color accent = Color(0xFFDCBB6E);
 
-  /// Light Champagne Gold
-  static const Color accentLight2 = Color(0xFFEAD9A8);
+  /// Light Warm Gold
+  static const Color accentLight2 = Color(0xFFF0DDA6);
 
-  /// Rich Bronze Gold
-  static const Color accentDark = Color(0xFFA8842F);
+  /// Rich Amber Gold
+  static const Color accentDark = Color(0xFFB8923A);
 
   /// Translucent Gold Tint — Badges & icon backgrounds (12% opacity)
-  static const Color accentLight = Color(0x1FD4B06A);
+  static const Color accentLight = Color(0x1FDCBB6E);
 
   // ─── Dividers & Borders ─────────────────────────────────────────
-  /// Crisp 1px Border Navy Slate
-  static const Color divider = Color(0xFF1E2A3E);
+  /// Warm Navy Border
+  static const Color divider = Color(0xFF243650);
 
   // ─── Text Hierarchy ─────────────────────────────────────────────
-  /// Crisp Bright Navy-White — Main titles & body
-  static const Color textPrimary = Color(0xFFF2F5FA);
+  /// Warm Bright White — Main titles & body
+  static const Color textPrimary = Color(0xFFF5F2EC);
 
-  /// Smooth Navy Grey — Subtitles & metadata
-  static const Color textSecondary = Color(0xFF93A4BF);
+  /// Warm Silver — Subtitles & metadata
+  static const Color textSecondary = Color(0xFFA0B0C4);
 
-  /// Dark Navy Hint — Search placeholders
-  static const Color textHint = Color(0xFF5E6E8C);
+  /// Warm Hint — Search placeholders
+  static const Color textHint = Color(0xFF687C96);
 
   /// Contrast Text — On bright gold / gradient surfaces
   static const Color textOnPrimary = Color(0xFF1A1206);
@@ -65,29 +65,29 @@ class AppColors {
   // ─── Computed Variants ─────────────────────────────────────────
   static Color get primaryLight => accent.withValues(alpha: 0.12);
 
-  static const Color shimmer = Color(0xFF1E2A3E);
+  static const Color shimmer = Color(0xFF243650);
 
   // ─── Harmonious Gradients ───────────────────────────────────────
-  /// Smooth Hero Gradient
+  /// Smooth Twilight Hero Gradient
   static const LinearGradient heroGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF040914),
-      Color(0xFF081120),
-      Color(0xFF0F1B2D),
+      Color(0xFF070F1E),
+      Color(0xFF0C1A2E),
+      Color(0xFF122240),
     ],
     stops: [0.0, 0.5, 1.0],
   );
 
-  /// Gold Accent Gradient
+  /// Warm Gold Accent Gradient
   static const LinearGradient accentGradient = LinearGradient(
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
     colors: [
-      Color(0xFFEAD9A8),
-      Color(0xFFD4B06A),
-      Color(0xFFA8842F),
+      Color(0xFFF0DDA6),
+      Color(0xFFDCBB6E),
+      Color(0xFFB8923A),
     ],
   );
 
@@ -96,8 +96,8 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF081120),
-      Color(0xFF081120),
+      Color(0xFF0C1A2E),
+      Color(0xFF0C1A2E),
     ],
   );
 }
