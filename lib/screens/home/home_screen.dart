@@ -125,46 +125,31 @@ class _HomeScreenState extends State<HomeScreen> {
         : (size.height * 3);
     final double scrollProgress = (_scrollOffset / maxScrollExtent).clamp(0.0, 1.0);
 
-    // 3D Depth Parameters & Safe Parallax Buffer:
-    // Extra vertical buffer (250px top & bottom) so background never exposes blank space
-    const double extraBuffer = 250.0;
-    
-    // Scale smoothly zooms from 1.05 to 1.35 as user scrolls
-    final double imageScale = 1.05 + (scrollProgress * 0.30);
-    
-    // Parallax movement clamped safely within the buffer height
-    final double imageTranslationY = scrollProgress * extraBuffer;
+    // 3D Depth Parameters:
+    // Scale starts at exactly 1.0 (natural size) at top, then expands down to 1.25 as user scrolls
+    final double imageScale = 1.0 + (scrollProgress * 0.25);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
-          // ── 1. Full-Page Immersive 3D Zoom & Parallax Background ─────
-          Positioned(
-            top: -extraBuffer,
-            left: -60,
-            right: -60,
-            bottom: -extraBuffer,
+          // ── 1. Full-Page Natural & Immersive 3D Zoom Background ──────
+          Positioned.fill(
             child: IgnorePointer(
               child: ClipRect(
-                child: Transform.translate(
-                  offset: Offset(0, -imageTranslationY),
-                  child: Transform.scale(
-                    scale: imageScale,
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      'assets/image/background.jpeg',
-                      fit: BoxFit.cover,
-                      width: size.width + 120,
-                      height: size.height + (extraBuffer * 2),
-                    ),
+                child: Transform.scale(
+                  scale: imageScale,
+                  alignment: Alignment.topCenter,
+                  child: Image.asset(
+                    'assets/image/background.jpeg',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
           ),
 
-          // ── 2. Full-Page Dark Gradient Overlay for Readability ────────
+          // ── 2. Light Clear Gradient Overlay for Vivid Image Visibility ─
           Positioned.fill(
             child: IgnorePointer(
               child: DecoratedBox(
@@ -173,12 +158,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      AppColors.background.withValues(alpha: 0.65),
-                      AppColors.background.withValues(alpha: 0.85),
-                      AppColors.background.withValues(alpha: 0.92),
-                      AppColors.background.withValues(alpha: 0.96),
+                      AppColors.background.withValues(alpha: 0.35),
+                      AppColors.background.withValues(alpha: 0.55),
+                      AppColors.background.withValues(alpha: 0.75),
+                      AppColors.background.withValues(alpha: 0.88),
                     ],
-                    stops: const [0.0, 0.3, 0.7, 1.0],
+                    stops: const [0.0, 0.35, 0.7, 1.0],
                   ),
                 ),
               ),
