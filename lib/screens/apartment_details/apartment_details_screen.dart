@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/widgets/animated_background.dart';
 import '../../core/widgets/info_chip.dart';
 import '../../data/dummy_data.dart';
 import '../../models/apartment.dart';
@@ -45,11 +44,8 @@ class ApartmentDetailsScreen extends StatelessWidget {
       // ── Sticky WhatsApp CTA ──────────────────────────────────
       bottomNavigationBar: _WhatsAppCTA(apartment: apartment),
 
-      body: AnimatedBackground(
-        shapeColor: AppColors.accent,
-        shapeCount: 8,
-        child: SingleChildScrollView(
-          child: Center(
+      body: SingleChildScrollView(
+        child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 800),
               child: Padding(
@@ -181,7 +177,6 @@ class ApartmentDetailsScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
