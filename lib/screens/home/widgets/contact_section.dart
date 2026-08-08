@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
 import 'section_bar.dart';
 
 /// Contact Us section — WhatsApp & Facebook UI Cards.
@@ -70,34 +71,42 @@ class ContactSection extends StatelessWidget {
                     return Row(
                       children: [
                         Expanded(
-                          child: _ContactCard(
-                            title: 'تواصل عبر واتساب',
-                            subtitle:
-                                'استجابة فورية واستشارات عقارية مباشرة 24/7',
-                            iconWidget: const FaIcon(
-                              FontAwesomeIcons.whatsapp,
-                              size: 32,
-                              color: Color(0xFF25D366),
+                          child: RevealOnScroll(
+                            direction: RevealDirection.fromRight,
+                            delayMilliseconds: 0,
+                            child: _ContactCard(
+                              title: 'تواصل عبر واتساب',
+                              subtitle:
+                                  'استجابة فورية واستشارات عقارية مباشرة 24/7',
+                              iconWidget: const FaIcon(
+                                FontAwesomeIcons.whatsapp,
+                                size: 32,
+                                color: Color(0xFF25D366),
+                              ),
+                              badgeText: 'واتساب',
+                              accentColor: const Color(0xFF25D366),
+                              onTap: _openWhatsApp,
                             ),
-                            badgeText: 'واتساب',
-                            accentColor: const Color(0xFF25D366),
-                            onTap: _openWhatsApp,
                           ),
                         ),
                         const SizedBox(width: 24),
                         Expanded(
-                          child: _ContactCard(
-                            title: 'تابعنا على فيسبوك',
-                            subtitle:
-                                'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
-                            iconWidget: const FaIcon(
-                              FontAwesomeIcons.facebookF,
-                              size: 28,
-                              color: Color(0xFF1877F2),
+                          child: RevealOnScroll(
+                            direction: RevealDirection.fromRight,
+                            delayMilliseconds: 160,
+                            child: _ContactCard(
+                              title: 'تابعنا على فيسبوك',
+                              subtitle:
+                                  'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
+                              iconWidget: const FaIcon(
+                                FontAwesomeIcons.facebookF,
+                                size: 28,
+                                color: Color(0xFF1877F2),
+                              ),
+                              badgeText: 'فيسبوك',
+                              accentColor: const Color(0xFF1877F2),
+                              onTap: _openFacebook,
                             ),
-                            badgeText: 'فيسبوك',
-                            accentColor: const Color(0xFF1877F2),
-                            onTap: _openFacebook,
                           ),
                         ),
                       ],
@@ -106,32 +115,40 @@ class ContactSection extends StatelessWidget {
 
                   return Column(
                     children: [
-                      _ContactCard(
-                        title: 'تواصل عبر واتساب',
-                        subtitle:
-                            'استجابة فورية واستشارات عقارية مباشرة 24/7',
-                        iconWidget: const FaIcon(
-                          FontAwesomeIcons.whatsapp,
-                          size: 32,
-                          color: Color(0xFF25D366),
+                      RevealOnScroll(
+                        direction: RevealDirection.fromRight,
+                        delayMilliseconds: 0,
+                        child: _ContactCard(
+                          title: 'تواصل عبر واتساب',
+                          subtitle:
+                              'استجابة فورية واستشارات عقارية مباشرة 24/7',
+                          iconWidget: const FaIcon(
+                            FontAwesomeIcons.whatsapp,
+                            size: 32,
+                            color: Color(0xFF25D366),
+                          ),
+                          badgeText: 'واتساب',
+                          accentColor: const Color(0xFF25D366),
+                          onTap: _openWhatsApp,
                         ),
-                        badgeText: 'واتساب',
-                        accentColor: const Color(0xFF25D366),
-                        onTap: _openWhatsApp,
                       ),
                       const SizedBox(height: 20),
-                      _ContactCard(
-                        title: 'تابعنا على فيسبوك',
-                        subtitle:
-                            'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
-                        iconWidget: const FaIcon(
-                          FontAwesomeIcons.facebookF,
-                          size: 28,
-                          color: Color(0xFF1877F2),
+                      RevealOnScroll(
+                        direction: RevealDirection.fromRight,
+                        delayMilliseconds: 160,
+                        child: _ContactCard(
+                          title: 'تابعنا على فيسبوك',
+                          subtitle:
+                              'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
+                          iconWidget: const FaIcon(
+                            FontAwesomeIcons.facebookF,
+                            size: 28,
+                            color: Color(0xFF1877F2),
+                          ),
+                          badgeText: 'فيسبوك',
+                          accentColor: const Color(0xFF1877F2),
+                          onTap: _openFacebook,
                         ),
-                        badgeText: 'فيسبوك',
-                        accentColor: const Color(0xFF1877F2),
-                        onTap: _openFacebook,
                       ),
                     ],
                   );

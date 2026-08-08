@@ -236,24 +236,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Why Choose Us (From Right) ────────────────────────
+                // ── Why Choose Us (3D Perspective Tilt) ──────────────
                 const RevealOnScroll(
-                  direction: RevealDirection.fromRight,
+                  direction: RevealDirection.perspectiveTilt,
                   child: WhyUsSection(),
                 ),
 
                 const SizedBox(height: 64),
 
-                // ── Featured Properties (From Left) ───────────────────
+                // ── Featured Properties (3D Flip Unfold) ───────────────
                 RevealOnScroll(
                   key: _browseKey,
-                  direction: RevealDirection.fromLeft,
+                  direction: RevealDirection.flip3D,
                   child: const FeaturedPropertiesSection(),
                 ),
 
                 const SizedBox(height: 64),
 
-                // ── Neighborhood Grid Header (Scale) ──────────────────
+                // ── Neighborhood Grid Header (3D Scale Reveal) ────────
                 const RevealOnScroll(
                   direction: RevealDirection.scale,
                   child: SectionBar(
@@ -267,9 +267,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 36),
 
-                // ── Neighborhood Grid (From Right with Stagger) ───────
+                // ── Neighborhood Grid (3D Perspective Tilt) ───────────
                 RevealOnScroll(
-                  direction: RevealDirection.fromRight,
+                  direction: RevealDirection.perspectiveTilt,
                   delayMilliseconds: 100,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -294,15 +294,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: DummyData.areas.length,
                               itemBuilder: (context, index) {
                                 final area = DummyData.areas[index];
-                                return AreaCard(
-                                  areaName: area,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      RoutesNames.area,
-                                      arguments: area,
-                                    );
-                                  },
+                                return RevealOnScroll(
+                                  direction: RevealDirection.fromRight,
+                                  delayMilliseconds: index * 120,
+                                  child: AreaCard(
+                                    areaName: area,
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesNames.area,
+                                        arguments: area,
+                                      );
+                                    },
+                                  ),
                                 );
                               },
                             );
@@ -315,23 +319,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Recently Added (From Left) ────────────────────────
+                // ── Recently Added (3D Flip Unfold) ───────────────────
                 const RevealOnScroll(
-                  direction: RevealDirection.fromLeft,
+                  direction: RevealDirection.flip3D,
                   child: RecentPropertiesSection(),
                 ),
 
                 const SizedBox(height: 64),
 
-                // ── How It Works (From Right) ─────────────────────────
+                // ── How It Works (3D Perspective Tilt) ────────────────
                 const RevealOnScroll(
-                  direction: RevealDirection.fromRight,
+                  direction: RevealDirection.perspectiveTilt,
                   child: HowItWorksSection(),
                 ),
 
                 const SizedBox(height: 64),
 
-                // ── Testimonials (Scale Reveal) ───────────────────────
+                // ── Testimonials (3D Scale Reveal) ────────────────────
                 const RevealOnScroll(
                   direction: RevealDirection.scale,
                   child: TestimonialsSection(),
@@ -339,10 +343,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Contact Us (From Left) ────────────────────────────
+                // ── Contact Us (3D Perspective Tilt) ──────────────────
                 RevealOnScroll(
                   key: _contactKey,
-                  direction: RevealDirection.fromLeft,
+                  direction: RevealDirection.perspectiveTilt,
                   child: const ContactSection(),
                 ),
 

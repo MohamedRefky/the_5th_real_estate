@@ -1,8 +1,9 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
 import 'section_bar.dart';
 
 /// Testimonials section — Transparent & Glassmorphic.
@@ -58,17 +59,27 @@ class TestimonialsSection extends StatelessWidget {
                   if (isDesktop) {
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: testimonials
+                      children: testimonials.asMap().entries
                           .map(
-                              (t) => Expanded(child: _buildCard(context, t)))
+                              (entry) => Expanded(
+                                child: RevealOnScroll(
+                                  direction: RevealDirection.fromRight,
+                                  delayMilliseconds: entry.key * 150,
+                                  child: _buildCard(context, entry.value),
+                                ),
+                              ))
                           .toList(),
                     );
                   }
                   return Column(
-                    children: testimonials
-                        .map((t) => Padding(
+                    children: testimonials.asMap().entries
+                        .map((entry) => Padding(
                               padding: const EdgeInsets.only(bottom: 20),
-                              child: _buildCard(context, t),
+                              child: RevealOnScroll(
+                                direction: RevealDirection.fromRight,
+                                delayMilliseconds: entry.key * 150,
+                                child: _buildCard(context, entry.value),
+                              ),
                             ))
                         .toList(),
                   );

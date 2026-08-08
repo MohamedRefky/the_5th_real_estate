@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
 import '../../../data/dummy_data.dart';
 import '../../area/widgets/apartment_card.dart';
 import 'section_bar.dart';
@@ -36,9 +37,13 @@ class FeaturedPropertiesSection extends StatelessWidget {
                   separatorBuilder: (_, _) => const SizedBox(width: 20),
                   itemBuilder: (context, index) {
                     final apt = featuredApartments[index];
-                    return SizedBox(
-                      width: 340,
-                      child: ApartmentCard(apartment: apt),
+                    return RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      delayMilliseconds: index * 140,
+                      child: SizedBox(
+                        width: 340,
+                        child: ApartmentCard(apartment: apt),
+                      ),
                     );
                   },
                 ),

@@ -1,8 +1,9 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
 import 'section_bar.dart';
 
 /// Trust Indicators / "Why Choose Us" section — Transparent & Glassmorphic.
@@ -54,20 +55,32 @@ class WhyUsSection extends StatelessWidget {
                   final isDesktop = constraints.maxWidth >= 800;
                   if (isDesktop) {
                     return Row(
-                      children: items
-                          .map((item) => Expanded(
-                                child: _buildItem(context, item),
-                              ))
-                          .toList(),
+                      children: items.asMap().entries.map((entry) {
+                        final idx = entry.key;
+                        final item = entry.value;
+                        return Expanded(
+                          child: RevealOnScroll(
+                            direction: RevealDirection.fromRight,
+                            delayMilliseconds: idx * 150,
+                            child: _buildItem(context, item),
+                          ),
+                        );
+                      }).toList(),
                     );
                   }
                   return Column(
-                    children: items
-                        .map((item) => Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: _buildItem(context, item),
-                            ))
-                        .toList(),
+                    children: items.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final item = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: RevealOnScroll(
+                          direction: RevealDirection.fromRight,
+                          delayMilliseconds: idx * 150,
+                          child: _buildItem(context, item),
+                        ),
+                      );
+                    }).toList(),
                   );
                 },
               ),

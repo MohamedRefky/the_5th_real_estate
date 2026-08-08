@@ -1,7 +1,6 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-
+import 'package:the_5th_real_estate/core/widgets/reveal_on_scroll.dart';
 import '../../../core/theme/app_colors.dart';
 import 'section_bar.dart';
 
@@ -61,7 +60,13 @@ class HowItWorksSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (int i = 0; i < steps.length; i++) ...[
-                          Expanded(child: _buildStepCard(context, steps[i])),
+                          Expanded(
+                            child: RevealOnScroll(
+                              direction: RevealDirection.fromRight,
+                              delayMilliseconds: i * 160,
+                              child: _buildStepCard(context, steps[i]),
+                            ),
+                          ),
                           if (i < steps.length - 1)
                             Padding(
                               padding: const EdgeInsets.only(top: 70),
@@ -77,11 +82,19 @@ class HowItWorksSection extends StatelessWidget {
                   }
 
                   return Column(
-                    children: steps
-                        .map((s) => Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
+                    children: steps.asMap().entries
+                        .map((entry) {
+                          final idx = entry.key;
+                          final s = entry.value;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: RevealOnScroll(
+                              direction: RevealDirection.fromRight,
+                              delayMilliseconds: idx * 160,
                               child: _buildStepCard(context, s),
-                            ))
+                            ),
+                          );
+                        })
                         .toList(),
                   );
                 },

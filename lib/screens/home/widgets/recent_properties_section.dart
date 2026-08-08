@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
 import '../../../data/dummy_data.dart';
 import '../../area/widgets/apartment_card.dart';
 import 'section_bar.dart';
@@ -38,10 +39,16 @@ class RecentPropertiesSection extends StatelessWidget {
                   return Wrap(
                     spacing: spacing,
                     runSpacing: spacing,
-                    children: recentApartments.map((apt) {
+                    children: recentApartments.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final apt = entry.value;
                       return SizedBox(
                         width: cardWidth,
-                        child: ApartmentCard(apartment: apt),
+                        child: RevealOnScroll(
+                          direction: RevealDirection.fromRight,
+                          delayMilliseconds: idx * 150,
+                          child: ApartmentCard(apartment: apt),
+                        ),
                       );
                     }).toList(),
                   );
