@@ -2,54 +2,71 @@ import 'package:flutter/material.dart';
 
 /// The 5th Estate — World-Class Real Estate Color Palette
 ///
-/// Warm Dusky Twilight Blues and Refined Warm Gold — designed to
-/// harmonize perfectly with the twilight compound background image.
+/// Ultra-Refined Cool Platinum Silver & Deep Steel Night Navy.
+/// Tailored for high-end architectural luxury, metallic platinum shimmer, and dark mode perfection.
 class AppColors {
   AppColors._();
 
-  // ─── Core Brand Tones (Warm Twilight Blues) ─────────────────────
-  /// Deep Twilight Blue — Main scaffold background
-  static const Color background = Color(0xFF0C1A2E);
+  // ─── Core Brand Tones (Deep Steel Night Navy) ─────────────────
+  /// Deep Steel Night Scaffold Background
+  static const Color background = Color(0xFF0A111D);
 
-  /// Card Surface — Elevated card background (warm navy)
-  static const Color surface = Color(0xFF122240);
+  /// Elevated Steel Slate Card Surface Background
+  static const Color surface = Color(0xFF121C2B);
 
-  /// Section Alt Surface — Secondary cards & containers
-  static const Color cream = Color(0xFF0F1D34);
+  /// Secondary Section Container Surface
+  static const Color cream = Color(0xFF0E1724);
 
   /// Primary Brand Anchor
-  static const Color primary = Color(0xFF0E1C32);
+  static const Color primary = Color(0xFF0D1623);
 
-  /// Deepest Twilight Anchor
-  static const Color primaryDark = Color(0xFF070F1E);
+  /// Deepest Night Anchor
+  static const Color primaryDark = Color(0xFF050911);
 
-  /// Medium Twilight Slate
-  static const Color primaryMedium = Color(0xFF1D3050);
+  /// Medium Steel Slate Border/Container Tone
+  static const Color primaryMedium = Color(0xFF1E2C3F);
 
-  // ─── Modern Emerald Teal Accents ────────────────────────────────
-  /// Modern Emerald Teal — Highlights, icons, primary buttons
-// ─── Cool Platinum Accents ──────────────────────────────────────
-static const Color accent = Color(0xFFC9CDD6);
-static const Color accentLight2 = Color(0xFFE8EAEE);
-static const Color accentDark = Color(0xFF8E94A0);
-static const Color accentLight = Color(0x1FC9CDD6);
+  // ─── Ultra-Refined Cool Platinum Accents ────────────────────────
+  // Cool Platinum Silver — Highlights, icons, primary buttons
+  static const Color accent = Color(0xFFC9CDD6);
+
+  /// Luminous Diamond Silver — High-contrast badges & gradient highlights
+  static const Color accentLight2 = Color(0xFFF0F2F6);
+
+  /// Deep Steel Platinum — Active borders & gradient depth
+  static const Color accentDark = Color(0xFF7D8494);
+
+  /// Translucent Platinum Tint — Badges & icon backgrounds (12% opacity)
+  static const Color accentLight = Color(0x1FC9CDD6);
+
+  /// Cool Platinum Sheen — Near-white top highlight for metallic gradients
+  static const Color accentHighlight = Color(0xFFFCFDFE);
+
+  /// Soft Platinum Wash — Large subtle backgrounds (5% opacity)
+  static const Color accentSoft = Color(0x0DC9CDD6);
+
+  /// Deep Steel Line — Hairline strokes & separators below accentDark
+  static const Color accentLine = Color(0xFF525A6A);
+
+  /// Platinum Halo — Soft silver glow for premium shadows & ambient light
+  static const Color accentGlow = Color(0x33C9CDD6);
 
   // ─── Dividers & Borders ─────────────────────────────────────────
-  /// Warm Navy Border
-  static const Color divider = Color(0xFF243650);
+  /// Crisp Steel Border
+  static const Color divider = Color(0xFF1E2C3F);
 
   // ─── Text Hierarchy ─────────────────────────────────────────────
-  /// Warm Bright White — Main titles & body
-  static const Color textPrimary = Color(0xFFF5F2EC);
+  /// Crisp Ice White — Main titles & headers
+  static const Color textPrimary = Color(0xFFF5F7FA);
 
-  /// Warm Silver — Subtitles & metadata
-  static const Color textSecondary = Color(0xFFA0B0C4);
+  /// Platinum Slate Silver — Subtitles & metadata
+  static const Color textSecondary = Color(0xFF94A0B2);
 
-  /// Warm Hint — Search placeholders
-  static const Color textHint = Color(0xFF687C96);
+  /// Steel Hint — Search placeholders
+  static const Color textHint = Color(0xFF647285);
 
-  /// Contrast Text — On bright gold / gradient surfaces
-  static const Color textOnPrimary = Color(0xFF1A1206);
+  /// Contrast Text — Deep Steel Slate inside bright platinum CTA buttons
+  static const Color textOnPrimary = Color(0xFF0F1724);
 
   // ─── Status Colors ─────────────────────────────────────────────
   static const Color success = Color(0xFF10B981);
@@ -60,39 +77,46 @@ static const Color accentLight = Color(0x1FC9CDD6);
   // ─── Computed Variants ─────────────────────────────────────────
   static Color get primaryLight => accent.withValues(alpha: 0.12);
 
-  static const Color shimmer = Color(0xFF243650);
+  static const Color shimmer = Color(0xFF1E2C3F);
 
   // ─── Harmonious Gradients ───────────────────────────────────────
-  /// Smooth Twilight Hero Gradient
+  /// Deep Steel Hero Gradient
   static const LinearGradient heroGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [
-      Color(0xFF070F1E),
-      Color(0xFF0C1A2E),
-      Color(0xFF122240),
-    ],
+    colors: [Color(0xFF050911), Color(0xFF0A111D), Color(0xFF121C2B)],
     stops: [0.0, 0.5, 1.0],
   );
 
-  /// Modern Emerald Teal Accent Gradient
+  /// Ultra-Refined Cool Platinum Metallic Gradient (brushed-silver sheen)
   static const LinearGradient accentGradient = LinearGradient(
     begin: Alignment.topRight,
     end: Alignment.bottomLeft,
     colors: [
-      Color(0xFF7FE5D8),
-      Color(0xFF2DD4BF),
-      Color(0xFF0F9488),
+      Color(0xFFFCFDFE),
+      Color(0xFFF0F2F6),
+      Color(0xFFC9CDD6),
+      Color(0xFF7D8494),
     ],
+    stops: [0.0, 0.4, 0.72, 1.0],
+  );
+
+  /// Platinum Halo Fade — Subtle silver light leaking across section ties
+  static const LinearGradient platinumFade = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [
+      Color(0x00C9CDD6),
+      Color(0x26C9CDD6),
+      Color(0x00C9CDD6),
+    ],
+    stops: [0.0, 0.5, 1.0],
   );
 
   /// Section Background Gradient
   static const LinearGradient sectionGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [
-      Color(0xFF0C1A2E),
-      Color(0xFF0C1A2E),
-    ],
+    colors: [Color(0xFF0A111D), Color(0xFF0A111D)],
   );
 }
