@@ -30,8 +30,8 @@ class RevealOnScroll extends StatefulWidget {
   const RevealOnScroll({
     super.key,
     required this.child,
-    this.duration = const Duration(milliseconds: 1000),
-    this.offset = 70,
+    this.duration = const Duration(milliseconds: 700),
+    this.offset = 55,
     this.curve = Curves.easeOutQuart,
     this.delayMilliseconds = 0,
     this.direction = RevealDirection.fromRight,
@@ -92,8 +92,8 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     final dimension = position.viewportDimension;
     final distance = revealOffset - scrollOffset;
 
-    // Early trigger: start animation 120px before item hits screen edge
-    if (distance < dimension + 120 && (distance + renderObject.size.height) > -50) {
+    // Trigger animation right as item enters 70px inside the visible viewport
+    if (distance < dimension - 70 && (distance + renderObject.size.height) > 0) {
       _position?.removeListener(_checkVisibility);
       _trigger();
     }
