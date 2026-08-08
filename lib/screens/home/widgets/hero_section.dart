@@ -40,13 +40,13 @@ class _HeroSectionState extends State<HeroSection>
   ];
 
   Animation<double> _step(double start) => CurvedAnimation(
-        parent: _entrance,
-        curve: Interval(
-          start,
-          (start + 0.42).clamp(0.0, 1.0),
-          curve: Curves.easeOutCubic,
-        ),
-      );
+    parent: _entrance,
+    curve: Interval(
+      start,
+      (start + 0.42).clamp(0.0, 1.0),
+      curve: Curves.easeOutCubic,
+    ),
+  );
 
   @override
   void dispose() {
@@ -159,7 +159,7 @@ class _HeroSectionState extends State<HeroSection>
                       borderColor: AppColors.accent.withValues(alpha: 0.5),
                       borderWidth: 0.5,
                       child: Text(
-                        '✦  كل العقارات المتاحة في مكان واحد  ✦',
+                        '✦  وجهتك الحصرية لكل عقارات التجمع الخامس  ✦',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: AppColors.accent,
@@ -208,6 +208,10 @@ class _HeroSectionState extends State<HeroSection>
                         _GlassHeroStat(value: '+50', label: 'مشروع فاخر'),
                         _GlassHeroStat(value: '5', label: 'أحياء راقية'),
                         _GlassHeroStat(value: '+1000', label: 'عميل سعيد'),
+                        _GlassHeroStat(
+                          value: '100%',
+                          label: 'تعاقدات رسمية موثقة',
+                        ),
                       ],
                     ),
                   ),

@@ -17,28 +17,32 @@ class WhyUsSection extends StatelessWidget {
         icon: Icons.business_rounded,
         value: '+50',
         title: 'مشروع حصري',
-        subtitle: 'أرقى الكمبوندات والمشروعات العقارية'
+        subtitle: 'شراكات مباشرة مع كبرى شركات التطوير العقاري',
+      ),
+      (
+        icon: Icons.verified_rounded,
+        value: 'وكيل معتمد',
+        title: 'شراكة موثوقة',
+        subtitle: 'تعاقدات رسمية مع كبار الملاك والمطورين',
       ),
       (
         icon: Icons.handshake_rounded,
-        value: '+1000',
-        title: 'عميل سعيد',
-        subtitle: 'ثقة نعتز بها على مدار السنوات'
+        value: '1000+',
+        title: 'عميل واثق بينا',
+        subtitle: 'سجل حافل من الصفقات الناجحة والثقة المتبادلة',
       ),
       (
         icon: Icons.bolt_rounded,
-        value: '24/7',
-        title: 'استجابة فورية',
-        subtitle: 'فريق متخصص لتلبية طلباتك في أي وقت'
+        value: 'فوري',
+        title: 'استجابة ومعاينة',
+        subtitle: 'فريق متخصص لخدمتك في أي وقت',
       ),
     ];
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
-      ),
+      decoration: const BoxDecoration(color: Colors.transparent),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
