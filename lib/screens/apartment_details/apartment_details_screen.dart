@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/info_chip.dart';
+import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
 import '../../models/apartment.dart';
 import 'widgets/construction_timeline.dart';
@@ -75,125 +75,183 @@ class ApartmentDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── Facade Cover Photo ─────────────────────────
-                    FacadeCoverPlaceholder(
-                      imageUrl: apartment.coverImageUrl,
-                      area: apartment.area,
+                    // ── Facade Cover Photo (Scale Reveal) ───────────
+                    RevealOnScroll(
+                      direction: RevealDirection.scale,
+                      child: FacadeCoverPlaceholder(
+                        imageUrl: apartment.coverImageUrl,
+                        area: apartment.area,
+                      ),
                     ),
 
                     const SizedBox(height: 20),
 
-                    // ── Title & Price Header ───────────────────────
-                    _TitleSection(apartment: apartment, theme: theme),
+                    // ── Title & Price Header (From Right) ──────────
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: _TitleSection(apartment: apartment, theme: theme),
+                    ),
 
                     const SizedBox(height: 18),
 
-                    // ── Key Stats ──────────────────────────────────
-                    _StatsSection(apartment: apartment),
+                    // ── Key Stats (From Left) ──────────────────────
+                    RevealOnScroll(
+                      direction: RevealDirection.fromLeft,
+                      child: _StatsSection(apartment: apartment),
+                    ),
 
                     const SizedBox(height: 20),
 
-                    // ── Walkthrough Video ──────────────────────────
-                    _SectionHeader(
-                      title: 'فيديو معاينة الشقة',
-                      icon: Icons.videocam_rounded,
-                      theme: theme,
+                    // ── Walkthrough Video (From Right) ─────────────
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionHeader(
+                            title: 'فيديو معاينة الشقة',
+                            icon: Icons.videocam_rounded,
+                            theme: theme,
+                          ),
+                          const SizedBox(height: 10),
+                          VideoPlaceholder(videoUrl: apartment.videoUrl),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    VideoPlaceholder(videoUrl: apartment.videoUrl),
 
                     const SizedBox(height: 20),
 
-                    // ── Interior Gallery ──────────────────────────
-                    _SectionHeader(
-                      title: 'معاينة الغرف والتصميم الداخلي',
-                      icon: Icons.photo_library_rounded,
-                      theme: theme,
+                    // ── Interior Gallery (From Left) ───────────────
+                    RevealOnScroll(
+                      direction: RevealDirection.fromLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionHeader(
+                            title: 'معاينة الغرف والتصميم الداخلي',
+                            icon: Icons.photo_library_rounded,
+                            theme: theme,
+                          ),
+                          const SizedBox(height: 10),
+                          const ImageGalleryPlaceholder(),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    const ImageGalleryPlaceholder(),
 
                     const SizedBox(height: 20),
 
-                    // ── Description ────────────────----------------
-                    _SectionHeader(
-                      title: 'الوصف والتفاصيل الكاملة',
-                      icon: Icons.description_rounded,
-                      theme: theme,
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                          color: AppColors.divider.withValues(alpha: 0.6),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.04),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
+                    // ── Description (From Right) ───────────────────
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionHeader(
+                            title: 'الوصف والتفاصيل الكاملة',
+                            icon: Icons.description_rounded,
+                            theme: theme,
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(18),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(
+                                color: AppColors.divider.withValues(alpha: 0.6),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withValues(alpha: 0.04),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              apartment.description,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w500,
+                                height: 1.8,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      child: Text(
-                        apartment.description,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w500,
-                          height: 1.8,
-                          color: AppColors.textPrimary,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // ── WhatsApp Direct Callout Banner (Scale) ──────
+                    RevealOnScroll(
+                      direction: RevealDirection.scale,
+                      child: _WhatsAppBannerCard(apartment: apartment, theme: theme),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // ── Amenities (From Left) ──────────────────────
+                    if (apartment.amenities.isNotEmpty) ...[
+                      RevealOnScroll(
+                        direction: RevealDirection.fromLeft,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _SectionHeader(
+                              title: 'المميزات والتسهيلات',
+                              icon: Icons.star_rounded,
+                              theme: theme,
+                            ),
+                            const SizedBox(height: 10),
+                            _AmenitiesGrid(
+                              amenities: apartment.amenities,
+                              theme: theme,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── WhatsApp Direct Callout Banner ───────────────
-                    _WhatsAppBannerCard(apartment: apartment, theme: theme),
-
-                    const SizedBox(height: 20),
-
-                    // ── Amenities ──────────────────────────────────
-                    if (apartment.amenities.isNotEmpty) ...[
-                      _SectionHeader(
-                        title: 'المميزات والتسهيلات',
-                        icon: Icons.star_rounded,
-                        theme: theme,
-                      ),
-                      const SizedBox(height: 10),
-                      _AmenitiesGrid(
-                        amenities: apartment.amenities,
-                        theme: theme,
-                      ),
                       const SizedBox(height: 20),
                     ],
 
-                    // ── Construction Timeline ──────────────────────
+                    // ── Construction Timeline (From Right) ─────────
                     if (apartment.isUnderConstruction &&
                         apartment.milestones.isNotEmpty) ...[
-                      ConstructionTimeline(apartment: apartment),
+                      RevealOnScroll(
+                        direction: RevealDirection.fromRight,
+                        child: ConstructionTimeline(apartment: apartment),
+                      ),
                       const SizedBox(height: 20),
                     ],
 
-                    // ── Details Table ──────────────────────────────
-                    _SectionHeader(
-                      title: 'جدول التفاصيل الكاملة',
-                      icon: Icons.assignment_rounded,
-                      theme: theme,
+                    // ── Details Table (From Left) ──────────────────
+                    RevealOnScroll(
+                      direction: RevealDirection.fromLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionHeader(
+                            title: 'جدول التفاصيل الكاملة',
+                            icon: Icons.assignment_rounded,
+                            theme: theme,
+                          ),
+                          const SizedBox(height: 10),
+                          _DetailsTable(apartment: apartment, theme: theme),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 10),
-                    _DetailsTable(apartment: apartment, theme: theme),
 
-                    // ── Other Available Units in the Same Building ───
+                    // ── Other Available Units (From Right) ─────────
                     if (apartment.buildingName != null) ...[
                       const SizedBox(height: 20),
-                      _BuildingUnitsSection(
-                        currentApartment: apartment,
-                        theme: theme,
+                      RevealOnScroll(
+                        direction: RevealDirection.fromRight,
+                        child: _BuildingUnitsSection(
+                          currentApartment: apartment,
+                          theme: theme,
+                        ),
                       ),
                     ],
 

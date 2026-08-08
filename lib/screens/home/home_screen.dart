@@ -236,21 +236,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Why Choose Us ─────────────────────────────────────
-                const RevealOnScroll(child: WhyUsSection()),
+                // ── Why Choose Us (From Right) ────────────────────────
+                const RevealOnScroll(
+                  direction: RevealDirection.fromRight,
+                  child: WhyUsSection(),
+                ),
 
                 const SizedBox(height: 64),
 
-                // ── Featured Properties ───────────────────────────────
+                // ── Featured Properties (From Left) ───────────────────
                 RevealOnScroll(
                   key: _browseKey,
+                  direction: RevealDirection.fromLeft,
                   child: const FeaturedPropertiesSection(),
                 ),
 
                 const SizedBox(height: 64),
 
-                // ── Neighborhood Grid Header ──────────────────────────
+                // ── Neighborhood Grid Header (Scale) ──────────────────
                 const RevealOnScroll(
+                  direction: RevealDirection.scale,
                   child: SectionBar(
                     index: 4,
                     icon: Icons.location_city_rounded,
@@ -262,9 +267,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 36),
 
-                // ── Neighborhood Grid ─────────────────────────────────
+                // ── Neighborhood Grid (From Right with Stagger) ───────
                 RevealOnScroll(
-                  delayMilliseconds: 150,
+                  direction: RevealDirection.fromRight,
+                  delayMilliseconds: 100,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Center(
@@ -309,31 +315,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Recently Added ────────────────────────────────────
-                const RevealOnScroll(child: RecentPropertiesSection()),
+                // ── Recently Added (From Left) ────────────────────────
+                const RevealOnScroll(
+                  direction: RevealDirection.fromLeft,
+                  child: RecentPropertiesSection(),
+                ),
 
                 const SizedBox(height: 64),
 
-                // ── How It Works ──────────────────────────────────────
-                const RevealOnScroll(child: HowItWorksSection()),
+                // ── How It Works (From Right) ─────────────────────────
+                const RevealOnScroll(
+                  direction: RevealDirection.fromRight,
+                  child: HowItWorksSection(),
+                ),
 
                 const SizedBox(height: 64),
 
-                // ── Testimonials ──────────────────────────────────────
-                const RevealOnScroll(child: TestimonialsSection()),
+                // ── Testimonials (Scale Reveal) ───────────────────────
+                const RevealOnScroll(
+                  direction: RevealDirection.scale,
+                  child: TestimonialsSection(),
+                ),
 
                 const SizedBox(height: 64),
 
-                // ── Contact Us ────────────────────────────────────────
+                // ── Contact Us (From Left) ────────────────────────────
                 RevealOnScroll(
                   key: _contactKey,
+                  direction: RevealDirection.fromLeft,
                   child: const ContactSection(),
                 ),
 
                 const SizedBox(height: 64),
 
-                // ── Footer ────────────────────────────────────────────
-                const RevealOnScroll(child: _Footer()),
+                // ── Footer (From Bottom) ──────────────────────────────
+                const RevealOnScroll(
+                  direction: RevealDirection.fromBottom,
+                  child: _Footer(),
+                ),
               ],
             ),
           ),
