@@ -684,6 +684,7 @@ class _DetailsTable extends StatelessWidget {
         '${apartment.totalFloors} أدوار',
       ),
       (Icons.brush_rounded, 'مستوى التشطيب', apartment.finishingStatus.label),
+      (Icons.explore_rounded, 'واجهة الشقة', apartment.orientation.label),
       (
         Icons.monetization_on_rounded,
         'السعر الإجمالي',

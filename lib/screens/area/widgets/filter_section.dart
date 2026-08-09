@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../models/apartment.dart';
 
 /// Ultra-Clear, Auto-Wrapping Inline Popover Filter Section.
 ///
@@ -22,13 +23,14 @@ class FilterSection extends StatefulWidget {
 }
 
 class _FilterSectionState extends State<FilterSection> {
-  // Currently open inline popover key: 'floor', 'finishing', 'rooms', 'bathrooms', 'area', 'price', or null
+  // Currently open inline popover key: 'floor', 'finishing', 'orientation', 'rooms', 'bathrooms', 'area', 'price', or null
   String? _activePopover;
 
   // Filter state
   RangeValues _priceRange = const RangeValues(0, 10000000);
   final Set<int> _selectedFloors = {};
   final Set<String> _selectedFinishingStatuses = {};
+  final Set<ApartmentOrientation> _selectedOrientations = {};
   final Set<int> _selectedRooms = {};
   final Set<int> _selectedBathrooms = {};
   final Set<(double, double)> _selectedAreaRanges = {};
@@ -38,6 +40,7 @@ class _FilterSectionState extends State<FilterSection> {
     if (_priceRange.start > 0 || _priceRange.end < 10000000) count++;
     if (_selectedFloors.isNotEmpty) count++;
     if (_selectedFinishingStatuses.isNotEmpty) count++;
+    if (_selectedOrientations.isNotEmpty) count++;
     if (_selectedRooms.isNotEmpty) count++;
     if (_selectedBathrooms.isNotEmpty) count++;
     if (_selectedAreaRanges.isNotEmpty) count++;
@@ -66,6 +69,13 @@ class _FilterSectionState extends State<FilterSection> {
     }).toList();
     if (list.length <= 2) return 'التشطيب: ${list.join("، ")}';
     return 'التشطيب: ${list.take(2).join("، ")} (+${list.length - 2})';
+  }
+
+  String get _orientationLabel {
+    if (_selectedOrientations.isEmpty) return 'الواجهة';
+    final list = _selectedOrientations.map((o) => o.label).toList();
+    if (list.length <= 2) return 'الواجهة: ${list.join("، ")}';
+    return 'الواجهة: ${list.take(2).join("، ")} (+${list.length - 2})';
   }
 
   String get _roomsLabel {
@@ -112,6 +122,7 @@ class _FilterSectionState extends State<FilterSection> {
         maxPrice: _priceRange.end,
         floors: _selectedFloors,
         finishingStatuses: _selectedFinishingStatuses,
+        orientations: _selectedOrientations,
         rooms: _selectedRooms,
         bathrooms: _selectedBathrooms,
         areaRanges: _selectedAreaRanges,
@@ -125,6 +136,7 @@ class _FilterSectionState extends State<FilterSection> {
       _priceRange = const RangeValues(0, 10000000);
       _selectedFloors.clear();
       _selectedFinishingStatuses.clear();
+      _selectedOrientations.clear();
       _selectedRooms.clear();
       _selectedBathrooms.clear();
       _selectedAreaRanges.clear();
@@ -248,7 +260,19 @@ class _FilterSectionState extends State<FilterSection> {
                   onTap: () => _togglePopover('finishing'),
                 ),
 
-                // 3. Rooms Pill
+                // 3. Orientation Pill (أمامي، خلفي، جانبي)
+                _FilterPill(
+                  label: _orientationLabel,
+                  badgeText: _selectedOrientations.isEmpty
+                      ? null
+                      : '${_selectedOrientations.length}',
+                  icon: Icons.explore_rounded,
+                  isOpen: _activePopover == 'orientation',
+                  isSelected: _selectedOrientations.isNotEmpty,
+                  onTap: () => _togglePopover('orientation'),
+                ),
+
+                // 4. Rooms Pill
                 _FilterPill(
                   label: _roomsLabel,
                   badgeText: _selectedRooms.isEmpty
@@ -260,7 +284,7 @@ class _FilterSectionState extends State<FilterSection> {
                   onTap: () => _togglePopover('rooms'),
                 ),
 
-                // 4. Bathrooms Pill
+                // 5. Bathrooms Pill
                 _FilterPill(
                   label: _bathroomsLabel,
                   badgeText: _selectedBathrooms.isEmpty
@@ -272,7 +296,7 @@ class _FilterSectionState extends State<FilterSection> {
                   onTap: () => _togglePopover('bathrooms'),
                 ),
 
-                // 5. Area Pill
+                // 6. Area Pill
                 _FilterPill(
                   label: _areaLabel,
                   badgeText: _selectedAreaRanges.isEmpty
@@ -284,7 +308,7 @@ class _FilterSectionState extends State<FilterSection> {
                   onTap: () => _togglePopover('area'),
                 ),
 
-                // 6. Price Pill
+                // 7. Price Pill
                 _FilterPill(
                   label: _priceLabel,
                   icon: Icons.payments_rounded,
@@ -364,6 +388,9 @@ class _FilterSectionState extends State<FilterSection> {
         break;
       case 'finishing':
         optionsContent = _buildFinishingOptions();
+        break;
+      case 'orientation':
+        optionsContent = _buildOrientationOptions();
         break;
       case 'rooms':
         optionsContent = _buildRoomsOptions();
@@ -483,6 +510,34 @@ class _FilterSectionState extends State<FilterSection> {
               setState(() {
                 if (!_selectedFinishingStatuses.add(val)) {
                   _selectedFinishingStatuses.remove(val);
+                }
+              });
+              _applyFilters();
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildOrientationOptions() {
+    final options = [
+      ('أمامي', ApartmentOrientation.front),
+      ('خلفي', ApartmentOrientation.rear),
+      ('جانبي', ApartmentOrientation.side),
+    ];
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        for (final (label, val) in options)
+          _ChoiceChip(
+            label: label,
+            selected: _selectedOrientations.contains(val),
+            onTap: () {
+              setState(() {
+                if (!_selectedOrientations.add(val)) {
+                  _selectedOrientations.remove(val);
                 }
               });
               _applyFilters();
@@ -801,6 +856,7 @@ class FilterValues {
   final double maxPrice;
   final Set<int> floors;
   final Set<String> finishingStatuses;
+  final Set<ApartmentOrientation> orientations;
   final Set<int> rooms;
   final Set<int> bathrooms;
   final Set<(double, double)> areaRanges;
@@ -810,6 +866,7 @@ class FilterValues {
     this.maxPrice = 10000000,
     this.floors = const {},
     this.finishingStatuses = const {},
+    this.orientations = const {},
     this.rooms = const {},
     this.bathrooms = const {},
     this.areaRanges = const {},

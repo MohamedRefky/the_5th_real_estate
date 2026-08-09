@@ -296,6 +296,10 @@ class _ApartmentCardState extends State<ApartmentCard> {
                               icon: Icons.layers_rounded,
                               label: apt.floorLabel,
                             ),
+                            InfoChip(
+                              icon: Icons.explore_rounded,
+                              label: apt.orientation.label,
+                            ),
                           ],
                         ),
 

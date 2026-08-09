@@ -13,6 +13,21 @@ enum FinishingStatus {
   const FinishingStatus(this.label);
 }
 
+/// Apartment orientation/view (أمامي، خلفي، جانبي).
+enum ApartmentOrientation {
+  /// Front view / facing main street.
+  front('أمامي'),
+
+  /// Rear view / facing garden or inner courtyard.
+  rear('خلفي'),
+
+  /// Side view.
+  side('جانبي');
+
+  final String label;
+  const ApartmentOrientation(this.label);
+}
+
 /// Represents a single construction milestone in the timeline.
 class ConstructionMilestone {
   /// Display title (e.g., "صب الأساسات").
@@ -66,6 +81,9 @@ class Apartment {
   /// Finishing status.
   final FinishingStatus finishingStatus;
 
+  /// Orientation / view (أمامي، خلفي، جانبي).
+  final ApartmentOrientation orientation;
+
   /// Whether the unit is still under construction.
   final bool isUnderConstruction;
 
@@ -110,6 +128,7 @@ class Apartment {
     required this.rooms,
     required this.bathrooms,
     required this.finishingStatus,
+    this.orientation = ApartmentOrientation.front,
     this.isUnderConstruction = false,
     this.deliveryDate,
     this.constructionProgress = 1.0,

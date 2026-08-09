@@ -52,6 +52,11 @@ class _AreaScreenState extends State<AreaScreen> {
             !filters.finishingStatuses.contains(apt.finishingStatus.name)) {
           return false;
         }
+        // Orientation (أمامي، خلفي، جانبي)
+        if (filters.orientations.isNotEmpty &&
+            !filters.orientations.contains(apt.orientation)) {
+          return false;
+        }
         // Rooms
         if (filters.rooms.isNotEmpty && !filters.rooms.contains(apt.rooms)) {
           return false;
