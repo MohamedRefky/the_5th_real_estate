@@ -2,11 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/whatsapp_launcher.dart';
+import 'package:the_5th_real_estate/core/theme/app_colors.dart';
+import '../../../../core/widgets/contact_chooser_modal.dart';
 import '../../../../core/widgets/reveal_on_scroll.dart';
 import 'section_bar.dart';
 
@@ -14,27 +11,11 @@ import 'section_bar.dart';
 class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
 
-  Future<void> _openWhatsApp() async {
-    await launchWhatsApp(
-      phoneNumber: AppConstants.defaultWhatsappNumber,
-      message: 'مرحبًا، أريد الاستفسار عن العقارات المتاحة في التجمع الخامس وتحديد موعد معاينة',
-    );
-  }
-
-  Future<void> _openFacebook() async {
-    final url = Uri.parse('https://facebook.com');
-    try {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      await launchUrl(url);
-    }
-  }
-
   /// Data descriptors for the contact options, shared by both layouts.
-  List<_ContactOption> get _options => [
+  List<_ContactOption> _getOptions(BuildContext context) => [
         _ContactOption(
           title: 'تواصل عبر واتساب',
-          subtitle: 'استجابة فورية واستشارات عقارية مباشرة 24/7',
+          subtitle: 'استجابة فورية واستشارات عقارية مباشرة من فريق المبيعات',
           iconWidget: const FaIcon(
             FontAwesomeIcons.whatsapp,
             size: 32,
@@ -42,11 +23,15 @@ class ContactSection extends StatelessWidget {
           ),
           badgeText: 'واتساب',
           accentColor: const Color(0xFF25D366),
-          onTap: _openWhatsApp,
+          onTap: () => showContactChooserModal(
+            context,
+            message: 'مرحبًا، أريد الاستفسار عن العقارات المتاحة وتحديد موعد معاينة',
+            preferredPlatform: 'whatsapp',
+          ),
         ),
         _ContactOption(
           title: 'تابعنا على فيسبوك',
-          subtitle: 'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
+          subtitle: 'تصفح أحدث العروض والمشاريع وتواصل مع مسؤولي المبيعات',
           iconWidget: const FaIcon(
             FontAwesomeIcons.facebookF,
             size: 28,
@@ -54,7 +39,10 @@ class ContactSection extends StatelessWidget {
           ),
           badgeText: 'فيسبوك',
           accentColor: const Color(0xFF1877F2),
-          onTap: _openFacebook,
+          onTap: () => showContactChooserModal(
+            context,
+            preferredPlatform: 'facebook',
+          ),
         ),
       ];
 
@@ -79,7 +67,7 @@ class ContactSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final options = _options;
+    final options = _getOptions(context);
 
     return Container(
       width: double.infinity,

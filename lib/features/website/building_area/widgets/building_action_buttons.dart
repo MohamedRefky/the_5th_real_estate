@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/whatsapp_launcher.dart';
+import '../../../../core/widgets/contact_chooser_modal.dart';
 import '../../../../models/building.dart';
 
 /// Building card action row: WhatsApp CTA + "تفاصيل العمارة" button.
@@ -12,13 +12,10 @@ class BuildingActionButtons extends StatelessWidget {
   const BuildingActionButtons({super.key, required this.building});
 
   Future<void> _openWhatsapp(BuildContext context) async {
-    await launchWhatsApp(
-      phoneNumber: building.whatsappNumber,
+    await showContactChooserModal(
+      context,
       message:
           'مرحباً، أود الاستفسار عن ${building.name} في حي ${building.area}.',
-      context: context,
-      failureMessage:
-          'تعذر فتح واتساب على هذا الجهاز (${building.whatsappNumber.replaceAll(RegExp(r'\D'), '')})',
     );
   }
 

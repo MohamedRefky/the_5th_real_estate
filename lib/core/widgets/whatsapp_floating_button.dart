@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../utils/whatsapp_launcher.dart';
+import 'contact_chooser_modal.dart';
 
 /// Visual variants of the floating WhatsApp call-to-action.
 enum WhatsAppFloatingButtonVariant {
@@ -47,11 +47,9 @@ class WhatsAppFloatingButton extends StatelessWidget {
             ],
           ),
           child: FloatingActionButton.extended(
-            onPressed: () => launchWhatsApp(
-              phoneNumber: phoneNumber,
+            onPressed: () => showContactChooserModal(
+              context,
               message: message,
-              context: context,
-              failureMessage: failureMessage,
             ),
             backgroundColor: const Color(0xFF25D366),
             foregroundColor: Colors.white,
@@ -75,8 +73,8 @@ class WhatsAppFloatingButton extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () => launchWhatsApp(
-                phoneNumber: phoneNumber,
+              onTap: () => showContactChooserModal(
+                context,
                 message: message,
               ),
               borderRadius: BorderRadius.circular(30),

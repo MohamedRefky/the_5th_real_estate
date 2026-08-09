@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/whatsapp_launcher.dart';
+import '../../../../core/widgets/contact_chooser_modal.dart';
 import '../../../../models/apartment.dart';
 
 /// Direct WhatsApp callout banner for an apartment listing.
@@ -59,7 +59,7 @@ class WhatsAppBannerCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'تواصل مباشرة مع المالك عبر واتساب للاستفسار وحجز المعاينة',
+                  'تواصل مباشرة مع مسؤول المبيعات للاستفسار وحجز المعاينة',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -69,8 +69,8 @@ class WhatsAppBannerCard extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           ElevatedButton(
-            onPressed: () => launchWhatsApp(
-              phoneNumber: apartment.whatsappNumber,
+            onPressed: () => showContactChooserModal(
+              context,
               message:
                   'مرحبًا، أنا مهتم بـ "${apartment.title}" في ${apartment.area}. '
                   'هل يمكنني الحصول على مزيد من المعلومات وتحديد موعد معاينة؟',
