@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
