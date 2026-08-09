@@ -6,11 +6,13 @@ import '../../../data/dummy_data.dart';
 /// A ultra-premium card representing a neighborhood on the Home Screen.
 class AreaCard extends StatefulWidget {
   final String areaName;
+  final String? customBadgeText;
   final VoidCallback onTap;
 
   const AreaCard({
     super.key,
     required this.areaName,
+    this.customBadgeText,
     required this.onTap,
   });
 
@@ -54,6 +56,7 @@ class _AreaCardState extends State<AreaCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final count = DummyData.getByArea(widget.areaName).length;
+    final badgeText = widget.customBadgeText ?? '$count شقة متاحة';
     final imagePath = _areaImage;
 
     return MouseRegion(
@@ -194,7 +197,7 @@ class _AreaCardState extends State<AreaCard> {
 
                       const SizedBox(height: 10),
 
-                      // Apartment Count Badge
+                      // Count Badge
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         padding: const EdgeInsets.symmetric(
@@ -216,7 +219,7 @@ class _AreaCardState extends State<AreaCard> {
                           ),
                         ),
                         child: Text(
-                          '$count شقة متاحة',
+                          badgeText,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: _isHovered
                                 ? AppColors.textOnPrimary

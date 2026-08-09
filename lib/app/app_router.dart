@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/apartment_details/apartment_details_screen.dart';
 import '../screens/area/area_screen.dart';
+import '../screens/building_area/buildings_area_screen.dart';
 import '../screens/home/home_screen.dart';
 
 /// Centralised route names — single source of truth for navigation.
@@ -10,6 +11,7 @@ class RoutesNames {
 
   static const String home = '/';
   static const String area = '/area';
+  static const String buildingsArea = '/buildings-area';
   static const String apartmentDetails = '/apartment-details';
 }
 
@@ -20,13 +22,19 @@ class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RoutesNames.home:
-        return _buildRoute(HomeScreen(), settings);
+        return _buildRoute(const HomeScreen(), settings);
 
       case RoutesNames.area:
         final areaName = (settings.arguments is String)
             ? (settings.arguments as String)
             : 'المستثمرين';
         return _buildRoute(AreaScreen(areaName: areaName), settings);
+
+      case RoutesNames.buildingsArea:
+        final areaName = (settings.arguments is String)
+            ? (settings.arguments as String)
+            : 'المستثمرين';
+        return _buildRoute(BuildingsAreaScreen(areaName: areaName), settings);
 
       case RoutesNames.apartmentDetails:
         final apartmentId = (settings.arguments is String)

@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _browseKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
   final GlobalKey _neighborhoodKey = GlobalKey();
+  final GlobalKey _buildingsKey = GlobalKey();
   final GlobalKey _recentKey = GlobalKey();
   final GlobalKey _howKey = GlobalKey();
   final GlobalKey _testimonialsKey = GlobalKey();
@@ -40,22 +41,22 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<String> _navOrder = [
     'لماذا نحن',
     'المميزة',
-    'الأحياء',
+    'شقق',
+    'عمارات',
     'أحدث العقارات',
-    'كيف نعمل',
     'آراء العملاء',
     'تواصل معنا',
   ];
 
   Map<String, GlobalKey> get _sectionKeys => {
-        'لماذا نحن': _whyKey,
-        'المميزة': _browseKey,
-        'الأحياء': _neighborhoodKey,
-        'أحدث العقارات': _recentKey,
-        'كيف نعمل': _howKey,
-        'آراء العملاء': _testimonialsKey,
-        'تواصل معنا': _contactKey,
-      };
+    'لماذا نحن': _whyKey,
+    'المميزة': _browseKey,
+    'شقق': _neighborhoodKey,
+    'عمارات': _buildingsKey,
+    'أحدث العقارات': _recentKey,
+    'آراء العملاء': _testimonialsKey,
+    'تواصل معنا': _contactKey,
+  };
 
   @override
   void initState() {
@@ -235,20 +236,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 64),
 
-                // ── Neighborhood Grid Header (3D Scale Reveal) ────────
+                // ── Apartments Neighborhood Grid Header (3D Scale Reveal) ─
                 const RevealOnScroll(
                   direction: RevealDirection.scale,
                   child: SectionBar(
                     index: 4,
                     icon: Icons.location_city_rounded,
-                    title: 'اختر الحي',
+                    title: 'شقق',
                     subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
                   ),
                 ),
 
                 const SizedBox(height: 36),
 
-                // ── Neighborhood Grid ─────────────────────────────────
+                // ── Apartments Neighborhood Grid ──────────────────────
                 Padding(
                   key: _neighborhoodKey,
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -282,6 +283,73 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Navigator.pushNamed(
                                       context,
                                       RoutesNames.area,
+                                      arguments: area,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 64),
+
+                // ── Buildings Neighborhood Grid Header ────────────────
+                const RevealOnScroll(
+                  direction: RevealDirection.scale,
+                  child: SectionBar(
+                    index: 5,
+                    icon: Icons.apartment_rounded,
+                    title: 'عمارات',
+                    subtitle:
+                        'استكشف المشروعات والعمارات السكنية في الـ 5 أحياء',
+                  ),
+                ),
+
+                const SizedBox(height: 36),
+
+                // ── Buildings Neighborhood Grid ───────────────────────
+                Padding(
+                  key: _buildingsKey,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final crossAxisCount = _getCrossAxisCount(
+                            constraints.maxWidth,
+                          );
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 24,
+                                  mainAxisSpacing: 24,
+                                  childAspectRatio: 1.05,
+                                ),
+                            itemCount: DummyData.areas.length,
+                            itemBuilder: (context, index) {
+                              final area = DummyData.areas[index];
+                              final bldCount = DummyData.getBuildingsByArea(
+                                area,
+                              ).length;
+                              return RevealOnScroll(
+                                direction: RevealDirection.elasticPop,
+                                delayMilliseconds: index * 80,
+                                child: AreaCard(
+                                  areaName: area,
+                                  customBadgeText: '$bldCount عمارة متاحة',
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      RoutesNames.buildingsArea,
                                       arguments: area,
                                     );
                                   },
