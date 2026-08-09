@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../features/admin/screens/dashboard_screen.dart';
+import '../features/admin/screens/login_screen.dart';
+import '../features/admin/widgets/admin_route_guard.dart';
 import '../screens/apartment_details/apartment_details_screen.dart';
 import '../screens/area/area_screen.dart';
 import '../screens/building_area/buildings_area_screen.dart';
@@ -13,6 +16,10 @@ class RoutesNames {
   static const String area = '/area';
   static const String buildingsArea = '/buildings-area';
   static const String apartmentDetails = '/apartment-details';
+
+  // Hidden admin routes — never linked from the public UI.
+  static const String adminLogin = '/admin/login';
+  static const String adminDashboard = '/admin/dashboard';
 }
 
 /// Generates routes for [MaterialApp.onGenerateRoute].
@@ -42,6 +49,15 @@ class AppRouter {
             : 'apt_001';
         return _buildRoute(
           ApartmentDetailsScreen(apartmentId: apartmentId),
+          settings,
+        );
+
+      case RoutesNames.adminLogin:
+        return _buildRoute(const AdminLoginScreen(), settings);
+
+      case RoutesNames.adminDashboard:
+        return _buildRoute(
+          const AdminRouteGuard(child: AdminDashboardScreen()),
           settings,
         );
 
