@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/glass_container.dart';
 import '../../../core/widgets/metallic_gloss.dart';
@@ -176,7 +177,7 @@ class _HeroSectionState extends State<HeroSection>
                   _HeroEntrance(
                     animation: _steps[4],
                     child: Text(
-                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والفيلات\nبأسعار محدثة لحظة بلحظة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
+                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والعمارات والفيلات\nبأسعار محدثة لحظة بلحظة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: Colors.white.withValues(alpha: 0.88),
