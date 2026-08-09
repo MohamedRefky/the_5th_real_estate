@@ -93,10 +93,10 @@ class ContactChooserModal extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),
           child: ClipRRect(
-            // Fully rounded corners (top & bottom) for floating modal sheet look
+            // Fully rounded corners for floating modal sheet look
             borderRadius: BorderRadius.circular(32),
             child: BackdropFilter(
-              // Heavy blur effect for high translucency (منغمشة كدا blur)
+              // Heavy blur effect for high translucency
               filter: ImageFilter.blur(sigmaX: 45, sigmaY: 45),
               child: Container(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
@@ -319,57 +319,54 @@ class _GlassRepresentativeCard extends StatelessWidget {
                 // Representative Header
                 Row(
                   children: [
-                    // Avatar Circle
+                    // Sleek Profile Icon Badge (Replaced Initials)
                     Container(
-                      width: 52,
-                      height: 52,
+                      width: 50,
+                      height: 50,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: isWhatsAppOnly
                               ? [
-                                  const Color(0xFF25D366),
-                                  const Color(0xFF075E54),
+                                  const Color(0xFF25D366).withValues(alpha: 0.25),
+                                  const Color(0xFF128C7E).withValues(alpha: 0.15),
                                 ]
                               : (isFacebookOnly
                                   ? [
-                                      const Color(0xFF1877F2),
-                                      const Color(0xFF0F52AC),
+                                      const Color(0xFF1877F2).withValues(alpha: 0.25),
+                                      const Color(0xFF0F52AC).withValues(alpha: 0.15),
                                     ]
                                   : [
-                                      AppColors.accent,
-                                      AppColors.primaryDark,
+                                      AppColors.accent.withValues(alpha: 0.25),
+                                      AppColors.primaryMedium.withValues(alpha: 0.15),
                                     ]),
                         ),
-                        shape: BoxShape.circle,
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          width: 1.5,
+                          color: accentColor.withValues(alpha: 0.4),
+                          width: 1.2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: accentColor.withValues(alpha: 0.35),
+                            color: accentColor.withValues(alpha: 0.20),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
                         ],
                       ),
                       child: Center(
-                        child: Text(
-                          contact.initials,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 17,
-                          ),
+                        child: FaIcon(
+                          FontAwesomeIcons.userTie,
+                          color: accentColor,
+                          size: 22,
                         ),
                       ),
                     ),
 
                     const SizedBox(width: 14),
 
-                    // Name + Verified Badge + Title
+                    // Name + Official Facebook-Style Verified Badge + Title
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,18 +382,11 @@ class _GlassRepresentativeCard extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              // Official Verified Badge
-                              Container(
-                                padding: const EdgeInsets.all(2.5),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF1877F2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  size: 11,
-                                  color: Colors.white,
-                                ),
+                              // Official Facebook Blue Verified Badge Icon
+                              const Icon(
+                                Icons.verified_rounded,
+                                color: Color(0xFF1877F2),
+                                size: 19,
                               ),
                             ],
                           ),
