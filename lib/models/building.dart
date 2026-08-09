@@ -5,7 +5,7 @@ class Building {
   /// Unique identifier (Firestore doc ID).
   final String id;
 
-  /// Building name (e.g. "عمارة جاردينيا هايتس ١").
+  /// Building name (e.g. "عمارة كاملة في جاردينيا هايتس ٣ حرف أ").
   final String name;
 
   /// Description of the building and project.
@@ -14,7 +14,19 @@ class Building {
   /// Neighborhood name (e.g. "جاردينيا").
   final String area;
 
-  /// Starting price for units in this building in EGP.
+  /// Plot / total land area in square meters (e.g., 286).
+  final double? areaSqm;
+
+  /// Built structure description (e.g., "مبنية بيزمنت وأرضي وأول").
+  final String? buildingStructure;
+
+  /// Frontage / orientation (e.g., "دبل فيس").
+  final String? orientation;
+
+  /// Floor layout suitability note (e.g., "الدور ينفع شقتين").
+  final String? layoutNote;
+
+  /// Starting price or total building price in EGP.
   final double startingPrice;
 
   /// Total floors.
@@ -62,6 +74,10 @@ class Building {
     required this.name,
     required this.description,
     required this.area,
+    this.areaSqm,
+    this.buildingStructure,
+    this.orientation,
+    this.layoutNote,
     required this.startingPrice,
     required this.totalFloors,
     required this.totalUnits,
@@ -82,17 +98,26 @@ class Building {
   String? get coverImageUrl =>
       imageUrls.isNotEmpty ? imageUrls.first : null;
 
-  /// Formatted starting price string.
+  /// Formatted price string in Egyptian Pounds.
   String get formattedStartingPrice {
     if (startingPrice >= 1000000) {
       final millions = startingPrice / 1000000;
-      final formatted = millions == millions.roundToDouble()
-          ? millions.toStringAsFixed(0)
-          : millions.toStringAsFixed(1);
-      return 'تبدأ من $formatted مليون جنيه';
+      if (millions == millions.roundToDouble()) {
+        return '${millions.toStringAsFixed(0)} مليون جنيه';
+      }
+      final rounded1Dec = (millions * 10).round() / 10;
+      if (rounded1Dec == millions) {
+        return '$rounded1Dec مليون جنيه';
+      }
+      final wholeMillions = startingPrice ~/ 1000000;
+      final thousands = ((startingPrice % 1000000) / 1000).round();
+      if (thousands > 0) {
+        return '$wholeMillions مليون و $thousands ألف جنيه';
+      }
+      return '$wholeMillions مليون جنيه';
     }
     final thousands = (startingPrice / 1000).toStringAsFixed(0);
-    return 'تبدأ من $thousands ألف جنيه';
+    return '$thousands ألف جنيه';
   }
 
   /// Delivery date formatted in Arabic.
@@ -120,6 +145,10 @@ class Building {
         'name': name,
         'description': description,
         'area': area,
+        'areaSqm': areaSqm,
+        'buildingStructure': buildingStructure,
+        'orientation': orientation,
+        'layoutNote': layoutNote,
         'startingPrice': startingPrice,
         'totalFloors': totalFloors,
         'totalUnits': totalUnits,
@@ -143,6 +172,10 @@ class Building {
       name: json['name'] as String? ?? '',
       description: json['description'] as String? ?? '',
       area: json['area'] as String? ?? '',
+      areaSqm: (json['areaSqm'] as num?)?.toDouble(),
+      buildingStructure: json['buildingStructure'] as String?,
+      orientation: json['orientation'] as String?,
+      layoutNote: json['layoutNote'] as String?,
       startingPrice: (json['startingPrice'] as num?)?.toDouble() ?? 0,
       totalFloors: json['totalFloors'] as int? ?? 1,
       totalUnits: json['totalUnits'] as int? ?? 0,
