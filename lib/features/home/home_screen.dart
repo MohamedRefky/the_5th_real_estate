@@ -35,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey _testimonialsKey = GlobalKey();
   final GlobalKey _whyKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
-  double _scrollOffset = 0;
   String? _activeSection;
 
   static const List<String> _navOrder = [
@@ -47,6 +46,12 @@ class _HomeScreenState extends State<HomeScreen> {
     'آراء العملاء',
     'تواصل معنا',
   ];
+
+  /// Precomputed building counts (avoids re-filtering on every grid item build).
+  late final Map<String, int> _buildingCounts = {
+    for (final area in DummyData.areas)
+      area: DummyData.getBuildingsByArea(area).length,
+  };
 
   Map<String, GlobalKey> get _sectionKeys => {
     'لماذا نحن': _whyKey,
@@ -64,9 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.addListener(_onScroll);
   }
 
+  /// Only tracks the active nav section; scroll-driven visuals listen to the
+  /// controller directly so plain scrolling never rebuilds the whole page.
   void _onScroll() {
     if (!_scrollController.hasClients) return;
-    final offset = _scrollController.offset;
     String? active;
     for (final label in _navOrder) {
       final key = _sectionKeys[label];
@@ -78,11 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
       final dy = renderObject.localToGlobal(Offset.zero).dy;
       if (dy <= 160) active = label;
     }
-    if (active != _activeSection || offset != _scrollOffset) {
-      setState(() {
-        _scrollOffset = offset;
-        _activeSection = active;
-      });
+    if (active != _activeSection) {
+      setState(() => _activeSection = active);
     }
   }
 
@@ -119,47 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
-
-    // ── Scroll-driven animation parameters ──────────────────────────
-    double maxScroll = size.height * 3;
-    if (_scrollController.hasClients) {
-      try {
-        final pos = _scrollController.position;
-        if (pos.hasContentDimensions && pos.maxScrollExtent > 0) {
-          maxScroll = pos.maxScrollExtent;
-        }
-      } catch (_) {
-        // Fallback safely if scroll position is not attached yet
-      }
-    }
-    final double scrollProgress = (_scrollOffset / maxScroll).clamp(0.0, 1.0);
-
-    // Background: gentle zoom as you scroll (1.0 → 1.20)
-    final double imageScale = 1.0 + (scrollProgress * 0.20);
-
-    // Hero content: fades out and drifts up as user scrolls past it
-    final double heroScrollRatio = (_scrollOffset / (size.height * 0.65)).clamp(
-      0.0,
-      1.0,
-    );
-    final double heroOpacity = (1.0 - heroScrollRatio).clamp(0.0, 1.0);
-    final double heroDriftY = heroScrollRatio * -60;
-
-    // Overlay: darkens gradually as you scroll deeper into content
-    final double overlayTopAlpha = (0.35 + scrollProgress * 0.30).clamp(
-      0.0,
-      1.0,
-    );
-    final double overlayBottomAlpha = (0.88 + scrollProgress * 0.08).clamp(
-      0.0,
-      1.0,
-    );
-
-    // Scroll-to-top FAB visibility
-    final bool showScrollToTop = _scrollOffset > size.height * 0.8;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -167,39 +129,14 @@ class _HomeScreenState extends State<HomeScreen> {
           // ── 1. Full-Page 3D Zoom Background ─────────────────────────
           Positioned.fill(
             child: IgnorePointer(
-              child: ClipRect(
-                child: Transform.scale(
-                  scale: imageScale,
-                  alignment: Alignment.topCenter,
-                  child: Image.asset(
-                    'assets/image/background.jpeg',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+              child: _ZoomingBackground(controller: _scrollController),
             ),
           ),
 
           // ── 2. Dynamic Gradient Overlay (darkens on scroll) ─────────
           Positioned.fill(
             child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.background.withValues(alpha: overlayTopAlpha),
-                      AppColors.background.withValues(alpha: 0.55),
-                      AppColors.background.withValues(alpha: 0.78),
-                      AppColors.background.withValues(
-                        alpha: overlayBottomAlpha,
-                      ),
-                    ],
-                    stops: const [0.0, 0.35, 0.7, 1.0],
-                  ),
-                ),
-              ),
+              child: _GradientOverlay(controller: _scrollController),
             ),
           ),
 
@@ -209,16 +146,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 // ── Hero Section with Parallax Fade-Out ────────────────
-                Transform.translate(
-                  offset: Offset(0, heroDriftY),
-                  child: Opacity(
-                    opacity: heroOpacity,
-                    child: HeroSection(
-                      theme: theme,
-                      onBrowseAll: () => _scrollTo(_browseKey),
-                      onContact: () => _scrollTo(_contactKey),
-                    ),
-                  ),
+                _ParallaxHero(
+                  controller: _scrollController,
+                  onBrowseAll: () => _scrollTo(_browseKey),
+                  onContact: () => _scrollTo(_contactKey),
                 ),
 
                 const SizedBox(height: 64),
@@ -337,9 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemCount: DummyData.areas.length,
                             itemBuilder: (context, index) {
                               final area = DummyData.areas[index];
-                              final bldCount = DummyData.getBuildingsByArea(
-                                area,
-                              ).length;
+                              final bldCount = _buildingCounts[area] ?? 0;
                               return RevealOnScroll(
                                 direction: RevealDirection.elasticPop,
                                 delayMilliseconds: index * 80,
@@ -417,55 +346,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Positioned(
             bottom: 28,
             right: 28,
-            child: AnimatedSlide(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeOutCubic,
-              offset: showScrollToTop ? Offset.zero : const Offset(0, 2),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeOutCubic,
-                opacity: showScrollToTop ? 1.0 : 0.0,
-                child: IgnorePointer(
-                  ignoring: !showScrollToTop,
-                  child: GestureDetector(
-                    onTap: _scrollToTop,
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        gradient: AppColors.accentGradient,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.accent.withValues(alpha: 0.4),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          const Center(
-                            child: Icon(
-                              Icons.keyboard_arrow_up_rounded,
-                              color: AppColors.textOnPrimary,
-                              size: 28,
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: IgnorePointer(
-                              child: MetallicGloss(
-                                borderRadius: 16,
-                                strength: 0.85,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            child: _ScrollTopFab(
+              controller: _scrollController,
+              onTap: _scrollToTop,
             ),
           ),
         ],
@@ -477,5 +360,193 @@ class _HomeScreenState extends State<HomeScreen> {
     if (width >= 900) return 3;
     if (width >= 550) return 2;
     return 1;
+  }
+}
+
+/// Scroll progress (0.0 → 1.0) against the page's real content height.
+double _scrollProgress(ScrollController controller, double screenHeight) {
+  final offset = controller.hasClients ? controller.offset : 0.0;
+  double maxScroll = screenHeight * 3;
+  try {
+    final pos = controller.position;
+    if (pos.hasContentDimensions && pos.maxScrollExtent > 0) {
+      maxScroll = pos.maxScrollExtent;
+    }
+  } catch (_) {
+    // Fallback safely if the scroll position is not attached yet.
+  }
+  return (offset / maxScroll).clamp(0.0, 1.0);
+}
+
+/// Gentle background zoom (1.0 → 1.20) driven directly by scroll.
+class _ZoomingBackground extends StatelessWidget {
+  final ScrollController controller;
+
+  const _ZoomingBackground({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final progress = _scrollProgress(
+          controller,
+          MediaQuery.of(context).size.height,
+        );
+        return ClipRect(
+          child: Transform.scale(
+            scale: 1.0 + (progress * 0.20),
+            alignment: Alignment.topCenter,
+            child: const Image(
+              image: AssetImage('assets/image/background.jpeg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Overlay that darkens gradually as the user scrolls deeper into content.
+class _GradientOverlay extends StatelessWidget {
+  final ScrollController controller;
+
+  const _GradientOverlay({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final progress = _scrollProgress(
+          controller,
+          MediaQuery.of(context).size.height,
+        );
+        final topAlpha = (0.35 + progress * 0.30).clamp(0.0, 1.0);
+        final bottomAlpha = (0.88 + progress * 0.08).clamp(0.0, 1.0);
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColors.background.withValues(alpha: topAlpha),
+                AppColors.background.withValues(alpha: 0.55),
+                AppColors.background.withValues(alpha: 0.78),
+                AppColors.background.withValues(alpha: bottomAlpha),
+              ],
+              stops: const [0.0, 0.35, 0.7, 1.0],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Hero section that fades out and drifts up as the user scrolls past it.
+class _ParallaxHero extends StatelessWidget {
+  final ScrollController controller;
+  final VoidCallback? onBrowseAll;
+  final VoidCallback? onContact;
+
+  const _ParallaxHero({
+    required this.controller,
+    this.onBrowseAll,
+    this.onContact,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AnimatedBuilder(
+      animation: controller,
+      child: HeroSection(
+        theme: theme,
+        onBrowseAll: onBrowseAll,
+        onContact: onContact,
+      ),
+      builder: (context, child) {
+        final offset = controller.hasClients ? controller.offset : 0.0;
+        final height = MediaQuery.of(context).size.height;
+        final ratio = (offset / (height * 0.65)).clamp(0.0, 1.0);
+        final opacity = (1.0 - ratio).clamp(0.0, 1.0);
+        final driftY = ratio * -60;
+        return Transform.translate(
+          offset: Offset(0, driftY),
+          child: Opacity(opacity: opacity, child: child),
+        );
+      },
+    );
+  }
+}
+
+/// Scroll-to-top FAB that appears once the user scrolls past ~80% of a viewport.
+class _ScrollTopFab extends StatelessWidget {
+  final ScrollController controller;
+  final VoidCallback onTap;
+
+  const _ScrollTopFab({required this.controller, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final threshold = MediaQuery.of(context).size.height * 0.8;
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final visible = controller.hasClients && controller.offset > threshold;
+        return AnimatedSlide(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          offset: visible ? Offset.zero : const Offset(0, 2),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutCubic,
+            opacity: visible ? 1.0 : 0.0,
+            child: IgnorePointer(
+              ignoring: !visible,
+              child: GestureDetector(
+                onTap: onTap,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.accentGradient,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.accent.withValues(alpha: 0.4),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      const Center(
+                        child: Icon(
+                          Icons.keyboard_arrow_up_rounded,
+                          color: AppColors.textOnPrimary,
+                          size: 28,
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: MetallicGloss(
+                            borderRadius: 16,
+                            strength: 0.85,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import '../features/admin/models/property.dart'
-    as admin show Property, PriceNote, PropertyFinishing, PropertyOrientation, UnitType;
+import '../features/admin/models/property.dart' as admin show Property;
 import '../models/apartment.dart';
 import 'dummy_data.dart';
+import 'mappers/property_mapper.dart';
 
 /// Public-facing apartment data source for the website.
 ///
@@ -20,9 +20,6 @@ class PublicPropertyRepository {
 
   static final PublicPropertyRepository instance =
       PublicPropertyRepository._();
-
-  /// WhatsApp number used for admin-added listings (editable later).
-  static const String defaultWhatsapp = '+201000000001';
 
   List<Apartment>? _cache;
 
@@ -60,7 +57,7 @@ class PublicPropertyRepository {
             .where('isPublished', isEqualTo: true)
             .get(const GetOptions(source: Source.serverAndCache));
         remote = snap.docs
-            .map((doc) => _propertyToApartment(
+            .map((doc) => propertyToApartment(
                   admin.Property.fromFirestore(doc.id, doc.data()),
                 ))
             .toList();
@@ -88,98 +85,5 @@ class PublicPropertyRepository {
     if (area == 'النرجس الجديدة' && aptArea == 'النرجس') return true;
     if (area == 'النرجس' && aptArea == 'النرجس الجديدة') return true;
     return false;
-  }
-
-  /// Maps an admin `properties` doc onto the public [Apartment] model.
-  Apartment _propertyToApartment(admin.Property p) {
-    return Apartment(
-      id: p.id ?? '',
-      title: p.buildingLabel != null && p.buildingLabel!.isNotEmpty
-          ? '${p.projectName} — ${p.buildingLabel}'
-          : p.projectName,
-      description:
-          p.description ?? '${p.projectName} — ${p.unitType.label} ${p.floor}',
-      freeDescription: p.description,
-      area: p.area,
-      unitType: _unitType(p.unitType),
-      price: p.price,
-      priceNotes: p.priceNote == null
-          ? const {}
-          : {_priceNote(p.priceNote!)},
-      floor: _floorIndex(p.floor),
-      totalFloors: 1,
-      areaSqm: p.areaSqm,
-      rooms: p.bedrooms,
-      bathrooms: p.bathrooms,
-      reception: p.hasReception ? 'ريسبشن' : 'بدون ريسبشن',
-      hasSeparateKitchen: p.hasKitchen,
-      finishingStatus: _finishing(p.finishingStatus),
-      orientation: _orientation(p.orientation),
-      isUnderConstruction: false,
-      whatsappNumber: defaultWhatsapp,
-      imageUrls: p.imageUrls,
-      amenities: const [],
-      createdAt: p.createdAt,
-      updatedAt: p.updatedAt,
-    );
-  }
-
-  UnitType _unitType(admin.UnitType t) {
-    for (final e in UnitType.values) {
-      if (e.label == t.label) return e;
-    }
-    if (t.label == 'عماره') return UnitType.building;
-    return UnitType.apartment;
-  }
-
-  PriceNote _priceNote(admin.PriceNote n) {
-    for (final e in PriceNote.values) {
-      if (e.label == n.label) return e;
-    }
-    if (n.label == 'بالعداد') return PriceNote.installment;
-    return PriceNote.cash;
-  }
-
-  FinishingStatus _finishing(admin.PropertyFinishing f) {
-    switch (f.label) {
-      case 'سوبر لوكس':
-      case 'تشطيب كامل':
-        return FinishingStatus.superLux;
-      case 'نص تشطيب':
-      case '٣_٤ تشطيب':
-        return FinishingStatus.semiFinished;
-      default:
-        return FinishingStatus.semiFinished;
-    }
-  }
-
-  ApartmentOrientation _orientation(admin.PropertyOrientation? o) {
-    for (final e in ApartmentOrientation.values) {
-      if (e.label == o?.label) return e;
-    }
-    return ApartmentOrientation.front;
-  }
-
-  int _floorIndex(String floor) {
-    switch (floor) {
-      case 'بيزمنت':
-        return -1;
-      case 'أرضي':
-        return 0;
-      case 'أول':
-        return 1;
-      case 'تاني':
-        return 2;
-      case 'تالت':
-        return 3;
-      case 'رابع':
-        return 4;
-      case 'خامس':
-        return 5;
-      case 'روف':
-        return 6;
-      default:
-        return 0;
-    }
   }
 }
