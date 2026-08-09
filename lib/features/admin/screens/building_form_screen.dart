@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../controllers/property_form_controller.dart';
-import '../models/property.dart';
+import '../../../models/apartment.dart';
+import '../controllers/building_form_controller.dart';
+import '../models/admin_building.dart';
 import '../widgets/property_form_widgets.dart';
 import '../widgets/property_images_editor.dart';
 
-/// Add / edit a unit (apartment, villa, duplex or studio). Used by the
-/// dashboard's "إضافة عقار" flow and the edit button on each unit card.
+/// Add / edit a whole building (عمارة). Reached from the dashboard's type
+/// chooser; writes go to the `buildings/{area}/units` collection.
 ///
-/// [initialUnitType] comes from the dashboard type chooser so new units are
-/// created as the right kind without a manual type pick.
-///
-/// All form state + save logic lives in [PropertyFormController]; this screen
+/// All form state + save logic lives in [BuildingFormController]; this screen
 /// only composes the shared form widgets.
-class PropertyFormScreen extends StatefulWidget {
-  final Property? property;
-  final UnitType? initialUnitType;
+class BuildingFormScreen extends StatefulWidget {
+  final AdminBuilding? building;
 
-  const PropertyFormScreen({super.key, this.property, this.initialUnitType});
+  const BuildingFormScreen({super.key, this.building});
 
   @override
-  State<PropertyFormScreen> createState() => _PropertyFormScreenState();
+  State<BuildingFormScreen> createState() => _BuildingFormScreenState();
 }
 
-class _PropertyFormScreenState extends State<PropertyFormScreen> {
-  late final PropertyFormController _controller;
+class _BuildingFormScreenState extends State<BuildingFormScreen> {
+  late final BuildingFormController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        PropertyFormController(widget.property, initialUnitType: widget.initialUnitType);
+    _controller = BuildingFormController(widget.building);
   }
 
   @override
@@ -56,16 +52,26 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
     }
   }
 
-  /// Unit types selectable in the units form. Buildings have their own form
-  /// and collection, so they are excluded — except when editing a legacy doc
-  /// that was originally stored as a building.
-  List<UnitType> _unitTypeOptions(UnitType current) {
-    final options = [
-      for (final t in UnitType.values)
-        if (t != UnitType.building) t,
-    ];
-    if (current == UnitType.building) options.add(UnitType.building);
-    return options;
+  Future<void> _pickDeliveryDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _controller.deliveryDate ?? DateTime.now().add(
+            const Duration(days: 365),
+          ),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
+      helpText: 'موعد التسليم المتوقع',
+      builder: (context, child) => Theme(
+        data: ThemeData.dark().copyWith(
+          colorScheme: const ColorScheme.dark(
+            primary: AppColors.accent,
+            surface: AppColors.surface,
+          ),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) _controller.setDeliveryDate(picked);
   }
 
   @override
@@ -78,7 +84,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
         title: ListenableBuilder(
           listenable: _controller,
           builder: (context, _) => Text(
-            _controller.isEdit ? 'تعديل العقار' : 'إضافة عقار',
+            _controller.isEdit ? 'تعديل العمارة' : 'إضافة عمارة',
             style: const TextStyle(color: AppColors.textPrimary),
           ),
         ),
@@ -100,71 +106,54 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                       children: [
                         const FormSectionTitle('بيانات أساسية'),
                         FormTextField(
-                          c.projectName,
-                          'اسم المشروع',
+                          c.name,
+                          'اسم العمارة / المشروع',
                           validator: c.requiredValidator,
                         ),
                         const SizedBox(height: 12),
                         FormDropdown<String>(
                           label: 'الحي/المنطقة',
                           value: c.area,
-                          items: areaOptions,
+                          items: const [
+                            'المستثمرين',
+                            'الأندلس',
+                            'جاردينيا',
+                            'بيت الوطن',
+                            'النرجس الجديدة',
+                          ],
                           labelOf: (v) => v,
                           onChanged: c.setArea,
                         ),
                         const SizedBox(height: 12),
-                        FormTextField(c.buildingLabel, 'رقم العمارة (اختياري)'),
+                        FormTextField(
+                          c.areaSqm,
+                          'مساحة المبنى (م²) — اختياري',
+                          keyboardType: TextInputType.number,
+                          validator: c.optionalNumberValidator,
+                        ),
                         const SizedBox(height: 20),
-                        const FormSectionTitle('تفاصيل الوحدة'),
+                        const FormSectionTitle('تفاصيل العمارة'),
                         const SizedBox(height: 12),
-                        FormDropdown<UnitType>(
-                          label: 'نوع الوحدة',
-                          value: c.unitType,
-                          items: _unitTypeOptions(c.unitType),
-                          labelOf: (v) => v.label,
-                          onChanged: c.setUnitType,
-                        ),
+                        FormTextField(c.buildingStructure, 'هيكل المبنى (مثال: بيزمنت + أرضي + أول)'),
                         const SizedBox(height: 12),
-                        FormDropdown<String>(
-                          label: 'الدور',
-                          value: c.floor,
-                          items: floorOptions,
-                          labelOf: (v) => v,
-                          onChanged: c.setFloor,
-                        ),
+                        FormTextField(c.orientation, 'الاتجاه/الواجهة (مثال: دبل فيس)'),
                         const SizedBox(height: 12),
-                        FormDropdown<PropertyOrientation?>(
-                          label: 'الاتجاه (اختياري)',
-                          value: c.orientation,
-                          items: PropertyOrientation.values,
-                          labelOf: (v) => v?.label ?? 'بدون',
-                          hint: 'بدون',
-                          onChanged: c.setOrientation,
-                        ),
+                        FormTextField(c.layoutNote, 'ملاحظة التخطيط (مثال: الدور ينفع شقتين)'),
                         const SizedBox(height: 12),
-                        FormDropdown<PropertyFinishing>(
+                        FormDropdown<FinishingStatus>(
                           label: 'التشطيب',
                           value: c.finishingStatus,
-                          items: PropertyFinishing.values,
+                          items: FinishingStatus.values,
                           labelOf: (v) => v.label,
                           onChanged: c.setFinishingStatus,
-                        ),
-                        const SizedBox(height: 12),
-                        FormDropdown<PriceNote?>(
-                          label: 'نوع السعر (اختياري)',
-                          value: c.priceNote,
-                          items: PriceNote.values,
-                          labelOf: (v) => v?.label ?? 'بدون',
-                          hint: 'بدون',
-                          onChanged: c.setPriceNote,
                         ),
                         const SizedBox(height: 12),
                         Row(
                           children: [
                             Expanded(
                               child: FormTextField(
-                                c.areaSqm,
-                                'المساحة (م²)',
+                                c.startingPrice,
+                                'السعر (ج.م)',
                                 keyboardType: TextInputType.number,
                                 validator: c.numberValidator,
                               ),
@@ -172,8 +161,8 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: FormTextField(
-                                c.bedrooms,
-                                'عدد الغرف',
+                                c.totalFloors,
+                                'عدد الأدوار',
                                 keyboardType: TextInputType.number,
                                 validator: c.numberValidator,
                               ),
@@ -185,8 +174,8 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           children: [
                             Expanded(
                               child: FormTextField(
-                                c.bathrooms,
-                                'عدد الحمامات',
+                                c.totalUnits,
+                                'عدد الوحدات',
                                 keyboardType: TextInputType.number,
                                 validator: c.numberValidator,
                               ),
@@ -194,8 +183,8 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: FormTextField(
-                                c.price,
-                                'السعر (ج.م)',
+                                c.availableUnits,
+                                'الوحدات المتاحة',
                                 keyboardType: TextInputType.number,
                                 validator: c.numberValidator,
                               ),
@@ -204,15 +193,69 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                         ),
                         const SizedBox(height: 16),
                         FormSwitchRow(
-                          label: 'يوجد ريسبشن',
-                          value: c.hasReception,
-                          onChanged: c.setHasReception,
+                          label: 'تحت الإنشاء',
+                          value: c.isUnderConstruction,
+                          onChanged: c.setIsUnderConstruction,
                         ),
-                        FormSwitchRow(
-                          label: 'يوجد مطبخ',
-                          value: c.hasKitchen,
-                          onChanged: c.setHasKitchen,
+                        if (c.isUnderConstruction) ...[
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: _pickDeliveryDate,
+                                  icon: const Icon(
+                                    Icons.event_rounded,
+                                    color: AppColors.accent,
+                                  ),
+                                  label: Text(
+                                    c.deliveryDate == null
+                                        ? 'اختر موعد التسليم'
+                                        : 'التسليم: ${c.deliveryDate!.year}/${c.deliveryDate!.month}',
+                                    style: const TextStyle(
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (c.deliveryDate != null)
+                                IconButton(
+                                  tooltip: 'إلغاء الموعد',
+                                  onPressed: c.clearDeliveryDate,
+                                  icon: const Icon(
+                                    Icons.clear_rounded,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'نسبة التنفيذ: ${(c.constructionProgress * 100).round()}٪',
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          Slider(
+                            value: c.constructionProgress,
+                            onChanged: c.setConstructionProgress,
+                            activeColor: AppColors.accent,
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        FormTextField(
+                          c.whatsappNumber,
+                          'رقم الواتساب',
+                          keyboardType: TextInputType.phone,
+                          validator: c.requiredValidator,
                         ),
+                        const SizedBox(height: 12),
+                        FormTextField(
+                          c.amenities,
+                          'المميزات (افصل بينها بفاصلة)',
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 16),
                         FormSwitchRow(
                           label: 'منشور على الموقع',
                           value: c.isPublished,
@@ -223,7 +266,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                         const SizedBox(height: 12),
                         FormTextField(
                           c.description,
-                          'وصف إضافي (اختياري)',
+                          'وصف العمارة والمشروع',
                           maxLines: 4,
                         ),
                         const SizedBox(height: 20),
@@ -266,7 +309,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           color: AppColors.textOnPrimary,
                         ),
                       )
-                    : Text(_controller.isEdit ? 'حفظ التعديلات' : 'إضافة العقار'),
+                    : Text(_controller.isEdit ? 'حفظ التعديلات' : 'إضافة العمارة'),
               ),
             ),
           );

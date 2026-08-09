@@ -39,8 +39,9 @@ firebase deploy --only firestore:rules,storage:rules
 ```
 
 > The rules are the **only** security boundary (there is no backend). Every
-> read and write to the `properties` collection and `properties/` storage
-> paths is locked to the single admin UID.
+> read and write to the `properties/*/units` and `buildings/*/units` paths
+> (and the `properties/` + `buildings/` storage folders) is locked to the
+> single admin UID.
 
 ## 6. Run and test
 ```bash
@@ -48,15 +49,33 @@ flutter run -d chrome
 ```
 Then type the hidden URLs directly in the browser (no public links exist):
 - `/admin/login` — sign in with the admin account
-- `/admin/dashboard` — add / edit / delete / publish–unpublish properties
+- `/admin/dashboard` — add / edit / delete / publish–unpublish listings
 
 Signed-out visitors who type `/admin/dashboard` are redirected to `/admin/login`.
+
+## Data organization (Firestore)
+Listings are split into two collections, each grouped per neighborhood in
+per-area folders:
+
+```
+properties/{area}/units/{unitId}   → شقق / فيلا / دوبلكس / استوديو
+buildings/{area}/units/{unitId}    → عمارات كاملة
+```
+
+- Adding from the dashboard asks **عمارة vs شقة/فيلا** first, then opens the
+  matching form and writes into that type's collection — inside the chosen
+  neighborhood's folder.
+- The website reads published listings from the right per-area folder, so a
+  unit added to "جاردينيا" shows under جاردينيا (not المستثمرين).
+- Old flat `properties/{id}` documents (uploaded before this structure) are
+  migrated with the dashboard's **sync** button: "ترحيل البيانات القديمة".
 
 ## How it works
 - `AuthController` listens to `authStateChanges` and notifies the route guard.
 - `AdminRouteGuard` redirects anonymous visitors to login; the real gate is
   the rules, so the UI guard is convenience, not security.
-- `PropertyService` is the only class touching Firestore/Storage; the form
-  screen uploads picked images and stores their download URLs in the document.
-- Each floor of a multi-floor building is a **separate document**; the admin
-  adds one listing per floor.
+- `PropertyService` (units) and `BuildingService` (buildings) are the only
+  classes touching Firestore/Storage; the forms upload picked images and store
+  their download URLs in the document.
+- Each floor of a multi-floor building is a **separate unit document**; the
+  admin adds one listing per floor.

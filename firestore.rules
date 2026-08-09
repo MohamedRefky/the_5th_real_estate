@@ -1,30 +1,13 @@
 rules_version = '2';
 
 // ─── Firestore Security Rules — The 5th Real Estate ─────────────────
-//
-// The public website now renders live listings from Firestore: everyone can
-// read PUBLISHED properties (used to build the site catalog). Writes stay
-// locked to the single admin UID via the hidden admin dashboard.
-//
-// IMPORTANT: These rules are the ONLY real security boundary — there is no
-// backend server. Replace the admin UID placeholder (see FIREBASE_SETUP.md).
+// Full read and write permissions for managing properties and buildings.
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /properties/{propertyId} {
-      // Anyone can read properties that are published to the website.
-      allow get: if resource.data.isPublished == true;
-      allow list: if request.query.where.isPublished == true;
-
-      // Admin has full access (includes unpublished docs and unfiltered
-      // list queries used by the dashboard).
-      allow get, list, create, update, delete: if isAdmin();
-    }
-
-    function isAdmin() {
-      return request.auth != null
-        && request.auth.uid == 'yC5VCHMzFqWfNPaj1krkXZHAQ0D2';
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }

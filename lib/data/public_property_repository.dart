@@ -13,6 +13,9 @@ import 'mappers/property_mapper.dart';
 /// the website instantly after being added; local listings stay as a fallback
 /// and as extra content.
 ///
+/// Firestore data is read from the per-area folders `properties/{area}/units`
+/// (plus the legacy flat `properties` collection during the migration window).
+///
 /// If Firebase is not configured or the query fails (offline, rules, etc.)
 /// this transparently falls back to local data only — the site never breaks.
 class PublicPropertyRepository {
@@ -52,15 +55,33 @@ class PublicPropertyRepository {
     var remote = const <Apartment>[];
     try {
       if (Firebase.apps.isNotEmpty) {
-        final snap = await FirebaseFirestore.instance
+        final byId = <String, Apartment>{};
+
+        // New structure: one folder per area.
+        final areaSnaps = await Future.wait([
+          for (final area in DummyData.areas)
+            FirebaseFirestore.instance
+                .collection('properties')
+                .doc(area)
+                .collection('units')
+                .where('isPublished', isEqualTo: true)
+                .get(const GetOptions(source: Source.serverAndCache)),
+        ]);
+
+        // Legacy flat collection — still read until the migration deletes it.
+        final legacySnap = await FirebaseFirestore.instance
             .collection('properties')
             .where('isPublished', isEqualTo: true)
             .get(const GetOptions(source: Source.serverAndCache));
-        remote = snap.docs
-            .map((doc) => propertyToApartment(
-                  admin.Property.fromFirestore(doc.id, doc.data()),
-                ))
-            .toList();
+
+        for (final snap in [legacySnap, ...areaSnaps]) {
+          for (final doc in snap.docs) {
+            byId[doc.id] = propertyToApartment(
+              admin.Property.fromFirestore(doc.id, doc.data()),
+            );
+          }
+        }
+        remote = byId.values.toList();
       }
     } catch (_) {
       // Offline / not set up / permission denied → local data only.

@@ -47,6 +47,11 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
       body: ListenableBuilder(
         listenable: _controller,
         builder: (context, _) {
+          if (_controller.loading) {
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.accent),
+            );
+          }
           final buildings = _controller.filteredBuildings;
 
           return SingleChildScrollView(

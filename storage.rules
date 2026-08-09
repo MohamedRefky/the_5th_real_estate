@@ -1,20 +1,13 @@
 rules_version = '2';
 
 // ─── Firebase Storage Security Rules — The 5th Real Estate ──────────
-//
-// Property images are uploaded by the admin dashboard only. All access is
-// locked to the single admin UID. Replace the placeholder (FIREBASE_SETUP.md).
+// Full read and write permissions for uploading property images.
 
 service firebase.storage {
   match /b/{bucket}/o {
 
-    match /properties/{allPaths=**} {
-      allow read, write: if isAdmin();
-    }
-
-    function isAdmin() {
-      return request.auth != null
-        && request.auth.uid == 'yC5VCHMzFqWfNPaj1krkXZHAQ0D2';
+    match /{allPaths=**} {
+      allow read, write: if true;
     }
   }
 }

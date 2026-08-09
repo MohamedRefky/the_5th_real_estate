@@ -7,7 +7,7 @@ import '../../../../core/widgets/reveal_on_scroll.dart';
 import '../../../../core/widgets/section_header.dart';
 import '../../../../core/widgets/state_views.dart';
 import '../../../../core/widgets/whatsapp_floating_button.dart';
-import '../../../../data/dummy_data.dart';
+import '../../../../data/public_building_repository.dart';
 import '../../../../models/building.dart';
 import '../../apartment_details/widgets/facade_cover.dart';
 import '../building_details_presenter.dart';
@@ -39,8 +39,10 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
     _load();
   }
 
-  void _load() {
-    final bld = DummyData.getBuildingById(widget.buildingId);
+  Future<void> _load() async {
+    final bld =
+        await PublicBuildingRepository.instance.byId(widget.buildingId);
+    if (!mounted) return;
     setState(() {
       _building = bld;
       _notFound = bld == null;

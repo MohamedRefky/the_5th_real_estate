@@ -1,32 +1,28 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../models/picked_image.dart';
 import '../models/property.dart';
 import '../services/property_service.dart';
+import 'image_edit_controller.dart';
 
-/// A locally picked image (file handle + decoded bytes) awaiting upload.
-class PickedImage {
-  final XFile file;
-  final Uint8List bytes;
-
-  PickedImage(this.file, this.bytes);
-}
-
-/// Holds all state for the add/edit property form: text controllers, enum
+/// Holds all state for the add/edit unit form: text controllers, enum
 /// selections, image management and the save flow.
 ///
 /// Extracted from `PropertyFormScreen` so the form logic is testable and the
 /// screen only composes widgets.
-class PropertyFormController extends ChangeNotifier {
-  PropertyFormController(this.property) {
+class PropertyFormController extends ChangeNotifier
+    implements ImageEditController {
+  PropertyFormController(this.property, {UnitType? initialUnitType}) {
+    _initialUnitType = initialUnitType;
     _init();
   }
 
   final Property? property;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
+
+  UnitType? _initialUnitType;
 
   late final bool isEdit;
 
@@ -53,6 +49,7 @@ class PropertyFormController extends ChangeNotifier {
   // Images
   late List<String> existingUrls;
   final List<String> removedUrls = [];
+  @override
   final List<PickedImage> newImages = [];
 
   bool saving = false;
@@ -71,7 +68,7 @@ class PropertyFormController extends ChangeNotifier {
     price = TextEditingController(text: p != null ? _fmtNum(p.price) : '');
     description = TextEditingController(text: p?.description ?? '');
 
-    unitType = p?.unitType ?? UnitType.apartment;
+    unitType = p?.unitType ?? _initialUnitType ?? UnitType.apartment;
     floor = p?.floor ?? floorOptions[1];
     area = p?.area ?? areaOptions.first;
     orientation = p?.orientation;
@@ -89,6 +86,7 @@ class PropertyFormController extends ChangeNotifier {
 
   // ── Derived ────────────────────────────────────────────────────────
 
+  @override
   List<String> get visibleExistingUrls =>
       existingUrls.where((u) => !removedUrls.contains(u)).toList();
 
@@ -155,6 +153,7 @@ class PropertyFormController extends ChangeNotifier {
 
   // ── Images ─────────────────────────────────────────────────────────
 
+  @override
   Future<void> pickImages() async {
     final picked = await _picker.pickMultiImage(limit: 10 - newImages.length);
     if (picked.isEmpty) return;
@@ -166,11 +165,13 @@ class PropertyFormController extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   void removeExisting(String url) {
     removedUrls.add(url);
     notifyListeners();
   }
 
+  @override
   void removeNew(PickedImage image) {
     newImages.remove(image);
     notifyListeners();

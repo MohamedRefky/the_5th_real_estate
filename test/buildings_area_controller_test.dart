@@ -5,14 +5,16 @@ import 'package:the_5th_real_estate/features/website/building_area/controllers/b
 
 void main() {
   group('BuildingsAreaController', () {
-    test('loads buildings for the area', () {
-      final c = BuildingsAreaController('المستثمرين')..load();
+    test('loads buildings for the area', () async {
+      final c = BuildingsAreaController('المستثمرين');
+      await c.load();
       expect(c.filteredBuildings, isNotEmpty);
       c.dispose();
     });
 
-    test('search narrows the results', () {
-      final c = BuildingsAreaController('المستثمرين')..load();
+    test('search narrows the results', () async {
+      final c = BuildingsAreaController('المستثمرين');
+      await c.load();
       final before = c.filteredBuildings.length;
 
       c.onSearchChanged('zzz_not_found_zzz');
@@ -23,8 +25,9 @@ void main() {
       c.dispose();
     });
 
-    test('status pills filter and notify', () {
-      final c = BuildingsAreaController('المستثمرين')..load();
+    test('status pills filter and notify', () async {
+      final c = BuildingsAreaController('المستثمرين');
+      await c.load();
       final total = c.filteredBuildings.length;
       var notified = 0;
       c.addListener(() => notified++);

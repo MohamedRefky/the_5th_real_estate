@@ -64,7 +64,7 @@ class FormTextField extends StatelessWidget {
     this.label, {
     super.key,
     this.keyboardType,
-    this.maxLines,
+    this.maxLines = 1,
     this.validator,
     this.prefixIcon,
     this.fillColor = AppColors.surface,
@@ -78,7 +78,7 @@ class FormTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      maxLines: maxLines,
+      maxLines: obscureText ? 1 : maxLines,
       obscureText: obscureText,
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,

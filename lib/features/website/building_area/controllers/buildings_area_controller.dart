@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../../data/dummy_data.dart';
 import '../../../../data/filters/building_filter.dart';
+import '../../../../data/public_building_repository.dart';
 import '../../../../models/building.dart';
 
 /// Holds all list/search/status-filter state for the Buildings Area Screen.
@@ -12,17 +12,30 @@ class BuildingsAreaController extends ChangeNotifier {
   BuildingsAreaController(this.areaName);
 
   final String areaName;
+  final PublicBuildingRepository _repository =
+      PublicBuildingRepository.instance;
 
+  List<Building> _allBuildings = [];
   List<Building> _filteredBuildings = [];
+  bool _loading = true;
   String _searchQuery = '';
   String _selectedStatus = BuildingStatus.all;
 
   List<Building> get filteredBuildings => _filteredBuildings;
+  bool get loading => _loading;
   String get searchQuery => _searchQuery;
   String get selectedStatus => _selectedStatus;
 
-  /// Loads the area's buildings and applies the current filters.
-  void load() {
+  /// Loads the area's buildings (Firestore + local fallback) and applies the
+  /// current filters.
+  Future<void> load() async {
+    _loading = true;
+    notifyListeners();
+    try {
+      _allBuildings = await _repository.byArea(areaName);
+    } finally {
+      _loading = false;
+    }
     _applyFilter();
   }
 
@@ -39,9 +52,8 @@ class BuildingsAreaController extends ChangeNotifier {
   }
 
   void _applyFilter() {
-    final all = DummyData.getBuildingsByArea(areaName);
     _filteredBuildings = filterBuildings(
-      source: all,
+      source: _allBuildings,
       searchQuery: _searchQuery,
       status: _selectedStatus,
     );

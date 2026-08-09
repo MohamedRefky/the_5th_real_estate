@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../controllers/property_form_controller.dart';
+import '../controllers/image_edit_controller.dart';
 
-/// Image picker grid for the property form: existing (network) images with
-/// remove badges, newly picked (memory) images, and an "add photo" tile.
+/// Image picker grid shared by the units form and the building form: existing
+/// (network) images with remove badges, newly picked (memory) images, and an
+/// "add photo" tile.
 class PropertyImagesEditor extends StatelessWidget {
-  final PropertyFormController controller;
+  final ImageEditController controller;
 
   const PropertyImagesEditor({super.key, required this.controller});
 
