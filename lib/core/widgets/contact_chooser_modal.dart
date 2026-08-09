@@ -101,7 +101,7 @@ class ContactChooserModal extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 decoration: BoxDecoration(
-                  // Rich dark translucent steel glass container (high contrast, non-washed out)
+                  // Rich dark translucent steel glass container
                   color: AppColors.surface.withValues(alpha: 0.70),
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(
@@ -136,33 +136,22 @@ class ContactChooserModal extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    // Glowing Platform Header Icon
+                    // Glowing Platform Header Icon (Matching Home Page Contact Section Style)
                     Container(
-                      width: 68,
-                      height: 68,
+                      width: 64,
+                      height: 64,
                       decoration: BoxDecoration(
-                        gradient: isWhatsAppOnly
-                            ? const LinearGradient(
-                                colors: [Color(0xFF25D366), Color(0xFF128C7E)],
-                              )
-                            : (isFacebookOnly
-                                ? const LinearGradient(
-                                    colors: [
-                                      Color(0xFF1877F2),
-                                      Color(0xFF0F52AC)
-                                    ],
-                                  )
-                                : AppColors.accentGradient),
-                        shape: BoxShape.circle,
+                        color: primaryPlatformColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.5),
-                          width: 1.5,
+                          color: primaryPlatformColor.withValues(alpha: 0.5),
+                          width: 1.2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: primaryPlatformColor.withValues(alpha: 0.50),
-                            blurRadius: 28,
-                            offset: const Offset(0, 6),
+                            color: primaryPlatformColor.withValues(alpha: 0.35),
+                            blurRadius: 18,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -170,19 +159,19 @@ class ContactChooserModal extends StatelessWidget {
                         child: isWhatsAppOnly
                             ? const FaIcon(
                                 FontAwesomeIcons.whatsapp,
-                                color: Colors.white,
+                                color: Color(0xFF25D366),
                                 size: 34,
                               )
                             : (isFacebookOnly
                                 ? const FaIcon(
                                     FontAwesomeIcons.facebookF,
-                                    color: Colors.white,
+                                    color: Color(0xFF1877F2),
                                     size: 30,
                                   )
                                 : const Icon(
                                     Icons.support_agent_rounded,
-                                    color: AppColors.textOnPrimary,
-                                    size: 36,
+                                    color: AppColors.accent,
+                                    size: 34,
                                   )),
                       ),
                     ),
