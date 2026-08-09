@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../data/public_property_repository.dart';
 import '../models/property.dart';
 
 /// All reads/writes to the `properties` collection for the admin dashboard.
@@ -33,6 +34,7 @@ class PropertyService {
     final doc = await _collection.add(
       property.copyWith(imageUrls: [...property.imageUrls, ...urls]).toFirestore(),
     );
+    PublicPropertyRepository.instance.invalidate();
     return doc.id;
   }
 
@@ -56,6 +58,7 @@ class PropertyService {
               .copyWith(imageUrls: [...keptUrls, ...urls])
               .toFirestore(isUpdate: true),
         );
+    PublicPropertyRepository.instance.invalidate();
   }
 
   /// Toggles published status without touching the rest of the document.
@@ -64,6 +67,7 @@ class PropertyService {
       'isPublished': isPublished,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+    PublicPropertyRepository.instance.invalidate();
   }
 
   /// Deletes the property document and its images from Storage.
@@ -72,6 +76,7 @@ class PropertyService {
       await _deleteStorageFiles(imageUrls);
     }
     await _collection.doc(id).delete();
+    PublicPropertyRepository.instance.invalidate();
   }
 
   Future<List<String>> _upload(List<XFile> files) async {

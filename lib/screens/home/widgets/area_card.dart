@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/dummy_data.dart';
+import '../../../data/public_property_repository.dart';
+import '../../../models/apartment.dart';
 
 /// A ultra-premium card representing a neighborhood on the Home Screen.
 class AreaCard extends StatefulWidget {
@@ -55,8 +57,7 @@ class _AreaCardState extends State<AreaCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final count = DummyData.getByArea(widget.areaName).length;
-    final badgeText = widget.customBadgeText ?? '$count شقة متاحة';
+    final localCount = DummyData.getByArea(widget.areaName).length;
     final imagePath = _areaImage;
 
     return MouseRegion(
@@ -218,14 +219,21 @@ class _AreaCardState extends State<AreaCard> {
                             width: 0.8,
                           ),
                         ),
-                        child: Text(
-                          badgeText,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: _isHovered
-                                ? AppColors.textOnPrimary
-                                : AppColors.accent,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        child: FutureBuilder<List<Apartment>>(
+                          future: PublicPropertyRepository.instance
+                              .byArea(widget.areaName),
+                          builder: (context, snapshot) {
+                            final count = snapshot.data?.length ?? localCount;
+                            return Text(
+                              widget.customBadgeText ?? '$count شقة متاحة',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: _isHovered
+                                    ? AppColors.textOnPrimary
+                                    : AppColors.accent,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            );
+                          },
                         ),
                       ),
 

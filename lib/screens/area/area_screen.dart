@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
-import '../../data/dummy_data.dart';
+import '../../data/public_property_repository.dart';
 import '../../models/apartment.dart';
 import 'widgets/apartment_card.dart';
 import 'widgets/filter_section.dart';
@@ -18,19 +18,30 @@ class AreaScreen extends StatefulWidget {
 }
 
 class _AreaScreenState extends State<AreaScreen> {
+  List<Apartment> _allApartments = [];
   List<Apartment> _filteredApartments = [];
   String _searchQuery = '';
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _filteredApartments = DummyData.getByArea(widget.areaName);
+    _load();
   }
 
-  void _applyFilters(FilterValues filters) {
-    final all = DummyData.getByArea(widget.areaName);
+  Future<void> _load() async {
+    final all = await PublicPropertyRepository.instance
+        .byArea(widget.areaName);
+    if (!mounted) return;
     setState(() {
-      _filteredApartments = all.where((apt) {
+      _allApartments = all;
+      _filteredApartments = _filter(all, const FilterValues());
+      _loading = false;
+    });
+  }
+
+  List<Apartment> _filter(List<Apartment> source, FilterValues filters) {
+    return source.where((apt) {
         // Search query keyword filter
         if (_searchQuery.isNotEmpty) {
           final query = _searchQuery.toLowerCase();
@@ -74,13 +85,18 @@ class _AreaScreenState extends State<AreaScreen> {
         }
         return true;
       }).toList();
+  }
+
+  void _applyFilters(FilterValues filters) {
+    setState(() {
+      _filteredApartments = _filter(_allApartments, filters);
     });
   }
 
   void _resetFilters() {
     setState(() {
       _searchQuery = '';
-      _filteredApartments = DummyData.getByArea(widget.areaName);
+      _filteredApartments = _filter(_allApartments, const FilterValues());
     });
   }
 
@@ -240,7 +256,14 @@ class _AreaScreenState extends State<AreaScreen> {
                       const SizedBox(height: 28),
 
                       // ── Apartment Grid ───────────────────────────────
-                      if (_filteredApartments.isEmpty)
+                      if (_loading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 64),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      else if (_filteredApartments.isEmpty)
                         const RevealOnScroll(child: _EmptyState())
                       else
                         LayoutBuilder(

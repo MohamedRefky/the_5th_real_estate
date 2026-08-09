@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/widgets/info_chip.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
 import '../../data/dummy_data.dart';
+import '../../data/public_property_repository.dart';
 import '../../models/apartment.dart';
 import 'widgets/construction_timeline.dart';
 import 'widgets/facade_cover.dart';
@@ -33,17 +34,51 @@ Future<void> openWhatsAppForApartment(Apartment apartment) async {
 }
 
 /// Apartment Details Screen — Ultra-premium listing page.
-class ApartmentDetailsScreen extends StatelessWidget {
+class ApartmentDetailsScreen extends StatefulWidget {
   final String apartmentId;
 
   const ApartmentDetailsScreen({super.key, required this.apartmentId});
 
   @override
+  State<ApartmentDetailsScreen> createState() => _ApartmentDetailsScreenState();
+}
+
+class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
+  Apartment? _apartment;
+  bool _loading = true;
+  bool _notFound = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final apartment = DummyData.getById(widget.apartmentId) ??
+        await PublicPropertyRepository.instance.byId(widget.apartmentId);
+    if (!mounted) return;
+    setState(() {
+      _apartment = apartment;
+      _notFound = apartment == null;
+      _loading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final apartment = DummyData.getById(apartmentId);
 
-    if (apartment == null) {
+    if (_loading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('...')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final apartment = _apartment;
+
+    if (apartment == null || _notFound) {
       return Scaffold(
         appBar: AppBar(title: const Text('خطأ')),
         body: const Center(child: Text('الشقة غير موجودة')),

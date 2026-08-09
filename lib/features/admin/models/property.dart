@@ -80,6 +80,15 @@ const List<String> floorOptions = [
   'روف',
 ];
 
+/// Neighborhood options for the admin form (mirrors the public site areas).
+const List<String> areaOptions = [
+  'المستثمرين',
+  'الأندلس',
+  'جاردينيا',
+  'بيت الوطن',
+  'النرجس الجديدة',
+];
+
 class Property {
   final String? id;
 
@@ -102,6 +111,9 @@ class Property {
   final DateTime? updatedAt;
   final bool isPublished;
 
+  /// Neighborhood this listing belongs to (see [areaOptions]).
+  final String area;
+
   const Property({
     this.id,
     required this.projectName,
@@ -122,6 +134,7 @@ class Property {
     this.createdAt,
     this.updatedAt,
     this.isPublished = true,
+    this.area = 'المستثمرين',
   });
 
   Property copyWith({
@@ -144,6 +157,7 @@ class Property {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isPublished,
+    String? area,
   }) {
     return Property(
       id: id ?? this.id,
@@ -165,6 +179,7 @@ class Property {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isPublished: isPublished ?? this.isPublished,
+      area: area ?? this.area,
     );
   }
 
@@ -204,6 +219,7 @@ class Property {
       'createdAt': isUpdate ? (createdAt ?? now) : now,
       'updatedAt': now,
       'isPublished': isPublished,
+      'area': area,
     };
   }
 
@@ -233,6 +249,7 @@ class Property {
       createdAt: (data['createdAt'] as dynamic)?.toDate(),
       updatedAt: (data['updatedAt'] as dynamic)?.toDate(),
       isPublished: (data['isPublished'] as bool?) ?? true,
+      area: (data['area'] as String?) ?? areaOptions.first,
     );
   }
 }

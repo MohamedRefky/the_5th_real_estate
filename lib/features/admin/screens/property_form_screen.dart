@@ -35,6 +35,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
   // Enum/selectable state
   late UnitType _unitType;
   late String _floor;
+  late String _area;
   PropertyOrientation? _orientation;
   late PropertyFinishing _finishingStatus;
   PriceNote? _priceNote;
@@ -68,6 +69,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
 
     _unitType = p?.unitType ?? UnitType.apartment;
     _floor = p?.floor ?? floorOptions[1];
+    _area = p?.area ?? areaOptions.first;
     _orientation = p?.orientation;
     _finishingStatus = p?.finishingStatus ?? PropertyFinishing.shell;
     _priceNote = p?.priceNote;
@@ -115,6 +117,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
             : _buildingLabel.text.trim(),
         unitType: _unitType,
         floor: _floor,
+        area: _area,
         orientation: _orientation,
         areaSqm: double.parse(_areaSqm.text.trim()),
         bedrooms: int.parse(_bedrooms.text.trim()),
@@ -195,6 +198,14 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                   children: [
                     _sectionTitle('بيانات أساسية'),
                     _textField(_projectName, 'اسم المشروع', validator: _required),
+                    const SizedBox(height: 12),
+                    _dropdown<String>(
+                      label: 'الحي/المنطقة',
+                      value: _area,
+                      items: areaOptions,
+                      labelOf: (v) => v,
+                      onChanged: (v) => setState(() => _area = v),
+                    ),
                     const SizedBox(height: 12),
                     _textField(_buildingLabel, 'رقم العمارة (اختياري)'),
                     const SizedBox(height: 20),
