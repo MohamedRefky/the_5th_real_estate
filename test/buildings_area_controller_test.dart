@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:the_5th_real_estate/data/filters/building_filter.dart';
-import 'package:the_5th_real_estate/features/building_area/controllers/buildings_area_controller.dart';
+import 'package:the_5th_real_estate/features/website/building_area/controllers/buildings_area_controller.dart';
 
 void main() {
   group('BuildingsAreaController', () {

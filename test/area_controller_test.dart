@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:the_5th_real_estate/data/public_property_repository.dart';
-import 'package:the_5th_real_estate/features/area/controllers/area_controller.dart';
+import 'package:the_5th_real_estate/features/website/area/controllers/area_controller.dart';
 import 'package:the_5th_real_estate/models/filter_values.dart';
 
 void main() {
