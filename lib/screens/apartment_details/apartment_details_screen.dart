@@ -124,14 +124,56 @@ class ApartmentDetailsScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: Text(
-                            apartment.description,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontSize: 19,
-                              fontWeight: FontWeight.w500,
-                              height: 1.8,
-                              color: AppColors.textPrimary,
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                apartment.description,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.8,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              if (apartment.freeDescription != null &&
+                                  apartment.freeDescription!.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.accentLight,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: AppColors.accent.withValues(alpha: 0.3),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.note_alt_rounded,
+                                        size: 18,
+                                        color: AppColors.accent,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          apartment.freeDescription!,
+                                          style: theme.textTheme.bodyMedium?.copyWith(
+                                            color: AppColors.accent,
+                                            fontWeight: FontWeight.w700,
+                                            height: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ],
@@ -919,34 +961,34 @@ class _WhatsAppBannerCard extends StatelessWidget {
 // Other Available Units in the Same Building
 // ═══════════════════════════════════════════════════════════════════
 
-class _BuildingUnitsSection extends StatelessWidget {
+class _OtherUnitsInAreaSection extends StatelessWidget {
   final Apartment currentApartment;
   final ThemeData theme;
 
-  const _BuildingUnitsSection({
+  const _OtherUnitsInAreaSection({
     required this.currentApartment,
     required this.theme,
   });
 
   @override
   Widget build(BuildContext context) {
-    final buildingUnits = DummyData.getByBuilding(
-      currentApartment.buildingName!,
+    final areaUnits = DummyData.getByArea(
+      currentApartment.area,
     ).where((apt) => apt.id != currentApartment.id).toList();
 
-    if (buildingUnits.isEmpty) return const SizedBox.shrink();
+    if (areaUnits.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionHeader(
-          title: 'شقق أخرى متاحة في ${currentApartment.buildingName}',
+          title: 'وحدات أخرى متاحة في حي ${currentApartment.area}',
           icon: Icons.apartment_rounded,
           theme: theme,
         ),
         const SizedBox(height: 14),
         Column(
-          children: buildingUnits.map((apt) {
+          children: areaUnits.map((apt) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Material(
