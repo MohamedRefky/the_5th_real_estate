@@ -6,6 +6,7 @@ import '../features/admin/widgets/admin_route_guard.dart';
 import '../screens/apartment_details/apartment_details_screen.dart';
 import '../screens/area/area_screen.dart';
 import '../screens/building_area/buildings_area_screen.dart';
+import '../screens/building_details/building_details_screen.dart';
 import '../screens/home/home_screen.dart';
 
 /// Centralised route names — single source of truth for navigation.
@@ -16,6 +17,7 @@ class RoutesNames {
   static const String area = '/area';
   static const String buildingsArea = '/buildings-area';
   static const String apartmentDetails = '/apartment-details';
+  static const String buildingDetails = '/building-details';
 
   // Hidden admin routes — never linked from the public UI.
   static const String adminLogin = '/admin/login';
@@ -49,6 +51,15 @@ class AppRouter {
             : 'apt_001';
         return _buildRoute(
           ApartmentDetailsScreen(apartmentId: apartmentId),
+          settings,
+        );
+
+      case RoutesNames.buildingDetails:
+        final buildingId = (settings.arguments is String)
+            ? (settings.arguments as String)
+            : 'bld_003';
+        return _buildRoute(
+          BuildingDetailsScreen(buildingId: buildingId),
           settings,
         );
 

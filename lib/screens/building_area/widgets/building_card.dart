@@ -89,18 +89,29 @@ class _BuildingCardState extends State<BuildingCard> {
           borderRadius: BorderRadius.circular(24),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.surface.withValues(alpha: 0.95),
-                    AppColors.primaryMedium.withValues(alpha: 0.85),
-                  ],
-                ),
-              ),
-              child: Stack(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    RoutesNames.buildingDetails,
+                    arguments: building.id,
+                  );
+                },
+                borderRadius: BorderRadius.circular(24),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.surface.withValues(alpha: 0.95),
+                        AppColors.primaryMedium.withValues(alpha: 0.85),
+                      ],
+                    ),
+                  ),
+                  child: Stack(
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -469,14 +480,14 @@ class _BuildingCardState extends State<BuildingCard> {
 
                                 const SizedBox(width: 10),
 
-                                // View Apartments Button
+                                // View Details Button
                                 Expanded(
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.pushNamed(
                                         context,
-                                        RoutesNames.area,
-                                        arguments: building.area,
+                                        RoutesNames.buildingDetails,
+                                        arguments: building.id,
                                       );
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -492,7 +503,7 @@ class _BuildingCardState extends State<BuildingCard> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: const [
                                         Text(
-                                          'عرض الشقق',
+                                          'تفاصيل العمارة',
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
@@ -527,7 +538,10 @@ class _BuildingCardState extends State<BuildingCard> {
           ),
         ),
       ),
-    );
+      
+    ),
+  ),
+);
   }
 
   Widget _buildFallbackImage(String? areaImage) {
