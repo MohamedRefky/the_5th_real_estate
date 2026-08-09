@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../app/app_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/info_chip.dart';
@@ -9,7 +10,6 @@ import '../../data/dummy_data.dart';
 import '../../models/apartment.dart';
 import 'widgets/construction_timeline.dart';
 import 'widgets/facade_cover.dart';
-import 'widgets/image_gallery_placeholder.dart';
 import 'widgets/video_placeholder.dart';
 
 /// Helper launcher for WhatsApp messaging with cross-platform fallback.
@@ -46,9 +46,7 @@ class ApartmentDetailsScreen extends StatelessWidget {
     if (apartment == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('خطأ')),
-        body: const Center(
-          child: Text('الشقة غير موجودة'),
-        ),
+        body: const Center(child: Text('الشقة غير موجودة')),
       );
     }
 
@@ -68,213 +66,206 @@ class ApartmentDetailsScreen extends StatelessWidget {
 
       body: SingleChildScrollView(
         child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ── Facade Cover Photo (Scale Reveal) ───────────
-                    RevealOnScroll(
-                      direction: RevealDirection.scale,
-                      child: FacadeCoverPlaceholder(
-                        imageUrl: apartment.coverImageUrl,
-                        area: apartment.area,
-                      ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Facade Cover Photo (Scale Reveal) ───────────
+                  RevealOnScroll(
+                    direction: RevealDirection.scale,
+                    child: FacadeCoverPlaceholder(
+                      imageUrl: apartment.coverImageUrl,
+                      area: apartment.area,
                     ),
+                  ),
+                  const SizedBox(height: 20),
 
-                    const SizedBox(height: 20),
-
-                    // ── Title & Price Header (From Right) ──────────
-                    RevealOnScroll(
-                      direction: RevealDirection.fromRight,
-                      child: _TitleSection(apartment: apartment, theme: theme),
+                  // ── 1. Title & Address Header (From Right) ──────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromRight,
+                    child: _TitleHeaderSection(
+                      apartment: apartment,
+                      theme: theme,
                     ),
+                  ),
+                  const SizedBox(height: 20),
 
-                    const SizedBox(height: 18),
-
-                    // ── Key Stats (From Left) ──────────────────────
-                    RevealOnScroll(
-                      direction: RevealDirection.fromLeft,
-                      child: _StatsSection(apartment: apartment),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── Walkthrough Video (From Right) ─────────────
-                    RevealOnScroll(
-                      direction: RevealDirection.fromRight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionHeader(
-                            title: 'فيديو معاينة الشقة',
-                            icon: Icons.videocam_rounded,
-                            theme: theme,
-                          ),
-                          const SizedBox(height: 10),
-                          VideoPlaceholder(videoUrl: apartment.videoUrl),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── Interior Gallery (From Left) ───────────────
-                    RevealOnScroll(
-                      direction: RevealDirection.fromLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionHeader(
-                            title: 'معاينة الغرف والتصميم الداخلي',
-                            icon: Icons.photo_library_rounded,
-                            theme: theme,
-                          ),
-                          const SizedBox(height: 10),
-                          const ImageGalleryPlaceholder(),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── Description (From Right) ───────────────────
-                    RevealOnScroll(
-                      direction: RevealDirection.fromRight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionHeader(
-                            title: 'الوصف والتفاصيل الكاملة',
-                            icon: Icons.description_rounded,
-                            theme: theme,
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(18),
-                            decoration: BoxDecoration(
-                              color: AppColors.surface,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(
-                                color: AppColors.divider.withValues(alpha: 0.6),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.04),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              apartment.description,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w500,
-                                height: 1.8,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── WhatsApp Direct Callout Banner (Scale) ──────
-                    RevealOnScroll(
-                      direction: RevealDirection.scale,
-                      child: _WhatsAppBannerCard(apartment: apartment, theme: theme),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // ── Amenities (From Left) ──────────────────────
-                    if (apartment.amenities.isNotEmpty) ...[
-                      RevealOnScroll(
-                        direction: RevealDirection.fromLeft,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _SectionHeader(
-                              title: 'المميزات والتسهيلات',
-                              icon: Icons.star_rounded,
-                              theme: theme,
-                            ),
-                            const SizedBox(height: 10),
-                            _AmenitiesGrid(
-                              amenities: apartment.amenities,
-                              theme: theme,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-
-                    // ── Construction Timeline (From Right) ─────────
-                    if (apartment.isUnderConstruction &&
-                        apartment.milestones.isNotEmpty) ...[
-                      RevealOnScroll(
-                        direction: RevealDirection.fromRight,
-                        child: ConstructionTimeline(apartment: apartment),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-
-                    // ── Details Table (From Left) ──────────────────
-                    RevealOnScroll(
-                      direction: RevealDirection.fromLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _SectionHeader(
-                            title: 'جدول التفاصيل الكاملة',
-                            icon: Icons.assignment_rounded,
-                            theme: theme,
-                          ),
-                          const SizedBox(height: 10),
-                          _DetailsTable(apartment: apartment, theme: theme),
-                        ],
-                      ),
-                    ),
-
-                    // ── Other Available Units (From Right) ─────────
-                    if (apartment.buildingName != null) ...[
-                      const SizedBox(height: 20),
-                      RevealOnScroll(
-                        direction: RevealDirection.fromRight,
-                        child: _BuildingUnitsSection(
-                          currentApartment: apartment,
+                  // ── 2. Description (From Right) ───────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromRight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SectionHeader(
+                          title: 'الوصف والتفاصيل الكاملة',
+                          icon: Icons.description_rounded,
                           theme: theme,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: AppColors.divider.withValues(alpha: 0.6),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.04,
+                                ),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            apartment.description,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w500,
+                              height: 1.8,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
-                    const SizedBox(height: 90), // Space for sticky CTA
+                  const SizedBox(height: 20),
+                  // ── 4. Key Stats (From Left) ──────────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromLeft,
+                    child: _StatsSection(apartment: apartment),
+                  ),
+
+                  const SizedBox(height: 20),
+                  // ── 3. Price Section (Scale Reveal) ───────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.scale,
+                    child: _PriceSection(apartment: apartment, theme: theme),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  // ── Walkthrough Video (From Right) ─────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromRight,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SectionHeader(
+                          title: 'فيديو معاينة الشقة',
+                          icon: Icons.videocam_rounded,
+                          theme: theme,
+                        ),
+                        const SizedBox(height: 10),
+                        VideoPlaceholder(videoUrl: apartment.videoUrl),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── WhatsApp Direct Callout Banner (Scale) ──────
+                  RevealOnScroll(
+                    direction: RevealDirection.scale,
+                    child: _WhatsAppBannerCard(
+                      apartment: apartment,
+                      theme: theme,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── Amenities (From Left) ──────────────────────
+                  if (apartment.amenities.isNotEmpty) ...[
+                    RevealOnScroll(
+                      direction: RevealDirection.fromLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _SectionHeader(
+                            title: 'المميزات والتسهيلات',
+                            icon: Icons.star_rounded,
+                            theme: theme,
+                          ),
+                          const SizedBox(height: 10),
+                          _AmenitiesGrid(
+                            amenities: apartment.amenities,
+                            theme: theme,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
-                ),
+
+                  // ── Construction Timeline (From Right) ─────────
+                  if (apartment.isUnderConstruction &&
+                      apartment.milestones.isNotEmpty) ...[
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: ConstructionTimeline(apartment: apartment),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // ── Details Table (From Left) ──────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SectionHeader(
+                          title: 'جدول التفاصيل الكاملة',
+                          icon: Icons.assignment_rounded,
+                          theme: theme,
+                        ),
+                        const SizedBox(height: 10),
+                        _DetailsTable(apartment: apartment, theme: theme),
+                      ],
+                    ),
+                  ),
+
+                  // ── Other Available Units (From Right) ─────────
+                  if (apartment.buildingName != null) ...[
+                    const SizedBox(height: 20),
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: _BuildingUnitsSection(
+                        currentApartment: apartment,
+                        theme: theme,
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 90), // Space for sticky CTA
+                ],
               ),
             ),
           ),
         ),
+      ),
     );
   }
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// Title Section
+// 1. Title & Header Section
 // ═══════════════════════════════════════════════════════════════════
 
-class _TitleSection extends StatelessWidget {
+class _TitleHeaderSection extends StatelessWidget {
   final Apartment apartment;
   final ThemeData theme;
 
-  const _TitleSection({required this.apartment, required this.theme});
+  const _TitleHeaderSection({required this.apartment, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -290,13 +281,13 @@ class _TitleSection extends StatelessWidget {
               label: apartment.finishingStatus.label,
               color: _finishingColor(apartment.finishingStatus),
             ),
-            _Badge(
-              label: apartment.area,
-              color: AppColors.accentLight2,
-            ),
+            _Badge(label: apartment.area, color: AppColors.accentLight2),
             if (apartment.buildingName != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(20),
@@ -324,10 +315,7 @@ class _TitleSection extends StatelessWidget {
                 ),
               ),
             if (apartment.isUnderConstruction)
-              const _Badge(
-                label: 'تحت الإنشاء',
-                color: AppColors.warning,
-              ),
+              const _Badge(label: 'تحت الإنشاء', color: AppColors.warning),
           ],
         ),
 
@@ -341,65 +329,6 @@ class _TitleSection extends StatelessWidget {
             color: AppColors.textPrimary,
           ),
         ),
-
-        const SizedBox(height: 16),
-
-        // Price Tag Badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: AppColors.accentGradient,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.35),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Text(
-            apartment.formattedPrice,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: AppColors.textOnPrimary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-
-        // Delivery date
-        if (apartment.isUnderConstruction &&
-            apartment.formattedDeliveryDate != null) ...[
-          const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.accentLight,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: AppColors.accent.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.event_rounded,
-                  size: 20,
-                  color: AppColors.accent,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'موعد التسليم المتوقع: ${apartment.formattedDeliveryDate}',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: AppColors.accent,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -413,6 +342,100 @@ class _TitleSection extends StatelessWidget {
       case FinishingStatus.unfinished:
         return AppColors.textSecondary;
     }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 3. Price Section
+// ═══════════════════════════════════════════════════════════════════
+
+class _PriceSection extends StatelessWidget {
+  final Apartment apartment;
+  final ThemeData theme;
+
+  const _PriceSection({required this.apartment, required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        // Compact Metallic Price Badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            gradient: AppColors.accentGradient,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.35),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.sell_rounded,
+                size: 20,
+                color: AppColors.textOnPrimary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'السعر: ',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textOnPrimary.withValues(alpha: 0.85),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                apartment.formattedPrice,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: AppColors.textOnPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Delivery date tag (if under construction)
+        if (apartment.isUnderConstruction &&
+            apartment.formattedDeliveryDate != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.4),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.event_rounded,
+                  size: 18,
+                  color: AppColors.accent,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'التسليم المتوقع: ${apartment.formattedDeliveryDate}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
   }
 }
 
@@ -440,9 +463,9 @@ class _Badge extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textOnPrimary,
-              fontWeight: FontWeight.w700,
-            ),
+          color: AppColors.textOnPrimary,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -621,11 +644,13 @@ class _AmenitiesGrid extends StatelessWidget {
       spacing: 12,
       runSpacing: 12,
       children: amenities
-          .map((amenity) => InfoChip(
-                icon: Icons.check_circle_rounded,
-                label: amenity,
-                iconColor: AppColors.success,
-              ))
+          .map(
+            (amenity) => InfoChip(
+              icon: Icons.check_circle_rounded,
+              label: amenity,
+              iconColor: AppColors.success,
+            ),
+          )
           .toList(),
     );
   }
@@ -645,16 +670,36 @@ class _DetailsTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final details = [
       (Icons.location_on_rounded, 'الحي', apartment.area),
-      (Icons.square_foot_rounded, 'المساحة الإجمالية', '${apartment.areaSqm.toInt()} م²'),
+      (
+        Icons.square_foot_rounded,
+        'المساحة الإجمالية',
+        '${apartment.areaSqm.toInt()} م²',
+      ),
       (Icons.bed_rounded, 'عدد غرف النوم', '${apartment.rooms} غرف'),
       (Icons.bathtub_rounded, 'عدد الحمامات', '${apartment.bathrooms} حمام'),
       (Icons.layers_rounded, 'الدور الحالي', apartment.floorLabel),
-      (Icons.apartment_rounded, 'إجمالي أدوار المبنى', '${apartment.totalFloors} أدوار'),
+      (
+        Icons.apartment_rounded,
+        'إجمالي أدوار المبنى',
+        '${apartment.totalFloors} أدوار',
+      ),
       (Icons.brush_rounded, 'مستوى التشطيب', apartment.finishingStatus.label),
-      (Icons.monetization_on_rounded, 'السعر الإجمالي', apartment.formattedPrice),
+      (
+        Icons.monetization_on_rounded,
+        'السعر الإجمالي',
+        apartment.formattedPrice,
+      ),
       if (apartment.formattedDeliveryDate != null)
-        (Icons.event_rounded, 'موعد التسليم المتوقع', apartment.formattedDeliveryDate!),
-      (Icons.phone_iphone_rounded, 'رقم التواصل والمعاينة', apartment.whatsappNumber),
+        (
+          Icons.event_rounded,
+          'موعد التسليم المتوقع',
+          apartment.formattedDeliveryDate!,
+        ),
+      (
+        Icons.phone_iphone_rounded,
+        'رقم التواصل والمعاينة',
+        apartment.whatsappNumber,
+      ),
     ];
 
     return Container(
@@ -687,8 +732,8 @@ class _DetailsTable extends StatelessWidget {
               borderRadius: isLast
                   ? const BorderRadius.vertical(bottom: Radius.circular(22))
                   : (index == 0
-                      ? const BorderRadius.vertical(top: Radius.circular(22))
-                      : null),
+                        ? const BorderRadius.vertical(top: Radius.circular(22))
+                        : null),
               border: isLast
                   ? null
                   : Border(
@@ -709,11 +754,7 @@ class _DetailsTable extends StatelessWidget {
                         color: AppColors.accent.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(
-                        icon,
-                        size: 18,
-                        color: AppColors.accent,
-                      ),
+                      child: Icon(icon, size: 18, color: AppColors.accent),
                     ),
                     const SizedBox(width: 12),
                     Text(
@@ -729,7 +770,9 @@ class _DetailsTable extends StatelessWidget {
                   value,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: label == 'السعر الإجمالي' ? AppColors.accent : AppColors.textPrimary,
+                    color: label == 'السعر الإجمالي'
+                        ? AppColors.accent
+                        : AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -765,10 +808,7 @@ class _FloatingWhatsAppButton extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF25D366),
-                  Color(0xFF128C7E),
-                ],
+                colors: [Color(0xFF25D366), Color(0xFF128C7E)],
               ),
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
@@ -882,7 +922,10 @@ class _WhatsAppBannerCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            child: const Text('تواصل الآن', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text(
+              'تواصل الآن',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -905,9 +948,9 @@ class _BuildingUnitsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buildingUnits = DummyData.getByBuilding(currentApartment.buildingName!)
-        .where((apt) => apt.id != currentApartment.id)
-        .toList();
+    final buildingUnits = DummyData.getByBuilding(
+      currentApartment.buildingName!,
+    ).where((apt) => apt.id != currentApartment.id).toList();
 
     if (buildingUnits.isEmpty) return const SizedBox.shrink();
 
