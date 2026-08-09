@@ -1,1 +1,31 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"real-estate-app-7031d","appId":"1:200241901984:android:edffca4a5e8dc7aa2434c5","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"real-estate-app-7031d","configurations":{"android":"1:200241901984:android:edffca4a5e8dc7aa2434c5","ios":"1:200241901984:ios:570b83b2c748cb5e2434c5","macos":"1:200241901984:ios:570b83b2c748cb5e2434c5","web":"1:200241901984:web:e4db36925ae15e382434c5","windows":"1:200241901984:web:a91de0d009add3b72434c5"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "real-estate-app-7031d",
+          "appId": "1:200241901984:android:edffca4a5e8dc7aa2434c5",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "real-estate-app-7031d",
+          "configurations": {
+            "android": "1:200241901984:android:edffca4a5e8dc7aa2434c5",
+            "ios": "1:200241901984:ios:570b83b2c748cb5e2434c5",
+            "macos": "1:200241901984:ios:570b83b2c748cb5e2434c5",
+            "web": "1:200241901984:web:e4db36925ae15e382434c5",
+            "windows": "1:200241901984:web:a91de0d009add3b72434c5"
+          }
+        }
+      }
+    }
+  }
+}

@@ -487,23 +487,19 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
   }) {
     return DropdownButtonFormField<T>(
       initialValue: value,
+      hint: hint == null
+          ? null
+          : Text(hint, style: const TextStyle(color: AppColors.textHint)),
       isExpanded: true,
       dropdownColor: AppColors.surface,
       style: const TextStyle(color: AppColors.textPrimary),
       decoration: _inputDecoration(label),
-      items: [
-        if (hint != null && value != null)
-          DropdownMenuItem<T>(
-            value: value,
-            enabled: false,
-            child: Text(hint,
-                style: const TextStyle(color: AppColors.textHint)),
-          ),
-        ...items.map((v) => DropdownMenuItem<T>(
-              value: v,
-              child: Text(labelOf(v)),
-            )),
-      ],
+      items: items
+          .map((v) => DropdownMenuItem<T>(
+                value: v,
+                child: Text(labelOf(v)),
+              ))
+          .toList(),
       onChanged: (v) {
         if (v != null) onChanged(v);
       },

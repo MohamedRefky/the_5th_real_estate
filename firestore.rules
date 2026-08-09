@@ -28,7 +28,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return request.auth != null
-        && request.auth.uid == 'PASTE_YOUR_ADMIN_UID';
+        && request.auth.uid == 'yC5VCHMzFqWfNPaj1krkXZHAQ0D2';
     }
   }
 }
