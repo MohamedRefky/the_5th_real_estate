@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/whatsapp_launcher.dart';
 import '../../../core/widgets/reveal_on_scroll.dart';
 import 'section_bar.dart';
 
@@ -13,19 +15,10 @@ class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
 
   Future<void> _openWhatsApp() async {
-    final message = Uri.encodeComponent(
-      'مرحبًا، أريد الاستفسار عن العقارات المتاحة في التجمع الخامس وتحديد موعد معاينة',
+    await launchWhatsApp(
+      phoneNumber: AppConstants.defaultWhatsappNumber,
+      message: 'مرحبًا، أريد الاستفسار عن العقارات المتاحة في التجمع الخامس وتحديد موعد معاينة',
     );
-    final url = Uri.parse('https://wa.me/+201000000001?text=$message');
-    try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      }
-    } catch (_) {
-      await launchUrl(url);
-    }
   }
 
   Future<void> _openFacebook() async {

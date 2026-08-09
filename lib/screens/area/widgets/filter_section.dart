@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../data/filters/filter_formatters.dart';
 import '../../../models/apartment.dart';
+import '../../../models/filter_values.dart';
+import 'filter_choice_chip.dart';
+import 'filter_pill.dart';
 
 /// Ultra-Clear, Auto-Wrapping Inline Popover Filter Section.
 ///
-/// Converts the main filter bar from a horizontal scrollable row into an auto-wrapping
-/// flex layout (`Wrap`) so every single filter pill (including Price and Reset All)
-/// wraps cleanly onto a second line when space runs out, ensuring zero hidden options!
+/// Converts the main filter bar from a horizontal scrollable row into an
+/// auto-wrapping flex layout (`Wrap`) so every single filter pill (including
+/// Price and Reset All) wraps cleanly onto a second line when space runs out,
+/// ensuring zero hidden options!
 class FilterSection extends StatefulWidget {
   final void Function(FilterValues filters) onFiltersChanged;
   final VoidCallback onReset;
@@ -23,11 +28,15 @@ class FilterSection extends StatefulWidget {
 }
 
 class _FilterSectionState extends State<FilterSection> {
-  // Currently open inline popover key: 'floor', 'finishing', 'orientation', 'rooms', 'bathrooms', 'area', 'price', or null
+  // Currently open inline popover key: 'floor', 'finishing', 'orientation',
+  // 'rooms', 'bathrooms', 'area', 'price', or null
   String? _activePopover;
 
   // Filter state
-  RangeValues _priceRange = const RangeValues(0, 10000000);
+  RangeValues _priceRange = const RangeValues(
+    FilterValues.defaultMinPrice,
+    FilterValues.defaultMaxPrice,
+  );
   final Set<int> _selectedFloors = {};
   final Set<String> _selectedFinishingStatuses = {};
   final Set<ApartmentOrientation> _selectedOrientations = {};
@@ -47,64 +56,24 @@ class _FilterSectionState extends State<FilterSection> {
     return count;
   }
 
+  bool get _hasPriceFilter =>
+      _priceRange.start > 0 || _priceRange.end < 10000000;
+
   // ── Smart Truncated Selected Labels ──────────────────────────
-  String get _floorLabel {
-    if (_selectedFloors.isEmpty) return 'الدور';
-    final list = _selectedFloors.map((f) {
-      if (f == -1) return 'بيزمنت';
-      if (f == 0) return 'أرضي';
-      if (f == 6) return 'روف';
-      return '$f';
-    }).toList();
-    if (list.length <= 2) return 'الدور: ${list.join("، ")}';
-    return 'الدور: ${list.take(2).join("، ")} (+${list.length - 2})';
-  }
+  String get _floorLabel => floorFilterLabel(_selectedFloors);
 
-  String get _finishingLabel {
-    if (_selectedFinishingStatuses.isEmpty) return 'التشطيب';
-    final list = _selectedFinishingStatuses.map((s) {
-      if (s == 'superLux') return 'سوبر لوكس';
-      if (s == 'semiFinished') return 'نص تشطيب';
-      if (s == 'underConstruction') return 'تحت الإنشاء';
-      return s;
-    }).toList();
-    if (list.length <= 2) return 'التشطيب: ${list.join("، ")}';
-    return 'التشطيب: ${list.take(2).join("، ")} (+${list.length - 2})';
-  }
+  String get _finishingLabel => finishingFilterLabel(_selectedFinishingStatuses);
 
-  String get _orientationLabel {
-    if (_selectedOrientations.isEmpty) return 'الواجهة';
-    final list = _selectedOrientations.map((o) => o.label).toList();
-    if (list.length <= 2) return 'الواجهة: ${list.join("، ")}';
-    return 'الواجهة: ${list.take(2).join("، ")} (+${list.length - 2})';
-  }
+  String get _orientationLabel => orientationFilterLabel(_selectedOrientations);
 
-  String get _roomsLabel {
-    if (_selectedRooms.isEmpty) return 'الغرف';
-    final list = _selectedRooms.toList();
-    if (list.length <= 2) return 'الغرف: ${list.join("، ")}';
-    return 'الغرف: ${list.take(2).join("، ")} (+${list.length - 2})';
-  }
+  String get _roomsLabel => roomsFilterLabel(_selectedRooms);
 
-  String get _bathroomsLabel {
-    if (_selectedBathrooms.isEmpty) return 'الحمامات';
-    final list = _selectedBathrooms.toList();
-    if (list.length <= 2) return 'الحمامات: ${list.join("، ")}';
-    return 'الحمامات: ${list.take(2).join("، ")} (+${list.length - 2})';
-  }
+  String get _bathroomsLabel => bathroomsFilterLabel(_selectedBathrooms);
 
-  String get _areaLabel {
-    if (_selectedAreaRanges.isEmpty) return 'المساحة';
-    final list = _selectedAreaRanges.map((r) => _formatAreaRange(r)).toList();
-    if (list.length <= 1) return 'المساحة: ${list.first}';
-    return 'المساحة: ${list.first} (+${list.length - 1})';
-  }
+  String get _areaLabel => areaFilterLabel(_selectedAreaRanges);
 
-  String get _priceLabel {
-    final hasPriceFilter = _priceRange.start > 0 || _priceRange.end < 10000000;
-    if (!hasPriceFilter) return 'السعر';
-    return 'السعر: ${_formatPrice(_priceRange.start)}-${_formatPrice(_priceRange.end)}';
-  }
+  String get _priceLabel =>
+      priceFilterLabel(min: _priceRange.start, max: _priceRange.end);
 
   void _togglePopover(String name) {
     setState(() {
@@ -134,7 +103,10 @@ class _FilterSectionState extends State<FilterSection> {
   void _resetFilters() {
     setState(() {
       _activePopover = null;
-      _priceRange = const RangeValues(0, 10000000);
+      _priceRange = const RangeValues(
+        FilterValues.defaultMinPrice,
+        FilterValues.defaultMaxPrice,
+      );
       _selectedFloors.clear();
       _selectedFinishingStatuses.clear();
       _selectedOrientations.clear();
@@ -238,7 +210,7 @@ class _FilterSectionState extends State<FilterSection> {
                 ),
 
                 // 1. Floor Pill
-                _FilterPill(
+                FilterPill(
                   label: _floorLabel,
                   badgeText: _selectedFloors.isEmpty
                       ? null
@@ -250,7 +222,7 @@ class _FilterSectionState extends State<FilterSection> {
                 ),
 
                 // 2. Finishing Pill
-                _FilterPill(
+                FilterPill(
                   label: _finishingLabel,
                   badgeText: _selectedFinishingStatuses.isEmpty
                       ? null
@@ -262,7 +234,7 @@ class _FilterSectionState extends State<FilterSection> {
                 ),
 
                 // 3. Orientation Pill (أمامي، خلفي، جانبي)
-                _FilterPill(
+                FilterPill(
                   label: _orientationLabel,
                   badgeText: _selectedOrientations.isEmpty
                       ? null
@@ -274,7 +246,7 @@ class _FilterSectionState extends State<FilterSection> {
                 ),
 
                 // 4. Rooms Pill
-                _FilterPill(
+                FilterPill(
                   label: _roomsLabel,
                   badgeText: _selectedRooms.isEmpty
                       ? null
@@ -286,7 +258,7 @@ class _FilterSectionState extends State<FilterSection> {
                 ),
 
                 // 5. Bathrooms Pill
-                _FilterPill(
+                FilterPill(
                   label: _bathroomsLabel,
                   badgeText: _selectedBathrooms.isEmpty
                       ? null
@@ -298,7 +270,7 @@ class _FilterSectionState extends State<FilterSection> {
                 ),
 
                 // 6. Area Pill
-                _FilterPill(
+                FilterPill(
                   label: _areaLabel,
                   badgeText: _selectedAreaRanges.isEmpty
                       ? null
@@ -310,12 +282,11 @@ class _FilterSectionState extends State<FilterSection> {
                 ),
 
                 // 7. Price Pill
-                _FilterPill(
+                FilterPill(
                   label: _priceLabel,
                   icon: Icons.payments_rounded,
                   isOpen: _activePopover == 'price',
-                  isSelected:
-                      _priceRange.start > 0 || _priceRange.end < 10000000,
+                  isSelected: _hasPriceFilter,
                   onTap: () => _togglePopover('price'),
                 ),
 
@@ -464,169 +435,105 @@ class _FilterSectionState extends State<FilterSection> {
     );
   }
 
-  Widget _buildFloorOptions() {
-    final floors = [
-      ('بيزمنت', -1),
-      ('أرضي', 0),
-      ('الأول', 1),
-      ('الثاني', 2),
-      ('الثالث', 3),
-      ('الرابع', 4),
-      ('الروف', 6),
-    ];
+  /// Renders a `Wrap` of toggleable choice chips from an option list.
+  Widget _buildChoiceWrap<T>({
+    required List<(String, T)> options,
+    required bool Function(T) isSelected,
+    required void Function(T) onToggle,
+  }) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        for (final (label, val) in floors)
-          _ChoiceChip(
+        for (final (label, val) in options)
+          FilterChoiceChip(
             label: label,
-            selected: _selectedFloors.contains(val),
-            onTap: () {
-              setState(() {
-                if (!_selectedFloors.add(val)) {
-                  _selectedFloors.remove(val);
-                }
-              });
-              _applyFilters();
-            },
+            selected: isSelected(val),
+            onTap: () => onToggle(val),
           ),
       ],
+    );
+  }
+
+  void _toggleInSet<T>(Set<T> set, T value) {
+    setState(() {
+      if (!set.add(value)) {
+        set.remove(value);
+      }
+    });
+    _applyFilters();
+  }
+
+  Widget _buildFloorOptions() {
+    return _buildChoiceWrap<int>(
+      options: const [
+        ('بيزمنت', -1),
+        ('أرضي', 0),
+        ('الأول', 1),
+        ('الثاني', 2),
+        ('الثالث', 3),
+        ('الرابع', 4),
+        ('الروف', 6),
+      ],
+      isSelected: _selectedFloors.contains,
+      onToggle: (val) => _toggleInSet(_selectedFloors, val),
     );
   }
 
   Widget _buildFinishingOptions() {
-    final options = [
-      ('سوبر لوكس', 'superLux'),
-      ('نص تشطيب', 'semiFinished'),
-      ('تحت الإنشاء', 'underConstruction'),
-    ];
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        for (final (label, val) in options)
-          _ChoiceChip(
-            label: label,
-            selected: _selectedFinishingStatuses.contains(val),
-            onTap: () {
-              setState(() {
-                if (!_selectedFinishingStatuses.add(val)) {
-                  _selectedFinishingStatuses.remove(val);
-                }
-              });
-              _applyFilters();
-            },
-          ),
+    return _buildChoiceWrap<String>(
+      options: const [
+        ('سوبر لوكس', 'superLux'),
+        ('نص تشطيب', 'semiFinished'),
+        ('تحت الإنشاء', 'underConstruction'),
       ],
+      isSelected: _selectedFinishingStatuses.contains,
+      onToggle: (val) => _toggleInSet(_selectedFinishingStatuses, val),
     );
   }
 
   Widget _buildOrientationOptions() {
-    final options = [
-      ('أمامي', ApartmentOrientation.front),
-      ('خلفي', ApartmentOrientation.rear),
-      ('جانبي', ApartmentOrientation.side),
-    ];
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        for (final (label, val) in options)
-          _ChoiceChip(
-            label: label,
-            selected: _selectedOrientations.contains(val),
-            onTap: () {
-              setState(() {
-                if (!_selectedOrientations.add(val)) {
-                  _selectedOrientations.remove(val);
-                }
-              });
-              _applyFilters();
-            },
-          ),
+    return _buildChoiceWrap<ApartmentOrientation>(
+      options: const [
+        ('أمامي', ApartmentOrientation.front),
+        ('خلفي', ApartmentOrientation.rear),
+        ('جانبي', ApartmentOrientation.side),
       ],
+      isSelected: _selectedOrientations.contains,
+      onToggle: (val) => _toggleInSet(_selectedOrientations, val),
     );
   }
 
   Widget _buildRoomsOptions() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        for (var i = 1; i <= 5; i++)
-          _ChoiceChip(
-            label: '$i غرف',
-            selected: _selectedRooms.contains(i),
-            onTap: () {
-              setState(() {
-                if (!_selectedRooms.add(i)) {
-                  _selectedRooms.remove(i);
-                }
-              });
-              _applyFilters();
-            },
-          ),
-      ],
+    return _buildChoiceWrap<int>(
+      options: List.generate(5, (i) => ('${i + 1} غرف', i + 1)),
+      isSelected: _selectedRooms.contains,
+      onToggle: (val) => _toggleInSet(_selectedRooms, val),
     );
   }
 
   Widget _buildBathroomsOptions() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        for (var i = 1; i <= 4; i++)
-          _ChoiceChip(
-            label: '$i حمام',
-            selected: _selectedBathrooms.contains(i),
-            onTap: () {
-              setState(() {
-                if (!_selectedBathrooms.add(i)) {
-                  _selectedBathrooms.remove(i);
-                }
-              });
-              _applyFilters();
-            },
-          ),
-      ],
+    return _buildChoiceWrap<int>(
+      options: List.generate(4, (i) => ('${i + 1} حمام', i + 1)),
+      isSelected: _selectedBathrooms.contains,
+      onToggle: (val) => _toggleInSet(_selectedBathrooms, val),
     );
   }
 
   Widget _buildAreaOptions() {
-    final ranges = [
-      ('115م²', (115.0, 115.0)),
-      ('125م²', (125.0, 125.0)),
-      ('125 : 150م²', (125.0, 150.0)),
-      ('150 : 200م²', (150.0, 200.0)),
-      ('200 : 250م²', (200.0, 250.0)),
-      ('250 : 300م²', (250.0, 300.0)),
-      ('+300م²', (300.0, 99999.0)),
-    ];
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        for (final (label, val) in ranges)
-          _ChoiceChip(
-            label: label,
-            selected: _selectedAreaRanges.contains(val),
-            onTap: () {
-              setState(() {
-                if (!_selectedAreaRanges.add(val)) {
-                  _selectedAreaRanges.remove(val);
-                }
-              });
-              _applyFilters();
-            },
-          ),
+    return _buildChoiceWrap<(double, double)>(
+      options: const [
+        ('115م²', (115.0, 115.0)),
+        ('125م²', (125.0, 125.0)),
+        ('125 : 150م²', (125.0, 150.0)),
+        ('150 : 200م²', (150.0, 200.0)),
+        ('200 : 250م²', (200.0, 250.0)),
+        ('250 : 300م²', (250.0, 300.0)),
+        ('+300م²', (300.0, 99999.0)),
       ],
+      isSelected: _selectedAreaRanges.contains,
+      onToggle: (val) => _toggleInSet(_selectedAreaRanges, val),
     );
   }
 
@@ -646,7 +553,7 @@ class _FilterSectionState extends State<FilterSection> {
               ),
             ),
             Text(
-              '${_formatPrice(_priceRange.start)} - ${_formatPrice(_priceRange.end)} جنيه',
+              '${formatPriceShort(_priceRange.start)} - ${formatPriceShort(_priceRange.end)} جنيه',
               style: const TextStyle(
                 color: AppColors.accent,
                 fontWeight: FontWeight.bold,
@@ -678,204 +585,4 @@ class _FilterSectionState extends State<FilterSection> {
       ],
     );
   }
-
-  String _formatAreaRange((double, double) range) {
-    if (range.$1 == range.$2) return '${range.$1.toInt()}م²';
-    if (range.$1 == 0.0) return '<${range.$2.toInt()}م²';
-    if (range.$2 >= 99999.0) return '+${range.$1.toInt()}م²';
-    return '${range.$1.toInt()} – ${range.$2.toInt()}م²';
-  }
-
-  String _formatPrice(double price) {
-    if (price >= 1000000) {
-      return '${(price / 1000000).toStringAsFixed(1)}M';
-    }
-    return '${(price / 1000).toStringAsFixed(0)}K';
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Pill Button Widget
-// ═══════════════════════════════════════════════════════════════════
-
-class _FilterPill extends StatelessWidget {
-  final String label;
-  final String? badgeText;
-  final IconData icon;
-  final bool isOpen;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _FilterPill({
-    required this.label,
-    this.badgeText,
-    required this.icon,
-    required this.isOpen,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final active = isOpen || isSelected;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: active ? AppColors.accent : AppColors.background,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: active ? AppColors.accent : AppColors.divider,
-            width: active ? 1.2 : 0.8,
-          ),
-          boxShadow: active
-              ? [
-                  BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.25),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: active ? AppColors.textOnPrimary : AppColors.textSecondary,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13.5,
-                fontWeight: active ? FontWeight.bold : FontWeight.w600,
-                color: active ? AppColors.textOnPrimary : AppColors.textPrimary,
-              ),
-            ),
-            if (badgeText != null) ...[
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.textOnPrimary,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  badgeText!,
-                  style: const TextStyle(
-                    color: AppColors.accent,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(width: 4),
-            AnimatedRotation(
-              turns: isOpen ? 0.5 : 0,
-              duration: const Duration(milliseconds: 180),
-              child: Icon(
-                Icons.keyboard_arrow_down_rounded,
-                size: 16,
-                color: active
-                    ? AppColors.textOnPrimary
-                    : AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Choice Chip
-// ═══════════════════════════════════════════════════════════════════
-
-class _ChoiceChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _ChoiceChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.accent : AppColors.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected ? AppColors.accent : AppColors.divider,
-            width: selected ? 1.2 : 0.8,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (selected) ...[
-              const Icon(
-                Icons.check_rounded,
-                size: 14,
-                color: AppColors.textOnPrimary,
-              ),
-              const SizedBox(width: 6),
-            ],
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13.5,
-                fontWeight: selected ? FontWeight.bold : FontWeight.w500,
-                color: selected
-                    ? AppColors.textOnPrimary
-                    : AppColors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Holds the current filter values.
-class FilterValues {
-  final double minPrice;
-  final double maxPrice;
-  final Set<UnitType> unitTypes;
-  final Set<int> floors;
-  final Set<String> finishingStatuses;
-  final Set<ApartmentOrientation> orientations;
-  final Set<int> rooms;
-  final Set<int> bathrooms;
-  final Set<(double, double)> areaRanges;
-
-  const FilterValues({
-    this.minPrice = 0,
-    this.maxPrice = 10000000,
-    this.unitTypes = const {},
-    this.floors = const {},
-    this.finishingStatuses = const {},
-    this.orientations = const {},
-    this.rooms = const {},
-    this.bathrooms = const {},
-    this.areaRanges = const {},
-  });
 }

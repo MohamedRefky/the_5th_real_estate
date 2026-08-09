@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 
 /// Hero facade / cover photo of the apartment building.
@@ -13,16 +14,10 @@ class FacadeCoverPlaceholder extends StatelessWidget {
     this.area,
   });
 
-  String? _getFallbackFacadeAsset(String? areaName) {
-    if (areaName == 'جاردينيا') return 'assets/image/gardenia.webp';
-    if (areaName == 'بيت الوطن') return 'assets/image/bait_elwatan.webp';
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fallbackAsset = _getFallbackFacadeAsset(area);
+    final fallbackAsset = AppConstants.areaImageAssetFor(area);
 
     return Container(
       width: double.infinity,

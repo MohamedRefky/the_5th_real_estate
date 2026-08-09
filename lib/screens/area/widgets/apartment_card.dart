@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app_router.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/status_colors.dart';
+import '../../../core/widgets/cover_image_fallback.dart';
 import '../../../core/widgets/info_chip.dart';
+import '../../../core/widgets/price_tag_pill.dart';
+import '../../../core/widgets/status_badge.dart';
 import '../../../models/apartment.dart';
 
 /// A premium card displaying an apartment listing in the Area Screen.
@@ -21,22 +26,11 @@ class ApartmentCard extends StatefulWidget {
 class _ApartmentCardState extends State<ApartmentCard> {
   bool _isHovered = false;
 
-  String? _getAreaImage(String area) {
-    switch (area) {
-      case 'بيت الوطن':
-        return 'assets/image/bait_elwatan.webp';
-      case 'جاردينيا':
-        return 'assets/image/gardenia.webp';
-      default:
-        return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final apt = widget.apartment;
-    final areaImage = _getAreaImage(apt.area);
+    final areaImage = AppConstants.areaImageAssetFor(apt.area);
 
     return Material(
       color: Colors.transparent,
@@ -114,27 +108,7 @@ class _ApartmentCardState extends State<ApartmentCard> {
                           ),
                         ] else ...[
                           Positioned.fill(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [
-                                    AppColors.primary,
-                                    AppColors.primaryDark,
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Center(
-                            child: Icon(
-                              Icons.apartment_rounded,
-                              size: 64,
-                              color: AppColors.textPrimary.withValues(
-                                alpha: 0.12,
-                              ),
-                            ),
+                            child: CoverImageFallback(),
                           ),
                         ],
 
@@ -142,30 +116,16 @@ class _ApartmentCardState extends State<ApartmentCard> {
                         Positioned(
                           top: 12,
                           right: 12,
-                          child: Container(
+                          child: StatusBadge(
+                            label: apt.finishingStatus.label,
+                            color: finishingStatusColor(apt.finishingStatus),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 6,
                             ),
-                            decoration: BoxDecoration(
-                              color: _finishingColor(apt.finishingStatus),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.3),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              apt.finishingStatus.label,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: AppColors.textOnPrimary,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 11,
-                              ),
-                            ),
+                            fontSize: 11,
+                            shadowColor: Colors.black.withValues(alpha: 0.3),
+                            shadowBlur: 6,
                           ),
                         ),
 
@@ -174,34 +134,16 @@ class _ApartmentCardState extends State<ApartmentCard> {
                           Positioned(
                             top: 12,
                             left: 12,
-                            child: Container(
+                            child: StatusBadge(
+                              label: 'تحت الإنشاء',
+                              color: AppColors.warning,
+                              icon: Icons.construction_rounded,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
                                 vertical: 6,
                               ),
-                              decoration: BoxDecoration(
-                                color: AppColors.warning,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.construction_rounded,
-                                    size: 14,
-                                    color: AppColors.textOnPrimary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'تحت الإنشاء',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: AppColors.textOnPrimary,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              fontSize: 11,
+                              showShadow: false,
                             ),
                           ),
 
@@ -209,30 +151,7 @@ class _ApartmentCardState extends State<ApartmentCard> {
                         Positioned(
                           bottom: 12,
                           right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 7,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: AppColors.accentGradient,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.4),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              apt.formattedPrice,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                color: AppColors.textOnPrimary,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          ),
+                          child: PriceTagPill(price: apt.formattedPrice),
                         ),
                       ],
                     ),
@@ -346,16 +265,5 @@ class _ApartmentCardState extends State<ApartmentCard> {
         ),
       ),
     );
-  }
-
-  Color _finishingColor(FinishingStatus status) {
-    switch (status) {
-      case FinishingStatus.superLux:
-        return AppColors.success;
-      case FinishingStatus.semiFinished:
-        return AppColors.info;
-      case FinishingStatus.underConstruction:
-        return AppColors.warning;
-    }
   }
 }

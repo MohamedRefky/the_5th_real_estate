@@ -1,11 +1,15 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/app_router.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/whatsapp_launcher.dart';
+import '../../../core/widgets/cover_image_fallback.dart';
 import '../../../core/widgets/metallic_gloss.dart';
+import '../../../core/widgets/price_tag_pill.dart';
+import '../../../core/widgets/status_badge.dart';
 import '../../../models/building.dart';
 
 /// Ultra-premium Glassmorphic Building Card with 3D hover/elevation effects,
@@ -22,44 +26,23 @@ class BuildingCard extends StatefulWidget {
 class _BuildingCardState extends State<BuildingCard> {
   bool _isHovered = false;
 
-  String? _getAreaImage(String area) {
-    switch (area) {
-      case 'بيت الوطن':
-        return 'assets/image/bait_elwatan.webp';
-      case 'جاردينيا':
-        return 'assets/image/gardenia.webp';
-      default:
-        return null;
-    }
-  }
-
   Future<void> _openWhatsapp(BuildContext context) async {
     final building = widget.building;
-    final message = Uri.encodeComponent(
-      'مرحباً، أود الاستفسار عن ${building.name} في حي ${building.area}.',
+    await launchWhatsApp(
+      phoneNumber: building.whatsappNumber,
+      message:
+          'مرحباً، أود الاستفسار عن ${building.name} في حي ${building.area}.',
+      context: context,
+      failureMessage:
+          'تعذر فتح واتساب على هذا الجهاز (${building.whatsappNumber.replaceAll(RegExp(r'\D'), '')})',
     );
-    final cleanPhone = building.whatsappNumber.replaceAll(RegExp(r'\D'), '');
-    final uri = Uri.parse('https://wa.me/$cleanPhone?text=$message');
-
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('تعذر فتح واتساب على هذا الجهاز ($cleanPhone)'),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final building = widget.building;
-    final areaImage = _getAreaImage(building.area);
+    final areaImage = AppConstants.areaImageAssetFor(building.area);
     final coverUrl = building.coverImageUrl;
 
     return MouseRegion(
@@ -132,7 +115,10 @@ class _BuildingCardState extends State<BuildingCard> {
                                   child: Image.network(
                                     coverUrl,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) => _buildFallbackImage(areaImage),
+                                    errorBuilder: (context, error, stackTrace) => CoverImageFallback(
+                                      assetPath: areaImage,
+                                      iconAlpha: 0.15,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -142,7 +128,10 @@ class _BuildingCardState extends State<BuildingCard> {
                                   scale: _isHovered ? 1.06 : 1.0,
                                   duration: const Duration(milliseconds: 350),
                                   curve: Curves.easeOutCubic,
-                                  child: _buildFallbackImage(areaImage),
+                                  child: CoverImageFallback(
+                                    assetPath: areaImage,
+                                    iconAlpha: 0.15,
+                                  ),
                                 ),
                               ),
                             ],
@@ -167,34 +156,20 @@ class _BuildingCardState extends State<BuildingCard> {
                             Positioned(
                               top: 12,
                               right: 12,
-                              child: Container(
+                              child: StatusBadge(
+                                label: building.isUnderConstruction
+                                    ? 'تحت الإنشاء'
+                                    : 'جاهز للتسليم',
+                                color: building.isUnderConstruction
+                                    ? AppColors.warning
+                                    : AppColors.success,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
                                   vertical: 6,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: building.isUnderConstruction
-                                      ? AppColors.warning
-                                      : AppColors.success,
-                                  borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.3),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  building.isUnderConstruction
-                                      ? 'تحت الإنشاء'
-                                      : 'جاهز للتسليم',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: AppColors.textOnPrimary,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 11.5,
-                                  ),
-                                ),
+                                fontSize: 11.5,
+                                shadowColor: Colors.black.withValues(alpha: 0.3),
+                                shadowBlur: 6,
                               ),
                             ),
 
@@ -202,29 +177,8 @@ class _BuildingCardState extends State<BuildingCard> {
                             Positioned(
                               bottom: 12,
                               right: 12,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 7,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: AppColors.accentGradient,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.4),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  building.formattedStartingPrice,
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                    color: AppColors.textOnPrimary,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
+                              child: PriceTagPill(
+                                price: building.formattedStartingPrice,
                               ),
                             ),
                           ],
@@ -542,31 +496,6 @@ class _BuildingCardState extends State<BuildingCard> {
     ),
   ),
 );
-  }
-
-  Widget _buildFallbackImage(String? areaImage) {
-    if (areaImage != null) {
-      return Image.asset(areaImage, fit: BoxFit.cover);
-    }
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [
-            AppColors.primary,
-            AppColors.primaryDark,
-          ],
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.apartment_rounded,
-          size: 64,
-          color: AppColors.textPrimary.withValues(alpha: 0.15),
-        ),
-      ),
-    );
   }
 
   Widget _buildDivider() {

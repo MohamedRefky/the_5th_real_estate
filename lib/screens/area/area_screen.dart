@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
+import '../../data/filters/apartment_filter.dart';
 import '../../data/public_property_repository.dart';
 import '../../models/apartment.dart';
+import '../../models/filter_values.dart';
 import 'widgets/apartment_card.dart';
 import 'widgets/filter_section.dart';
 
@@ -35,68 +37,33 @@ class _AreaScreenState extends State<AreaScreen> {
     if (!mounted) return;
     setState(() {
       _allApartments = all;
-      _filteredApartments = _filter(all, const FilterValues());
+      _filteredApartments = filterApartments(
+        source: all,
+        filters: const FilterValues(),
+        searchQuery: _searchQuery,
+      );
       _loading = false;
     });
   }
 
-  List<Apartment> _filter(List<Apartment> source, FilterValues filters) {
-    return source.where((apt) {
-        // Search query keyword filter
-        if (_searchQuery.isNotEmpty) {
-          final query = _searchQuery.toLowerCase();
-          final titleMatch = apt.title.toLowerCase().contains(query);
-          final descMatch = apt.description.toLowerCase().contains(query);
-          if (!titleMatch && !descMatch) return false;
-        }
-
-        // Price range
-        if (apt.price < filters.minPrice || apt.price > filters.maxPrice) {
-          return false;
-        }
-        // Floor
-        if (filters.floors.isNotEmpty && !filters.floors.contains(apt.floor)) {
-          return false;
-        }
-        // Finishing status
-        if (filters.finishingStatuses.isNotEmpty &&
-            !filters.finishingStatuses.contains(apt.finishingStatus.name)) {
-          return false;
-        }
-        // Orientation (أمامي، خلفي، جانبي)
-        if (filters.orientations.isNotEmpty &&
-            !filters.orientations.contains(apt.orientation)) {
-          return false;
-        }
-        // Rooms
-        if (filters.rooms.isNotEmpty && !filters.rooms.contains(apt.rooms)) {
-          return false;
-        }
-        // Bathrooms
-        if (filters.bathrooms.isNotEmpty &&
-            !filters.bathrooms.contains(apt.bathrooms)) {
-          return false;
-        }
-        // Area (sqm) — matches any of the selected ranges.
-        if (filters.areaRanges.isNotEmpty) {
-          final matchesArea = filters.areaRanges
-              .any((r) => apt.areaSqm >= r.$1 && apt.areaSqm <= r.$2);
-          if (!matchesArea) return false;
-        }
-        return true;
-      }).toList();
-  }
-
   void _applyFilters(FilterValues filters) {
     setState(() {
-      _filteredApartments = _filter(_allApartments, filters);
+      _filteredApartments = filterApartments(
+        source: _allApartments,
+        filters: filters,
+        searchQuery: _searchQuery,
+      );
     });
   }
 
   void _resetFilters() {
     setState(() {
       _searchQuery = '';
-      _filteredApartments = _filter(_allApartments, const FilterValues());
+      _filteredApartments = filterApartments(
+        source: _allApartments,
+        filters: const FilterValues(),
+        searchQuery: _searchQuery,
+      );
     });
   }
 

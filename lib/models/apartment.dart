@@ -1,3 +1,5 @@
+import '../core/utils/formatters.dart';
+
 /// ─── Finishing status of a property unit ─────────────────────────
 ///
 /// Admin dashboard values: سوبر لوكس / نص تشطيب / تحت الإنشاء
@@ -259,21 +261,7 @@ class Apartment {
   /// Delivery date formatted as Arabic month + year (e.g., "يناير 2026").
   String? get formattedDeliveryDate {
     if (deliveryDate == null) return null;
-    const months = [
-      'يناير',
-      'فبراير',
-      'مارس',
-      'أبريل',
-      'مايو',
-      'يونيو',
-      'يوليو',
-      'أغسطس',
-      'سبتمبر',
-      'أكتوبر',
-      'نوفمبر',
-      'ديسمبر',
-    ];
-    return '${months[deliveryDate!.month - 1]} ${deliveryDate!.year}';
+    return formatArabicMonthYear(deliveryDate!);
   }
 
   /// Serialize to Firestore-compatible map.

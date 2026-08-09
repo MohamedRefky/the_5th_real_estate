@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../models/apartment.dart';
 
 /// Ultra-premium visual construction timeline with progress indicator.
@@ -326,11 +327,6 @@ class _MilestoneItem extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    const months = [
-      'يناير', 'فبراير', 'مارس', 'أبريل',
-      'مايو', 'يونيو', 'يوليو', 'أغسطس',
-      'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
-    ];
-    return '${months[date.month - 1]} ${date.year}';
+    return formatArabicMonthYear(date);
   }
 }

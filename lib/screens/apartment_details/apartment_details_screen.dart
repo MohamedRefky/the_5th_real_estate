@@ -1,37 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../../app/app_router.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/widgets/info_chip.dart';
+import '../../core/widgets/details_table.dart';
 import '../../core/widgets/reveal_on_scroll.dart';
+import '../../core/widgets/section_header.dart';
+import '../../core/widgets/state_views.dart';
+import '../../core/widgets/whatsapp_floating_button.dart';
 import '../../data/dummy_data.dart';
 import '../../data/public_property_repository.dart';
 import '../../models/apartment.dart';
+import 'widgets/amenities_grid.dart';
 import 'widgets/construction_timeline.dart';
+import 'widgets/description_section.dart';
 import 'widgets/facade_cover.dart';
+import 'widgets/other_units_in_area_section.dart';
+import 'widgets/price_section.dart';
+import 'widgets/stats_section.dart';
+import 'widgets/title_header_section.dart';
 import 'widgets/video_placeholder.dart';
-
-/// Helper launcher for WhatsApp messaging with cross-platform fallback.
-Future<void> openWhatsAppForApartment(Apartment apartment) async {
-  final message = Uri.encodeComponent(
-    'مرحبًا، أنا مهتم بـ "${apartment.title}" في ${apartment.area}. '
-    'هل يمكنني الحصول على مزيد من المعلومات وتحديد موعد معاينة؟',
-  );
-  final url = Uri.parse(
-    'https://wa.me/${apartment.whatsappNumber}?text=$message',
-  );
-  try {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  } catch (_) {
-    await launchUrl(url);
-  }
-}
+import 'widgets/whatsapp_banner_card.dart';
 
 /// Apartment Details Screen — Ultra-premium listing page.
 class ApartmentDetailsScreen extends StatefulWidget {
@@ -55,34 +41,109 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
   }
 
   Future<void> _load() async {
-    final apartment = DummyData.getById(widget.apartmentId) ??
+    final apt = DummyData.getById(widget.apartmentId) ??
         await PublicPropertyRepository.instance.byId(widget.apartmentId);
     if (!mounted) return;
     setState(() {
-      _apartment = apartment;
-      _notFound = apartment == null;
+      _apartment = apt;
+      _notFound = apt == null;
       _loading = false;
     });
   }
 
+  List<({IconData icon, String label, String value})> _detailsRows(
+    Apartment apartment,
+  ) {
+    return [
+      (
+        icon: Icons.home_work_rounded,
+        label: 'نوع الوحدة',
+        value: apartment.unitType.label,
+      ),
+      (icon: Icons.location_on_rounded, label: 'الحي', value: apartment.area),
+      (
+        icon: Icons.square_foot_rounded,
+        label: 'المساحة الإجمالية',
+        value: '${apartment.areaSqm.toInt()} م²',
+      ),
+      (
+        icon: Icons.bed_rounded,
+        label: 'عدد غرف النوم',
+        value: '${apartment.rooms} غرف',
+      ),
+      (
+        icon: Icons.bathtub_rounded,
+        label: 'عدد الحمامات',
+        value: '${apartment.bathrooms} حمام',
+      ),
+      if (apartment.reception != null)
+        (
+          icon: Icons.chair_rounded,
+          label: 'الريسبشن',
+          value: apartment.reception!,
+        ),
+      (
+        icon: Icons.soup_kitchen_rounded,
+        label: 'المطبخ',
+        value: apartment.hasSeparateKitchen ? 'مطبخ منفصل' : 'مطبخ أمريكي / مفتوح',
+      ),
+      (icon: Icons.layers_rounded, label: 'الدور الحالي', value: apartment.floorLabel),
+      (
+        icon: Icons.apartment_rounded,
+        label: 'إجمالي أدوار المبنى',
+        value: '${apartment.totalFloors} أدوار',
+      ),
+      (
+        icon: Icons.brush_rounded,
+        label: 'مستوى التشطيب',
+        value: apartment.finishingStatus.label,
+      ),
+      (
+        icon: Icons.explore_rounded,
+        label: 'واجهة الشقة',
+        value: apartment.orientation.label,
+      ),
+      (
+        icon: Icons.monetization_on_rounded,
+        label: 'السعر الإجمالي',
+        value: apartment.formattedPrice,
+      ),
+      if (apartment.formattedPriceNotes != null)
+        (
+          icon: Icons.sell_rounded,
+          label: 'ملاحظات السعر والدفع',
+          value: apartment.formattedPriceNotes!,
+        ),
+      if (apartment.formattedDeliveryDate != null)
+        (
+          icon: Icons.event_rounded,
+          label: 'موعد التسليم المتوقع',
+          value: apartment.formattedDeliveryDate!,
+        ),
+      (
+        icon: Icons.phone_iphone_rounded,
+        label: 'رقم التواصل والمعاينة',
+        value: apartment.whatsappNumber,
+      ),
+    ];
+  }
+
+  String get _whatsAppMessage {
+    final apartment = _apartment!;
+    return 'مرحبًا، أنا مهتم بـ "${apartment.title}" في ${apartment.area}. '
+        'هل يمكنني الحصول على مزيد من المعلومات وتحديد موعد معاينة؟';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     if (_loading) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('...')),
-        body: const Center(child: CircularProgressIndicator()),
-      );
+      return const ScaffoldLoadingView();
     }
 
     final apartment = _apartment;
 
     if (apartment == null || _notFound) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('خطأ')),
-        body: const Center(child: Text('الشقة غير موجودة')),
-      );
+      return const ScaffoldNotFoundView(message: 'الشقة غير موجودة');
     }
 
     return Scaffold(
@@ -96,7 +157,10 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
       ),
 
       // ── Floating Side WhatsApp CTA ────────────────────────────
-      floatingActionButton: _FloatingWhatsAppButton(apartment: apartment),
+      floatingActionButton: WhatsAppFloatingButton(
+        phoneNumber: apartment.whatsappNumber,
+        message: _whatsAppMessage,
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
 
       body: SingleChildScrollView(
@@ -121,112 +185,28 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                   // ── 1. Title & Address Header (From Right) ──────
                   RevealOnScroll(
                     direction: RevealDirection.fromRight,
-                    child: _TitleHeaderSection(
-                      apartment: apartment,
-                      theme: theme,
-                    ),
+                    child: TitleHeaderSection(apartment: apartment),
                   ),
                   const SizedBox(height: 20),
 
                   // ── 2. Description (From Right) ───────────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromRight,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _SectionHeader(
-                          title: 'الوصف والتفاصيل الكاملة',
-                          icon: Icons.description_rounded,
-                          theme: theme,
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(18),
-                            border: Border.all(
-                              color: AppColors.divider.withValues(alpha: 0.6),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(
-                                  alpha: 0.04,
-                                ),
-                                blurRadius: 16,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                apartment.description,
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.8,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                              if (apartment.freeDescription != null &&
-                                  apartment.freeDescription!.isNotEmpty) ...[
-                                const SizedBox(height: 12),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.accentLight,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: AppColors.accent.withValues(alpha: 0.3),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.note_alt_rounded,
-                                        size: 18,
-                                        color: AppColors.accent,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          apartment.freeDescription!,
-                                          style: theme.textTheme.bodyMedium?.copyWith(
-                                            color: AppColors.accent,
-                                            fontWeight: FontWeight.w700,
-                                            height: 1.5,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: DescriptionSection(apartment: apartment),
                   ),
 
                   const SizedBox(height: 20),
                   // ── 4. Key Stats (From Left) ──────────────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromLeft,
-                    child: _StatsSection(apartment: apartment),
+                    child: StatsSection(apartment: apartment),
                   ),
 
                   const SizedBox(height: 20),
                   // ── 3. Price Section (Scale Reveal) ───────────────
                   RevealOnScroll(
                     direction: RevealDirection.scale,
-                    child: _PriceSection(apartment: apartment, theme: theme),
+                    child: PriceSection(apartment: apartment),
                   ),
 
                   const SizedBox(height: 18),
@@ -237,10 +217,9 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _SectionHeader(
+                        const SectionHeader(
                           title: 'فيديو معاينة الشقة',
                           icon: Icons.videocam_rounded,
-                          theme: theme,
                         ),
                         const SizedBox(height: 10),
                         VideoPlaceholder(videoUrl: apartment.videoUrl),
@@ -253,10 +232,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                   // ── WhatsApp Direct Callout Banner (Scale) ──────
                   RevealOnScroll(
                     direction: RevealDirection.scale,
-                    child: _WhatsAppBannerCard(
-                      apartment: apartment,
-                      theme: theme,
-                    ),
+                    child: WhatsAppBannerCard(apartment: apartment),
                   ),
 
                   const SizedBox(height: 20),
@@ -268,16 +244,12 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _SectionHeader(
+                          const SectionHeader(
                             title: 'المميزات والتسهيلات',
                             icon: Icons.star_rounded,
-                            theme: theme,
                           ),
                           const SizedBox(height: 10),
-                          _AmenitiesGrid(
-                            amenities: apartment.amenities,
-                            theme: theme,
-                          ),
+                          AmenitiesGrid(amenities: apartment.amenities),
                         ],
                       ),
                     ),
@@ -300,13 +272,12 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _SectionHeader(
+                        const SectionHeader(
                           title: 'جدول التفاصيل الكاملة',
                           icon: Icons.assignment_rounded,
-                          theme: theme,
                         ),
                         const SizedBox(height: 10),
-                        _DetailsTable(apartment: apartment, theme: theme),
+                        DetailsTable(rows: _detailsRows(apartment)),
                       ],
                     ),
                   ),
@@ -315,10 +286,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                   const SizedBox(height: 20),
                   RevealOnScroll(
                     direction: RevealDirection.fromRight,
-                    child: _OtherUnitsInAreaSection(
-                      currentApartment: apartment,
-                      theme: theme,
-                    ),
+                    child: OtherUnitsInAreaSection(currentApartment: apartment),
                   ),
 
                   const SizedBox(height: 90), // Space for sticky CTA
@@ -328,801 +296,6 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// 1. Title & Header Section
-// ═══════════════════════════════════════════════════════════════════
-
-class _TitleHeaderSection extends StatelessWidget {
-  final Apartment apartment;
-  final ThemeData theme;
-
-  const _TitleHeaderSection({required this.apartment, required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Badges row
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: [
-            _Badge(
-              label: apartment.finishingStatus.label,
-              color: _finishingColor(apartment.finishingStatus),
-            ),
-            _Badge(label: apartment.unitType.label, color: AppColors.accent),
-            _Badge(label: apartment.area, color: AppColors.accentLight2),
-            if (apartment.isUnderConstruction)
-              const _Badge(label: 'تحت الإنشاء', color: AppColors.warning),
-          ],
-        ),
-
-        const SizedBox(height: 18),
-
-        // Title
-        Text(
-          apartment.title,
-          style: theme.textTheme.headlineLarge?.copyWith(
-            fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Color _finishingColor(FinishingStatus status) {
-    switch (status) {
-      case FinishingStatus.superLux:
-        return AppColors.success;
-      case FinishingStatus.semiFinished:
-        return AppColors.info;
-      case FinishingStatus.underConstruction:
-        return AppColors.warning;
-    }
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// 3. Price Section
-// ═══════════════════════════════════════════════════════════════════
-
-class _PriceSection extends StatelessWidget {
-  final Apartment apartment;
-  final ThemeData theme;
-
-  const _PriceSection({required this.apartment, required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        // Compact Metallic Price Badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: AppColors.accentGradient,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.35),
-                blurRadius: 14,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.sell_rounded,
-                size: 20,
-                color: AppColors.textOnPrimary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'السعر: ',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textOnPrimary.withValues(alpha: 0.85),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                apartment.formattedPrice,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: AppColors.textOnPrimary,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Delivery date tag (if under construction)
-        if (apartment.isUnderConstruction &&
-            apartment.formattedDeliveryDate != null)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppColors.accent.withValues(alpha: 0.4),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.event_rounded,
-                  size: 18,
-                  color: AppColors.accent,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'التسليم المتوقع: ${apartment.formattedDeliveryDate}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.accent,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _Badge extends StatelessWidget {
-  final String label;
-  final Color color;
-
-  const _Badge({required this.label, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: AppColors.textOnPrimary,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Stats Section
-// ═══════════════════════════════════════════════════════════════════
-
-class _StatsSection extends StatelessWidget {
-  final Apartment apartment;
-
-  const _StatsSection({required this.apartment});
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: [
-        _StatCard(
-          icon: Icons.bed_rounded,
-          value: '${apartment.rooms} غرف',
-          label: 'غرف النوم',
-        ),
-        _StatCard(
-          icon: Icons.bathtub_rounded,
-          value: '${apartment.bathrooms} حمامات',
-          label: 'الحمامات',
-        ),
-        _StatCard(
-          icon: Icons.square_foot_rounded,
-          value: '${apartment.areaSqm.toInt()} م²',
-          label: 'المساحة',
-        ),
-        _StatCard(
-          icon: Icons.layers_rounded,
-          value: apartment.floorLabel,
-          label: 'الدور',
-        ),
-      ],
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final String label;
-
-  const _StatCard({
-    required this.icon,
-    required this.value,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.3),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(7),
-            decoration: BoxDecoration(
-              gradient: AppColors.accentGradient,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, size: 16, color: AppColors.textOnPrimary),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                value,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                  fontSize: 13,
-                ),
-              ),
-              Text(
-                label,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Section Header
-// ═══════════════════════════════════════════════════════════════════
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final ThemeData theme;
-
-  const _SectionHeader({
-    required this.title,
-    required this.icon,
-    required this.theme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            gradient: AppColors.accentGradient,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Icon(icon, color: AppColors.textOnPrimary, size: 20),
-        ),
-        const SizedBox(width: 14),
-        Text(
-          title,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Amenities Grid
-// ═══════════════════════════════════════════════════════════════════
-
-class _AmenitiesGrid extends StatelessWidget {
-  final List<String> amenities;
-  final ThemeData theme;
-
-  const _AmenitiesGrid({required this.amenities, required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: amenities
-          .map(
-            (amenity) => InfoChip(
-              icon: Icons.check_circle_rounded,
-              label: amenity,
-              iconColor: AppColors.success,
-            ),
-          )
-          .toList(),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Details Table
-// ═══════════════════════════════════════════════════════════════════
-
-class _DetailsTable extends StatelessWidget {
-  final Apartment apartment;
-  final ThemeData theme;
-
-  const _DetailsTable({required this.apartment, required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    final details = [
-      (Icons.home_work_rounded, 'نوع الوحدة', apartment.unitType.label),
-      (Icons.location_on_rounded, 'الحي', apartment.area),
-      (
-        Icons.square_foot_rounded,
-        'المساحة الإجمالية',
-        '${apartment.areaSqm.toInt()} م²',
-      ),
-      (Icons.bed_rounded, 'عدد غرف النوم', '${apartment.rooms} غرف'),
-      (Icons.bathtub_rounded, 'عدد الحمامات', '${apartment.bathrooms} حمام'),
-      if (apartment.reception != null)
-        (Icons.chair_rounded, 'الريسبشن', apartment.reception!),
-      (
-        Icons.soup_kitchen_rounded,
-        'المطبخ',
-        apartment.hasSeparateKitchen ? 'مطبخ منفصل' : 'مطبخ أمريكي / مفتوح',
-      ),
-      (Icons.layers_rounded, 'الدور الحالي', apartment.floorLabel),
-      (
-        Icons.apartment_rounded,
-        'إجمالي أدوار المبنى',
-        '${apartment.totalFloors} أدوار',
-      ),
-      (Icons.brush_rounded, 'مستوى التشطيب', apartment.finishingStatus.label),
-      (Icons.explore_rounded, 'واجهة الشقة', apartment.orientation.label),
-      (
-        Icons.monetization_on_rounded,
-        'السعر الإجمالي',
-        apartment.formattedPrice,
-      ),
-      if (apartment.formattedPriceNotes != null)
-        (
-          Icons.sell_rounded,
-          'ملاحظات السعر والدفع',
-          apartment.formattedPriceNotes!,
-        ),
-      if (apartment.formattedDeliveryDate != null)
-        (
-          Icons.event_rounded,
-          'موعد التسليم المتوقع',
-          apartment.formattedDeliveryDate!,
-        ),
-      (
-        Icons.phone_iphone_rounded,
-        'رقم التواصل والمعاينة',
-        apartment.whatsappNumber,
-      ),
-    ];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.35),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.08),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: List.generate(details.length, (index) {
-          final (icon, label, value) = details[index];
-          final isLast = index == details.length - 1;
-          final isEven = index.isEven;
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-            decoration: BoxDecoration(
-              color: isEven
-                  ? AppColors.surface
-                  : AppColors.cream.withValues(alpha: 0.7),
-              borderRadius: isLast
-                  ? const BorderRadius.vertical(bottom: Radius.circular(22))
-                  : (index == 0
-                        ? const BorderRadius.vertical(top: Radius.circular(22))
-                        : null),
-              border: isLast
-                  ? null
-                  : Border(
-                      bottom: BorderSide(
-                        color: AppColors.accent.withValues(alpha: 0.15),
-                        width: 0.8,
-                      ),
-                    ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.accent.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(icon, size: 18, color: AppColors.accent),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      label,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  value,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: label == 'السعر الإجمالي'
-                        ? AppColors.accent
-                        : AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// WhatsApp CTA
-// ═══════════════════════════════════════════════════════════════════
-
-class _FloatingWhatsAppButton extends StatelessWidget {
-  final Apartment apartment;
-
-  const _FloatingWhatsAppButton({required this.apartment});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => openWhatsAppForApartment(apartment),
-          borderRadius: BorderRadius.circular(30),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF25D366), Color(0xFF128C7E)],
-              ),
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.35),
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF25D366).withValues(alpha: 0.5),
-                  blurRadius: 20,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                FaIcon(
-                  FontAwesomeIcons.whatsapp,
-                  color: Colors.white,
-                  size: 24,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  'تواصل معنا',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 15,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _WhatsAppBannerCard extends StatelessWidget {
-  final Apartment apartment;
-  final ThemeData theme;
-
-  const _WhatsAppBannerCard({required this.apartment, required this.theme});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF25D366).withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFF25D366).withValues(alpha: 0.4),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFF25D366),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF25D366).withValues(alpha: 0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const FaIcon(
-              FontAwesomeIcons.whatsapp,
-              color: Colors.white,
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'مهتم بهذه الشقة؟',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'تواصل مباشرة مع المالك عبر واتساب للاستفسار وحجز المعاينة',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          ElevatedButton(
-            onPressed: () => openWhatsAppForApartment(apartment),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF25D366),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
-            child: const Text(
-              'تواصل الآن',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Other Available Units in the Same Building
-// ═══════════════════════════════════════════════════════════════════
-
-class _OtherUnitsInAreaSection extends StatelessWidget {
-  final Apartment currentApartment;
-  final ThemeData theme;
-
-  const _OtherUnitsInAreaSection({
-    required this.currentApartment,
-    required this.theme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final areaUnits = DummyData.getByArea(
-      currentApartment.area,
-    ).where((apt) => apt.id != currentApartment.id).toList();
-
-    if (areaUnits.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionHeader(
-          title: 'وحدات أخرى متاحة في حي ${currentApartment.area}',
-          icon: Icons.apartment_rounded,
-          theme: theme,
-        ),
-        const SizedBox(height: 14),
-        Column(
-          children: areaUnits.map((apt) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pushReplacementNamed(
-                      context,
-                      RoutesNames.apartmentDetails,
-                      arguments: apt.id,
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.accent.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.accentLight,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.home_work_rounded,
-                            color: AppColors.accent,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                apt.title,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'الدور: ${apt.floorLabel} • ${apt.areaSqm.toInt()} م² • ${apt.rooms} غرف',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              apt.formattedPrice,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: AppColors.accent,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'عرض',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: AppColors.accent,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  size: 12,
-                                  color: AppColors.accent,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
     );
   }
 }

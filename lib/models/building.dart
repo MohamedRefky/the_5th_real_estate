@@ -1,4 +1,5 @@
 import 'apartment.dart';
+import '../core/utils/formatters.dart';
 
 /// Core data model for a residential building listing.
 class Building {
@@ -123,21 +124,7 @@ class Building {
   /// Delivery date formatted in Arabic.
   String? get formattedDeliveryDate {
     if (deliveryDate == null) return null;
-    const months = [
-      'يناير',
-      'فبراير',
-      'مارس',
-      'أبريل',
-      'مايو',
-      'يونيو',
-      'يوليو',
-      'أغسطس',
-      'سبتمبر',
-      'أكتوبر',
-      'نوفمبر',
-      'ديسمبر',
-    ];
-    return '${months[deliveryDate!.month - 1]} ${deliveryDate!.year}';
+    return formatArabicMonthYear(deliveryDate!);
   }
 
   /// Serialize to Firestore-compatible map.
