@@ -28,6 +28,7 @@ class _FilterSectionState extends State<FilterSection> {
 
   // Filter state
   RangeValues _priceRange = const RangeValues(0, 10000000);
+  final Set<UnitType> _selectedUnitTypes = {};
   final Set<int> _selectedFloors = {};
   final Set<String> _selectedFinishingStatuses = {};
   final Set<ApartmentOrientation> _selectedOrientations = {};
@@ -38,6 +39,7 @@ class _FilterSectionState extends State<FilterSection> {
   int get _activeFilterCount {
     int count = 0;
     if (_priceRange.start > 0 || _priceRange.end < 10000000) count++;
+    if (_selectedUnitTypes.isNotEmpty) count++;
     if (_selectedFloors.isNotEmpty) count++;
     if (_selectedFinishingStatuses.isNotEmpty) count++;
     if (_selectedOrientations.isNotEmpty) count++;
@@ -48,6 +50,13 @@ class _FilterSectionState extends State<FilterSection> {
   }
 
   // ── Smart Truncated Selected Labels ──────────────────────────
+  String get _unitTypeLabel {
+    if (_selectedUnitTypes.isEmpty) return 'نوع الوحدة';
+    final list = _selectedUnitTypes.map((u) => u.label).toList();
+    if (list.length <= 2) return 'الوحدة: ${list.join("، ")}';
+    return 'الوحدة: ${list.take(2).join("، ")} (+${list.length - 2})';
+  }
+
   String get _floorLabel {
     if (_selectedFloors.isEmpty) return 'الدور';
     final list = _selectedFloors.map((f) {
@@ -63,8 +72,9 @@ class _FilterSectionState extends State<FilterSection> {
   String get _finishingLabel {
     if (_selectedFinishingStatuses.isEmpty) return 'التشطيب';
     final list = _selectedFinishingStatuses.map((s) {
-      if (s == 'finished') return 'كامل';
-      if (s == 'semiFinished') return 'نصف';
+      if (s == 'superLux') return 'سوبر لوكس';
+      if (s == 'semiFinished') return 'نص تشطيب';
+      if (s == 'underConstruction') return 'تحت الإنشاء';
       return s;
     }).toList();
     if (list.length <= 2) return 'التشطيب: ${list.join("، ")}';
@@ -120,6 +130,7 @@ class _FilterSectionState extends State<FilterSection> {
       FilterValues(
         minPrice: _priceRange.start,
         maxPrice: _priceRange.end,
+        unitTypes: _selectedUnitTypes,
         floors: _selectedFloors,
         finishingStatuses: _selectedFinishingStatuses,
         orientations: _selectedOrientations,
@@ -134,6 +145,7 @@ class _FilterSectionState extends State<FilterSection> {
     setState(() {
       _activePopover = null;
       _priceRange = const RangeValues(0, 10000000);
+      _selectedUnitTypes.clear();
       _selectedFloors.clear();
       _selectedFinishingStatuses.clear();
       _selectedOrientations.clear();
@@ -234,6 +246,18 @@ class _FilterSectionState extends State<FilterSection> {
                       ],
                     ],
                   ),
+                ),
+
+                // 0. Unit Type Pill
+                _FilterPill(
+                  label: _unitTypeLabel,
+                  badgeText: _selectedUnitTypes.isEmpty
+                      ? null
+                      : '${_selectedUnitTypes.length}',
+                  icon: Icons.home_work_rounded,
+                  isOpen: _activePopover == 'unitType',
+                  isSelected: _selectedUnitTypes.isNotEmpty,
+                  onTap: () => _togglePopover('unitType'),
                 ),
 
                 // 1. Floor Pill
@@ -383,6 +407,9 @@ class _FilterSectionState extends State<FilterSection> {
     Widget optionsContent;
 
     switch (_activePopover) {
+      case 'unitType':
+        optionsContent = _buildUnitTypeOptions();
+        break;
       case 'floor':
         optionsContent = _buildFloorOptions();
         break;
@@ -495,8 +522,36 @@ class _FilterSectionState extends State<FilterSection> {
     );
   }
 
+  Widget _buildUnitTypeOptions() {
+    final options = UnitType.values;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        for (final val in options)
+          _ChoiceChip(
+            label: val.label,
+            selected: _selectedUnitTypes.contains(val),
+            onTap: () {
+              setState(() {
+                if (!_selectedUnitTypes.add(val)) {
+                  _selectedUnitTypes.remove(val);
+                }
+              });
+              _applyFilters();
+            },
+          ),
+      ],
+    );
+  }
+
   Widget _buildFinishingOptions() {
-    final options = [('متشطب كامل', 'finished'), ('نصف تشطيب', 'semiFinished')];
+    final options = [
+      ('سوبر لوكس', 'superLux'),
+      ('نص تشطيب', 'semiFinished'),
+      ('تحت الإنشاء', 'underConstruction'),
+    ];
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -854,6 +909,7 @@ class _ChoiceChip extends StatelessWidget {
 class FilterValues {
   final double minPrice;
   final double maxPrice;
+  final Set<UnitType> unitTypes;
   final Set<int> floors;
   final Set<String> finishingStatuses;
   final Set<ApartmentOrientation> orientations;
@@ -864,6 +920,7 @@ class FilterValues {
   const FilterValues({
     this.minPrice = 0,
     this.maxPrice = 10000000,
+    this.unitTypes = const {},
     this.floors = const {},
     this.finishingStatuses = const {},
     this.orientations = const {},

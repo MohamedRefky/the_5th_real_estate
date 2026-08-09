@@ -32,7 +32,7 @@ class DummyData {
       totalFloors: 5,
       totalUnits: 10,
       availableUnits: 4,
-      finishingStatus: FinishingStatus.finished,
+      finishingStatus: FinishingStatus.superLux,
       isUnderConstruction: false,
       constructionProgress: 1.0,
       whatsappNumber: '+201000000001',
@@ -134,7 +134,7 @@ class DummyData {
       totalFloors: 5,
       totalUnits: 10,
       availableUnits: 5,
-      finishingStatus: FinishingStatus.unfinished,
+      finishingStatus: FinishingStatus.underConstruction,
       isUnderConstruction: true,
       deliveryDate: DateTime(2027, 1),
       constructionProgress: 0.45,
@@ -186,7 +186,7 @@ class DummyData {
       totalFloors: 5,
       totalUnits: 8,
       availableUnits: 2,
-      finishingStatus: FinishingStatus.finished,
+      finishingStatus: FinishingStatus.superLux,
       isUnderConstruction: false,
       constructionProgress: 1.0,
       whatsappNumber: '+201000000005',
@@ -210,14 +210,19 @@ class DummyData {
           'شقة فاخرة بتصميم عصري في قلب حي المستثمرين. '
           'تتميز بإطلالة رائعة على الحديقة المركزية، '
           'تشطيب سوبر لوكس بأجود الخامات.',
+      freeDescription: 'فيو مباشر على الحديقة المركزية — قريبة من البوابة الرئيسية',
       area: 'المستثمرين',
+      unitType: UnitType.apartment,
       price: 3500000,
+      priceNotes: {PriceNote.cash, PriceNote.negotiable},
       floor: 3,
       totalFloors: 5,
       areaSqm: 180,
       rooms: 3,
       bathrooms: 2,
-      finishingStatus: FinishingStatus.finished,
+      reception: 'ريسبشن قطعتين',
+      hasSeparateKitchen: true,
+      finishingStatus: FinishingStatus.superLux,
       orientation: ApartmentOrientation.front,
       isUnderConstruction: false,
       constructionProgress: 1.0,
@@ -239,13 +244,18 @@ class DummyData {
           'دوبلكس بمساحة واسعة في منطقة الأندلس الراقية. '
           'تشطيب نصف تشطيب يتيح لك حرية التصميم الداخلي. '
           'قريب من المحاور الرئيسية والخدمات.',
+      freeDescription: 'قريب من المحور المركزي — إطلالة على الحدائق',
       area: 'الأندلس',
+      unitType: UnitType.duplex,
       price: 4200000,
+      priceNotes: {PriceNote.installment},
       floor: 4,
       totalFloors: 6,
       areaSqm: 220,
       rooms: 4,
       bathrooms: 3,
+      reception: 'ريسبشن L شيب كبير',
+      hasSeparateKitchen: true,
       finishingStatus: FinishingStatus.semiFinished,
       orientation: ApartmentOrientation.front,
       isUnderConstruction: true,
@@ -285,18 +295,22 @@ class DummyData {
     // ─── 3. جاردينيا (عمارة جاردينيا هايتس ١ - حرف ت) ─────────────
     Apartment(
       id: 'apt_gardenia_001',
-      title: 'شقة بيزمنت 180م² - جاردينيا هايتس ١ (حرف ت)',
+      title: 'جاردينيا هايتس ١ حرف ت - بيزمنت 180م²',
       description:
-          'شقة بيزمنت بمساحة ١٨٠ متر مربع في عمارتك بحي جاردينيا هايتس ١ (حرف ت). '
-          'موقع متميز بالحي وقريب من الخدمات والمحاور الرئيسية. السعر: ٢ مليون جنيه.',
+          'شقة بيزمنت بمساحة ١٨٠ متر مربع في حي جاردينيا هايتس ١ (حرف ت). '
+          'موقع متميز بالحي وقريب من الخدمات والمحاور الرئيسية.',
+      freeDescription: 'مناسبة كعيادة أو مكتب — دور بيزمنت بمدخل مستقل',
       area: 'جاردينيا',
-      buildingName: 'جاردينيا هايتس ١ - حرف ت',
+      unitType: UnitType.apartment,
       price: 2000000,
+      priceNotes: {PriceNote.cash},
       floor: -1,
       totalFloors: 5,
       areaSqm: 180,
       rooms: 3,
       bathrooms: 2,
+      reception: 'ريسبشن واسع',
+      hasSeparateKitchen: true,
       finishingStatus: FinishingStatus.semiFinished,
       orientation: ApartmentOrientation.rear,
       isUnderConstruction: false,
@@ -307,18 +321,21 @@ class DummyData {
 
     Apartment(
       id: 'apt_gardenia_002',
-      title: 'شقة أرضي 170م² (3 غرف + ريسبشن) - جاردينيا هايتس ١ (حرف ت)',
+      title: 'جاردينيا هايتس ١ حرف ت - أرضي 170م²',
       description:
           'شقة بالدور الأرضي بمساحة ١٧٠ متر مربع بحي جاردينيا هايتس ١ (حرف ت). '
-          'تتكون من ٣ غرف وريسبشن واسع و٢ حمام ومطبخ، نصف تشطيب. السعر: ٣ مليون و٣٠٠ ألف جنيه.',
+          'تتكون من ٣ غرف وريسبشن واسع و٢ حمام ومطبخ، نصف تشطيب.',
       area: 'جاردينيا',
-      buildingName: 'جاردينيا هايتس ١ - حرف ت',
+      unitType: UnitType.apartment,
       price: 3300000,
+      priceNotes: {PriceNote.cash, PriceNote.negotiable},
       floor: 0,
       totalFloors: 5,
       areaSqm: 170,
       rooms: 3,
       bathrooms: 2,
+      reception: 'ريسبشن قطعتين',
+      hasSeparateKitchen: true,
       finishingStatus: FinishingStatus.semiFinished,
       orientation: ApartmentOrientation.front,
       isUnderConstruction: false,
@@ -329,18 +346,21 @@ class DummyData {
 
     Apartment(
       id: 'apt_gardenia_003',
-      title: 'شقة الدور الثاني خلفي 120م² - جاردينيا هايتس ١ (حرف ت)',
+      title: 'جاردينيا هايتس ١ حرف ت - ثاني خلفي 120م²',
       description:
           'شقة بالدور الثاني خلفي بمساحة ١٢٠ متر مربع بحي جاردينيا هايتس ١ (حرف ت). '
-          'تتكون من غرفتين وريسبشن وحمام ومطبخ، نصف تشطيب. السعر: ٢ مليون و٣٥٠ ألف جنيه.',
+          'تتكون من غرفتين وريسبشن وحمام ومطبخ، نصف تشطيب.',
       area: 'جاردينيا',
-      buildingName: 'جاردينيا هايتس ١ - حرف ت',
+      unitType: UnitType.apartment,
       price: 2350000,
+      priceNotes: {PriceNote.negotiable},
       floor: 2,
       totalFloors: 5,
       areaSqm: 120,
       rooms: 2,
       bathrooms: 1,
+      reception: 'ريسبشن',
+      hasSeparateKitchen: false,
       finishingStatus: FinishingStatus.semiFinished,
       orientation: ApartmentOrientation.rear,
       isUnderConstruction: false,
@@ -357,14 +377,19 @@ class DummyData {
           'فرصة استثمارية ممتازة في بيت الوطن. '
           'شقة بدون تشطيب بسعر مميز مع خطة سداد مرنة. '
           'هيتسلم يناير 2027 بإذن الله.',
+      freeDescription: 'خطة سداد مرنة حتى ٤ سنوات بدون فوائد',
       area: 'بيت الوطن',
+      unitType: UnitType.apartment,
       price: 1900000,
+      priceNotes: {PriceNote.installment, PriceNote.negotiable},
       floor: 2,
       totalFloors: 5,
       areaSqm: 140,
       rooms: 2,
       bathrooms: 1,
-      finishingStatus: FinishingStatus.unfinished,
+      reception: 'ريسبشن',
+      hasSeparateKitchen: false,
+      finishingStatus: FinishingStatus.underConstruction,
       orientation: ApartmentOrientation.side,
       isUnderConstruction: true,
       deliveryDate: DateTime(2027, 1),
@@ -403,19 +428,24 @@ class DummyData {
     // ─── 5. النرجس ─────────────────────────────────────────────
     Apartment(
       id: 'apt_005',
-      title: 'بنتهاوس فاخر بالنرجس',
+      title: 'بنتهاوس فاخر بالنرجس الجديدة',
       description:
           'بنتهاوس حصري بإطلالة بانورامية في حي النرجس الجديدة. '
           'تشطيب سوبر لوكس مع تراس واسع وجاكوزي. '
           'لمحبي الفخامة والخصوصية.',
+      freeDescription: 'روف خاص بجاكوزي — إطلالة بانورامية 360°',
       area: 'النرجس الجديدة',
+      unitType: UnitType.duplex,
       price: 5500000,
+      priceNotes: {PriceNote.cash},
       floor: 6,
       totalFloors: 5,
       areaSqm: 250,
       rooms: 4,
       bathrooms: 3,
-      finishingStatus: FinishingStatus.finished,
+      reception: 'ريسبشن كبير قطعتين',
+      hasSeparateKitchen: true,
+      finishingStatus: FinishingStatus.superLux,
       isUnderConstruction: false,
       constructionProgress: 1.0,
       whatsappNumber: '+201000000005',
@@ -465,10 +495,5 @@ class DummyData {
     } catch (_) {
       return null;
     }
-  }
-
-  /// Get all apartments in a specific building.
-  static List<Apartment> getByBuilding(String buildingName) {
-    return apartments.where((apt) => apt.buildingName == buildingName).toList();
   }
 }

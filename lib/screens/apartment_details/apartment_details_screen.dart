@@ -234,17 +234,15 @@ class ApartmentDetailsScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // ── Other Available Units (From Right) ─────────
-                  if (apartment.buildingName != null) ...[
-                    const SizedBox(height: 20),
-                    RevealOnScroll(
-                      direction: RevealDirection.fromRight,
-                      child: _BuildingUnitsSection(
-                        currentApartment: apartment,
-                        theme: theme,
-                      ),
+                  // ── Other Available Units in Area (From Right) ─────────
+                  const SizedBox(height: 20),
+                  RevealOnScroll(
+                    direction: RevealDirection.fromRight,
+                    child: _OtherUnitsInAreaSection(
+                      currentApartment: apartment,
+                      theme: theme,
                     ),
-                  ],
+                  ),
 
                   const SizedBox(height: 90), // Space for sticky CTA
                 ],
@@ -281,39 +279,8 @@ class _TitleHeaderSection extends StatelessWidget {
               label: apartment.finishingStatus.label,
               color: _finishingColor(apartment.finishingStatus),
             ),
+            _Badge(label: apartment.unitType.label, color: AppColors.accent),
             _Badge(label: apartment.area, color: AppColors.accentLight2),
-            if (apartment.buildingName != null)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: AppColors.accent.withValues(alpha: 0.5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.domain_rounded,
-                      size: 16,
-                      color: AppColors.accent,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      apartment.buildingName!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             if (apartment.isUnderConstruction)
               const _Badge(label: 'تحت الإنشاء', color: AppColors.warning),
           ],
@@ -335,12 +302,12 @@ class _TitleHeaderSection extends StatelessWidget {
 
   Color _finishingColor(FinishingStatus status) {
     switch (status) {
-      case FinishingStatus.finished:
+      case FinishingStatus.superLux:
         return AppColors.success;
       case FinishingStatus.semiFinished:
         return AppColors.info;
-      case FinishingStatus.unfinished:
-        return AppColors.textSecondary;
+      case FinishingStatus.underConstruction:
+        return AppColors.warning;
     }
   }
 }
@@ -669,6 +636,7 @@ class _DetailsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final details = [
+      (Icons.home_work_rounded, 'نوع الوحدة', apartment.unitType.label),
       (Icons.location_on_rounded, 'الحي', apartment.area),
       (
         Icons.square_foot_rounded,
@@ -677,6 +645,13 @@ class _DetailsTable extends StatelessWidget {
       ),
       (Icons.bed_rounded, 'عدد غرف النوم', '${apartment.rooms} غرف'),
       (Icons.bathtub_rounded, 'عدد الحمامات', '${apartment.bathrooms} حمام'),
+      if (apartment.reception != null)
+        (Icons.chair_rounded, 'الريسبشن', apartment.reception!),
+      (
+        Icons.soup_kitchen_rounded,
+        'المطبخ',
+        apartment.hasSeparateKitchen ? 'مطبخ منفصل' : 'مطبخ أمريكي / مفتوح',
+      ),
       (Icons.layers_rounded, 'الدور الحالي', apartment.floorLabel),
       (
         Icons.apartment_rounded,
@@ -690,6 +665,12 @@ class _DetailsTable extends StatelessWidget {
         'السعر الإجمالي',
         apartment.formattedPrice,
       ),
+      if (apartment.formattedPriceNotes != null)
+        (
+          Icons.sell_rounded,
+          'ملاحظات السعر والدفع',
+          apartment.formattedPriceNotes!,
+        ),
       if (apartment.formattedDeliveryDate != null)
         (
           Icons.event_rounded,

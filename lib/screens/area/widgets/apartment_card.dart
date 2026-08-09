@@ -281,6 +281,10 @@ class _ApartmentCardState extends State<ApartmentCard> {
                           runSpacing: 6,
                           children: [
                             InfoChip(
+                              icon: Icons.home_work_rounded,
+                              label: apt.unitType.label,
+                            ),
+                            InfoChip(
                               icon: Icons.bed_rounded,
                               label: '${apt.rooms} غرف',
                             ),
@@ -300,6 +304,12 @@ class _ApartmentCardState extends State<ApartmentCard> {
                               icon: Icons.explore_rounded,
                               label: apt.orientation.label,
                             ),
+                            if (apt.formattedPriceNotes != null)
+                              InfoChip(
+                                icon: Icons.sell_rounded,
+                                label: apt.formattedPriceNotes!,
+                                iconColor: AppColors.accent,
+                              ),
                           ],
                         ),
 
@@ -340,12 +350,12 @@ class _ApartmentCardState extends State<ApartmentCard> {
 
   Color _finishingColor(FinishingStatus status) {
     switch (status) {
-      case FinishingStatus.finished:
+      case FinishingStatus.superLux:
         return AppColors.success;
       case FinishingStatus.semiFinished:
         return AppColors.info;
-      case FinishingStatus.unfinished:
-        return AppColors.textSecondary;
+      case FinishingStatus.underConstruction:
+        return AppColors.warning;
     }
   }
 }

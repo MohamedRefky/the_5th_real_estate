@@ -2,7 +2,7 @@ import 'apartment.dart';
 
 /// Core data model for a residential building listing.
 class Building {
-  /// Unique identifier.
+  /// Unique identifier (Firestore doc ID).
   final String id;
 
   /// Building name (e.g. "عمارة جاردينيا هايتس ١").
@@ -47,8 +47,15 @@ class Building {
   /// Key building amenities (e.g. "مصعد", "جراج خاص", "كاميرات مراقبة").
   final List<String> amenities;
 
-  /// Facade cover image URL / asset path.
-  final String? coverImageUrl;
+  /// Image URLs — unified gallery (Firebase Storage).
+  /// The first image is used as the cover/facade.
+  final List<String> imageUrls;
+
+  /// Timestamp when this listing was created.
+  final DateTime? createdAt;
+
+  /// Timestamp when this listing was last updated.
+  final DateTime? updatedAt;
 
   const Building({
     required this.id,
@@ -66,8 +73,14 @@ class Building {
     this.milestones = const [],
     required this.whatsappNumber,
     this.amenities = const [],
-    this.coverImageUrl,
+    this.imageUrls = const [],
+    this.createdAt,
+    this.updatedAt,
   });
+
+  /// The first image URL, used as cover/facade. Null if no images.
+  String? get coverImageUrl =>
+      imageUrls.isNotEmpty ? imageUrls.first : null;
 
   /// Formatted starting price string.
   String get formattedStartingPrice {
@@ -100,5 +113,70 @@ class Building {
       'ديسمبر',
     ];
     return '${months[deliveryDate!.month - 1]} ${deliveryDate!.year}';
+  }
+
+  /// Serialize to Firestore-compatible map.
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'description': description,
+        'area': area,
+        'startingPrice': startingPrice,
+        'totalFloors': totalFloors,
+        'totalUnits': totalUnits,
+        'availableUnits': availableUnits,
+        'finishingStatus': finishingStatus.name,
+        'isUnderConstruction': isUnderConstruction,
+        'deliveryDate': deliveryDate?.toIso8601String(),
+        'constructionProgress': constructionProgress,
+        'milestones': milestones.map((m) => m.toJson()).toList(),
+        'whatsappNumber': whatsappNumber,
+        'amenities': amenities,
+        'imageUrls': imageUrls,
+        'createdAt': createdAt?.toIso8601String(),
+        'updatedAt': updatedAt?.toIso8601String(),
+      };
+
+  /// Deserialize from Firestore document.
+  factory Building.fromJson(Map<String, dynamic> json, {String? id}) {
+    return Building(
+      id: id ?? json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      area: json['area'] as String? ?? '',
+      startingPrice: (json['startingPrice'] as num?)?.toDouble() ?? 0,
+      totalFloors: json['totalFloors'] as int? ?? 1,
+      totalUnits: json['totalUnits'] as int? ?? 0,
+      availableUnits: json['availableUnits'] as int? ?? 0,
+      finishingStatus: FinishingStatus.values.firstWhere(
+        (e) => e.name == json['finishingStatus'],
+        orElse: () => FinishingStatus.semiFinished,
+      ),
+      isUnderConstruction: json['isUnderConstruction'] as bool? ?? false,
+      deliveryDate: json['deliveryDate'] != null
+          ? DateTime.tryParse(json['deliveryDate'] as String)
+          : null,
+      constructionProgress:
+          (json['constructionProgress'] as num?)?.toDouble() ?? 1.0,
+      milestones: (json['milestones'] as List<dynamic>?)
+              ?.map((m) =>
+                  ConstructionMilestone.fromJson(m as Map<String, dynamic>))
+              .toList() ??
+          [],
+      whatsappNumber: json['whatsappNumber'] as String? ?? '',
+      amenities: (json['amenities'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      imageUrls: (json['imageUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'] as String)
+          : null,
+    );
   }
 }
