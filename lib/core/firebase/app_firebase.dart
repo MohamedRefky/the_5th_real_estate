@@ -21,12 +21,6 @@ class AppFirebase {
     }
     _initializing = true;
     try {
-      if (!DefaultFirebaseOptions.isConfigured) {
-        throw StateError(
-          'Firebase is not configured yet. Run `flutterfire configure` '
-          'and follow FIREBASE_SETUP.md.',
-        );
-      }
       final app = await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
