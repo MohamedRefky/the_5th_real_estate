@@ -26,7 +26,7 @@ class ContactSection extends StatelessWidget {
           onTap: () => showContactChooserModal(
             context,
             message: 'مرحبًا، أريد الاستفسار عن العقارات المتاحة وتحديد موعد معاينة',
-            preferredPlatform: 'whatsapp',
+            platform: ContactPlatform.whatsapp,
           ),
         ),
         _ContactOption(
@@ -41,7 +41,7 @@ class ContactSection extends StatelessWidget {
           accentColor: const Color(0xFF1877F2),
           onTap: () => showContactChooserModal(
             context,
-            preferredPlatform: 'facebook',
+            platform: ContactPlatform.facebook,
           ),
         ),
       ];

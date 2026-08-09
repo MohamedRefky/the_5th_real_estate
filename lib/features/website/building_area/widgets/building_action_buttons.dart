@@ -16,6 +16,7 @@ class BuildingActionButtons extends StatelessWidget {
       context,
       message:
           'مرحباً، أود الاستفسار عن ${building.name} في حي ${building.area}.',
+      platform: ContactPlatform.whatsapp,
     );
   }
 

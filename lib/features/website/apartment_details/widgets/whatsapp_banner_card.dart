@@ -74,6 +74,7 @@ class WhatsAppBannerCard extends StatelessWidget {
               message:
                   'مرحبًا، أنا مهتم بـ "${apartment.title}" في ${apartment.area}. '
                   'هل يمكنني الحصول على مزيد من المعلومات وتحديد موعد معاينة؟',
+              platform: ContactPlatform.whatsapp,
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF25D366),

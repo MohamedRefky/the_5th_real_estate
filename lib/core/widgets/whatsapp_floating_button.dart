@@ -50,6 +50,7 @@ class WhatsAppFloatingButton extends StatelessWidget {
             onPressed: () => showContactChooserModal(
               context,
               message: message,
+              platform: ContactPlatform.whatsapp,
             ),
             backgroundColor: const Color(0xFF25D366),
             foregroundColor: Colors.white,
@@ -76,6 +77,7 @@ class WhatsAppFloatingButton extends StatelessWidget {
               onTap: () => showContactChooserModal(
                 context,
                 message: message,
+                platform: ContactPlatform.whatsapp,
               ),
               borderRadius: BorderRadius.circular(30),
               child: Container(
