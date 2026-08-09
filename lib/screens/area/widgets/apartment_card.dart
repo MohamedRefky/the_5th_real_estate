@@ -82,9 +82,9 @@ class _ApartmentCardState extends State<ApartmentCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── 1. Dominant Image Box (190px Height) ──────────────────
+                  // ── 1. Dominant Image Box (175px Height) ──────────────────
                   SizedBox(
-                    height: 190,
+                    height: 175,
                     width: double.infinity,
                     child: Stack(
                       children: [
@@ -240,7 +240,7 @@ class _ApartmentCardState extends State<ApartmentCard> {
 
                   // ── 2. Compact Card Body (Tight & No Empty Space) ──────
                   Padding(
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
