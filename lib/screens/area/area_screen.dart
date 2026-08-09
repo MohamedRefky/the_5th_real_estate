@@ -39,12 +39,6 @@ class _AreaScreenState extends State<AreaScreen> {
           if (!titleMatch && !descMatch) return false;
         }
 
-        // Unit type
-        if (filters.unitTypes.isNotEmpty &&
-            !filters.unitTypes.contains(apt.unitType)) {
-          return false;
-        }
-
         // Price range
         if (apt.price < filters.minPrice || apt.price > filters.maxPrice) {
           return false;
