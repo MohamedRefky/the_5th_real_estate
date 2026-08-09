@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../features/admin/screens/dashboard_screen.dart';
 import '../features/admin/screens/login_screen.dart';
 import '../features/admin/widgets/admin_route_guard.dart';
-import '../screens/apartment_details/apartment_details_screen.dart';
-import '../screens/area/area_screen.dart';
-import '../screens/building_area/buildings_area_screen.dart';
-import '../screens/building_details/building_details_screen.dart';
-import '../screens/home/home_screen.dart';
+import '../features/apartment_details/apartment_details_screen.dart';
+import '../features/area/area_screen.dart';
+import '../features/building_area/buildings_area_screen.dart';
+import '../features/building_details/building_details_screen.dart';
+import '../features/home/home_screen.dart';
 
 /// Centralised route names — single source of truth for navigation.
 class RoutesNames {
