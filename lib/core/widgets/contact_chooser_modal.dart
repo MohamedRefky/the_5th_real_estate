@@ -26,7 +26,7 @@ Future<void> showContactChooserModal(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    barrierColor: Colors.black.withValues(alpha: 0.35),
+    barrierColor: Colors.black.withValues(alpha: 0.45),
     builder: (context) => ContactChooserModal(
       message: message,
       platform: platform,
@@ -96,26 +96,26 @@ class ContactChooserModal extends StatelessWidget {
             // Fully rounded corners for floating modal sheet look
             borderRadius: BorderRadius.circular(32),
             child: BackdropFilter(
-              // Heavy blur effect for high translucency
-              filter: ImageFilter.blur(sigmaX: 45, sigmaY: 45),
+              // Smooth balanced blur effect
+              filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
               child: Container(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 decoration: BoxDecoration(
-                  // Ultra-transparent glass surface
-                  color: const Color(0xFF0F172A).withValues(alpha: 0.25),
+                  // Rich dark translucent steel glass container (high contrast, non-washed out)
+                  color: AppColors.surface.withValues(alpha: 0.70),
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.22),
+                    color: primaryPlatformColor.withValues(alpha: 0.30),
                     width: 1.2,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: primaryPlatformColor.withValues(alpha: 0.20),
-                      blurRadius: 50,
+                      blurRadius: 40,
                       spreadRadius: 2,
                     ),
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.30),
+                      color: Colors.black.withValues(alpha: 0.40),
                       blurRadius: 30,
                       offset: const Offset(0, 10),
                     ),
@@ -155,12 +155,12 @@ class ContactChooserModal extends StatelessWidget {
                                 : AppColors.accentGradient),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.4),
+                          color: Colors.white.withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: primaryPlatformColor.withValues(alpha: 0.45),
+                            color: primaryPlatformColor.withValues(alpha: 0.50),
                             blurRadius: 28,
                             offset: const Offset(0, 6),
                           ),
@@ -196,6 +196,7 @@ class ContactChooserModal extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                         color: AppColors.textPrimary,
                         fontSize: 22,
+                        letterSpacing: 0.2,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -209,7 +210,7 @@ class ContactChooserModal extends StatelessWidget {
                         subtitleText,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
-                          fontSize: 13,
+                          fontSize: 13.5,
                           height: 1.45,
                         ),
                         textAlign: TextAlign.center,
@@ -292,25 +293,25 @@ class _GlassRepresentativeCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        // Translucent card background inside glass modal
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(24),
+        // Translucent rich slate card background
+        color: Colors.white.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.16),
+          color: accentColor.withValues(alpha: 0.30),
           width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 16,
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 18,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: Padding(
             padding: const EdgeInsets.all(18),
             child: Column(
@@ -319,46 +320,46 @@ class _GlassRepresentativeCard extends StatelessWidget {
                 // Representative Header
                 Row(
                   children: [
-                    // Sleek Profile Icon Badge (Replaced Initials)
+                    // Sleek Agent Profile Icon Badge
                     Container(
-                      width: 50,
-                      height: 50,
+                      width: 52,
+                      height: 52,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: isWhatsAppOnly
                               ? [
-                                  const Color(0xFF25D366).withValues(alpha: 0.25),
-                                  const Color(0xFF128C7E).withValues(alpha: 0.15),
+                                  const Color(0xFF25D366),
+                                  const Color(0xFF075E54),
                                 ]
                               : (isFacebookOnly
                                   ? [
-                                      const Color(0xFF1877F2).withValues(alpha: 0.25),
-                                      const Color(0xFF0F52AC).withValues(alpha: 0.15),
+                                      const Color(0xFF1877F2),
+                                      const Color(0xFF0F52AC),
                                     ]
                                   : [
-                                      AppColors.accent.withValues(alpha: 0.25),
-                                      AppColors.primaryMedium.withValues(alpha: 0.15),
+                                      AppColors.accent,
+                                      AppColors.primaryDark,
                                     ]),
                         ),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: accentColor.withValues(alpha: 0.4),
-                          width: 1.2,
+                          color: Colors.white.withValues(alpha: 0.45),
+                          width: 1.5,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: accentColor.withValues(alpha: 0.20),
-                            blurRadius: 12,
+                            color: accentColor.withValues(alpha: 0.40),
+                            blurRadius: 14,
                             offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: Center(
+                      child: const Center(
                         child: FaIcon(
                           FontAwesomeIcons.userTie,
-                          color: accentColor,
+                          color: Colors.white,
                           size: 22,
                         ),
                       ),
@@ -366,7 +367,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
 
                     const SizedBox(width: 14),
 
-                    // Name + Official Facebook-Style Verified Badge + Title
+                    // Name + Verified Badge + Title
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
