@@ -11,10 +11,13 @@ enum DetailsTableLayout {
   flex,
 }
 
+/// A single details row: icon + label + value.
+typedef DetailsRow = ({IconData icon, String label, String value});
+
 /// Alternating-row details table shared by the apartment and building
-/// detail screens. Each row is an `(icon, label, value)` record.
+/// detail screens. Each row is an [DetailsRow] record.
 class DetailsTable extends StatelessWidget {
-  final List<({IconData icon, String label, String value})> rows;
+  final List<DetailsRow> rows;
   final DetailsTableLayout layout;
 
   const DetailsTable({

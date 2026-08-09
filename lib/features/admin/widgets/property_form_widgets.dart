@@ -21,13 +21,20 @@ class FormSectionTitle extends StatelessWidget {
   }
 }
 
-/// Shared input decoration for the property form fields.
-InputDecoration propertyInputDecoration(String label) {
+/// Shared input decoration for admin form fields.
+InputDecoration propertyInputDecoration(
+  String label, {
+  IconData? prefixIcon,
+  Color fillColor = AppColors.surface,
+}) {
   return InputDecoration(
     labelText: label,
     labelStyle: const TextStyle(color: AppColors.textSecondary),
+    prefixIcon: prefixIcon == null
+        ? null
+        : Icon(prefixIcon, color: AppColors.accent),
     filled: true,
-    fillColor: AppColors.surface,
+    fillColor: fillColor,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: AppColors.divider),
@@ -39,13 +46,18 @@ InputDecoration propertyInputDecoration(String label) {
   );
 }
 
-/// Text field styled for the property form.
+/// Text field styled for the admin forms (property form + login).
 class FormTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final TextInputType? keyboardType;
   final int? maxLines;
   final String? Function(String?)? validator;
+  final IconData? prefixIcon;
+  final Color fillColor;
+  final bool obscureText;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
 
   const FormTextField(
     this.controller,
@@ -54,6 +66,11 @@ class FormTextField extends StatelessWidget {
     this.keyboardType,
     this.maxLines,
     this.validator,
+    this.prefixIcon,
+    this.fillColor = AppColors.surface,
+    this.obscureText = false,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -62,9 +79,16 @@ class FormTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      obscureText: obscureText,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
       validator: validator,
       style: const TextStyle(color: AppColors.textPrimary),
-      decoration: propertyInputDecoration(label),
+      decoration: propertyInputDecoration(
+        label,
+        prefixIcon: prefixIcon,
+        fillColor: fillColor,
+      ),
     );
   }
 }

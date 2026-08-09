@@ -24,18 +24,63 @@ class ContactSection extends StatelessWidget {
   Future<void> _openFacebook() async {
     final url = Uri.parse('https://facebook.com');
     try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      }
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (_) {
       await launchUrl(url);
     }
   }
 
+  /// Data descriptors for the contact options, shared by both layouts.
+  List<_ContactOption> get _options => [
+        _ContactOption(
+          title: 'تواصل عبر واتساب',
+          subtitle: 'استجابة فورية واستشارات عقارية مباشرة 24/7',
+          iconWidget: const FaIcon(
+            FontAwesomeIcons.whatsapp,
+            size: 32,
+            color: Color(0xFF25D366),
+          ),
+          badgeText: 'واتساب',
+          accentColor: const Color(0xFF25D366),
+          onTap: _openWhatsApp,
+        ),
+        _ContactOption(
+          title: 'تابعنا على فيسبوك',
+          subtitle: 'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
+          iconWidget: const FaIcon(
+            FontAwesomeIcons.facebookF,
+            size: 28,
+            color: Color(0xFF1877F2),
+          ),
+          badgeText: 'فيسبوك',
+          accentColor: const Color(0xFF1877F2),
+          onTap: _openFacebook,
+        ),
+      ];
+
+  Widget _buildOption(
+    _ContactOption option,
+    RevealDirection direction,
+    int delayMilliseconds,
+  ) {
+    return RevealOnScroll(
+      direction: direction,
+      delayMilliseconds: delayMilliseconds,
+      child: _ContactCard(
+        title: option.title,
+        subtitle: option.subtitle,
+        iconWidget: option.iconWidget,
+        badgeText: option.badgeText,
+        accentColor: option.accentColor,
+        onTap: option.onTap,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final options = _options;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
@@ -64,42 +109,18 @@ class ContactSection extends StatelessWidget {
                     return Row(
                       children: [
                         Expanded(
-                          child: RevealOnScroll(
-                            direction: RevealDirection.fromRight,
-                            delayMilliseconds: 0,
-                            child: _ContactCard(
-                              title: 'تواصل عبر واتساب',
-                              subtitle:
-                                  'استجابة فورية واستشارات عقارية مباشرة 24/7',
-                              iconWidget: const FaIcon(
-                                FontAwesomeIcons.whatsapp,
-                                size: 32,
-                                color: Color(0xFF25D366),
-                              ),
-                              badgeText: 'واتساب',
-                              accentColor: const Color(0xFF25D366),
-                              onTap: _openWhatsApp,
-                            ),
+                          child: _buildOption(
+                            options[0],
+                            RevealDirection.fromRight,
+                            0,
                           ),
                         ),
                         const SizedBox(width: 24),
                         Expanded(
-                          child: RevealOnScroll(
-                            direction: RevealDirection.fromLeft,
-                            delayMilliseconds: 80,
-                            child: _ContactCard(
-                              title: 'تابعنا على فيسبوك',
-                              subtitle:
-                                  'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
-                              iconWidget: const FaIcon(
-                                FontAwesomeIcons.facebookF,
-                                size: 28,
-                                color: Color(0xFF1877F2),
-                              ),
-                              badgeText: 'فيسبوك',
-                              accentColor: const Color(0xFF1877F2),
-                              onTap: _openFacebook,
-                            ),
+                          child: _buildOption(
+                            options[1],
+                            RevealDirection.fromLeft,
+                            80,
                           ),
                         ),
                       ],
@@ -108,41 +129,9 @@ class ContactSection extends StatelessWidget {
 
                   return Column(
                     children: [
-                      RevealOnScroll(
-                        direction: RevealDirection.fromRight,
-                        delayMilliseconds: 0,
-                        child: _ContactCard(
-                          title: 'تواصل عبر واتساب',
-                          subtitle:
-                              'استجابة فورية واستشارات عقارية مباشرة 24/7',
-                          iconWidget: const FaIcon(
-                            FontAwesomeIcons.whatsapp,
-                            size: 32,
-                            color: Color(0xFF25D366),
-                          ),
-                          badgeText: 'واتساب',
-                          accentColor: const Color(0xFF25D366),
-                          onTap: _openWhatsApp,
-                        ),
-                      ),
+                      _buildOption(options[0], RevealDirection.fromRight, 0),
                       const SizedBox(height: 20),
-                      RevealOnScroll(
-                        direction: RevealDirection.fromLeft,
-                        delayMilliseconds: 80,
-                        child: _ContactCard(
-                          title: 'تابعنا على فيسبوك',
-                          subtitle:
-                              'اكتشف أحدث العروض والمشاريع الحصرية فور طرحها',
-                          iconWidget: const FaIcon(
-                            FontAwesomeIcons.facebookF,
-                            size: 28,
-                            color: Color(0xFF1877F2),
-                          ),
-                          badgeText: 'فيسبوك',
-                          accentColor: const Color(0xFF1877F2),
-                          onTap: _openFacebook,
-                        ),
-                      ),
+                      _buildOption(options[1], RevealDirection.fromLeft, 80),
                     ],
                   );
                 },
@@ -153,6 +142,25 @@ class ContactSection extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Data holder describing a single contact option card.
+class _ContactOption {
+  final String title;
+  final String subtitle;
+  final Widget iconWidget;
+  final String badgeText;
+  final Color accentColor;
+  final VoidCallback onTap;
+
+  const _ContactOption({
+    required this.title,
+    required this.subtitle,
+    required this.iconWidget,
+    required this.badgeText,
+    required this.accentColor,
+    required this.onTap,
+  });
 }
 
 class _ContactCard extends StatelessWidget {

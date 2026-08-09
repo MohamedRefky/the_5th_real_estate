@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 
-import '../../core/widgets/details_table.dart';
-import '../../core/widgets/reveal_on_scroll.dart';
-import '../../core/widgets/section_header.dart';
-import '../../core/widgets/state_views.dart';
-import '../../core/widgets/whatsapp_floating_button.dart';
-import '../../data/dummy_data.dart';
-import '../../data/public_property_repository.dart';
-import '../../models/apartment.dart';
-import 'widgets/amenities_grid.dart';
-import 'widgets/construction_timeline.dart';
-import 'widgets/description_section.dart';
-import 'widgets/facade_cover.dart';
-import 'widgets/other_units_in_area_section.dart';
-import 'widgets/price_section.dart';
-import 'widgets/stats_section.dart';
-import 'widgets/title_header_section.dart';
-import 'widgets/video_placeholder.dart';
-import 'widgets/whatsapp_banner_card.dart';
+import '../../../core/widgets/details_table.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
+import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/state_views.dart';
+import '../../../core/widgets/whatsapp_floating_button.dart';
+import '../../../data/dummy_data.dart';
+import '../../../data/public_property_repository.dart';
+import '../../../models/apartment.dart';
+import '../apartment_details_presenter.dart';
+import '../widgets/amenities_grid.dart';
+import '../widgets/construction_timeline.dart';
+import '../widgets/description_section.dart';
+import '../widgets/facade_cover.dart';
+import '../widgets/other_units_in_area_section.dart';
+import '../widgets/price_section.dart';
+import '../widgets/stats_section.dart';
+import '../widgets/title_header_section.dart';
+import '../widgets/video_placeholder.dart';
+import '../widgets/whatsapp_banner_card.dart';
 
 /// Apartment Details Screen — Ultra-premium listing page.
 class ApartmentDetailsScreen extends StatefulWidget {
@@ -51,82 +52,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
     });
   }
 
-  List<({IconData icon, String label, String value})> _detailsRows(
-    Apartment apartment,
-  ) {
-    return [
-      (
-        icon: Icons.home_work_rounded,
-        label: 'نوع الوحدة',
-        value: apartment.unitType.label,
-      ),
-      (icon: Icons.location_on_rounded, label: 'الحي', value: apartment.area),
-      (
-        icon: Icons.square_foot_rounded,
-        label: 'المساحة الإجمالية',
-        value: '${apartment.areaSqm.toInt()} م²',
-      ),
-      (
-        icon: Icons.bed_rounded,
-        label: 'عدد غرف النوم',
-        value: '${apartment.rooms} غرف',
-      ),
-      (
-        icon: Icons.bathtub_rounded,
-        label: 'عدد الحمامات',
-        value: '${apartment.bathrooms} حمام',
-      ),
-      if (apartment.reception != null)
-        (
-          icon: Icons.chair_rounded,
-          label: 'الريسبشن',
-          value: apartment.reception!,
-        ),
-      (
-        icon: Icons.soup_kitchen_rounded,
-        label: 'المطبخ',
-        value: apartment.hasSeparateKitchen ? 'مطبخ منفصل' : 'مطبخ أمريكي / مفتوح',
-      ),
-      (icon: Icons.layers_rounded, label: 'الدور الحالي', value: apartment.floorLabel),
-      (
-        icon: Icons.apartment_rounded,
-        label: 'إجمالي أدوار المبنى',
-        value: '${apartment.totalFloors} أدوار',
-      ),
-      (
-        icon: Icons.brush_rounded,
-        label: 'مستوى التشطيب',
-        value: apartment.finishingStatus.label,
-      ),
-      (
-        icon: Icons.explore_rounded,
-        label: 'واجهة الشقة',
-        value: apartment.orientation.label,
-      ),
-      (
-        icon: Icons.monetization_on_rounded,
-        label: 'السعر الإجمالي',
-        value: apartment.formattedPrice,
-      ),
-      if (apartment.formattedPriceNotes != null)
-        (
-          icon: Icons.sell_rounded,
-          label: 'ملاحظات السعر والدفع',
-          value: apartment.formattedPriceNotes!,
-        ),
-      if (apartment.formattedDeliveryDate != null)
-        (
-          icon: Icons.event_rounded,
-          label: 'موعد التسليم المتوقع',
-          value: apartment.formattedDeliveryDate!,
-        ),
-      (
-        icon: Icons.phone_iphone_rounded,
-        label: 'رقم التواصل والمعاينة',
-        value: apartment.whatsappNumber,
-      ),
-    ];
-  }
+  List<DetailsRow> get _detailsRows => apartmentDetailsRows(_apartment!);
 
   String get _whatsAppMessage {
     final apartment = _apartment!;
@@ -277,7 +203,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                           icon: Icons.assignment_rounded,
                         ),
                         const SizedBox(height: 10),
-                        DetailsTable(rows: _detailsRows(apartment)),
+                        DetailsTable(rows: _detailsRows),
                       ],
                     ),
                   ),

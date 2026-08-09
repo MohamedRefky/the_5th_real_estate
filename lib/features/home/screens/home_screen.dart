@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../../app/app_router.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/widgets/metallic_gloss.dart';
-import '../../core/widgets/reveal_on_scroll.dart';
-import '../../data/dummy_data.dart';
-import 'widgets/area_card.dart';
-import 'widgets/contact_section.dart';
-import 'widgets/featured_properties_section.dart';
-import 'widgets/hero_section.dart';
-import 'widgets/home_footer.dart';
-import 'widgets/home_top_bar.dart';
-import 'widgets/how_it_works_section.dart';
-import 'widgets/recent_properties_section.dart';
-import 'widgets/section_bar.dart';
-import 'widgets/testimonials_section.dart';
-import 'widgets/why_us_section.dart';
+import '../../../app/app_router.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/metallic_gloss.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
+import '../../../data/dummy_data.dart';
+import '../widgets/area_card.dart';
+import '../widgets/contact_section.dart';
+import '../widgets/featured_properties_section.dart';
+import '../widgets/hero_section.dart';
+import '../widgets/home_footer.dart';
+import '../widgets/home_top_bar.dart';
+import '../widgets/how_it_works_section.dart';
+import '../widgets/recent_properties_section.dart';
+import '../widgets/section_bar.dart';
+import '../widgets/testimonials_section.dart';
+import '../widgets/why_us_section.dart';
 
 /// Home Screen — Ultra-Premium Landing Page with Full Glassmorphism & 3D Scroll Zoom Effect.
 class HomeScreen extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/reveal_on_scroll.dart';
 import '../../../data/dummy_data.dart';
+import '../../../models/apartment.dart';
 import '../../area/widgets/apartment_card.dart';
 import 'section_bar.dart';
 
@@ -8,10 +9,13 @@ import 'section_bar.dart';
 class FeaturedPropertiesSection extends StatelessWidget {
   const FeaturedPropertiesSection({super.key});
 
+  /// Featured apartments (e.g., price >= 3.5M) — computed once, not per build.
+  static final List<Apartment> _featuredApartments =
+      DummyData.apartments.where((apt) => apt.price >= 3500000).toList();
+
   @override
   Widget build(BuildContext context) {
-    // Filter featured apartments (e.g., price >= 3.5M or penthouse)
-    final featuredApartments = DummyData.apartments.where((apt) => apt.price >= 3500000).toList();
+    final featuredApartments = _featuredApartments;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),

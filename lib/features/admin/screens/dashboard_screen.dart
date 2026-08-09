@@ -5,6 +5,8 @@ import '../../../core/theme/app_colors.dart';
 import '../auth/auth_controller.dart';
 import '../models/property.dart';
 import '../services/property_service.dart';
+import '../widgets/message_view.dart';
+import '../widgets/property_card.dart';
 import 'property_form_screen.dart';
 
 /// Hidden admin dashboard — lists all properties with edit / delete / publish
@@ -119,7 +121,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             );
           }
           if (snapshot.hasError) {
-            return _MessageView(
+            return MessageView(
               icon: Icons.error_outline_rounded,
               title: 'فشل التحميل',
               message: '${snapshot.error}',
@@ -127,7 +129,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           }
           final items = snapshot.data ?? const <Property>[];
           if (items.isEmpty) {
-            return const _MessageView(
+            return const MessageView(
               icon: Icons.home_work_outlined,
               title: 'لا توجد عقارات بعد',
               message: 'اضغط "إضافة عقار" لبدء إضافة الوحدات.',
@@ -140,7 +142,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
               itemCount: items.length,
               separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, index) => _PropertyCard(
+              itemBuilder: (context, index) => PropertyCard(
                 property: items[index],
                 onEdit: () => _openForm(property: items[index]),
                 onDelete: () => _confirmDelete(items[index]),
@@ -149,154 +151,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _PropertyCard extends StatelessWidget {
-  final Property property;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-  final ValueChanged<bool> onToggle;
-
-  const _PropertyCard({
-    required this.property,
-    required this.onEdit,
-    required this.onDelete,
-    required this.onToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        property.projectName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                    if (!property.isPublished)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: AppColors.warning.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Text(
-                          'مخفي',
-                          style: TextStyle(
-                            color: AppColors.warning,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  [
-                    property.unitType.label,
-                    '${property.areaSqm.toStringAsFixed(0)} م²',
-                    '${property.bedrooms} غرف',
-                    '${property.bathrooms} حمام',
-                    property.finishingStatus.label,
-                  ].join(' • '),
-                  style: const TextStyle(
-                      color: AppColors.textSecondary, fontSize: 13),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${property.floor} — ${property.formattedPrice}',
-                  style: const TextStyle(
-                    color: AppColors.accent,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: property.isPublished,
-            activeTrackColor: AppColors.accent,
-            onChanged: onToggle,
-          ),
-          IconButton(
-            tooltip: 'تعديل',
-            onPressed: onEdit,
-            icon: const Icon(Icons.edit_rounded, color: AppColors.accent),
-          ),
-          IconButton(
-            tooltip: 'حذف',
-            onPressed: onDelete,
-            icon: const Icon(Icons.delete_rounded, color: AppColors.error),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MessageView extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String message;
-
-  const _MessageView({
-    required this.icon,
-    required this.title,
-    required this.message,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 48, color: AppColors.accent),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                  color: AppColors.textSecondary, fontSize: 14),
-            ),
-          ],
-        ),
       ),
     );
   }

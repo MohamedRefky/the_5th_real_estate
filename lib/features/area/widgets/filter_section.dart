@@ -4,8 +4,11 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/filters/filter_formatters.dart';
 import '../../../models/apartment.dart';
 import '../../../models/filter_values.dart';
+import '../data/filter_options.dart';
 import 'filter_choice_chip.dart';
 import 'filter_pill.dart';
+import 'filter_popover_panel.dart';
+import 'filter_price_slider.dart';
 
 /// Ultra-Clear, Auto-Wrapping Inline Popover Filter Section.
 ///
@@ -154,60 +157,7 @@ class _FilterSectionState extends State<FilterSection> {
               runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                // ── Explicit "فلترة النتائج" Header Badge ────────────
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentLight,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.accent.withValues(alpha: 0.4),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.tune_rounded,
-                        size: 16,
-                        color: AppColors.accent,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'فلترة النتائج',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 13.5,
-                        ),
-                      ),
-                      if (_activeFilterCount > 0) ...[
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.accent,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '$_activeFilterCount',
-                            style: const TextStyle(
-                              color: AppColors.textOnPrimary,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                _buildHeaderBadge(theme),
 
                 // 1. Floor Pill
                 FilterPill(
@@ -290,43 +240,7 @@ class _FilterSectionState extends State<FilterSection> {
                   onTap: () => _togglePopover('price'),
                 ),
 
-                if (_activeFilterCount > 0)
-                  InkWell(
-                    onTap: _resetFilters,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.error.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.error.withValues(alpha: 0.5),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(
-                            Icons.restart_alt_rounded,
-                            size: 16,
-                            color: AppColors.error,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            'مسح الكل',
-                            style: TextStyle(
-                              color: AppColors.error,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                if (_activeFilterCount > 0) _buildResetButton(),
               ],
             ),
           ),
@@ -334,7 +248,7 @@ class _FilterSectionState extends State<FilterSection> {
           // ── Auto-Wrapping Inline Dropdown Panel ─────────────────
           AnimatedCrossFade(
             firstChild: const SizedBox(width: double.infinity),
-            secondChild: _buildInlinePopoverPanel(theme),
+            secondChild: _buildInlinePopoverPanel(),
             crossFadeState: _activePopover != null
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
@@ -345,93 +259,160 @@ class _FilterSectionState extends State<FilterSection> {
     );
   }
 
+  Widget _buildHeaderBadge(ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.accentLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.4),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.tune_rounded,
+            size: 16,
+            color: AppColors.accent,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'فلترة النتائج',
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: AppColors.accent,
+              fontWeight: FontWeight.w900,
+              fontSize: 13.5,
+            ),
+          ),
+          if (_activeFilterCount > 0) ...[
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.accent,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '$_activeFilterCount',
+                style: const TextStyle(
+                  color: AppColors.textOnPrimary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResetButton() {
+    return InkWell(
+      onTap: _resetFilters,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.error.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.error.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(
+              Icons.restart_alt_rounded,
+              size: 16,
+              color: AppColors.error,
+            ),
+            SizedBox(width: 4),
+            Text(
+              'مسح الكل',
+              style: TextStyle(
+                color: AppColors.error,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // ═══════════════════════════════════════════════════════════════════
   // Auto-Wrapping Inline Dropdown Panel
   // ═══════════════════════════════════════════════════════════════════
 
-  Widget _buildInlinePopoverPanel(ThemeData theme) {
+  Widget _buildInlinePopoverPanel() {
     if (_activePopover == null) return const SizedBox.shrink();
 
     Widget optionsContent;
 
     switch (_activePopover) {
       case 'floor':
-        optionsContent = _buildFloorOptions();
+        optionsContent = _buildChoiceWrap<int>(
+          options: FilterOptions.floors,
+          isSelected: _selectedFloors.contains,
+          onToggle: (val) => _toggleInSet(_selectedFloors, val),
+        );
         break;
       case 'finishing':
-        optionsContent = _buildFinishingOptions();
+        optionsContent = _buildChoiceWrap<String>(
+          options: FilterOptions.finishingStatuses,
+          isSelected: _selectedFinishingStatuses.contains,
+          onToggle: (val) => _toggleInSet(_selectedFinishingStatuses, val),
+        );
         break;
       case 'orientation':
-        optionsContent = _buildOrientationOptions();
+        optionsContent = _buildChoiceWrap<ApartmentOrientation>(
+          options: FilterOptions.orientations,
+          isSelected: _selectedOrientations.contains,
+          onToggle: (val) => _toggleInSet(_selectedOrientations, val),
+        );
         break;
       case 'rooms':
-        optionsContent = _buildRoomsOptions();
+        optionsContent = _buildChoiceWrap<int>(
+          options: FilterOptions.rooms(),
+          isSelected: _selectedRooms.contains,
+          onToggle: (val) => _toggleInSet(_selectedRooms, val),
+        );
         break;
       case 'bathrooms':
-        optionsContent = _buildBathroomsOptions();
+        optionsContent = _buildChoiceWrap<int>(
+          options: FilterOptions.bathrooms(),
+          isSelected: _selectedBathrooms.contains,
+          onToggle: (val) => _toggleInSet(_selectedBathrooms, val),
+        );
         break;
       case 'area':
-        optionsContent = _buildAreaOptions();
+        optionsContent = _buildChoiceWrap<(double, double)>(
+          options: FilterOptions.areaRanges,
+          isSelected: _selectedAreaRanges.contains,
+          onToggle: (val) => _toggleInSet(_selectedAreaRanges, val),
+        );
         break;
       case 'price':
-        optionsContent = _buildPriceOptions(theme);
+        optionsContent = FilterPriceSlider(
+          values: _priceRange,
+          onChanged: (values) {
+            setState(() => _priceRange = values);
+            _applyFilters();
+          },
+        );
         break;
       default:
         optionsContent = const SizedBox.shrink();
     }
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
-        border: Border(
-          top: BorderSide(color: AppColors.divider.withValues(alpha: 0.5)),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(child: optionsContent),
-              const SizedBox(width: 10),
-              InkWell(
-                onTap: () => setState(() => _activePopover = null),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.accent.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: const Text(
-                    'تم',
-                    style: TextStyle(
-                      color: AppColors.textOnPrimary,
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return FilterPopoverPanel(
+      child: optionsContent,
+      onDone: () => setState(() => _activePopover = null),
     );
   }
 
@@ -463,126 +444,5 @@ class _FilterSectionState extends State<FilterSection> {
       }
     });
     _applyFilters();
-  }
-
-  Widget _buildFloorOptions() {
-    return _buildChoiceWrap<int>(
-      options: const [
-        ('بيزمنت', -1),
-        ('أرضي', 0),
-        ('الأول', 1),
-        ('الثاني', 2),
-        ('الثالث', 3),
-        ('الرابع', 4),
-        ('الروف', 6),
-      ],
-      isSelected: _selectedFloors.contains,
-      onToggle: (val) => _toggleInSet(_selectedFloors, val),
-    );
-  }
-
-  Widget _buildFinishingOptions() {
-    return _buildChoiceWrap<String>(
-      options: const [
-        ('سوبر لوكس', 'superLux'),
-        ('نص تشطيب', 'semiFinished'),
-        ('تحت الإنشاء', 'underConstruction'),
-      ],
-      isSelected: _selectedFinishingStatuses.contains,
-      onToggle: (val) => _toggleInSet(_selectedFinishingStatuses, val),
-    );
-  }
-
-  Widget _buildOrientationOptions() {
-    return _buildChoiceWrap<ApartmentOrientation>(
-      options: const [
-        ('أمامي', ApartmentOrientation.front),
-        ('خلفي', ApartmentOrientation.rear),
-        ('جانبي', ApartmentOrientation.side),
-      ],
-      isSelected: _selectedOrientations.contains,
-      onToggle: (val) => _toggleInSet(_selectedOrientations, val),
-    );
-  }
-
-  Widget _buildRoomsOptions() {
-    return _buildChoiceWrap<int>(
-      options: List.generate(5, (i) => ('${i + 1} غرف', i + 1)),
-      isSelected: _selectedRooms.contains,
-      onToggle: (val) => _toggleInSet(_selectedRooms, val),
-    );
-  }
-
-  Widget _buildBathroomsOptions() {
-    return _buildChoiceWrap<int>(
-      options: List.generate(4, (i) => ('${i + 1} حمام', i + 1)),
-      isSelected: _selectedBathrooms.contains,
-      onToggle: (val) => _toggleInSet(_selectedBathrooms, val),
-    );
-  }
-
-  Widget _buildAreaOptions() {
-    return _buildChoiceWrap<(double, double)>(
-      options: const [
-        ('115م²', (115.0, 115.0)),
-        ('125م²', (125.0, 125.0)),
-        ('125 : 150م²', (125.0, 150.0)),
-        ('150 : 200م²', (150.0, 200.0)),
-        ('200 : 250م²', (200.0, 250.0)),
-        ('250 : 300م²', (250.0, 300.0)),
-        ('+300م²', (300.0, 99999.0)),
-      ],
-      isSelected: _selectedAreaRanges.contains,
-      onToggle: (val) => _toggleInSet(_selectedAreaRanges, val),
-    );
-  }
-
-  Widget _buildPriceOptions(ThemeData theme) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'السعر:',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '${formatPriceShort(_priceRange.start)} - ${formatPriceShort(_priceRange.end)} جنيه',
-              style: const TextStyle(
-                color: AppColors.accent,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-        SliderTheme(
-          data: SliderThemeData(
-            trackHeight: 3,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
-            activeTrackColor: AppColors.accent,
-            inactiveTrackColor: AppColors.divider,
-            thumbColor: AppColors.accent,
-          ),
-          child: RangeSlider(
-            values: _priceRange,
-            min: 0,
-            max: 10000000,
-            divisions: 100,
-            onChanged: (values) {
-              setState(() => _priceRange = values);
-              _applyFilters();
-            },
-          ),
-        ),
-      ],
-    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/widgets/reveal_on_scroll.dart';
 import '../../../data/dummy_data.dart';
+import '../../../models/apartment.dart';
 import '../../area/widgets/apartment_card.dart';
 import 'section_bar.dart';
 
@@ -8,9 +9,13 @@ import 'section_bar.dart';
 class RecentPropertiesSection extends StatelessWidget {
   const RecentPropertiesSection({super.key});
 
+  /// Latest listings (first 3) — computed once, not per build.
+  static final List<Apartment> _recentApartments =
+      DummyData.apartments.take(3).toList();
+
   @override
   Widget build(BuildContext context) {
-    final recentApartments = DummyData.apartments.take(3).toList();
+    final recentApartments = _recentApartments;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),

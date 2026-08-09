@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 
-import '../../app/app_router.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/widgets/details_table.dart';
-import '../../core/widgets/reveal_on_scroll.dart';
-import '../../core/widgets/section_header.dart';
-import '../../core/widgets/state_views.dart';
-import '../../core/widgets/whatsapp_floating_button.dart';
-import '../../data/dummy_data.dart';
-import '../../models/building.dart';
-import '../apartment_details/widgets/facade_cover.dart';
-import 'widgets/amenities_grid.dart';
-import 'widgets/construction_timeline_section.dart';
-import 'widgets/description_section.dart';
-import 'widgets/price_section.dart';
-import 'widgets/stats_section.dart';
-import 'widgets/title_header_section.dart';
+import '../../../app/app_router.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/details_table.dart';
+import '../../../core/widgets/reveal_on_scroll.dart';
+import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/state_views.dart';
+import '../../../core/widgets/whatsapp_floating_button.dart';
+import '../../../data/dummy_data.dart';
+import '../../../models/building.dart';
+import '../../apartment_details/widgets/facade_cover.dart';
+import '../building_details_presenter.dart';
+import '../widgets/amenities_grid.dart';
+import '../widgets/construction_timeline_section.dart';
+import '../widgets/description_section.dart';
+import '../widgets/price_section.dart';
+import '../widgets/stats_section.dart';
+import '../widgets/title_header_section.dart';
 
 /// Ultra-premium details screen for residential buildings.
 class BuildingDetailsScreen extends StatefulWidget {
@@ -47,77 +48,7 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
     });
   }
 
-  List<({IconData icon, String label, String value})> _detailsRows(
-    Building building,
-  ) {
-    return [
-      (
-        icon: Icons.location_on_rounded,
-        label: 'الحي والمنطقة',
-        value: building.area,
-      ),
-      if (building.areaSqm != null)
-        (
-          icon: Icons.square_foot_rounded,
-          label: 'مساحة الأرض الإجمالية',
-          value: '${building.areaSqm!.toInt()} م²',
-        ),
-      if (building.buildingStructure != null)
-        (
-          icon: Icons.foundation_rounded,
-          label: 'هيكل البناء',
-          value: building.buildingStructure!,
-        ),
-      if (building.orientation != null)
-        (
-          icon: Icons.explore_rounded,
-          label: 'الواجهة والفيو',
-          value: building.orientation!,
-        ),
-      if (building.layoutNote != null)
-        (
-          icon: Icons.space_dashboard_rounded,
-          label: 'ملاحظة تقسيم الدور',
-          value: building.layoutNote!,
-        ),
-      (
-        icon: Icons.layers_rounded,
-        label: 'إجمالي عدد الأدوار',
-        value: '${building.totalFloors} أدوار',
-      ),
-      (
-        icon: Icons.grid_view_rounded,
-        label: 'إجمالي وحدات المبنى',
-        value: '${building.totalUnits} شقة',
-      ),
-      (
-        icon: Icons.door_front_door_rounded,
-        label: 'الوحدات المتاحة للبيع',
-        value: '${building.availableUnits} شقة',
-      ),
-      (
-        icon: Icons.brush_rounded,
-        label: 'مستوى التشطيب',
-        value: building.finishingStatus.label,
-      ),
-      (
-        icon: Icons.monetization_on_rounded,
-        label: 'السعر المطلوب',
-        value: building.formattedStartingPrice,
-      ),
-      if (building.formattedDeliveryDate != null)
-        (
-          icon: Icons.event_rounded,
-          label: 'موعد التسليم المتوقع',
-          value: building.formattedDeliveryDate!,
-        ),
-      (
-        icon: Icons.phone_iphone_rounded,
-        label: 'رقم التواصل والمعاينة',
-        value: building.whatsappNumber,
-      ),
-    ];
-  }
+  List<DetailsRow> get _detailsRows => buildingDetailsRows(_building!);
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +178,7 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
                         ),
                         const SizedBox(height: 10),
                         DetailsTable(
-                          rows: _detailsRows(building),
+                          rows: _detailsRows,
                           layout: DetailsTableLayout.flex,
                         ),
                       ],

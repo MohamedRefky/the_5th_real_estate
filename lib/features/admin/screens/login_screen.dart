@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../auth/auth_controller.dart';
+import '../widgets/property_form_widgets.dart';
 
 /// Hidden admin login page. Reached only by typing `/admin/login` — there is
 /// no public link to it anywhere in the app.
@@ -159,52 +160,26 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                     ?.copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: 28),
-              TextFormField(
-                controller: _emailController,
+              FormTextField(
+                _emailController,
+                'البريد الإلكتروني',
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
-                  labelText: 'البريد الإلكتروني',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
-                  prefixIcon: Icon(Icons.email_rounded, color: AppColors.accent),
-                  filled: true,
-                  fillColor: AppColors.background,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(color: AppColors.divider),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(color: AppColors.divider),
-                  ),
-                ),
+                prefixIcon: Icons.email_rounded,
+                fillColor: AppColors.background,
                 validator: (v) => (v == null || !v.contains('@'))
                     ? 'أدخل بريداً إلكترونياً صحيحاً'
                     : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
+              FormTextField(
+                _passwordController,
+                'كلمة المرور',
                 obscureText: true,
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _submit(),
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: const InputDecoration(
-                  labelText: 'كلمة المرور',
-                  labelStyle: TextStyle(color: AppColors.textSecondary),
-                  prefixIcon: Icon(Icons.lock_rounded, color: AppColors.accent),
-                  filled: true,
-                  fillColor: AppColors.background,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(color: AppColors.divider),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    borderSide: BorderSide(color: AppColors.divider),
-                  ),
-                ),
+                prefixIcon: Icons.lock_rounded,
+                fillColor: AppColors.background,
                 validator: (v) =>
                     (v == null || v.isEmpty) ? 'أدخل كلمة المرور' : null,
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/dummy_data.dart';
 import '../../../data/public_property_repository.dart';
@@ -25,33 +26,16 @@ class AreaCard extends StatefulWidget {
 class _AreaCardState extends State<AreaCard> {
   bool _isHovered = false;
 
-  String? get _areaImage {
-    switch (widget.areaName) {
-      case 'بيت الوطن':
-        return 'assets/image/bait_elwatan.webp';
-      case 'جاردينيا':
-        return 'assets/image/gardenia.webp';
-      default:
-        return null;
-    }
-  }
+  Future<List<Apartment>>? _countFuture;
 
-  IconData get _areaIcon {
-    switch (widget.areaName) {
-      case 'المستثمرين':
-        return Icons.business_rounded;
-      case 'الأندلس':
-        return Icons.villa_rounded;
-      case 'جاردينيا':
-        return Icons.park_rounded;
-      case 'بيت الوطن':
-        return Icons.home_work_rounded;
-      case 'النرجس':
-      case 'النرجس الجديدة':
-        return Icons.local_florist_rounded;
-      default:
-        return Icons.apartment_rounded;
-    }
+  String? get _areaImage => AppConstants.areaImageAssetFor(widget.areaName);
+
+  IconData get _areaIcon => AppConstants.areaIconFor(widget.areaName);
+
+  @override
+  void initState() {
+    super.initState();
+    _countFuture = PublicPropertyRepository.instance.byArea(widget.areaName);
   }
 
   @override
@@ -220,8 +204,7 @@ class _AreaCardState extends State<AreaCard> {
                           ),
                         ),
                         child: FutureBuilder<List<Apartment>>(
-                          future: PublicPropertyRepository.instance
-                              .byArea(widget.areaName),
+                          future: _countFuture,
                           builder: (context, snapshot) {
                             final count = snapshot.data?.length ?? localCount;
                             return Text(
