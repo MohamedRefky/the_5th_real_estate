@@ -65,7 +65,32 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           ? 'بيانات الدخول غير صحيحة'
           : 'فشل تسجيل الدخول: ${e.message}');
     } catch (e) {
-      if (mounted) setState(() => _error = '$e');
+      if (!mounted) return;
+      setState(() => _error = '$e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await AuthController.instance.signInWithGoogle();
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, RoutesNames.adminDashboard);
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() => _error = e.code == 'popup-closed-by-user'
+          ? 'تم إغلاق النافذة قبل إتمام الدخول'
+          : e.code == 'operation-not-allowed'
+              ? 'Google sign-in غير مفعّل في Firebase'
+              : 'فشل الدخول بواسطة Google: ${e.message}');
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = '$e');
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -212,6 +237,45 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                         ),
                       )
                     : const Text('دخول'),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Expanded(child: Divider(color: AppColors.divider)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'أو',
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: AppColors.textHint),
+                    ),
+                  ),
+                  const Expanded(child: Divider(color: AppColors.divider)),
+                ],
+              ),
+              const SizedBox(height: 20),
+              OutlinedButton.icon(
+                onPressed: _busy ? null : _signInWithGoogle,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.textPrimary,
+                  side: const BorderSide(color: AppColors.divider),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: _busy
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.accent,
+                        ),
+                      )
+                    : const Icon(Icons.g_mobiledata_rounded,
+                        color: AppColors.accent, size: 26),
+                label: const Text('الدخول بواسطة Google'),
               ),
               const SizedBox(height: 12),
               TextButton(

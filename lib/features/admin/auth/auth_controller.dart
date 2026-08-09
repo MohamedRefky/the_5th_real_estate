@@ -39,6 +39,20 @@ class AuthController extends ChangeNotifier {
     );
   }
 
+  /// Signs in with the Google account (popup flow — web only).
+  ///
+  /// On web this uses the Firebase `signInWithPopup` flow, which opens
+  /// Google's OAuth popup. Desktop/mobile need the `google_sign_in` plugin.
+  Future<void> signInWithGoogle() async {
+    if (!kIsWeb) {
+      throw UnimplementedError(
+        'Google sign-in is implemented for web only — '
+        'add the google_sign_in plugin for desktop/mobile.',
+      );
+    }
+    await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+  }
+
   /// Signs out of Firebase Auth.
   Future<void> signOut() => FirebaseAuth.instance.signOut();
 }
