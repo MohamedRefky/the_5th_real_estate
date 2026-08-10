@@ -65,6 +65,9 @@ class AdminBuilding {
   /// Image URLs — the first one is used as the cover/facade.
   final List<String> imageUrls;
 
+  /// Optional video tour URL (e.g. YouTube / Vimeo / MP4).
+  final String? videoUrl;
+
   /// Whether the listing is published on the website.
   final bool isPublished;
 
@@ -91,6 +94,7 @@ class AdminBuilding {
     required this.whatsappNumber,
     this.amenities = const [],
     this.imageUrls = const [],
+    this.videoUrl,
     this.isPublished = true,
     this.createdAt,
     this.updatedAt,
@@ -134,6 +138,7 @@ class AdminBuilding {
     String? whatsappNumber,
     List<String>? amenities,
     List<String>? imageUrls,
+    String? videoUrl,
     bool? isPublished,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -158,6 +163,7 @@ class AdminBuilding {
       whatsappNumber: whatsappNumber ?? this.whatsappNumber,
       amenities: amenities ?? this.amenities,
       imageUrls: imageUrls ?? this.imageUrls,
+      videoUrl: videoUrl ?? this.videoUrl,
       isPublished: isPublished ?? this.isPublished,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -185,6 +191,7 @@ class AdminBuilding {
       'whatsappNumber': whatsappNumber,
       'amenities': amenities,
       'imageUrls': imageUrls,
+      'videoUrl': videoUrl,
       'isPublished': isPublished,
       'createdAt': isUpdate ? (createdAt ?? now) : now,
       'updatedAt': now,
@@ -223,6 +230,7 @@ class AdminBuilding {
       imageUrls: ((data['imageUrls'] as List?) ?? const [])
           .map((e) => e as String)
           .toList(),
+      videoUrl: data['videoUrl'] as String?,
       isPublished: (data['isPublished'] as bool?) ?? true,
       createdAt: _readDate(data['createdAt']),
       updatedAt: _readDate(data['updatedAt']),

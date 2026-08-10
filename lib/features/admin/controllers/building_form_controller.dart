@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
+import '../../../core/utils/image_url_helper.dart';
 import '../../../data/mappers/property_mapper.dart';
 import '../../../models/apartment.dart';
 import '../models/admin_building.dart';
-import '../models/picked_image.dart';
 import '../services/building_service.dart';
-import 'image_edit_controller.dart';
 
 /// Holds all state for the add/edit building form: text controllers, enum
-/// selections, image management and the save flow.
-///
-/// Mirrors `PropertyFormController` but for the `buildings/{area}/units`
-/// subcollections.
-class BuildingFormController extends ChangeNotifier
-    implements ImageEditController {
+/// selections, URL inputs and the save flow.
+class BuildingFormController extends ChangeNotifier {
   BuildingFormController(this.building, {String? initialArea}) {
     _initialArea = initialArea;
     _init();
@@ -22,7 +16,6 @@ class BuildingFormController extends ChangeNotifier
 
   final AdminBuilding? building;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final ImagePicker _picker = ImagePicker();
 
   String? _initialArea;
 
@@ -37,10 +30,8 @@ class BuildingFormController extends ChangeNotifier
   late final TextEditingController layoutNote;
   late final TextEditingController startingPrice;
   late final TextEditingController totalFloors;
-  late final TextEditingController totalUnits;
-  late final TextEditingController availableUnits;
-  late final TextEditingController whatsappNumber;
-  late final TextEditingController amenities;
+  late final TextEditingController imageUrls;
+  late final TextEditingController videoUrl;
 
   // Selectable state
   late String area;
@@ -49,12 +40,6 @@ class BuildingFormController extends ChangeNotifier
   DateTime? deliveryDate;
   double constructionProgress = 1.0;
   late bool isPublished;
-
-  // Images
-  late List<String> existingUrls;
-  final List<String> removedUrls = [];
-  @override
-  final List<PickedImage> newImages = [];
 
   bool saving = false;
 
@@ -75,13 +60,9 @@ class BuildingFormController extends ChangeNotifier
         text: (isEdit && b != null) ? _fmtNum(b.startingPrice) : '');
     totalFloors = TextEditingController(
         text: (isEdit && b != null) ? b.totalFloors.toString() : '');
-    totalUnits =
-        TextEditingController(text: (isEdit && b != null) ? b.totalUnits.toString() : '');
-    availableUnits = TextEditingController(
-        text: (isEdit && b != null) ? b.availableUnits.toString() : '');
-    whatsappNumber =
-        TextEditingController(text: isEdit ? (b?.whatsappNumber ?? defaultAdminWhatsapp) : defaultAdminWhatsapp);
-    amenities = TextEditingController(text: isEdit ? ((b?.amenities ?? []).join('، ')) : '');
+    imageUrls = TextEditingController(
+        text: isEdit ? (b?.imageUrls.join('\n') ?? '') : '');
+    videoUrl = TextEditingController(text: isEdit ? (b?.videoUrl ?? '') : '');
 
     area = b?.area ?? _initialArea ?? 'المستثمرين';
     finishingStatus = isEdit ? b?.finishingStatus : null;
@@ -89,20 +70,10 @@ class BuildingFormController extends ChangeNotifier
     deliveryDate = b?.deliveryDate;
     constructionProgress = b?.constructionProgress ?? 1.0;
     isPublished = b?.isPublished ?? true;
-
-    existingUrls = b?.imageUrls ?? [];
   }
 
   String _fmtNum(double v) =>
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
-
-  // ── Derived ────────────────────────────────────────────────────────
-
-  @override
-  List<String> get visibleExistingUrls =>
-      existingUrls.where((u) => !removedUrls.contains(u)).toList();
-
-  int get visibleImageCount => visibleExistingUrls.length + newImages.length;
 
   // ── Validators ─────────────────────────────────────────────────────
 
@@ -160,32 +131,6 @@ class BuildingFormController extends ChangeNotifier
     notifyListeners();
   }
 
-  // ── Images ─────────────────────────────────────────────────────────
-
-  @override
-  Future<void> pickImages() async {
-    final picked = await _picker.pickMultiImage(limit: 10 - newImages.length);
-    if (picked.isEmpty) return;
-    final loaded = <PickedImage>[];
-    for (final file in picked) {
-      loaded.add(PickedImage(file, await file.readAsBytes()));
-    }
-    newImages.addAll(loaded);
-    notifyListeners();
-  }
-
-  @override
-  void removeExisting(String url) {
-    removedUrls.add(url);
-    notifyListeners();
-  }
-
-  @override
-  void removeNew(PickedImage image) {
-    newImages.remove(image);
-    notifyListeners();
-  }
-
   // ── Save ───────────────────────────────────────────────────────────
 
   /// Validates and saves. Returns true on success; rethrows on failure.
@@ -194,11 +139,13 @@ class BuildingFormController extends ChangeNotifier
     saving = true;
     notifyListeners();
     try {
-      final am = amenities.text
-          .split(RegExp(r'[,،]'))
-          .map((s) => s.trim())
+      final parsedImageUrls = imageUrls.text
+          .split(RegExp(r'[\n,]'))
+          .map((s) => sanitizeImageUrl(s.trim()))
           .where((s) => s.isNotEmpty)
           .toList();
+      final parsedVideoUrl =
+          videoUrl.text.trim().isEmpty ? null : videoUrl.text.trim();
 
       final bld = AdminBuilding(
         id: building?.id,
@@ -211,15 +158,16 @@ class BuildingFormController extends ChangeNotifier
         layoutNote: _optionalText(layoutNote),
         startingPrice: double.parse(startingPrice.text.trim()),
         totalFloors: int.parse(totalFloors.text.trim()),
-        totalUnits: int.parse(totalUnits.text.trim()),
-        availableUnits: int.parse(availableUnits.text.trim()),
+        totalUnits: 1,
+        availableUnits: 1,
         finishingStatus: finishingStatus ?? FinishingStatus.semiFinished,
         isUnderConstruction: isUnderConstruction,
         deliveryDate: deliveryDate,
         constructionProgress: constructionProgress,
-        whatsappNumber: whatsappNumber.text.trim(),
-        amenities: am,
-        imageUrls: existingUrls,
+        whatsappNumber: defaultAdminWhatsapp,
+        amenities: const [],
+        imageUrls: parsedImageUrls,
+        videoUrl: parsedVideoUrl,
         isPublished: isPublished,
       );
 
@@ -228,11 +176,11 @@ class BuildingFormController extends ChangeNotifier
         await service.update(
           building!.id!,
           bld,
-          newImages.map((i) => i.file).toList(),
-          removedUrls,
+          const [],
+          const [],
         );
       } else {
-        await service.create(bld, newImages.map((i) => i.file).toList());
+        await service.create(bld, const []);
       }
       return true;
     } finally {
@@ -261,10 +209,8 @@ class BuildingFormController extends ChangeNotifier
     layoutNote.dispose();
     startingPrice.dispose();
     totalFloors.dispose();
-    totalUnits.dispose();
-    availableUnits.dispose();
-    whatsappNumber.dispose();
-    amenities.dispose();
+    imageUrls.dispose();
+    videoUrl.dispose();
     super.dispose();
   }
 }

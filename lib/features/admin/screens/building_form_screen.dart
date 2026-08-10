@@ -4,7 +4,6 @@ import '../../../models/apartment.dart';
 import '../controllers/building_form_controller.dart';
 import '../models/admin_building.dart';
 import '../widgets/property_form_widgets.dart';
-import '../widgets/property_images_editor.dart';
 
 /// Add / edit a whole building (عمارة). Reached from the dashboard's type
 /// chooser; writes go to the `buildings/{area}/units` collection.
@@ -163,28 +162,6 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                           keyboardType: TextInputType.number,
                           validator: c.numberValidator,
                         ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: FormTextField(
-                                c.totalUnits,
-                                'عدد الوحدات',
-                                keyboardType: TextInputType.number,
-                                validator: c.numberValidator,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: FormTextField(
-                                c.availableUnits,
-                                'الوحدات المتاحة',
-                                keyboardType: TextInputType.number,
-                                validator: c.numberValidator,
-                              ),
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 16),
                         FormSwitchRow(
                           label: 'تحت الإنشاء',
@@ -237,19 +214,6 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                           ),
                         ],
                         const SizedBox(height: 16),
-                        FormTextField(
-                          c.whatsappNumber,
-                          'رقم الواتساب',
-                          keyboardType: TextInputType.phone,
-                          validator: c.requiredValidator,
-                        ),
-                        const SizedBox(height: 12),
-                        FormTextField(
-                          c.amenities,
-                          'المميزات (افصل بينها بفاصلة)',
-                          maxLines: 2,
-                        ),
-                        const SizedBox(height: 16),
                         FormSwitchRow(
                           label: 'منشور على الموقع',
                           value: c.isPublished,
@@ -264,9 +228,18 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                           maxLines: 4,
                         ),
                         const SizedBox(height: 20),
-                        FormSectionTitle('الصور (${c.visibleImageCount})'),
+                        const FormSectionTitle('الوسائط والميديا'),
                         const SizedBox(height: 12),
-                        PropertyImagesEditor(controller: c),
+                        FormTextField(
+                          c.imageUrls,
+                          'روابط الصور (رابط كل صورة في سطر جديد)',
+                          maxLines: 4,
+                        ),
+                        const SizedBox(height: 12),
+                        FormTextField(
+                          c.videoUrl,
+                          'رابط الفيديو (اختياري)',
+                        ),
                       ],
                     );
                   },
