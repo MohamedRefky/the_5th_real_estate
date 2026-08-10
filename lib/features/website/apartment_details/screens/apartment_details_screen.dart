@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/utils/image_url_helper.dart';
+import '../../../../core/widgets/adaptive_network_image.dart';
 import '../../../../core/widgets/details_table.dart';
 import '../../../../core/widgets/reveal_on_scroll.dart';
 import '../../../../core/widgets/section_header.dart';
@@ -118,7 +119,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
-                      height: 160,
+                      height: 180,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: apartment.imageUrls.length,
@@ -127,7 +128,10 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                           final cleanUrl = sanitizeImageUrl(
                             apartment.imageUrls[index],
                           );
-                          return GestureDetector(
+                          return AdaptiveNetworkImage(
+                            url: cleanUrl,
+                            targetHeight: 180,
+                            borderRadius: BorderRadius.circular(16),
                             onTap: () {
                               showDialog(
                                 context: context,
@@ -140,6 +144,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                                           child: Image.network(
                                             cleanUrl,
                                             fit: BoxFit.contain,
+                                            filterQuality: FilterQuality.high,
                                           ),
                                         ),
                                       ),
@@ -161,21 +166,6 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                                 ),
                               );
                             },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Container(
-                                 width: double.infinity,
-                                height: 160,
-                                color: Colors.transparent,
-                                child: Image.network(
-                                  cleanUrl,
-                                  fit: BoxFit.contain,
-                                  filterQuality: FilterQuality.medium,
-                                  errorBuilder: (_, _, _) =>
-                                      const SizedBox.shrink(),
-                                ),
-                              ),
-                            ),
                           );
                         },
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_5th_real_estate/core/widgets/adaptive_network_image.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -21,48 +22,12 @@ class FacadeCoverPlaceholder extends StatelessWidget {
       return _buildNetworkCover(context, theme, imageUrl!, fallbackAsset);
     }
 
-    // Fallback: fixed-height placeholder
-    return Container(
-      width: double.infinity,
-      height: 360,
-      decoration: BoxDecoration(
-        gradient: AppColors.heroGradient,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.45),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.15),
-            blurRadius: 32,
-            offset: const Offset(0, 12),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.5),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: _buildAssetOrPlaceholder(theme, fallbackAsset),
-    );
-  }
-
-  Widget _buildNetworkCover(
-    BuildContext context,
-    ThemeData theme,
-    String rawUrl,
-    String? fallbackAsset,
-  ) {
-    final cleanUrl = sanitizeImageUrl(rawUrl);
-    return GestureDetector(
-      onTap: () => _showFullScreenImage(context, cleanUrl),
+    // Fallback: placeholder with consistent aspect ratio
+    return AspectRatio(
+      aspectRatio: 16 / 10,
       child: Container(
-        width: double.infinity,
-        height: 340,
         decoration: BoxDecoration(
+          gradient: AppColors.heroGradient,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: AppColors.accent.withValues(alpha: 0.45),
@@ -82,70 +47,25 @@ class FacadeCoverPlaceholder extends StatelessWidget {
           ],
         ),
         clipBehavior: Clip.antiAlias,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.network(
-              cleanUrl,
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
-              errorBuilder: (_, _, _) =>
-                  _buildAssetOrPlaceholder(theme, fallbackAsset),
-            ),
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.05),
-                      Colors.black.withValues(alpha: 0.25),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Click to expand hint badge
-            Positioned(
-              top: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.65),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: AppColors.accent.withValues(alpha: 0.5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.fullscreen_rounded,
-                      size: 16,
-                      color: AppColors.accent,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'عرض الصورة بالكامل',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        child: _buildAssetOrPlaceholder(theme, fallbackAsset),
       ),
+    );
+  }
+
+  Widget _buildNetworkCover(
+    BuildContext context,
+    ThemeData theme,
+    String rawUrl,
+    String? fallbackAsset,
+  ) {
+    return AdaptiveNetworkImage(
+      url: rawUrl,
+      minHeight: 250,
+      maxHeight: 460,
+      borderRadius: BorderRadius.circular(24),
+      onTap: () => _showFullScreenImage(context, sanitizeImageUrl(rawUrl)),
+      errorBuilder: (_, __, ___) =>
+          _buildAssetOrPlaceholder(theme, fallbackAsset),
     );
   }
 
