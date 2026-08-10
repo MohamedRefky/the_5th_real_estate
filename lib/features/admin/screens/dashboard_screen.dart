@@ -449,11 +449,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 icon: const Icon(Icons.refresh_rounded, color: AppColors.accent),
               ),
               IconButton(
-                tooltip: 'ترحيل البيانات القديمة',
-                onPressed: _runMigration,
-                icon: const Icon(Icons.sync_rounded, color: AppColors.accent),
-              ),
-              IconButton(
                 tooltip: 'تسجيل الخروج',
                 onPressed: _logout,
                 icon: const Icon(Icons.logout_rounded, color: AppColors.error),
