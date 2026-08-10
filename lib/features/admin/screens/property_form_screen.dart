@@ -4,7 +4,6 @@ import '../../../core/theme/app_colors.dart';
 import '../controllers/property_form_controller.dart';
 import '../models/property.dart';
 import '../widgets/property_form_widgets.dart';
-import '../widgets/property_images_editor.dart';
 
 /// Add / edit a unit (apartment, villa, duplex or studio). Used by the
 /// dashboard's "إضافة عقار" flow and the edit button on each unit card.
@@ -219,17 +218,24 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           onChanged: c.setIsPublished,
                         ),
                         const SizedBox(height: 20),
-                        const FormSectionTitle('الوصف'),
+                        const FormSectionTitle('الوصف والوسائط'),
                         const SizedBox(height: 12),
                         FormTextField(
                           c.description,
                           'وصف إضافي (اختياري)',
-                          maxLines: 4,
+                          maxLines: 3,
                         ),
-                        const SizedBox(height: 20),
-                        FormSectionTitle('الصور (${c.visibleImageCount})'),
                         const SizedBox(height: 12),
-                        PropertyImagesEditor(controller: c),
+                        FormTextField(
+                          c.imageUrls,
+                          'روابط الصور (رابط في كل سطر أو مفصولة بفاصلة)',
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 12),
+                        FormTextField(
+                          c.videoUrl,
+                          'رابط فيديو المعاينة (اختياري)',
+                        ),
                       ],
                     );
                   },

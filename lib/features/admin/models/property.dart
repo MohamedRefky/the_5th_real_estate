@@ -107,6 +107,7 @@ class Property {
   final PriceNote? priceNote;
   final String? description;
   final List<String> imageUrls;
+  final String? videoUrl;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final bool isPublished;
@@ -131,6 +132,7 @@ class Property {
     this.priceNote,
     this.description,
     this.imageUrls = const [],
+    this.videoUrl,
     this.createdAt,
     this.updatedAt,
     this.isPublished = true,
@@ -154,6 +156,7 @@ class Property {
     PriceNote? priceNote,
     String? description,
     List<String>? imageUrls,
+    String? videoUrl,
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isPublished,
@@ -176,6 +179,7 @@ class Property {
       priceNote: priceNote ?? this.priceNote,
       description: description ?? this.description,
       imageUrls: imageUrls ?? this.imageUrls,
+      videoUrl: videoUrl ?? this.videoUrl,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isPublished: isPublished ?? this.isPublished,
@@ -216,6 +220,7 @@ class Property {
       'priceNote': priceNote?.label,
       'description': description,
       'imageUrls': imageUrls,
+      'videoUrl': videoUrl,
       'createdAt': isUpdate ? (createdAt ?? now) : now,
       'updatedAt': now,
       'isPublished': isPublished,
@@ -246,6 +251,7 @@ class Property {
       description: data['description'] as String?,
       imageUrls:
           ((data['imageUrls'] as List?) ?? const []).map((e) => e as String).toList(),
+      videoUrl: data['videoUrl'] as String?,
       createdAt: (data['createdAt'] as dynamic)?.toDate(),
       updatedAt: (data['updatedAt'] as dynamic)?.toDate(),
       isPublished: (data['isPublished'] as bool?) ?? true,

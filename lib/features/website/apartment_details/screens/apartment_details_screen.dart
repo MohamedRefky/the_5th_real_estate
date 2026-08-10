@@ -138,22 +138,24 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                   const SizedBox(height: 18),
 
                   // ── Walkthrough Video (From Right) ─────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.fromRight,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionHeader(
-                          title: 'فيديو معاينة الشقة',
-                          icon: Icons.videocam_rounded,
-                        ),
-                        const SizedBox(height: 10),
-                        VideoPlaceholder(videoUrl: apartment.videoUrl),
-                      ],
+                  if (apartment.videoUrl != null &&
+                      apartment.videoUrl!.trim().isNotEmpty) ...[
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SectionHeader(
+                            title: 'فيديو معاينة الشقة',
+                            icon: Icons.videocam_rounded,
+                          ),
+                          const SizedBox(height: 10),
+                          VideoPlaceholder(videoUrl: apartment.videoUrl),
+                        ],
+                      ),
                     ),
-                  ),
-
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
+                  ],
 
                   // ── WhatsApp Direct Callout Banner (Scale) ──────
                   RevealOnScroll(

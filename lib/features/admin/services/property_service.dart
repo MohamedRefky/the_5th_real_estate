@@ -57,36 +57,22 @@ class PropertyService {
     return items;
   }
 
-  /// Creates a new property document in its area folder. Newly picked images
-  /// are uploaded to Storage first, then their URLs are stored with the doc.
-  Future<String> create(Property property, List<XFile> newImages) async {
-    final urls = await _upload(newImages);
+  /// Creates a new property document in its area folder.
+  Future<String> create(Property property) async {
     final doc = await _units(property.area).add(
-      property.copyWith(imageUrls: [...property.imageUrls, ...urls]).toFirestore(),
+      property.toFirestore(),
     );
     PublicPropertyRepository.instance.invalidate();
     return doc.id;
   }
 
-  /// Updates an existing property. Images in [removedImageUrls] are deleted
-  /// from Storage; newly picked images are uploaded.
+  /// Updates an existing property.
   Future<void> update(
     String id,
     Property property,
-    List<XFile> newImages,
-    List<String> removedImageUrls,
   ) async {
-    if (removedImageUrls.isNotEmpty) {
-      await _deleteStorageFiles(removedImageUrls);
-    }
-    final urls = await _upload(newImages);
-    final keptUrls = property.imageUrls
-        .where((url) => !removedImageUrls.contains(url))
-        .toList();
     await _units(property.area).doc(id).update(
-          property
-              .copyWith(imageUrls: [...keptUrls, ...urls])
-              .toFirestore(isUpdate: true),
+          property.toFirestore(isUpdate: true),
         );
     PublicPropertyRepository.instance.invalidate();
   }

@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../models/picked_image.dart';
 import '../models/property.dart';
 import '../services/property_service.dart';
-import 'image_edit_controller.dart';
 
 /// Holds all state for the add/edit unit form: text controllers, enum
-/// selections, image management and the save flow.
-///
-/// Extracted from `PropertyFormScreen` so the form logic is testable and the
-/// screen only composes widgets.
-class PropertyFormController extends ChangeNotifier
-    implements ImageEditController {
+/// selections, URL inputs and the save flow.
+class PropertyFormController extends ChangeNotifier {
   PropertyFormController(this.property, {UnitType? initialUnitType}) {
     _initialUnitType = initialUnitType;
     _init();
@@ -20,7 +13,6 @@ class PropertyFormController extends ChangeNotifier
 
   final Property? property;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final ImagePicker _picker = ImagePicker();
 
   UnitType? _initialUnitType;
 
@@ -34,6 +26,8 @@ class PropertyFormController extends ChangeNotifier
   late final TextEditingController bathrooms;
   late final TextEditingController price;
   late final TextEditingController description;
+  late final TextEditingController imageUrls;
+  late final TextEditingController videoUrl;
 
   // Enum/selectable state
   late UnitType unitType;
@@ -45,12 +39,6 @@ class PropertyFormController extends ChangeNotifier
   late bool hasReception;
   late bool hasKitchen;
   late bool isPublished;
-
-  // Images
-  late List<String> existingUrls;
-  final List<String> removedUrls = [];
-  @override
-  final List<PickedImage> newImages = [];
 
   bool saving = false;
 
@@ -67,6 +55,8 @@ class PropertyFormController extends ChangeNotifier
         text: p != null ? p.bathrooms.toString() : '');
     price = TextEditingController(text: p != null ? _fmtNum(p.price) : '');
     description = TextEditingController(text: p?.description ?? '');
+    imageUrls = TextEditingController(text: p?.imageUrls.join('\n') ?? '');
+    videoUrl = TextEditingController(text: p?.videoUrl ?? '');
 
     unitType = p?.unitType ?? _initialUnitType ?? UnitType.apartment;
     floor = p?.floor ?? floorOptions[1];
@@ -77,20 +67,10 @@ class PropertyFormController extends ChangeNotifier
     hasReception = p?.hasReception ?? true;
     hasKitchen = p?.hasKitchen ?? true;
     isPublished = p?.isPublished ?? true;
-
-    existingUrls = p?.imageUrls ?? [];
   }
 
   String _fmtNum(double v) =>
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
-
-  // ── Derived ────────────────────────────────────────────────────────
-
-  @override
-  List<String> get visibleExistingUrls =>
-      existingUrls.where((u) => !removedUrls.contains(u)).toList();
-
-  int get visibleImageCount => visibleExistingUrls.length + newImages.length;
 
   // ── Validators ─────────────────────────────────────────────────────
 
@@ -151,32 +131,6 @@ class PropertyFormController extends ChangeNotifier
     notifyListeners();
   }
 
-  // ── Images ─────────────────────────────────────────────────────────
-
-  @override
-  Future<void> pickImages() async {
-    final picked = await _picker.pickMultiImage(limit: 10 - newImages.length);
-    if (picked.isEmpty) return;
-    final loaded = <PickedImage>[];
-    for (final file in picked) {
-      loaded.add(PickedImage(file, await file.readAsBytes()));
-    }
-    newImages.addAll(loaded);
-    notifyListeners();
-  }
-
-  @override
-  void removeExisting(String url) {
-    removedUrls.add(url);
-    notifyListeners();
-  }
-
-  @override
-  void removeNew(PickedImage image) {
-    newImages.remove(image);
-    notifyListeners();
-  }
-
   // ── Save ───────────────────────────────────────────────────────────
 
   /// Validates and saves. Returns true on success; rethrows on failure.
@@ -185,6 +139,14 @@ class PropertyFormController extends ChangeNotifier
     saving = true;
     notifyListeners();
     try {
+      final parsedImageUrls = imageUrls.text
+          .split(RegExp(r'[\n,]'))
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+      final parsedVideoUrl =
+          videoUrl.text.trim().isEmpty ? null : videoUrl.text.trim();
+
       final prop = Property(
         id: property?.id,
         projectName: projectName.text.trim(),
@@ -206,23 +168,16 @@ class PropertyFormController extends ChangeNotifier
         description: description.text.trim().isEmpty
             ? null
             : description.text.trim(),
-        imageUrls: existingUrls,
+        imageUrls: parsedImageUrls,
+        videoUrl: parsedVideoUrl,
         isPublished: isPublished,
       );
 
       final service = PropertyService.instance;
       if (isEdit) {
-        await service.update(
-          property!.id!,
-          prop,
-          newImages.map((i) => i.file).toList(),
-          removedUrls,
-        );
+        await service.update(property!.id!, prop);
       } else {
-        await service.create(
-          prop,
-          newImages.map((i) => i.file).toList(),
-        );
+        await service.create(prop);
       }
       return true;
     } finally {
@@ -240,6 +195,8 @@ class PropertyFormController extends ChangeNotifier
     bathrooms.dispose();
     price.dispose();
     description.dispose();
+    imageUrls.dispose();
+    videoUrl.dispose();
     super.dispose();
   }
 }

@@ -32,6 +32,7 @@ Apartment propertyToApartment(admin.Property p) {
     isUnderConstruction: false,
     whatsappNumber: defaultAdminWhatsapp,
     imageUrls: p.imageUrls,
+    videoUrl: p.videoUrl,
     amenities: const [],
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
