@@ -35,10 +35,10 @@ class PropertyFormController extends ChangeNotifier {
 
   // Enum/selectable state
   late UnitType unitType;
-  late String floor;
+  String? floor;
   late String area;
   PropertyOrientation? orientation;
-  late PropertyFinishing finishingStatus;
+  PropertyFinishing? finishingStatus;
   PriceNote? priceNote;
   late bool hasReception;
   late bool hasKitchen;
@@ -65,10 +65,10 @@ class PropertyFormController extends ChangeNotifier {
     videoUrl = TextEditingController(text: isEdit ? (p?.videoUrl ?? '') : '');
 
     unitType = p?.unitType ?? _initialUnitType ?? UnitType.apartment;
-    floor = p?.floor ?? floorOptions[1];
+    floor = isEdit ? p?.floor : null;
     area = p?.area ?? _initialArea ?? areaOptions.first;
     orientation = p?.orientation;
-    finishingStatus = p?.finishingStatus ?? PropertyFinishing.shell;
+    finishingStatus = isEdit ? p?.finishingStatus : null;
     priceNote = p?.priceNote;
     hasReception = p?.hasReception ?? true;
     hasKitchen = p?.hasKitchen ?? true;
@@ -92,19 +92,23 @@ class PropertyFormController extends ChangeNotifier {
 
   // ── Field setters ──────────────────────────────────────────────────
 
-  void setUnitType(UnitType v) {
-    unitType = v;
-    notifyListeners();
+  void setUnitType(UnitType? v) {
+    if (v != null) {
+      unitType = v;
+      notifyListeners();
+    }
   }
 
-  void setFloor(String v) {
+  void setFloor(String? v) {
     floor = v;
     notifyListeners();
   }
 
-  void setArea(String v) {
-    area = v;
-    notifyListeners();
+  void setArea(String? v) {
+    if (v != null) {
+      area = v;
+      notifyListeners();
+    }
   }
 
   void setOrientation(PropertyOrientation? v) {
@@ -112,7 +116,7 @@ class PropertyFormController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setFinishingStatus(PropertyFinishing v) {
+  void setFinishingStatus(PropertyFinishing? v) {
     finishingStatus = v;
     notifyListeners();
   }
@@ -160,7 +164,7 @@ class PropertyFormController extends ChangeNotifier {
             ? null
             : buildingLabel.text.trim(),
         unitType: unitType,
-        floor: floor,
+        floor: floor ?? 'أرضي',
         area: area,
         orientation: orientation,
         areaSqm: double.parse(areaSqm.text.trim()),
@@ -168,7 +172,7 @@ class PropertyFormController extends ChangeNotifier {
         bathrooms: int.parse(bathrooms.text.trim()),
         hasReception: hasReception,
         hasKitchen: hasKitchen,
-        finishingStatus: finishingStatus,
+        finishingStatus: finishingStatus ?? PropertyFinishing.shell,
         price: double.parse(price.text.trim()),
         priceNote: priceNote,
         description: description.text.trim().isEmpty

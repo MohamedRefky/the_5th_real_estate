@@ -44,7 +44,7 @@ class BuildingFormController extends ChangeNotifier
 
   // Selectable state
   late String area;
-  late FinishingStatus finishingStatus;
+  FinishingStatus? finishingStatus;
   late bool isUnderConstruction;
   DateTime? deliveryDate;
   double constructionProgress = 1.0;
@@ -84,7 +84,7 @@ class BuildingFormController extends ChangeNotifier
     amenities = TextEditingController(text: isEdit ? ((b?.amenities ?? []).join('، ')) : '');
 
     area = b?.area ?? _initialArea ?? 'المستثمرين';
-    finishingStatus = b?.finishingStatus ?? FinishingStatus.semiFinished;
+    finishingStatus = isEdit ? b?.finishingStatus : null;
     isUnderConstruction = b?.isUnderConstruction ?? false;
     deliveryDate = b?.deliveryDate;
     constructionProgress = b?.constructionProgress ?? 1.0;
@@ -123,12 +123,14 @@ class BuildingFormController extends ChangeNotifier
 
   // ── Field setters ──────────────────────────────────────────────────
 
-  void setArea(String v) {
-    area = v;
-    notifyListeners();
+  void setArea(String? v) {
+    if (v != null) {
+      area = v;
+      notifyListeners();
+    }
   }
 
-  void setFinishingStatus(FinishingStatus v) {
+  void setFinishingStatus(FinishingStatus? v) {
     finishingStatus = v;
     notifyListeners();
   }
@@ -211,7 +213,7 @@ class BuildingFormController extends ChangeNotifier
         totalFloors: int.parse(totalFloors.text.trim()),
         totalUnits: int.parse(totalUnits.text.trim()),
         availableUnits: int.parse(availableUnits.text.trim()),
-        finishingStatus: finishingStatus,
+        finishingStatus: finishingStatus ?? FinishingStatus.semiFinished,
         isUnderConstruction: isUnderConstruction,
         deliveryDate: deliveryDate,
         constructionProgress: constructionProgress,

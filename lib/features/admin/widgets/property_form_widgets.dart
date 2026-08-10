@@ -96,11 +96,12 @@ class FormTextField extends StatelessWidget {
 /// Dropdown styled for the property form.
 class FormDropdown<T> extends StatelessWidget {
   final String label;
-  final T value;
+  final T? value;
   final List<T> items;
   final String Function(T) labelOf;
-  final ValueChanged<T> onChanged;
+  final ValueChanged<T?> onChanged;
   final String? hint;
+  final String? Function(T?)? validator;
 
   const FormDropdown({
     super.key,
@@ -110,16 +111,18 @@ class FormDropdown<T> extends StatelessWidget {
     required this.labelOf,
     required this.onChanged,
     this.hint,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    final hintText = hint;
     return DropdownButtonFormField<T>(
       initialValue: value,
-      hint: hintText == null
-          ? null
-          : Text(hintText, style: const TextStyle(color: AppColors.textHint)),
+      validator: validator,
+      hint: Text(
+        hint ?? 'اختر $label...',
+        style: const TextStyle(color: AppColors.textHint),
+      ),
       isExpanded: true,
       dropdownColor: AppColors.surface,
       style: const TextStyle(color: AppColors.textPrimary),
@@ -130,9 +133,7 @@ class FormDropdown<T> extends StatelessWidget {
                 child: Text(labelOf(v)),
               ))
           .toList(),
-      onChanged: (v) {
-        if (v != null) onChanged(v);
-      },
+      onChanged: onChanged,
     );
   }
 }

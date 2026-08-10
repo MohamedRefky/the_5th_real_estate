@@ -133,11 +133,14 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           onChanged: c.setUnitType,
                         ),
                         const SizedBox(height: 12),
-                        FormDropdown<String>(
+                        FormDropdown<String?>(
                           label: 'الدور',
                           value: c.floor,
                           items: floorOptions,
-                          labelOf: (v) => v,
+                          labelOf: (v) => v ?? '',
+                          hint: 'اختر الدور...',
+                          validator: (v) =>
+                              (v == null || v.isEmpty) ? 'يرجى اختيار الدور' : null,
                           onChanged: c.setFloor,
                         ),
                         const SizedBox(height: 12),
@@ -150,11 +153,14 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           onChanged: c.setOrientation,
                         ),
                         const SizedBox(height: 12),
-                        FormDropdown<PropertyFinishing>(
+                        FormDropdown<PropertyFinishing?>(
                           label: 'التشطيب',
                           value: c.finishingStatus,
                           items: PropertyFinishing.values,
-                          labelOf: (v) => v.label,
+                          labelOf: (v) => v?.label ?? '',
+                          hint: 'اختر حالة التشطيب...',
+                          validator: (v) =>
+                              v == null ? 'يرجى اختيار حالة التشطيب' : null,
                           onChanged: c.setFinishingStatus,
                         ),
                         const SizedBox(height: 12),

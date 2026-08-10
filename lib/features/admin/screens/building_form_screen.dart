@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../core/theme/app_colors.dart';
 import '../../../models/apartment.dart';
 import '../controllers/building_form_controller.dart';
@@ -141,11 +140,14 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                         const SizedBox(height: 12),
                         FormTextField(c.layoutNote, 'ملاحظة التخطيط (مثال: الدور ينفع شقتين)'),
                         const SizedBox(height: 12),
-                        FormDropdown<FinishingStatus>(
+                        FormDropdown<FinishingStatus?>(
                           label: 'التشطيب',
                           value: c.finishingStatus,
                           items: FinishingStatus.values,
-                          labelOf: (v) => v.label,
+                          labelOf: (v) => v?.label ?? '',
+                          hint: 'اختر حالة التشطيب...',
+                          validator: (v) =>
+                              v == null ? 'يرجى اختيار حالة التشطيب' : null,
                           onChanged: c.setFinishingStatus,
                         ),
                         const SizedBox(height: 12),

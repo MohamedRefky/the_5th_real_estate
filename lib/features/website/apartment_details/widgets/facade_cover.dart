@@ -64,7 +64,7 @@ class FacadeCoverPlaceholder extends StatelessWidget {
       maxHeight: 460,
       borderRadius: BorderRadius.circular(24),
       onTap: () => _showFullScreenImage(context, sanitizeImageUrl(rawUrl)),
-      errorBuilder: (_, __, ___) =>
+      errorBuilder: (_, _, _) =>
           _buildAssetOrPlaceholder(theme, fallbackAsset),
     );
   }

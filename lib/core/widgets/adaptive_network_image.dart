@@ -106,7 +106,7 @@ class _AdaptiveNetworkImageState extends State<AdaptiveNetworkImage> {
       fit: BoxFit.contain,
       filterQuality: FilterQuality.high,
       errorBuilder: widget.errorBuilder ??
-          (_, __, ___) => Container(
+          (_, _, _) => Container(
                 color: AppColors.surface,
                 child: const Center(
                   child: Icon(Icons.broken_image_rounded,

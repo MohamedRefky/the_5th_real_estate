@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../models/apartment.dart' show FinishingStatus;
 import '../auth/auth_controller.dart';
 import '../models/admin_building.dart';
 import '../models/property.dart';
