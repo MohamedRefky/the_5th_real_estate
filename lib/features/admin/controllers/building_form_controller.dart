@@ -6,8 +6,8 @@ import '../../../models/apartment.dart';
 import '../models/admin_building.dart';
 import '../services/building_service.dart';
 
-/// Holds all state for the add/edit building form: text controllers, enum
-/// selections, URL inputs and the save flow.
+/// Holds all state for the streamlined add/edit building form:
+/// Name, Area, Price, AreaSqm, Description, Media URLs, and Published status.
 class BuildingFormController extends ChangeNotifier {
   BuildingFormController(this.building, {String? initialArea}) {
     _initialArea = initialArea;
@@ -25,20 +25,12 @@ class BuildingFormController extends ChangeNotifier {
   late final TextEditingController name;
   late final TextEditingController description;
   late final TextEditingController areaSqm;
-  late final TextEditingController buildingStructure;
-  late final TextEditingController orientation;
-  late final TextEditingController layoutNote;
   late final TextEditingController startingPrice;
-  late final TextEditingController totalFloors;
   late final TextEditingController imageUrls;
   late final TextEditingController videoUrl;
 
   // Selectable state
   late String area;
-  FinishingStatus? finishingStatus;
-  late bool isUnderConstruction;
-  DateTime? deliveryDate;
-  double constructionProgress = 1.0;
   late bool isPublished;
 
   bool saving = false;
@@ -52,23 +44,13 @@ class BuildingFormController extends ChangeNotifier {
     final initialAreaSqm = b?.areaSqm;
     areaSqm = TextEditingController(
         text: (isEdit && initialAreaSqm != null) ? _fmtNum(initialAreaSqm) : '');
-    buildingStructure =
-        TextEditingController(text: isEdit ? (b?.buildingStructure ?? '') : '');
-    orientation = TextEditingController(text: isEdit ? (b?.orientation ?? '') : '');
-    layoutNote = TextEditingController(text: isEdit ? (b?.layoutNote ?? '') : '');
     startingPrice = TextEditingController(
         text: (isEdit && b != null) ? _fmtNum(b.startingPrice) : '');
-    totalFloors = TextEditingController(
-        text: (isEdit && b != null) ? b.totalFloors.toString() : '');
     imageUrls = TextEditingController(
         text: isEdit ? (b?.imageUrls.join('\n') ?? '') : '');
     videoUrl = TextEditingController(text: isEdit ? (b?.videoUrl ?? '') : '');
 
     area = b?.area ?? _initialArea ?? 'المستثمرين';
-    finishingStatus = isEdit ? b?.finishingStatus : null;
-    isUnderConstruction = b?.isUnderConstruction ?? false;
-    deliveryDate = b?.deliveryDate;
-    constructionProgress = b?.constructionProgress ?? 1.0;
     isPublished = b?.isPublished ?? true;
   }
 
@@ -101,31 +83,6 @@ class BuildingFormController extends ChangeNotifier {
     }
   }
 
-  void setFinishingStatus(FinishingStatus? v) {
-    finishingStatus = v;
-    notifyListeners();
-  }
-
-  void setIsUnderConstruction(bool v) {
-    isUnderConstruction = v;
-    notifyListeners();
-  }
-
-  void setDeliveryDate(DateTime v) {
-    deliveryDate = v;
-    notifyListeners();
-  }
-
-  void clearDeliveryDate() {
-    deliveryDate = null;
-    notifyListeners();
-  }
-
-  void setConstructionProgress(double v) {
-    constructionProgress = v;
-    notifyListeners();
-  }
-
   void setIsPublished(bool v) {
     isPublished = v;
     notifyListeners();
@@ -153,17 +110,11 @@ class BuildingFormController extends ChangeNotifier {
         description: description.text.trim(),
         area: area,
         areaSqm: _optionalDouble(areaSqm.text),
-        buildingStructure: _optionalText(buildingStructure),
-        orientation: _optionalText(orientation),
-        layoutNote: _optionalText(layoutNote),
         startingPrice: double.parse(startingPrice.text.trim()),
-        totalFloors: int.parse(totalFloors.text.trim()),
+        totalFloors: 1,
         totalUnits: 1,
         availableUnits: 1,
-        finishingStatus: finishingStatus ?? FinishingStatus.semiFinished,
-        isUnderConstruction: isUnderConstruction,
-        deliveryDate: deliveryDate,
-        constructionProgress: constructionProgress,
+        finishingStatus: FinishingStatus.semiFinished,
         whatsappNumber: defaultAdminWhatsapp,
         amenities: const [],
         imageUrls: parsedImageUrls,
@@ -194,21 +145,12 @@ class BuildingFormController extends ChangeNotifier {
     return (val == null || val <= 0) ? null : val;
   }
 
-  String? _optionalText(TextEditingController c) {
-    final v = c.text.trim();
-    return v.isEmpty ? null : v;
-  }
-
   @override
   void dispose() {
     name.dispose();
     description.dispose();
     areaSqm.dispose();
-    buildingStructure.dispose();
-    orientation.dispose();
-    layoutNote.dispose();
     startingPrice.dispose();
-    totalFloors.dispose();
     imageUrls.dispose();
     videoUrl.dispose();
     super.dispose();
