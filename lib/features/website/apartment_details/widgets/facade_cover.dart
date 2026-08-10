@@ -61,7 +61,9 @@ class FacadeCoverPlaceholder extends StatelessWidget {
       onTap: () => _showFullScreenImage(context, cleanUrl),
       child: Container(
         width: double.infinity,
+        height: 350,
         decoration: BoxDecoration(
+          color: const Color(0xFF0F172A),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: AppColors.accent.withValues(alpha: 0.45),
@@ -83,15 +85,13 @@ class FacadeCoverPlaceholder extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            // Image at full width, natural height
-            Image.network(
-              cleanUrl,
-              width: double.infinity,
-              fit: BoxFit.fitWidth,
-              filterQuality: FilterQuality.high,
-              errorBuilder: (_, _, _) => SizedBox(
-                height: 360,
-                child: _buildAssetOrPlaceholder(theme, fallbackAsset),
+            Center(
+              child: Image.network(
+                cleanUrl,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (_, _, _) =>
+                    _buildAssetOrPlaceholder(theme, fallbackAsset),
               ),
             ),
             // Click to expand hint badge

@@ -56,9 +56,9 @@ class ApartmentCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ── 1. Dominant Image Box (195px Height) ──────────────────
+                // ── 1. Dominant Image Box (175px Height) ──────────────────
                 SizedBox(
-                  height: 195,
+                  height: 175,
                   width: double.infinity,
                   child: Stack(
                     children: [
