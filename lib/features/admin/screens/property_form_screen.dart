@@ -16,8 +16,14 @@ import '../widgets/property_form_widgets.dart';
 class PropertyFormScreen extends StatefulWidget {
   final Property? property;
   final UnitType? initialUnitType;
+  final String? initialArea;
 
-  const PropertyFormScreen({super.key, this.property, this.initialUnitType});
+  const PropertyFormScreen({
+    super.key,
+    this.property,
+    this.initialUnitType,
+    this.initialArea,
+  });
 
   @override
   State<PropertyFormScreen> createState() => _PropertyFormScreenState();
@@ -29,8 +35,11 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
   @override
   void initState() {
     super.initState();
-    _controller =
-        PropertyFormController(widget.property, initialUnitType: widget.initialUnitType);
+    _controller = PropertyFormController(
+      widget.property,
+      initialUnitType: widget.initialUnitType,
+      initialArea: widget.initialArea,
+    );
   }
 
   @override

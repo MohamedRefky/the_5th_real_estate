@@ -209,26 +209,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   }
 
   Future<void> _openUnitForm({Property? property, String? initialArea}) async {
-    final initialProperty = property ??
-        (initialArea != null
-            ? Property(
-                projectName: '',
-                unitType: UnitType.apartment,
-                floor: 'أرضي',
-                areaSqm: 120,
-                bedrooms: 2,
-                bathrooms: 1,
-                hasReception: true,
-                hasKitchen: true,
-                finishingStatus: PropertyFinishing.finished,
-                price: 2000000,
-                area: initialArea,
-              )
-            : null);
-
     await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => PropertyFormScreen(property: initialProperty),
+        builder: (_) => PropertyFormScreen(
+          property: property,
+          initialArea: initialArea,
+        ),
       ),
     );
     _reload();
@@ -236,24 +222,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
   Future<void> _openBuildingForm(
       {AdminBuilding? building, String? initialArea}) async {
-    final initialBuilding = building ??
-        (initialArea != null
-            ? AdminBuilding(
-                name: '',
-                description: '',
-                area: initialArea,
-                startingPrice: 3000000,
-                totalFloors: 5,
-                totalUnits: 10,
-                availableUnits: 4,
-                finishingStatus: FinishingStatus.semiFinished,
-                whatsappNumber: '+201000000001',
-              )
-            : null);
-
     await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => BuildingFormScreen(building: initialBuilding),
+        builder: (_) => BuildingFormScreen(
+          building: building,
+          initialArea: initialArea,
+        ),
       ),
     );
     _reload();

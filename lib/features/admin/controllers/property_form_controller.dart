@@ -7,8 +7,10 @@ import '../services/property_service.dart';
 /// Holds all state for the add/edit unit form: text controllers, enum
 /// selections, URL inputs and the save flow.
 class PropertyFormController extends ChangeNotifier {
-  PropertyFormController(this.property, {UnitType? initialUnitType}) {
+  PropertyFormController(this.property,
+      {UnitType? initialUnitType, String? initialArea}) {
     _initialUnitType = initialUnitType;
+    _initialArea = initialArea;
     _init();
   }
 
@@ -16,6 +18,7 @@ class PropertyFormController extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   UnitType? _initialUnitType;
+  String? _initialArea;
 
   late final bool isEdit;
 
@@ -45,23 +48,25 @@ class PropertyFormController extends ChangeNotifier {
 
   void _init() {
     final p = property;
-    isEdit = p != null;
+    isEdit = p != null && p.id != null && p.id!.isNotEmpty;
 
-    projectName = TextEditingController(text: p?.projectName ?? '');
-    buildingLabel = TextEditingController(text: p?.buildingLabel ?? '');
-    areaSqm = TextEditingController(text: p != null ? _fmtNum(p.areaSqm) : '');
+    projectName = TextEditingController(text: isEdit ? (p?.projectName ?? '') : '');
+    buildingLabel = TextEditingController(text: isEdit ? (p?.buildingLabel ?? '') : '');
+    areaSqm = TextEditingController(
+        text: (isEdit && p != null) ? _fmtNum(p.areaSqm) : '');
     bedrooms = TextEditingController(
-        text: p != null ? p.bedrooms.toString() : '');
+        text: (isEdit && p != null) ? p.bedrooms.toString() : '');
     bathrooms = TextEditingController(
-        text: p != null ? p.bathrooms.toString() : '');
-    price = TextEditingController(text: p != null ? _fmtNum(p.price) : '');
-    description = TextEditingController(text: p?.description ?? '');
-    imageUrls = TextEditingController(text: p?.imageUrls.join('\n') ?? '');
-    videoUrl = TextEditingController(text: p?.videoUrl ?? '');
+        text: (isEdit && p != null) ? p.bathrooms.toString() : '');
+    price = TextEditingController(
+        text: (isEdit && p != null) ? _fmtNum(p.price) : '');
+    description = TextEditingController(text: isEdit ? (p?.description ?? '') : '');
+    imageUrls = TextEditingController(text: isEdit ? (p?.imageUrls.join('\n') ?? '') : '');
+    videoUrl = TextEditingController(text: isEdit ? (p?.videoUrl ?? '') : '');
 
     unitType = p?.unitType ?? _initialUnitType ?? UnitType.apartment;
     floor = p?.floor ?? floorOptions[1];
-    area = p?.area ?? areaOptions.first;
+    area = p?.area ?? _initialArea ?? areaOptions.first;
     orientation = p?.orientation;
     finishingStatus = p?.finishingStatus ?? PropertyFinishing.shell;
     priceNote = p?.priceNote;

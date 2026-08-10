@@ -15,13 +15,16 @@ import 'image_edit_controller.dart';
 /// subcollections.
 class BuildingFormController extends ChangeNotifier
     implements ImageEditController {
-  BuildingFormController(this.building) {
+  BuildingFormController(this.building, {String? initialArea}) {
+    _initialArea = initialArea;
     _init();
   }
 
   final AdminBuilding? building;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
+
+  String? _initialArea;
 
   late final bool isEdit;
 
@@ -57,29 +60,30 @@ class BuildingFormController extends ChangeNotifier
 
   void _init() {
     final b = building;
-    isEdit = b != null;
+    isEdit = b != null && b.id != null && b.id!.isNotEmpty;
 
-    name = TextEditingController(text: b?.name ?? '');
-    description = TextEditingController(text: b?.description ?? '');
+    name = TextEditingController(text: isEdit ? (b?.name ?? '') : '');
+    description = TextEditingController(text: isEdit ? (b?.description ?? '') : '');
     final initialAreaSqm = b?.areaSqm;
     areaSqm = TextEditingController(
-        text: initialAreaSqm != null ? _fmtNum(initialAreaSqm) : '');
-    buildingStructure = TextEditingController(text: b?.buildingStructure ?? '');
-    orientation = TextEditingController(text: b?.orientation ?? '');
-    layoutNote = TextEditingController(text: b?.layoutNote ?? '');
+        text: (isEdit && initialAreaSqm != null) ? _fmtNum(initialAreaSqm) : '');
+    buildingStructure =
+        TextEditingController(text: isEdit ? (b?.buildingStructure ?? '') : '');
+    orientation = TextEditingController(text: isEdit ? (b?.orientation ?? '') : '');
+    layoutNote = TextEditingController(text: isEdit ? (b?.layoutNote ?? '') : '');
     startingPrice = TextEditingController(
-        text: b != null ? _fmtNum(b.startingPrice) : '');
+        text: (isEdit && b != null) ? _fmtNum(b.startingPrice) : '');
     totalFloors = TextEditingController(
-        text: b != null ? b.totalFloors.toString() : '');
+        text: (isEdit && b != null) ? b.totalFloors.toString() : '');
     totalUnits =
-        TextEditingController(text: b != null ? b.totalUnits.toString() : '');
+        TextEditingController(text: (isEdit && b != null) ? b.totalUnits.toString() : '');
     availableUnits = TextEditingController(
-        text: b != null ? b.availableUnits.toString() : '');
+        text: (isEdit && b != null) ? b.availableUnits.toString() : '');
     whatsappNumber =
-        TextEditingController(text: b?.whatsappNumber ?? defaultAdminWhatsapp);
-    amenities = TextEditingController(text: (b?.amenities ?? []).join('، '));
+        TextEditingController(text: isEdit ? (b?.whatsappNumber ?? defaultAdminWhatsapp) : defaultAdminWhatsapp);
+    amenities = TextEditingController(text: isEdit ? ((b?.amenities ?? []).join('، ')) : '');
 
-    area = b?.area ?? 'المستثمرين';
+    area = b?.area ?? _initialArea ?? 'المستثمرين';
     finishingStatus = b?.finishingStatus ?? FinishingStatus.semiFinished;
     isUnderConstruction = b?.isUnderConstruction ?? false;
     deliveryDate = b?.deliveryDate;

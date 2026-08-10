@@ -14,8 +14,9 @@ import '../widgets/property_images_editor.dart';
 /// only composes the shared form widgets.
 class BuildingFormScreen extends StatefulWidget {
   final AdminBuilding? building;
+  final String? initialArea;
 
-  const BuildingFormScreen({super.key, this.building});
+  const BuildingFormScreen({super.key, this.building, this.initialArea});
 
   @override
   State<BuildingFormScreen> createState() => _BuildingFormScreenState();
@@ -27,7 +28,7 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = BuildingFormController(widget.building);
+    _controller = BuildingFormController(widget.building, initialArea: widget.initialArea);
   }
 
   @override
