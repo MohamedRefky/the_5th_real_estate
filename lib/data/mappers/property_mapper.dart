@@ -15,7 +15,7 @@ Apartment propertyToApartment(admin.Property p) {
         : p.projectName,
     description:
         p.description ?? '${p.projectName} — ${p.unitType.label} ${p.floor}',
-    freeDescription: p.description,
+    freeDescription: null,
     area: p.area,
     unitType: _unitType(p.unitType),
     price: p.price,

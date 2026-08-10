@@ -13,6 +13,10 @@ class DescriptionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final showFreeDesc = apartment.freeDescription != null &&
+        apartment.freeDescription!.trim().isNotEmpty &&
+        apartment.freeDescription!.trim() != apartment.description.trim();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -50,8 +54,7 @@ class DescriptionSection extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              if (apartment.freeDescription != null &&
-                  apartment.freeDescription!.isNotEmpty) ...[
+              if (showFreeDesc) ...[
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(
