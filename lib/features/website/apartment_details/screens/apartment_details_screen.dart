@@ -42,8 +42,8 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
   }
 
   Future<void> _load() async {
-    final apt = DummyData.getById(widget.apartmentId) ??
-        await PublicPropertyRepository.instance.byId(widget.apartmentId);
+    final apt = await PublicPropertyRepository.instance.byId(widget.apartmentId) ??
+        DummyData.getById(widget.apartmentId);
     if (!mounted) return;
     setState(() {
       _apartment = apt;
