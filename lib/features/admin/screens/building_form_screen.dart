@@ -133,12 +133,6 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                           c.videoUrl,
                           'رابط الفيديو (اختياري)',
                         ),
-                        const SizedBox(height: 16),
-                        FormSwitchRow(
-                          label: 'منشور على الموقع',
-                          value: c.isPublished,
-                          onChanged: c.setIsPublished,
-                        ),
                       ],
                     );
                   },

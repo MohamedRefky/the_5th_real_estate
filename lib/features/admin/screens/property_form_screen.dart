@@ -139,8 +139,9 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           items: floorOptions,
                           labelOf: (v) => v ?? '',
                           hint: 'اختر الدور...',
-                          validator: (v) =>
-                              (v == null || v.isEmpty) ? 'يرجى اختيار الدور' : null,
+                          validator: (v) => (v == null || v.isEmpty)
+                              ? 'يرجى اختيار الدور'
+                              : null,
                           onChanged: c.setFloor,
                         ),
                         const SizedBox(height: 12),
@@ -218,11 +219,6 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           value: c.hasKitchen,
                           onChanged: c.setHasKitchen,
                         ),
-                        FormSwitchRow(
-                          label: 'منشور على الموقع',
-                          value: c.isPublished,
-                          onChanged: c.setIsPublished,
-                        ),
                         const SizedBox(height: 20),
                         const FormSectionTitle('الوصف والوسائط'),
                         const SizedBox(height: 12),
@@ -278,7 +274,9 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           color: AppColors.textOnPrimary,
                         ),
                       )
-                    : Text(_controller.isEdit ? 'حفظ التعديلات' : 'إضافة العقار'),
+                    : Text(
+                        _controller.isEdit ? 'حفظ التعديلات' : 'إضافة العقار',
+                      ),
               ),
             ),
           );
