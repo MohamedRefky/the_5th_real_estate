@@ -56,28 +56,31 @@ class ApartmentCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ── 1. Dominant Image Box (175px Height) ──────────────────
+                // ── 1. Dominant Image Box (195px Height) ──────────────────
                 SizedBox(
-                  height: 175,
+                  height: 195,
                   width: double.infinity,
                   child: Stack(
                     children: [
                       // Background Image (Cover URL > Area Asset > Fallback)
-                      if (apt.coverImageUrl != null && apt.coverImageUrl!.isNotEmpty) ...[
+                      if (apt.coverImageUrl != null &&
+                          apt.coverImageUrl!.isNotEmpty) ...[
                         Positioned.fill(
                           child: AnimatedScale(
-                            scale: isHovered ? 1.06 : 1.0,
+                            scale: isHovered ? 1.04 : 1.0,
                             duration: const Duration(milliseconds: 350),
                             curve: Curves.easeOutCubic,
                             child: Image.network(
                               sanitizeImageUrl(apt.coverImageUrl!),
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => areaImage != null
+                              filterQuality: FilterQuality.medium,
+                              errorBuilder: (_, _, _) => areaImage != null
                                   ? Image.asset(areaImage, fit: BoxFit.cover)
                                   : const CoverImageFallback(),
                             ),
                           ),
                         ),
+                        // Gradient overlay for text readability
                         Positioned.fill(
                           child: DecoratedBox(
                             decoration: BoxDecoration(
@@ -85,8 +88,8 @@ class ApartmentCard extends StatelessWidget {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Colors.black.withValues(alpha: 0.25),
-                                  Colors.black.withValues(alpha: 0.70),
+                                  Colors.black.withValues(alpha: 0.1),
+                                  Colors.black.withValues(alpha: 0.55),
                                 ],
                               ),
                             ),
@@ -116,9 +119,7 @@ class ApartmentCard extends StatelessWidget {
                           ),
                         ),
                       ] else ...[
-                        Positioned.fill(
-                          child: const CoverImageFallback(),
-                        ),
+                        Positioned.fill(child: const CoverImageFallback()),
                       ],
 
                       // Finishing status badge

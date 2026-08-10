@@ -9,17 +9,19 @@ class FacadeCoverPlaceholder extends StatelessWidget {
   final String? imageUrl;
   final String? area;
 
-  const FacadeCoverPlaceholder({
-    super.key,
-    this.imageUrl,
-    this.area,
-  });
+  const FacadeCoverPlaceholder({super.key, this.imageUrl, this.area});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fallbackAsset = AppConstants.areaImageAssetFor(area);
 
+    // When we have a network image, let it determine the height naturally
+    if (imageUrl != null && imageUrl!.trim().isNotEmpty) {
+      return _buildNetworkCover(context, theme, imageUrl!, fallbackAsset);
+    }
+
+    // Fallback: fixed-height placeholder
     return Container(
       width: double.infinity,
       height: 360,
@@ -44,13 +46,128 @@ class FacadeCoverPlaceholder extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: imageUrl != null && imageUrl!.trim().isNotEmpty
-          ? Image.network(
-              sanitizeImageUrl(imageUrl!),
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => _buildAssetOrPlaceholder(theme, fallbackAsset),
-            )
-          : _buildAssetOrPlaceholder(theme, fallbackAsset),
+      child: _buildAssetOrPlaceholder(theme, fallbackAsset),
+    );
+  }
+
+  Widget _buildNetworkCover(
+    BuildContext context,
+    ThemeData theme,
+    String rawUrl,
+    String? fallbackAsset,
+  ) {
+    final cleanUrl = sanitizeImageUrl(rawUrl);
+    return GestureDetector(
+      onTap: () => _showFullScreenImage(context, cleanUrl),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: AppColors.accent.withValues(alpha: 0.45),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.accent.withValues(alpha: 0.15),
+              blurRadius: 32,
+              offset: const Offset(0, 12),
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            // Image at full width, natural height
+            Image.network(
+              cleanUrl,
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              filterQuality: FilterQuality.high,
+              errorBuilder: (_, _, _) => SizedBox(
+                height: 360,
+                child: _buildAssetOrPlaceholder(theme, fallbackAsset),
+              ),
+            ),
+            // Click to expand hint badge
+            Positioned(
+              top: 16,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.65),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.fullscreen_rounded,
+                      size: 16,
+                      color: AppColors.accent,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'عرض الصورة بالكامل',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static void _showFullScreenImage(BuildContext context, String url) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(
+                  url,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.close_rounded,
+                  color: Colors.white,
+                  size: 32,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -59,10 +176,7 @@ class FacadeCoverPlaceholder extends StatelessWidget {
       return Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            assetPath,
-            fit: BoxFit.cover,
-          ),
+          Image.asset(assetPath, fit: BoxFit.cover),
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(

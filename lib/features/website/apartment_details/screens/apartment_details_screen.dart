@@ -118,22 +118,62 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                     ),
                     const SizedBox(height: 12),
                     SizedBox(
-                      height: 140,
+                      height: 160,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: apartment.imageUrls.length,
                         separatorBuilder: (_, _) => const SizedBox(width: 12),
                         itemBuilder: (context, index) {
-                          final url = apartment.imageUrls[index];
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.network(
-                              sanitizeImageUrl(url),
-                              width: 200,
-                              height: 140,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) =>
-                                  const SizedBox.shrink(),
+                          final cleanUrl = sanitizeImageUrl(
+                            apartment.imageUrls[index],
+                          );
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => Dialog.fullscreen(
+                                  backgroundColor: Colors.black,
+                                  child: Stack(
+                                    children: [
+                                      Center(
+                                        child: InteractiveViewer(
+                                          child: Image.network(
+                                            cleanUrl,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 20,
+                                        right: 20,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.close_rounded,
+                                            color: Colors.white,
+                                            size: 32,
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                width: 220,
+                                height: 160,
+                                color: const Color(0xFF0F172A),
+                                child: Image.network(
+                                  cleanUrl,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (_, _, _) =>
+                                      const SizedBox.shrink(),
+                                ),
+                              ),
                             ),
                           );
                         },
