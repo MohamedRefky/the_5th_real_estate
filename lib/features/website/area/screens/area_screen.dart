@@ -110,14 +110,20 @@ class _AreaScreenState extends State<AreaScreen> {
                           else
                             LayoutBuilder(
                               builder: (context, constraints) {
-                                final isWide = constraints.maxWidth >= 800;
-                                final cardWidth = isWide
-                                    ? (constraints.maxWidth - 24) / 2
-                                    : constraints.maxWidth;
+                                final double spacing = 20.0;
+                                int count = 1;
+                                if (constraints.maxWidth >= 900) {
+                                  count = 3;
+                                } else if (constraints.maxWidth >= 600) {
+                                  count = 2;
+                                }
+                                final cardWidth =
+                                    (constraints.maxWidth - (spacing * (count - 1))) /
+                                        count;
 
                                 return Wrap(
-                                  spacing: 24,
-                                  runSpacing: 24,
+                                  spacing: spacing,
+                                  runSpacing: spacing,
                                   children: apartments.asMap().entries.map((entry) {
                                     final index = entry.key;
                                     final apt = entry.value;
