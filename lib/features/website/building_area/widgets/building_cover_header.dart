@@ -1,7 +1,5 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-
 import '../../../../core/widgets/cover_image_fallback.dart';
 import '../../../../core/widgets/price_tag_pill.dart';
 import '../../../../models/building.dart';

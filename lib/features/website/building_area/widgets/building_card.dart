@@ -5,15 +5,11 @@ import 'package:flutter/material.dart';
 import '../../../../app/app_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/feature_badge.dart';
 import '../../../../core/widgets/hover_card.dart';
 import '../../../../core/widgets/metallic_gloss.dart';
 import '../../../../models/building.dart';
-import 'amenity_chips.dart';
 import 'building_action_buttons.dart';
 import 'building_cover_header.dart';
-import 'building_stats_row.dart';
-import 'construction_progress_bar.dart';
 
 /// Ultra-premium Glassmorphic Building Card with 3D hover/elevation effects,
 /// cover photo gallery support, structure/orientation badges, and WhatsApp CTA.
@@ -140,10 +136,7 @@ class BuildingCard extends StatelessWidget {
                     // Metallic gloss overlay effect
                     Positioned.fill(
                       child: IgnorePointer(
-                        child: MetallicGloss(
-                          borderRadius: 24,
-                          strength: 0.3,
-                        ),
+                        child: MetallicGloss(borderRadius: 24, strength: 0.3),
                       ),
                     ),
                   ],

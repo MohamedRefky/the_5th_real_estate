@@ -44,8 +44,8 @@ class DescriptionSection extends StatelessWidget {
             children: [
               Text(
                 building.description,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontSize: 18,
+                style: const TextStyle(
+                  fontSize: 17,
                   fontWeight: FontWeight.w500,
                   height: 1.8,
                   color: AppColors.textPrimary,

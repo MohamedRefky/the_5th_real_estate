@@ -141,9 +141,10 @@ class DetailsTable extends StatelessWidget {
           flex: 4,
           child: Text(
             label,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: const TextStyle(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
         ),
@@ -151,9 +152,10 @@ class DetailsTable extends StatelessWidget {
           flex: 5,
           child: Text(
             value,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: const TextStyle(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.bold,
+              fontSize: 14,
             ),
             textAlign: TextAlign.end,
           ),

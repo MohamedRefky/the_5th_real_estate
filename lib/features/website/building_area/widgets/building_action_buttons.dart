@@ -75,8 +75,8 @@ class BuildingActionButtons extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.textOnPrimary,
+              backgroundColor: AppColors.accent,
+              foregroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(vertical: 11),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
@@ -90,11 +90,16 @@ class BuildingActionButtons extends StatelessWidget {
                   'تفاصيل العمارة',
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
                   ),
                 ),
                 SizedBox(width: 6),
-                Icon(Icons.arrow_forward_rounded, size: 16),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: AppColors.primary,
+                ),
               ],
             ),
           ),
