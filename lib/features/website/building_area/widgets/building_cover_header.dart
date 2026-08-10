@@ -94,13 +94,14 @@ class BuildingCoverHeader extends StatelessWidget {
           ),
 
           // Price tag floating on image (bottom right)
-          Positioned(
-            bottom: 12,
-            right: 12,
-            child: PriceTagPill(
-              price: building.formattedStartingPrice,
+          if (building.startingPrice > 0)
+            Positioned(
+              bottom: 12,
+              right: 12,
+              child: PriceTagPill(
+                price: building.formattedStartingPrice,
+              ),
             ),
-          ),
         ],
       ),
     );

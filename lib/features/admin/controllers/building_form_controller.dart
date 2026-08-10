@@ -6,8 +6,8 @@ import '../../../models/apartment.dart';
 import '../models/admin_building.dart';
 import '../services/building_service.dart';
 
-/// Holds all state for the streamlined add/edit building form:
-/// Name, Area, Price, AreaSqm, Description, Media URLs, and Published status.
+/// Streamlined BuildingFormController:
+/// Manages Name, Area, Description (containing price, area, details), Media URLs, and Published status.
 class BuildingFormController extends ChangeNotifier {
   BuildingFormController(this.building, {String? initialArea}) {
     _initialArea = initialArea;
@@ -24,14 +24,11 @@ class BuildingFormController extends ChangeNotifier {
   // Text controllers
   late final TextEditingController name;
   late final TextEditingController description;
-  late final TextEditingController areaSqm;
-  late final TextEditingController startingPrice;
   late final TextEditingController imageUrls;
   late final TextEditingController videoUrl;
 
   // Selectable state
   late String area;
-  late bool isPublished;
 
   bool saving = false;
 
@@ -41,38 +38,17 @@ class BuildingFormController extends ChangeNotifier {
 
     name = TextEditingController(text: isEdit ? (b?.name ?? '') : '');
     description = TextEditingController(text: isEdit ? (b?.description ?? '') : '');
-    final initialAreaSqm = b?.areaSqm;
-    areaSqm = TextEditingController(
-        text: (isEdit && initialAreaSqm != null) ? _fmtNum(initialAreaSqm) : '');
-    startingPrice = TextEditingController(
-        text: (isEdit && b != null) ? _fmtNum(b.startingPrice) : '');
     imageUrls = TextEditingController(
         text: isEdit ? (b?.imageUrls.join('\n') ?? '') : '');
     videoUrl = TextEditingController(text: isEdit ? (b?.videoUrl ?? '') : '');
 
     area = b?.area ?? _initialArea ?? 'المستثمرين';
-    isPublished = b?.isPublished ?? true;
   }
-
-  String _fmtNum(double v) =>
-      v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
 
   // ── Validators ─────────────────────────────────────────────────────
 
   String? requiredValidator(String? v) =>
       (v == null || v.trim().isEmpty) ? 'هذا الحقل مطلوب' : null;
-
-  String? numberValidator(String? v, {bool allowZero = false}) {
-    final val = double.tryParse(v ?? '');
-    if (val == null) return 'أدخل رقماً صحيحاً';
-    if (!allowZero && val <= 0) return 'أدخل رقماً أكبر من صفر';
-    return null;
-  }
-
-  String? optionalNumberValidator(String? v) {
-    if (v == null || v.trim().isEmpty) return null;
-    return numberValidator(v);
-  }
 
   // ── Field setters ──────────────────────────────────────────────────
 
@@ -81,11 +57,6 @@ class BuildingFormController extends ChangeNotifier {
       area = v;
       notifyListeners();
     }
-  }
-
-  void setIsPublished(bool v) {
-    isPublished = v;
-    notifyListeners();
   }
 
   // ── Save ───────────────────────────────────────────────────────────
@@ -109,8 +80,8 @@ class BuildingFormController extends ChangeNotifier {
         name: name.text.trim(),
         description: description.text.trim(),
         area: area,
-        areaSqm: _optionalDouble(areaSqm.text),
-        startingPrice: double.parse(startingPrice.text.trim()),
+        areaSqm: null,
+        startingPrice: 0,
         totalFloors: 1,
         totalUnits: 1,
         availableUnits: 1,
@@ -119,7 +90,7 @@ class BuildingFormController extends ChangeNotifier {
         amenities: const [],
         imageUrls: parsedImageUrls,
         videoUrl: parsedVideoUrl,
-        isPublished: isPublished,
+        isPublished: true,
       );
 
       final service = BuildingService.instance;
@@ -140,17 +111,10 @@ class BuildingFormController extends ChangeNotifier {
     }
   }
 
-  double? _optionalDouble(String text) {
-    final val = double.tryParse(text.trim());
-    return (val == null || val <= 0) ? null : val;
-  }
-
   @override
   void dispose() {
     name.dispose();
     description.dispose();
-    areaSqm.dispose();
-    startingPrice.dispose();
     imageUrls.dispose();
     videoUrl.dispose();
     super.dispose();

@@ -122,20 +122,22 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
                   const SizedBox(height: 20),
 
                   // ── Key Stats (From Left) ──────────────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.fromLeft,
-                    child: StatsSection(building: building),
-                  ),
-
-                  const SizedBox(height: 20),
+                  if (building.areaSqm != null && building.areaSqm! > 0) ...[
+                    RevealOnScroll(
+                      direction: RevealDirection.fromLeft,
+                      child: StatsSection(building: building),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
 
                   // ── Price Section (Scale Reveal) ───────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.scale,
-                    child: PriceSection(building: building),
-                  ),
-
-                  const SizedBox(height: 20),
+                  if (building.startingPrice > 0) ...[
+                    RevealOnScroll(
+                      direction: RevealDirection.scale,
+                      child: PriceSection(building: building),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
 
                   // ── Construction Timeline (if under construction)
                   if (building.isUnderConstruction &&

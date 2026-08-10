@@ -100,27 +100,30 @@ class AdminBuildingCard extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  [
-                    building.area,
-                    '${building.totalFloors} أدوار',
-                    '${building.totalUnits} وحدة',
-                    'متاح ${building.availableUnits}',
-                    building.finishingStatus.label,
-                  ].join(' • '),
-                  style: const TextStyle(
-                      color: AppColors.textSecondary, fontSize: 13),
-                ),
                 const SizedBox(height: 4),
                 Text(
-                  building.formattedStartingPrice,
+                  building.description.isNotEmpty
+                      ? building.description
+                      : building.area,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: AppColors.accent,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                    height: 1.35,
                   ),
                 ),
+                if (building.startingPrice > 0) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    building.formattedStartingPrice,
+                    style: const TextStyle(
+                      color: AppColors.accent,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

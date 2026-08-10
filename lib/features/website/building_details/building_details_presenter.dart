@@ -14,65 +14,41 @@ List<DetailsRow> buildingDetailsRows(Building building) {
       label: 'الحي والمنطقة',
       value: building.area,
     ),
-    if (building.areaSqm != null)
+    if (building.areaSqm != null && building.areaSqm! > 0)
       (
         icon: Icons.square_foot_rounded,
         label: 'مساحة الأرض الإجمالية',
         value: '${building.areaSqm!.toInt()} م²',
       ),
-    if (building.buildingStructure != null)
+    if (building.buildingStructure != null && building.buildingStructure!.isNotEmpty)
       (
         icon: Icons.foundation_rounded,
         label: 'هيكل البناء',
         value: building.buildingStructure!,
       ),
-    if (building.orientation != null)
+    if (building.orientation != null && building.orientation!.isNotEmpty)
       (
         icon: Icons.explore_rounded,
         label: 'الواجهة والفيو',
         value: building.orientation!,
       ),
-    if (building.layoutNote != null)
+    if (building.layoutNote != null && building.layoutNote!.isNotEmpty)
       (
         icon: Icons.space_dashboard_rounded,
         label: 'ملاحظة تقسيم الدور',
         value: building.layoutNote!,
       ),
-    (
-      icon: Icons.layers_rounded,
-      label: 'إجمالي عدد الأدوار',
-      value: '${building.totalFloors} أدوار',
-    ),
-    (
-      icon: Icons.grid_view_rounded,
-      label: 'إجمالي وحدات المبنى',
-      value: '${building.totalUnits} شقة',
-    ),
-    (
-      icon: Icons.door_front_door_rounded,
-      label: 'الوحدات المتاحة للبيع',
-      value: '${building.availableUnits} شقة',
-    ),
-    (
-      icon: Icons.brush_rounded,
-      label: 'مستوى التشطيب',
-      value: building.finishingStatus.label,
-    ),
-    (
-      icon: Icons.monetization_on_rounded,
-      label: 'السعر المطلوب',
-      value: building.formattedStartingPrice,
-    ),
+    if (building.startingPrice > 0)
+      (
+        icon: Icons.monetization_on_rounded,
+        label: 'السعر المطلوب',
+        value: building.formattedStartingPrice,
+      ),
     if (building.formattedDeliveryDate != null)
       (
         icon: Icons.event_rounded,
         label: 'موعد التسليم المتوقع',
         value: building.formattedDeliveryDate!,
       ),
-    (
-      icon: Icons.phone_iphone_rounded,
-      label: 'رقم التواصل والمعاينة',
-      value: building.whatsappNumber,
-    ),
   ];
 }
