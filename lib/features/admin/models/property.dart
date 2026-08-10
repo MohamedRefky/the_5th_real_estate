@@ -233,13 +233,15 @@ class Property {
 
   factory Property.fromFirestore(
     String docId,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    String? fallbackArea,
+  }) {
     final rawImages = data['imageUrls'] ??
         data['imageUrl'] ??
         data['images'] ??
         data['photo'] ??
-        data['photos'];
+        data['photos'] ??
+        data['coverImageUrl'];
 
     final List<String> parsedImages = [];
     if (rawImages is List) {
@@ -256,9 +258,38 @@ class Property {
 
     final rawVideoUrl = (data['videoUrl'] as String?) ?? (data['video'] as String?);
 
+    final nameVal = (data['projectName'] as String?)?.trim() ??
+        (data['name'] as String?)?.trim() ??
+        (data['title'] as String?)?.trim() ??
+        (data['buildingLabel'] as String?)?.trim();
+    final rawName = (nameVal != null && nameVal.isNotEmpty) ? nameVal : 'شقة جديدة';
+
+    final rawPrice = ((data['price'] as num?) ??
+            (data['startingPrice'] as num?) ??
+            (data['totalPrice'] as num?) ??
+            0)
+        .toDouble();
+
+    final rawDesc = (data['description'] as String?) ??
+        (data['details'] as String?);
+
+    final areaVal = (data['area'] as String?)?.trim();
+    final neighVal = (data['neighborhood'] as String?)?.trim();
+    final areaNameVal = (data['areaName'] as String?)?.trim();
+
+    final rawArea = (areaVal != null && areaVal.isNotEmpty)
+        ? areaVal
+        : (neighVal != null && neighVal.isNotEmpty)
+            ? neighVal
+            : (areaNameVal != null && areaNameVal.isNotEmpty)
+                ? areaNameVal
+                : (fallbackArea != null && fallbackArea.trim().isNotEmpty)
+                    ? fallbackArea.trim()
+                    : areaOptions.first;
+
     return Property(
       id: docId,
-      projectName: (data['projectName'] as String?) ?? '',
+      projectName: rawName,
       buildingLabel: data['buildingLabel'] as String?,
       unitType: UnitType.fromLabel(data['unitType'] as String? ?? ''),
       floor: (data['floor'] as String?) ?? 'أرضي',
@@ -270,9 +301,9 @@ class Property {
       hasKitchen: (data['hasKitchen'] as bool?) ?? false,
       finishingStatus:
           PropertyFinishing.fromLabel(data['finishingStatus'] as String? ?? ''),
-      price: ((data['price'] as num?) ?? 0).toDouble(),
+      price: rawPrice,
       priceNote: PriceNote.fromLabel(data['priceNote'] as String?),
-      description: data['description'] as String?,
+      description: rawDesc,
       imageUrls: parsedImages,
       videoUrl: rawVideoUrl != null && rawVideoUrl.trim().isNotEmpty
           ? rawVideoUrl.trim()
@@ -280,7 +311,7 @@ class Property {
       createdAt: (data['createdAt'] as dynamic)?.toDate(),
       updatedAt: (data['updatedAt'] as dynamic)?.toDate(),
       isPublished: (data['isPublished'] as bool?) ?? true,
-      area: (data['area'] as String?) ?? areaOptions.first,
+      area: rawArea,
     );
   }
 }

@@ -49,7 +49,7 @@ class _FilterSectionState extends State<FilterSection> {
 
   int get _activeFilterCount {
     int count = 0;
-    if (_priceRange.start > 0 || _priceRange.end < 10000000) count++;
+    if (_priceRange.start > 0 || _priceRange.end < FilterValues.defaultMaxPrice) count++;
     if (_selectedFloors.isNotEmpty) count++;
     if (_selectedFinishingStatuses.isNotEmpty) count++;
     if (_selectedOrientations.isNotEmpty) count++;
@@ -60,7 +60,7 @@ class _FilterSectionState extends State<FilterSection> {
   }
 
   bool get _hasPriceFilter =>
-      _priceRange.start > 0 || _priceRange.end < 10000000;
+      _priceRange.start > 0 || _priceRange.end < FilterValues.defaultMaxPrice;
 
   // ── Smart Truncated Selected Labels ──────────────────────────
   String get _floorLabel => floorFilterLabel(_selectedFloors);

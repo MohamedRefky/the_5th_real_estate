@@ -17,6 +17,11 @@ class FilterPriceSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    const double minVal = 0;
+    const double maxVal = 100000000;
+
+    final clampedStart = values.start.clamp(minVal, maxVal);
+    final clampedEnd = values.end.clamp(minVal, maxVal);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -33,7 +38,7 @@ class FilterPriceSlider extends StatelessWidget {
               ),
             ),
             Text(
-              '${formatPriceShort(values.start)} - ${formatPriceShort(values.end)} جنيه',
+              '${formatPriceShort(clampedStart)} - ${formatPriceShort(clampedEnd)} جنيه',
               style: const TextStyle(
                 color: AppColors.accent,
                 fontWeight: FontWeight.bold,
@@ -52,9 +57,9 @@ class FilterPriceSlider extends StatelessWidget {
             thumbColor: AppColors.accent,
           ),
           child: RangeSlider(
-            values: values,
-            min: 0,
-            max: 10000000,
+            values: RangeValues(clampedStart, clampedEnd),
+            min: minVal,
+            max: maxVal,
             divisions: 100,
             onChanged: onChanged,
           ),
