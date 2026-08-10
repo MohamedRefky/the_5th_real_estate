@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../models/apartment.dart' show FinishingStatus;
 import '../auth/auth_controller.dart';
 import '../models/admin_building.dart';
 import '../models/property.dart';
@@ -14,11 +15,9 @@ import '../widgets/property_card.dart';
 import 'building_form_screen.dart';
 import 'property_form_screen.dart';
 
-/// Hidden admin dashboard — lists all units and buildings (in per-area
-/// folders) with edit / delete / publish toggles, plus a one-click data
-/// migration from the legacy flat `properties` collection.
-///
-/// Reached only after login at `/admin/dashboard`.
+/// Hidden admin dashboard — lists all units and buildings organized by neighborhood
+/// tabs (الكل, المستثمرين, الأندلس, جاردينيا, بيت الوطن, النرجس الجديدة)
+/// with edit / delete / publish toggles and live Firestore sync.
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
 
@@ -26,15 +25,39 @@ class AdminDashboardScreen extends StatefulWidget {
   State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
 }
 
-class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+class _AdminDashboardScreenState extends State<AdminDashboardScreen>
+    with SingleTickerProviderStateMixin {
   late Future<List<Property>> _unitsFuture;
   late Future<List<AdminBuilding>> _buildingsFuture;
+
+  late TabController _tabController;
+
+  static const List<String> _areas = [
+    'الكل',
+    'المستثمرين',
+    'الأندلس',
+    'جاردينيا',
+    'بيت الوطن',
+    'النرجس الجديدة',
+  ];
+
+  String _searchQuery = '';
+  String _filterType = 'all'; // 'all', 'unit', 'building'
+  bool _showSearch = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _unitsFuture = PropertyService.instance.fetchAll();
-    _buildingsFuture = BuildingService.instance.fetchAll();
+    _tabController = TabController(length: _areas.length, vsync: this);
+    _reload();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _reload() {
@@ -50,44 +73,75 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     Navigator.pushReplacementNamed(context, RoutesNames.adminLogin);
   }
 
-  /// Shows the type chooser: عمارة vs شقة/فيلا — decides which form opens.
+  bool _areaMatches(String itemArea, String targetArea) {
+    if (targetArea == 'الكل') return true;
+    final cleanItem = itemArea
+        .trim()
+        .replaceAll('حي ', '')
+        .replaceAll('منطقة ', '')
+        .replaceAll('جاردنيا', 'جاردينيا');
+    final cleanTarget = targetArea
+        .trim()
+        .replaceAll('حي ', '')
+        .replaceAll('منطقة ', '')
+        .replaceAll('جاردنيا', 'جاردينيا');
+    if (cleanItem == cleanTarget) return true;
+    return cleanItem.contains(cleanTarget) || cleanTarget.contains(cleanItem);
+  }
+
   Future<void> _openAddChooser() async {
-    final choice = await showModalBottomSheet<String>(
+    final activeAreaIndex = _tabController.index;
+    final defaultArea =
+        activeAreaIndex > 0 ? _areas[activeAreaIndex] : 'المستثمرين';
+
+    final choice = await showDialog<String>(
       context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+      builder: (context) => Dialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AppColors.divider),
+        ),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 420),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: Text(
-                  'إيه اللي هتضيفه؟',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'إضافة عقار جديد ($defaultArea)',
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
-                ),
+                  IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(Icons.close_rounded,
+                        color: AppColors.textSecondary, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
               ),
+              const SizedBox(height: 12),
               _chooserOption(
                 icon: Icons.apartment_rounded,
                 title: 'شقة / فيلا / دوبلكس / استوديو',
-                subtitle: 'تضاف لفولدر حيها في كلكشن الوحدات',
+                subtitle: 'تضاف في قسم $defaultArea',
                 value: 'unit',
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               _chooserOption(
                 icon: Icons.business_rounded,
-                title: 'عمارة',
-                subtitle: 'تضاف لفولدر حيها في كلكشن العمارات',
+                title: 'عمارة بالكامل',
+                subtitle: 'تضاف في قسم $defaultArea',
                 value: 'building',
               ),
             ],
@@ -98,9 +152,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
     if (!mounted) return;
     if (choice == 'building') {
-      await _openBuildingForm();
+      await _openBuildingForm(initialArea: defaultArea);
     } else if (choice == 'unit') {
-      await _openUnitForm();
+      await _openUnitForm(initialArea: defaultArea);
     }
     _reload();
   }
@@ -154,19 +208,52 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  Future<void> _openUnitForm({Property? property}) async {
+  Future<void> _openUnitForm({Property? property, String? initialArea}) async {
+    final initialProperty = property ??
+        (initialArea != null
+            ? Property(
+                projectName: '',
+                unitType: UnitType.apartment,
+                floor: 'أرضي',
+                areaSqm: 120,
+                bedrooms: 2,
+                bathrooms: 1,
+                hasReception: true,
+                hasKitchen: true,
+                finishingStatus: PropertyFinishing.finished,
+                price: 2000000,
+                area: initialArea,
+              )
+            : null);
+
     await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => PropertyFormScreen(property: property),
+        builder: (_) => PropertyFormScreen(property: initialProperty),
       ),
     );
     _reload();
   }
 
-  Future<void> _openBuildingForm({AdminBuilding? building}) async {
+  Future<void> _openBuildingForm(
+      {AdminBuilding? building, String? initialArea}) async {
+    final initialBuilding = building ??
+        (initialArea != null
+            ? AdminBuilding(
+                name: '',
+                description: '',
+                area: initialArea,
+                startingPrice: 3000000,
+                totalFloors: 5,
+                totalUnits: 10,
+                availableUnits: 4,
+                finishingStatus: FinishingStatus.semiFinished,
+                whatsappNumber: '+201000000001',
+              )
+            : null);
+
     await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => BuildingFormScreen(building: building),
+        builder: (_) => BuildingFormScreen(building: initialBuilding),
       ),
     );
     _reload();
@@ -175,7 +262,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Future<void> _confirmDeleteUnit(Property property) async {
     final confirmed = await _confirm(
       title: 'حذف الوحدة؟',
-      message: 'سيتم حذف "${property.projectName} - ${property.floor}" نهائياً ولا يمكن التراجع.',
+      message:
+          'سيتم حذف "${property.projectName} - ${property.floor}" نهائياً ولا يمكن التراجع.',
     );
     if (confirmed != true) return;
     await PropertyService.instance.delete(property.id!, property);
@@ -225,14 +313,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     _reload();
   }
 
-  Future<void> _togglePublishedBuilding(AdminBuilding building, bool value) async {
+  Future<void> _togglePublishedBuilding(
+      AdminBuilding building, bool value) async {
     await BuildingService.instance
         .setPublished(building.id!, building, value);
     _reload();
   }
 
-  /// One-click migration of the legacy flat `properties` collection into the
-  /// new per-area folders.
   Future<void> _runMigration() async {
     final proceed = await showDialog<bool>(
       context: context,
@@ -290,7 +377,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: AppColors.divider),
         ),
-        title: const Text('نقلح كلكشن properties القديم؟',
+        title: const Text('مسح كلكشن properties القديم؟',
             style: TextStyle(color: AppColors.textPrimary)),
         content: const Text(
           'بعد الترحيل الناجح ممكن تتشال الدوكس القديمة من الكلكشن المسطح عشان الموقع ما يقراهاش تاني.',
@@ -327,139 +414,294 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: AppColors.surface,
-          elevation: 0,
-          title: const Text(
-            'لوحة التحكم',
-            style: TextStyle(color: AppColors.textPrimary),
+    return FutureBuilder<List<dynamic>>(
+      future: Future.wait([_unitsFuture, _buildingsFuture]),
+      builder: (context, snapshot) {
+        final isLoading = snapshot.connectionState != ConnectionState.done;
+        final units =
+            (snapshot.data?[0] as List<Property>?) ?? const <Property>[];
+        final buildings = (snapshot.data?[1] as List<AdminBuilding>?) ??
+            const <AdminBuilding>[];
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: AppColors.surface,
+            elevation: 0,
+            title: _showSearch
+                ? TextField(
+                    controller: _searchController,
+                    autofocus: true,
+                    style: const TextStyle(color: AppColors.textPrimary),
+                    decoration: InputDecoration(
+                      hintText: 'ابحث بالاسم، الوصف، أو الحي...',
+                      hintStyle: const TextStyle(color: AppColors.textHint),
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close_rounded,
+                            color: AppColors.textSecondary),
+                        onPressed: () {
+                          setState(() {
+                            _showSearch = false;
+                            _searchQuery = '';
+                            _searchController.clear();
+                          });
+                        },
+                      ),
+                    ),
+                    onChanged: (val) =>
+                        setState(() => _searchQuery = val.trim().toLowerCase()),
+                  )
+                : const Text(
+                    'لوحة تحكم العقارات',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+            actions: [
+              IconButton(
+                tooltip: _showSearch ? 'إغلاق البحث' : 'بحث',
+                onPressed: () => setState(() => _showSearch = !_showSearch),
+                icon: Icon(
+                  _showSearch
+                      ? Icons.search_off_rounded
+                      : Icons.search_rounded,
+                  color: AppColors.accent,
+                ),
+              ),
+              IconButton(
+                tooltip: 'تحديث البيانات',
+                onPressed: _reload,
+                icon: const Icon(Icons.refresh_rounded, color: AppColors.accent),
+              ),
+              IconButton(
+                tooltip: 'ترحيل البيانات القديمة',
+                onPressed: _runMigration,
+                icon: const Icon(Icons.sync_rounded, color: AppColors.accent),
+              ),
+              IconButton(
+                tooltip: 'تسجيل الخروج',
+                onPressed: _logout,
+                icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+              ),
+            ],
+            bottom: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              labelColor: AppColors.accent,
+              unselectedLabelColor: AppColors.textSecondary,
+              indicatorColor: AppColors.accent,
+              indicatorWeight: 3,
+              labelStyle:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              tabs: _areas.map((area) {
+                final areaUnits =
+                    units.where((u) => _areaMatches(u.area, area)).length;
+                final areaBlds = buildings
+                    .where((b) => _areaMatches(b.area, area))
+                    .length;
+                final totalCount = areaUnits + areaBlds;
+                return Tab(
+                  text: '$area ${totalCount > 0 ? "($totalCount)" : ""}',
+                );
+              }).toList(),
+            ),
           ),
-          actions: [
-            IconButton(
-              tooltip: 'ترحيل البيانات القديمة',
-              onPressed: _runMigration,
-              icon: const Icon(Icons.sync_rounded, color: AppColors.accent),
-            ),
-            IconButton(
-              tooltip: 'تسجيل الخروج',
-              onPressed: _logout,
-              icon: const Icon(Icons.logout_rounded, color: AppColors.accent),
-            ),
-          ],
-          bottom: const TabBar(
-            labelColor: AppColors.accent,
-            unselectedLabelColor: AppColors.textSecondary,
-            indicatorColor: AppColors.accent,
-            tabs: [
-              Tab(text: 'الوحدات (شقق وفيلات)'),
-              Tab(text: 'العمارات'),
+          floatingActionButton: FloatingActionButton.extended(
+            backgroundColor: AppColors.accent,
+            foregroundColor: AppColors.textOnPrimary,
+            onPressed: _openAddChooser,
+            icon: const Icon(Icons.add_rounded),
+            label: const Text('إضافة عقار'),
+          ),
+          body: Column(
+            children: [
+              // Type Sub-Filter Bar
+              Container(
+                color: AppColors.surface,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  children: [
+                    const Text(
+                      'عرض:',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    _buildFilterChip('all', 'الكل'),
+                    const SizedBox(width: 8),
+                    _buildFilterChip('unit', 'شقق وفيلات'),
+                    const SizedBox(width: 8),
+                    _buildFilterChip('building', 'عمارات'),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, color: AppColors.divider),
+              // Main Tab Views per Area
+              Expanded(
+                child: isLoading
+                    ? const Center(
+                        child:
+                            CircularProgressIndicator(color: AppColors.accent),
+                      )
+                    : TabBarView(
+                        controller: _tabController,
+                        children: _areas.map((area) {
+                          return _buildAreaList(
+                            targetArea: area,
+                            units: units,
+                            buildings: buildings,
+                          );
+                        }).toList(),
+                      ),
+              ),
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: AppColors.accent,
-          foregroundColor: AppColors.textOnPrimary,
-          onPressed: _openAddChooser,
-          icon: const Icon(Icons.add_rounded),
-          label: const Text('إضافة'),
-        ),
-        body: TabBarView(
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterChip(String value, String label) {
+    final isSelected = _filterType == value;
+    return FilterChip(
+      selected: isSelected,
+      label: Text(label),
+      labelStyle: TextStyle(
+        color: isSelected ? AppColors.textOnPrimary : AppColors.textPrimary,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontSize: 13,
+      ),
+      selectedColor: AppColors.accent,
+      backgroundColor: AppColors.background,
+      checkmarkColor: AppColors.textOnPrimary,
+      onSelected: (_) => setState(() => _filterType = value),
+    );
+  }
+
+  Widget _buildAreaList({
+    required String targetArea,
+    required List<Property> units,
+    required List<AdminBuilding> buildings,
+  }) {
+    // 1. Filter by Area
+    final areaUnits =
+        units.where((u) => _areaMatches(u.area, targetArea)).toList();
+    final areaBuildings =
+        buildings.where((b) => _areaMatches(b.area, targetArea)).toList();
+
+    // 2. Search Query filter
+    final query = _searchQuery.toLowerCase();
+    final filteredUnits = areaUnits.where((u) {
+      if (query.isEmpty) return true;
+      return u.projectName.toLowerCase().contains(query) ||
+          (u.description?.toLowerCase().contains(query) ?? false) ||
+          u.area.toLowerCase().contains(query);
+    }).toList();
+
+    final filteredBuildings = areaBuildings.where((b) {
+      if (query.isEmpty) return true;
+      return b.name.toLowerCase().contains(query) ||
+          b.description.toLowerCase().contains(query) ||
+          b.area.toLowerCase().contains(query);
+    }).toList();
+
+    // 3. Filter by Type
+    final showUnits = _filterType == 'all' || _filterType == 'unit';
+    final showBuildings = _filterType == 'all' || _filterType == 'building';
+
+    final totalItems = (showUnits ? filteredUnits.length : 0) +
+        (showBuildings ? filteredBuildings.length : 0);
+
+    if (totalItems == 0) {
+      return RefreshIndicator(
+        color: AppColors.accent,
+        onRefresh: () async => _reload(),
+        child: ListView(
+          padding: const EdgeInsets.all(24),
           children: [
-            _buildUnitsTab(),
-            _buildBuildingsTab(),
+            const SizedBox(height: 40),
+            MessageView(
+              icon: Icons.location_off_rounded,
+              title: 'لا توجد عقارات في $targetArea',
+              message:
+                  'اضغط على زر "إضافة عقار" لرفع شقة أو عمارة جديدة في هذه المنطقة.',
+            ),
           ],
         ),
+      );
+    }
+
+    return RefreshIndicator(
+      color: AppColors.accent,
+      onRefresh: () async => _reload(),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+        children: [
+          if (showUnits && filteredUnits.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8, top: 4),
+              child: Row(
+                children: [
+                  const Icon(Icons.apartment_rounded,
+                      color: AppColors.accent, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                    'الشقق والفيلات (${filteredUnits.length})',
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ...filteredUnits.map((property) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: PropertyCard(
+                    property: property,
+                    onEdit: () => _openUnitForm(property: property),
+                    onDelete: () => _confirmDeleteUnit(property),
+                    onToggle: (v) => _togglePublishedUnit(property, v),
+                  ),
+                )),
+          ],
+          if (showBuildings && filteredBuildings.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8, top: 16),
+              child: Row(
+                children: [
+                  const Icon(Icons.business_rounded,
+                      color: Colors.purple, size: 18),
+                  const SizedBox(width: 6),
+                  Text(
+                    'العمارات السكنية (${filteredBuildings.length})',
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ...filteredBuildings.map((building) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: AdminBuildingCard(
+                    building: building,
+                    onEdit: () => _openBuildingForm(building: building),
+                    onDelete: () => _confirmDeleteBuilding(building),
+                    onToggle: (v) => _togglePublishedBuilding(building, v),
+                  ),
+                )),
+          ],
+        ],
       ),
-    );
-  }
-
-  Widget _buildUnitsTab() {
-    return FutureBuilder<List<Property>>(
-      future: _unitsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.accent),
-          );
-        }
-        if (snapshot.hasError) {
-          return MessageView(
-            icon: Icons.error_outline_rounded,
-            title: 'فشل التحميل',
-            message: '${snapshot.error}',
-          );
-        }
-        final items = snapshot.data ?? const <Property>[];
-        if (items.isEmpty) {
-          return const MessageView(
-            icon: Icons.home_work_outlined,
-            title: 'لا توجد وحدات بعد',
-            message: 'اضغط "إضافة" ثم اختر شقة/فيلا لبدء إضافة الوحدات.',
-          );
-        }
-        return RefreshIndicator(
-          color: AppColors.accent,
-          onRefresh: () async => _reload(),
-          child: ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-            itemCount: items.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (context, index) => PropertyCard(
-              property: items[index],
-              onEdit: () => _openUnitForm(property: items[index]),
-              onDelete: () => _confirmDeleteUnit(items[index]),
-              onToggle: (v) => _togglePublishedUnit(items[index], v),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBuildingsTab() {
-    return FutureBuilder<List<AdminBuilding>>(
-      future: _buildingsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.accent),
-          );
-        }
-        if (snapshot.hasError) {
-          return MessageView(
-            icon: Icons.error_outline_rounded,
-            title: 'فشل التحميل',
-            message: '${snapshot.error}',
-          );
-        }
-        final items = snapshot.data ?? const <AdminBuilding>[];
-        if (items.isEmpty) {
-          return const MessageView(
-            icon: Icons.business_outlined,
-            title: 'لا توجد عمارات بعد',
-            message: 'اضغط "إضافة" ثم اختر عمارة لبدء إضافة العمارات.',
-          );
-        }
-        return RefreshIndicator(
-          color: AppColors.accent,
-          onRefresh: () async => _reload(),
-          child: ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-            itemCount: items.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
-            itemBuilder: (context, index) => AdminBuildingCard(
-              building: items[index],
-              onEdit: () => _openBuildingForm(building: items[index]),
-              onDelete: () => _confirmDeleteBuilding(items[index]),
-              onToggle: (v) => _togglePublishedBuilding(items[index], v),
-            ),
-          ),
-        );
-      },
     );
   }
 }
