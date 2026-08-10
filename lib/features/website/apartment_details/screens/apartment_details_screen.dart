@@ -164,12 +164,13 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               child: Container(
-                                width: 220,
+                                 width: double.infinity,
                                 height: 160,
-                                color: const Color(0xFF0F172A),
+                                color: Colors.transparent,
                                 child: Image.network(
                                   cleanUrl,
                                   fit: BoxFit.contain,
+                                  filterQuality: FilterQuality.medium,
                                   errorBuilder: (_, _, _) =>
                                       const SizedBox.shrink(),
                                 ),
