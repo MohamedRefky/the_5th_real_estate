@@ -95,13 +95,13 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
+            constraints: const BoxConstraints(maxWidth: 920),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Facade Cover Photo (Scale Reveal) ───────────
+                  // ── 1. Facade Cover Photo ───────────────────────
                   RevealOnScroll(
                     direction: RevealDirection.scale,
                     child: FacadeCoverPlaceholder(
@@ -111,7 +111,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ── Image Gallery (if multiple images exist) ────
+                  // ── 2. Image Gallery ─────────────────────────────
                   if (apartment.imageUrls.length > 1) ...[
                     const SectionHeader(
                       title: 'معرض صور الشقة',
@@ -132,77 +132,43 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                             url: cleanUrl,
                             targetHeight: 180,
                             borderRadius: BorderRadius.circular(16),
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => Dialog.fullscreen(
-                                  backgroundColor: Colors.black,
-                                  child: Stack(
-                                    children: [
-                                      Center(
-                                        child: InteractiveViewer(
-                                          child: Image.network(
-                                            cleanUrl,
-                                            fit: BoxFit.contain,
-                                            filterQuality: FilterQuality.high,
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 20,
-                                        right: 20,
-                                        child: IconButton(
-                                          icon: const Icon(
-                                            Icons.close_rounded,
-                                            color: Colors.white,
-                                            size: 32,
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
+                            onTap: () => _openImageDialog(context, cleanUrl),
                           );
                         },
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                   ],
 
-                  // ── 1. Title & Address Header (From Right) ──────
+                  // ── 3. Title & Address Header ───────────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromRight,
                     child: TitleHeaderSection(apartment: apartment),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
-                  // ── 2. Description (From Right) ───────────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.fromRight,
-                    child: DescriptionSection(apartment: apartment),
-                  ),
-
-                  const SizedBox(height: 20),
-                  // ── 4. Key Stats (From Left) ──────────────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.fromLeft,
-                    child: StatsSection(apartment: apartment),
-                  ),
-
-                  const SizedBox(height: 20),
-                  // ── 3. Price Section (Scale Reveal) ───────────────
+                  // ── 4. Price & Financials ───────────────────────
                   RevealOnScroll(
                     direction: RevealDirection.scale,
                     child: PriceSection(apartment: apartment),
                   ),
+                  const SizedBox(height: 24),
 
-                  const SizedBox(height: 18),
+                  // ── 5. Key Stats Grid ───────────────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromLeft,
+                    child: StatsSection(apartment: apartment),
+                  ),
+                  const SizedBox(height: 24),
 
-                  // ── Walkthrough Video (From Right) ─────────────
+                  // ── 6. Description Section ──────────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromRight,
+                    child: DescriptionSection(apartment: apartment),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // ── 7. Walkthrough Video ────────────────────────
                   if (apartment.videoUrl != null &&
                       apartment.videoUrl!.trim().isNotEmpty) ...[
                     RevealOnScroll(
@@ -219,18 +185,10 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                   ],
 
-                  // ── WhatsApp Direct Callout Banner (Scale) ──────
-                  RevealOnScroll(
-                    direction: RevealDirection.scale,
-                    child: WhatsAppBannerCard(apartment: apartment),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ── Amenities (From Left) ──────────────────────
+                  // ── 8. Amenities & Features Grid ────────────────
                   if (apartment.amenities.isNotEmpty) ...[
                     RevealOnScroll(
                       direction: RevealDirection.fromLeft,
@@ -246,20 +204,20 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                   ],
 
-                  // ── Construction Timeline (From Right) ─────────
+                  // ── 9. Construction Timeline (if under construction) ─
                   if (apartment.isUnderConstruction &&
                       apartment.milestones.isNotEmpty) ...[
                     RevealOnScroll(
                       direction: RevealDirection.fromRight,
                       child: ConstructionTimeline(apartment: apartment),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                   ],
 
-                  // ── Details Table (From Left) ──────────────────
+                  // ── 10. Details Table ───────────────────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromLeft,
                     child: Column(
@@ -269,24 +227,65 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                           title: 'جدول التفاصيل الكاملة',
                           icon: Icons.assignment_rounded,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         DetailsTable(rows: _detailsRows),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 24),
 
-                  // ── Other Available Units in Area (From Right) ─────────
-                  const SizedBox(height: 20),
+                  // ── 11. WhatsApp Banner CTA ─────────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.scale,
+                    child: WhatsAppBannerCard(apartment: apartment),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // ── 12. Similar Properties in Area ───────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromRight,
                     child: OtherUnitsInAreaSection(currentApartment: apartment),
                   ),
 
-                  const SizedBox(height: 90), // Space for sticky CTA
+                  const SizedBox(height: 90),
                 ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _openImageDialog(BuildContext context, String cleanUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(
+                  cleanUrl,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.close_rounded,
+                  color: Colors.white,
+                  size: 32,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
         ),
       ),
     );
