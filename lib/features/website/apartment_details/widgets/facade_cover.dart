@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/image_url_helper.dart';
 
 /// Hero facade / cover photo of the apartment building.
 class FacadeCoverPlaceholder extends StatelessWidget {
@@ -43,9 +44,9 @@ class FacadeCoverPlaceholder extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: imageUrl != null && imageUrl!.isNotEmpty
+      child: imageUrl != null && imageUrl!.trim().isNotEmpty
           ? Image.network(
-              imageUrl!,
+              sanitizeImageUrl(imageUrl!),
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) => _buildAssetOrPlaceholder(theme, fallbackAsset),
             )

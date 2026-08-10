@@ -65,14 +65,14 @@ class PublicPropertyRepository {
                 .doc(area)
                 .collection('units')
                 .where('isPublished', isEqualTo: true)
-                .get(const GetOptions(source: Source.serverAndCache)),
+                .get(),
         ]);
 
         // Legacy flat collection — still read until the migration deletes it.
         final legacySnap = await FirebaseFirestore.instance
             .collection('properties')
             .where('isPublished', isEqualTo: true)
-            .get(const GetOptions(source: Source.serverAndCache));
+            .get();
 
         for (final snap in [legacySnap, ...areaSnaps]) {
           for (final doc in snap.docs) {

@@ -1,4 +1,5 @@
 import '../core/utils/formatters.dart';
+import '../core/utils/image_url_helper.dart';
 
 /// ─── Finishing status of a property unit ─────────────────────────
 ///
@@ -340,11 +341,26 @@ class Apartment {
                   ConstructionMilestone.fromJson(m as Map<String, dynamic>))
               .toList() ??
           [],
+
       whatsappNumber: json['whatsappNumber'] as String? ?? '',
-      imageUrls: (json['imageUrls'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
+      imageUrls: (() {
+        final raw = json['imageUrls'] ??
+            json['imageUrl'] ??
+            json['images'] ??
+            json['photo'] ??
+            json['photos'];
+        if (raw is List) {
+          return raw
+              .map((e) => sanitizeImageUrl(e.toString()))
+              .where((s) => s.isNotEmpty)
+              .toList();
+        }
+        if (raw is String && raw.trim().isNotEmpty) {
+          final cleaned = sanitizeImageUrl(raw);
+          return cleaned.isNotEmpty ? [cleaned] : <String>[];
+        }
+        return <String>[];
+      })(),
       videoUrl: json['videoUrl'] as String?,
       amenities: (json['amenities'] as List<dynamic>?)
               ?.map((e) => e as String)

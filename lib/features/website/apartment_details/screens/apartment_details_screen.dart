@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/image_url_helper.dart';
 import '../../../../core/widgets/details_table.dart';
 import '../../../../core/widgets/reveal_on_scroll.dart';
 import '../../../../core/widgets/section_header.dart';
@@ -42,7 +43,8 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
   }
 
   Future<void> _load() async {
-    final apt = await PublicPropertyRepository.instance.byId(widget.apartmentId) ??
+    final apt =
+        await PublicPropertyRepository.instance.byId(widget.apartmentId) ??
         DummyData.getById(widget.apartmentId);
     if (!mounted) return;
     setState(() {
@@ -107,6 +109,38 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
+
+                  // ── Image Gallery (if multiple images exist) ────
+                  if (apartment.imageUrls.length > 1) ...[
+                    const SectionHeader(
+                      title: 'معرض صور الشقة',
+                      icon: Icons.photo_library_rounded,
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 140,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: apartment.imageUrls.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final url = apartment.imageUrls[index];
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              sanitizeImageUrl(url),
+                              width: 200,
+                              height: 140,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, _, _) =>
+                                  const SizedBox.shrink(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
 
                   // ── 1. Title & Address Header (From Right) ──────
                   RevealOnScroll(

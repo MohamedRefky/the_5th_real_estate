@@ -6,6 +6,8 @@
 /// and filtered server-side.
 library;
 
+import '../../../core/utils/image_url_helper.dart';
+
 /// Unit types a listing can be.
 enum UnitType {
   apartment('شقة'),
@@ -220,6 +222,7 @@ class Property {
       'priceNote': priceNote?.label,
       'description': description,
       'imageUrls': imageUrls,
+      'imageUrl': imageUrls.firstOrNull,
       'videoUrl': videoUrl,
       'createdAt': isUpdate ? (createdAt ?? now) : now,
       'updatedAt': now,
@@ -232,6 +235,27 @@ class Property {
     String docId,
     Map<String, dynamic> data,
   ) {
+    final rawImages = data['imageUrls'] ??
+        data['imageUrl'] ??
+        data['images'] ??
+        data['photo'] ??
+        data['photos'];
+
+    final List<String> parsedImages = [];
+    if (rawImages is List) {
+      for (final e in rawImages) {
+        if (e != null) {
+          final cleaned = sanitizeImageUrl(e.toString());
+          if (cleaned.isNotEmpty) parsedImages.add(cleaned);
+        }
+      }
+    } else if (rawImages is String && rawImages.trim().isNotEmpty) {
+      final cleaned = sanitizeImageUrl(rawImages);
+      if (cleaned.isNotEmpty) parsedImages.add(cleaned);
+    }
+
+    final rawVideoUrl = (data['videoUrl'] as String?) ?? (data['video'] as String?);
+
     return Property(
       id: docId,
       projectName: (data['projectName'] as String?) ?? '',
@@ -249,9 +273,10 @@ class Property {
       price: ((data['price'] as num?) ?? 0).toDouble(),
       priceNote: PriceNote.fromLabel(data['priceNote'] as String?),
       description: data['description'] as String?,
-      imageUrls:
-          ((data['imageUrls'] as List?) ?? const []).map((e) => e as String).toList(),
-      videoUrl: data['videoUrl'] as String?,
+      imageUrls: parsedImages,
+      videoUrl: rawVideoUrl != null && rawVideoUrl.trim().isNotEmpty
+          ? rawVideoUrl.trim()
+          : null,
       createdAt: (data['createdAt'] as dynamic)?.toDate(),
       updatedAt: (data['updatedAt'] as dynamic)?.toDate(),
       isPublished: (data['isPublished'] as bool?) ?? true,

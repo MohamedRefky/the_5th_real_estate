@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/app_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/image_url_helper.dart';
 import '../../../../core/utils/status_colors.dart';
 import '../../../../core/widgets/cover_image_fallback.dart';
 import '../../../../core/widgets/hover_card.dart';
@@ -61,8 +62,37 @@ class ApartmentCard extends StatelessWidget {
                   width: double.infinity,
                   child: Stack(
                     children: [
-                      // Background Image or Fallback Gradient
-                      if (areaImage != null) ...[
+                      // Background Image (Cover URL > Area Asset > Fallback)
+                      if (apt.coverImageUrl != null && apt.coverImageUrl!.isNotEmpty) ...[
+                        Positioned.fill(
+                          child: AnimatedScale(
+                            scale: isHovered ? 1.06 : 1.0,
+                            duration: const Duration(milliseconds: 350),
+                            curve: Curves.easeOutCubic,
+                            child: Image.network(
+                              sanitizeImageUrl(apt.coverImageUrl!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => areaImage != null
+                                  ? Image.asset(areaImage, fit: BoxFit.cover)
+                                  : const CoverImageFallback(),
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black.withValues(alpha: 0.25),
+                                  Colors.black.withValues(alpha: 0.70),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ] else if (areaImage != null) ...[
                         Positioned.fill(
                           child: AnimatedScale(
                             scale: isHovered ? 1.06 : 1.0,
@@ -87,7 +117,7 @@ class ApartmentCard extends StatelessWidget {
                         ),
                       ] else ...[
                         Positioned.fill(
-                          child: CoverImageFallback(),
+                          child: const CoverImageFallback(),
                         ),
                       ],
 

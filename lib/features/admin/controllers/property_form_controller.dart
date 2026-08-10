@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/utils/image_url_helper.dart';
 import '../models/property.dart';
 import '../services/property_service.dart';
 
@@ -141,7 +142,7 @@ class PropertyFormController extends ChangeNotifier {
     try {
       final parsedImageUrls = imageUrls.text
           .split(RegExp(r'[\n,]'))
-          .map((s) => s.trim())
+          .map((s) => sanitizeImageUrl(s.trim()))
           .where((s) => s.isNotEmpty)
           .toList();
       final parsedVideoUrl =
