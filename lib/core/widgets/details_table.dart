@@ -33,7 +33,7 @@ class DetailsTable extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: AppColors.accent.withValues(alpha: 0.35),
           width: 1.2,
@@ -55,15 +55,15 @@ class DetailsTable extends StatelessWidget {
           final isLast = index == rows.length - 1;
           final isEven = index.isEven;
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
               color: isEven
                   ? AppColors.surface
                   : AppColors.cream.withValues(alpha: 0.7),
               borderRadius: isLast
-                  ? const BorderRadius.vertical(bottom: Radius.circular(22))
+                  ? const BorderRadius.vertical(bottom: Radius.circular(20))
                   : (index == 0
-                        ? const BorderRadius.vertical(top: Radius.circular(22))
+                        ? const BorderRadius.vertical(top: Radius.circular(20))
                         : null),
               border: layout == DetailsTableLayout.spaced
                   ? (isLast

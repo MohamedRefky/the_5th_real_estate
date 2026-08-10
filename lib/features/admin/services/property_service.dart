@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../data/public_property_repository.dart';
 import '../models/property.dart';
@@ -93,20 +92,6 @@ class PropertyService {
     }
     await _units(property.area).doc(id).delete();
     PublicPropertyRepository.instance.invalidate();
-  }
-
-  Future<List<String>> _upload(List<XFile> files) async {
-    final urls = <String>[];
-    for (final file in files) {
-      final name = file.name.isNotEmpty
-          ? file.name
-          : 'image_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final ref = FirebaseStorage.instance
-          .ref('properties/${DateTime.now().millisecondsSinceEpoch}_$name');
-      await ref.putData(await file.readAsBytes());
-      urls.add(await ref.getDownloadURL());
-    }
-    return urls;
   }
 
   Future<void> _deleteStorageFiles(List<String> urls) async {

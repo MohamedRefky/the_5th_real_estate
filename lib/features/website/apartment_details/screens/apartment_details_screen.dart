@@ -109,9 +109,30 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                       area: apartment.area,
                     ),
                   ),
+                  const SizedBox(height: 24),
+
+                  // ── 2. Title & Address Header ───────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromRight,
+                    child: TitleHeaderSection(apartment: apartment),
+                  ),
                   const SizedBox(height: 20),
 
-                  // ── 2. Image Gallery ─────────────────────────────
+                  // ── 3. Price & Financials ───────────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.scale,
+                    child: PriceSection(apartment: apartment),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // ── 4. Key Stats Grid ───────────────────────────
+                  RevealOnScroll(
+                    direction: RevealDirection.fromLeft,
+                    child: StatsSection(apartment: apartment),
+                  ),
+                  const SizedBox(height: 28),
+
+                  // ── 5. Image Gallery ────────────────────────────
                   if (apartment.imageUrls.length > 1) ...[
                     const SectionHeader(
                       title: 'معرض صور الشقة',
@@ -137,58 +158,17 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
                   ],
-
-                  // ── 3. Title & Address Header ───────────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.fromRight,
-                    child: TitleHeaderSection(apartment: apartment),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // ── 4. Price & Financials ───────────────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.scale,
-                    child: PriceSection(apartment: apartment),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // ── 5. Key Stats Grid ───────────────────────────
-                  RevealOnScroll(
-                    direction: RevealDirection.fromLeft,
-                    child: StatsSection(apartment: apartment),
-                  ),
-                  const SizedBox(height: 24),
 
                   // ── 6. Description Section ──────────────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromRight,
                     child: DescriptionSection(apartment: apartment),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
-                  // ── 7. Walkthrough Video ────────────────────────
-                  if (apartment.videoUrl != null &&
-                      apartment.videoUrl!.trim().isNotEmpty) ...[
-                    RevealOnScroll(
-                      direction: RevealDirection.fromRight,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SectionHeader(
-                            title: 'فيديو معاينة الشقة',
-                            icon: Icons.videocam_rounded,
-                          ),
-                          const SizedBox(height: 10),
-                          VideoPlaceholder(videoUrl: apartment.videoUrl),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // ── 8. Amenities & Features Grid ────────────────
+                  // ── 7. Amenities & Features Grid ────────────────
                   if (apartment.amenities.isNotEmpty) ...[
                     RevealOnScroll(
                       direction: RevealDirection.fromLeft,
@@ -199,25 +179,15 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                             title: 'المميزات والتسهيلات',
                             icon: Icons.star_rounded,
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 12),
                           AmenitiesGrid(amenities: apartment.amenities),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
                   ],
 
-                  // ── 9. Construction Timeline (if under construction) ─
-                  if (apartment.isUnderConstruction &&
-                      apartment.milestones.isNotEmpty) ...[
-                    RevealOnScroll(
-                      direction: RevealDirection.fromRight,
-                      child: ConstructionTimeline(apartment: apartment),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // ── 10. Details Table ───────────────────────────
+                  // ── 8. Details Table ────────────────────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromLeft,
                     child: Column(
@@ -232,7 +202,37 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
+
+                  // ── 9. Construction Timeline (if under construction) ─
+                  if (apartment.isUnderConstruction &&
+                      apartment.milestones.isNotEmpty) ...[
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: ConstructionTimeline(apartment: apartment),
+                    ),
+                    const SizedBox(height: 28),
+                  ],
+
+                  // ── 10. Walkthrough Video ───────────────────────
+                  if (apartment.videoUrl != null &&
+                      apartment.videoUrl!.trim().isNotEmpty) ...[
+                    RevealOnScroll(
+                      direction: RevealDirection.fromRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SectionHeader(
+                            title: 'فيديو معاينة الشقة',
+                            icon: Icons.videocam_rounded,
+                          ),
+                          const SizedBox(height: 12),
+                          VideoPlaceholder(videoUrl: apartment.videoUrl),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                  ],
 
                   // ── 11. WhatsApp Banner CTA ─────────────────────
                   RevealOnScroll(
@@ -241,10 +241,12 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                   ),
                   const SizedBox(height: 32),
 
-                  // ── 12. Similar Properties in Area ───────────────
+                  // ── 12. Similar Properties in Area ──────────────
                   RevealOnScroll(
                     direction: RevealDirection.fromRight,
-                    child: OtherUnitsInAreaSection(currentApartment: apartment),
+                    child: OtherUnitsInAreaSection(
+                      currentApartment: apartment,
+                    ),
                   ),
 
                   const SizedBox(height: 90),

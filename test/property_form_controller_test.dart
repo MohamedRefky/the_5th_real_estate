@@ -16,7 +16,6 @@ void main() {
       expect(c.hasReception, true);
       expect(c.hasKitchen, true);
       expect(c.isPublished, true);
-      expect(c.visibleImageCount, 0);
       c.dispose();
     });
 
@@ -74,7 +73,7 @@ void main() {
       c.dispose();
     });
 
-    test('tracks removed existing images', () {
+    test('initializes image URLs text field for an existing property', () {
       final p = Property(
         id: 'x',
         projectName: 'ن',
@@ -90,10 +89,7 @@ void main() {
         imageUrls: ['https://a/1.jpg', 'https://a/2.jpg'],
       );
       final c = PropertyFormController(p);
-      expect(c.visibleImageCount, 2);
-      c.removeExisting('https://a/1.jpg');
-      expect(c.visibleImageCount, 1);
-      expect(c.visibleExistingUrls, ['https://a/2.jpg']);
+      expect(c.imageUrls.text, 'https://a/1.jpg\nhttps://a/2.jpg');
       c.dispose();
     });
   });

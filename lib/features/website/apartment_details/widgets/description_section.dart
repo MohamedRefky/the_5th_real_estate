@@ -20,13 +20,13 @@ class DescriptionSection extends StatelessWidget {
           title: 'الوصف والتفاصيل الكاملة',
           icon: Icons.description_rounded,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: AppColors.divider.withValues(alpha: 0.6),
             ),
