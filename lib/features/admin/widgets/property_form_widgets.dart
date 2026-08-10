@@ -30,11 +30,19 @@ InputDecoration propertyInputDecoration(
   return InputDecoration(
     labelText: label,
     labelStyle: const TextStyle(color: AppColors.textSecondary),
+    floatingLabelStyle: const TextStyle(
+      color: AppColors.textPrimary,
+      fontWeight: FontWeight.w600,
+    ),
     prefixIcon: prefixIcon == null
         ? null
         : Icon(prefixIcon, color: AppColors.accent),
     filled: true,
     fillColor: fillColor,
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
+    ),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
       borderSide: const BorderSide(color: AppColors.divider),
@@ -83,6 +91,7 @@ class FormTextField extends StatelessWidget {
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted,
       validator: validator,
+      cursorColor: AppColors.textPrimary,
       style: const TextStyle(color: AppColors.textPrimary),
       decoration: propertyInputDecoration(
         label,
