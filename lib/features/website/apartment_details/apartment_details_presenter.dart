@@ -74,10 +74,5 @@ List<DetailsRow> apartmentDetailsRows(Apartment apartment) {
         label: 'موعد التسليم المتوقع',
         value: apartment.formattedDeliveryDate!,
       ),
-    (
-      icon: Icons.phone_iphone_rounded,
-      label: 'رقم التواصل والمعاينة',
-      value: apartment.whatsappNumber,
-    ),
   ];
 }
