@@ -195,26 +195,17 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: FormTextField(
-                                c.bathrooms,
-                                'عدد الحمامات',
-                                keyboardType: TextInputType.number,
-                                validator: c.numberValidator,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: FormTextField(
-                                c.price,
-                                'السعر (ج.م)',
-                                keyboardType: TextInputType.number,
-                                validator: c.numberValidator,
-                              ),
-                            ),
-                          ],
+                        FormTextField(
+                          c.bathrooms,
+                          'عدد الحمامات',
+                          keyboardType: TextInputType.number,
+                          validator: c.numberValidator,
+                        ),
+                        const SizedBox(height: 12),
+                        PriceInputField(
+                          controller: c.price,
+                          label: 'السعر (ج.م)',
+                          validator: c.numberValidator,
                         ),
                         const SizedBox(height: 16),
                         FormSwitchRow(

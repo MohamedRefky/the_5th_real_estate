@@ -178,3 +178,210 @@ class FormSwitchRow extends StatelessWidget {
     );
   }
 }
+
+/// Smart Price Input Field with auto zero buttons (+000) and live Arabic text preview.
+class PriceInputField extends StatefulWidget {
+  final TextEditingController controller;
+  final String label;
+  final String? Function(String?)? validator;
+
+  const PriceInputField({
+    super.key,
+    required this.controller,
+    this.label = 'السعر (ج.م)',
+    this.validator,
+  });
+
+  @override
+  State<PriceInputField> createState() => _PriceInputFieldState();
+}
+
+class _PriceInputFieldState extends State<PriceInputField> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onPriceChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onPriceChanged);
+    super.dispose();
+  }
+
+  void _onPriceChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _appendZeros() {
+    final currentText = widget.controller.text.trim();
+    if (currentText.isEmpty) {
+      widget.controller.text = '1000';
+    } else {
+      widget.controller.text = '${currentText}000';
+    }
+    widget.controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: widget.controller.text.length),
+    );
+  }
+
+  void _setPreset(int amount) {
+    widget.controller.text = amount.toString();
+    widget.controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: widget.controller.text.length),
+    );
+  }
+
+  String _formatArabicText(String input) {
+    final double? val = double.tryParse(input.trim());
+    if (val == null || val <= 0) return '';
+    final int amount = val.round();
+
+    final int millions = amount ~/ 1000000;
+    final int remainder = amount % 1000000;
+    final int thousands = remainder ~/ 1000;
+    final int rest = remainder % 1000;
+
+    final List<String> parts = [];
+    if (millions > 0) {
+      if (millions == 1) {
+        parts.add('مليون');
+      } else if (millions == 2) {
+        parts.add('مليونان');
+      } else if (millions >= 3 && millions <= 10) {
+        parts.add('$millions ملايين');
+      } else {
+        parts.add('$millions مليون');
+      }
+    }
+
+    if (thousands > 0) {
+      if (thousands == 1) {
+        parts.add('ألف');
+      } else if (thousands == 2) {
+        parts.add('ألفان');
+      } else if (thousands >= 3 && thousands <= 10) {
+        parts.add('$thousands آلاف');
+      } else {
+        parts.add('$thousands ألف');
+      }
+    }
+
+    if (rest > 0) {
+      parts.add('$rest');
+    }
+
+    if (parts.isEmpty) {
+      return '$amount جنيه';
+    }
+
+    return '${parts.join(' و ')} جنيه';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final arabicText = _formatArabicText(widget.controller.text);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FormTextField(
+          widget.controller,
+          widget.label,
+          keyboardType: TextInputType.number,
+          validator: widget.validator,
+          prefixIcon: Icons.payments_rounded,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            InkWell(
+              onTap: _appendZeros,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.accent.withValues(alpha: 0.4)),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.add_rounded, size: 14, color: AppColors.accent),
+                    Text(
+                      ' 000 (ثلاثة أصفار)',
+                      style: TextStyle(
+                        color: AppColors.accent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _presetChip('1M', 1000000),
+            _presetChip('2M', 2000000),
+            _presetChip('3M', 3000000),
+            _presetChip('5M', 5000000),
+          ],
+        ),
+        if (arabicText.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.accent.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.accent.withValues(alpha: 0.25)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.check_circle_rounded,
+                    size: 16, color: AppColors.accent),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'المبلغ بالعربية: $arabicText',
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _presetChip(String label, int amount) {
+    return InkWell(
+      onTap: () => _setPreset(amount),
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}

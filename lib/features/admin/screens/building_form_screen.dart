@@ -151,26 +151,17 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                           onChanged: c.setFinishingStatus,
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: FormTextField(
-                                c.startingPrice,
-                                'السعر (ج.م)',
-                                keyboardType: TextInputType.number,
-                                validator: c.numberValidator,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: FormTextField(
-                                c.totalFloors,
-                                'عدد الأدوار',
-                                keyboardType: TextInputType.number,
-                                validator: c.numberValidator,
-                              ),
-                            ),
-                          ],
+                        PriceInputField(
+                          controller: c.startingPrice,
+                          label: 'السعر الأولي (ج.م)',
+                          validator: c.numberValidator,
+                        ),
+                        const SizedBox(height: 12),
+                        FormTextField(
+                          c.totalFloors,
+                          'عدد الأدوار',
+                          keyboardType: TextInputType.number,
+                          validator: c.numberValidator,
                         ),
                         const SizedBox(height: 12),
                         Row(
