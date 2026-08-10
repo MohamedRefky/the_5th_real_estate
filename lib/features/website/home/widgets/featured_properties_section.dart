@@ -102,77 +102,85 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionBar(
-                index: 2,
-                icon: Icons.star_rounded,
-                title: 'عقارات مميزة',
-                subtitle: 'تصفح باقة شاملة من أفخم الشقق والعمارات المتاحة',
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 550,
-                child: FutureBuilder<List<_FeaturedItem>>(
-                  future: _featuredFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      );
-                    }
-                    final items = snapshot.data ?? [];
-                    if (items.isEmpty) {
-                      return const SizedBox.shrink();
-                    }
-
-                    final displayItems = items.length > 2
-                        ? [...items, ...items, ...items]
-                        : items;
-
-                    return MouseRegion(
-                      onEnter: (_) => setState(() => _isUserInteracting = true),
-                      onExit: (_) => setState(() => _isUserInteracting = false),
-                      child: NotificationListener<ScrollNotification>(
-                        onNotification: (notification) {
-                          if (notification is ScrollStartNotification) {
-                            _isUserInteracting = true;
-                          } else if (notification is ScrollEndNotification) {
-                            _isUserInteracting = false;
-                          }
-                          return false;
-                        },
-                        child: ListView.separated(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 8,
-                          ),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: displayItems.length,
-                          separatorBuilder: (_, _) => const SizedBox(width: 24),
-                          itemBuilder: (context, index) {
-                            final item = displayItems[index];
-                            return SizedBox(
-                              width: 360,
-                              child: item.apartment != null
-                                  ? ApartmentCard(apartment: item.apartment!)
-                                  : BuildingCard(building: item.building!),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Centered Section Bar Header ──────────────────────────────
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1200),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: SectionBar(
+                  index: 2,
+                  icon: Icons.star_rounded,
+                  title: 'عقارات مميزة',
+                  subtitle: 'تصفح باقة شاملة من أفخم الشقق والعمارات المتاحة',
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+
+          const SizedBox(height: 20),
+
+          // ── Edge-to-Edge Full Width Continuous Ticker ─────────────────
+          SizedBox(
+            height: 480,
+            width: double.infinity,
+            child: FutureBuilder<List<_FeaturedItem>>(
+              future: _featuredFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
+                }
+                final items = snapshot.data ?? [];
+                if (items.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                final displayItems = items.length > 2
+                    ? [...items, ...items, ...items, ...items]
+                    : items;
+
+                return MouseRegion(
+                  onEnter: (_) => setState(() => _isUserInteracting = true),
+                  onExit: (_) => setState(() => _isUserInteracting = false),
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification is ScrollStartNotification) {
+                        _isUserInteracting = true;
+                      } else if (notification is ScrollEndNotification) {
+                        _isUserInteracting = false;
+                      }
+                      return false;
+                    },
+                    child: ListView.separated(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: displayItems.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 20),
+                      itemBuilder: (context, index) {
+                        final item = displayItems[index];
+                        return SizedBox(
+                          width: 330,
+                          child: item.apartment != null
+                              ? ApartmentCard(apartment: item.apartment!)
+                              : BuildingCard(building: item.building!),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
