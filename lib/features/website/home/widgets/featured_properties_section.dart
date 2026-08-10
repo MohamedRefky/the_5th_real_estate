@@ -45,7 +45,7 @@ class _FeaturedPropertiesSectionState
               ),
               const SizedBox(height: 20),
               SizedBox(
-                height: 480,
+                height: 540,
                 child: FutureBuilder<List<Apartment>>(
                   future: _featuredFuture,
                   builder: (context, snapshot) {

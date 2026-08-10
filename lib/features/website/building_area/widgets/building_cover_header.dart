@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -25,17 +27,39 @@ class BuildingCoverHeader extends StatelessWidget {
     final coverUrl = building.coverImageUrl;
 
     return SizedBox(
-      height: 180,
+      height: 235,
       width: double.infinity,
       child: Stack(
         children: [
           if (coverUrl != null && coverUrl.isNotEmpty) ...[
+            // Blurred background image
+            Positioned.fill(
+              child: Image.network(
+                coverUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    CoverImageFallback(
+                  assetPath: areaImage,
+                  iconAlpha: 0.15,
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.35),
+                ),
+              ),
+            ),
+            // Uncropped contained main image
             Positioned.fill(
               child: _HoverImage(
                 isHovered: isHovered,
                 child: Image.network(
                   coverUrl,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
+                  alignment: Alignment.center,
                   errorBuilder: (context, error, stackTrace) =>
                       CoverImageFallback(
                     assetPath: areaImage,

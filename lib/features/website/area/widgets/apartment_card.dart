@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
@@ -56,15 +58,32 @@ class ApartmentCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ── 1. Dominant Image Box (175px Height) ──────────────────
+                // ── 1. Dominant Image Box (235px Height) ──────────────────
                 SizedBox(
-                  height: 175,
+                  height: 235,
                   width: double.infinity,
                   child: Stack(
                     children: [
                       // Background Image (Cover URL > Area Asset > Fallback)
                       if (apt.coverImageUrl != null &&
                           apt.coverImageUrl!.isNotEmpty) ...[
+                        // 1. Blurred background image filling container
+                        Positioned.fill(
+                          child: Image.network(
+                            sanitizeImageUrl(apt.coverImageUrl!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                            child: Container(
+                              color: Colors.black.withValues(alpha: 0.35),
+                            ),
+                          ),
+                        ),
+                        // 2. Uncropped full contained main image
                         Positioned.fill(
                           child: AnimatedScale(
                             scale: isHovered ? 1.04 : 1.0,
@@ -72,15 +91,16 @@ class ApartmentCard extends StatelessWidget {
                             curve: Curves.easeOutCubic,
                             child: Image.network(
                               sanitizeImageUrl(apt.coverImageUrl!),
-                              fit: BoxFit.cover,
-                              filterQuality: FilterQuality.medium,
+                              fit: BoxFit.contain,
+                              alignment: Alignment.center,
+                              filterQuality: FilterQuality.high,
                               errorBuilder: (_, _, _) => areaImage != null
                                   ? Image.asset(areaImage, fit: BoxFit.cover)
                                   : const CoverImageFallback(),
                             ),
                           ),
                         ),
-                        // Gradient overlay for text readability
+                        // 3. Subtle dark gradient overlay
                         Positioned.fill(
                           child: DecoratedBox(
                             decoration: BoxDecoration(
@@ -88,8 +108,9 @@ class ApartmentCard extends StatelessWidget {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Colors.black.withValues(alpha: 0.1),
-                                  Colors.black.withValues(alpha: 0.55),
+                                  Colors.black.withValues(alpha: 0.25),
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.45),
                                 ],
                               ),
                             ),
