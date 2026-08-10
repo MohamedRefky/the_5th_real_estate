@@ -2,10 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/cover_image_fallback.dart';
 import '../../../../core/widgets/price_tag_pill.dart';
-import '../../../../core/widgets/status_badge.dart';
 import '../../../../models/building.dart';
 
 /// Building card cover: hover-zooming photo (network or local fallback),
@@ -38,18 +36,13 @@ class BuildingCoverHeader extends StatelessWidget {
                 coverUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
-                    CoverImageFallback(
-                  assetPath: areaImage,
-                  iconAlpha: 0.15,
-                ),
+                    CoverImageFallback(assetPath: areaImage, iconAlpha: 0.15),
               ),
             ),
             Positioned.fill(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.35),
-                ),
+                child: Container(color: Colors.black.withValues(alpha: 0.35)),
               ),
             ),
             // Uncropped contained main image
@@ -61,10 +54,7 @@ class BuildingCoverHeader extends StatelessWidget {
                   fit: BoxFit.contain,
                   alignment: Alignment.center,
                   errorBuilder: (context, error, stackTrace) =>
-                      CoverImageFallback(
-                    assetPath: areaImage,
-                    iconAlpha: 0.15,
-                  ),
+                      CoverImageFallback(assetPath: areaImage, iconAlpha: 0.15),
                 ),
               ),
             ),
@@ -96,35 +86,12 @@ class BuildingCoverHeader extends StatelessWidget {
             ),
           ),
 
-          // Construction / delivery status badge (top right)
-          Positioned(
-            top: 12,
-            right: 12,
-            child: StatusBadge(
-              label: building.isUnderConstruction
-                  ? 'تحت الإنشاء'
-                  : 'جاهز للتسليم',
-              color: building.isUnderConstruction
-                  ? AppColors.warning
-                  : AppColors.success,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
-              fontSize: 11.5,
-              shadowColor: Colors.black.withValues(alpha: 0.3),
-              shadowBlur: 6,
-            ),
-          ),
-
           // Price tag floating on image (bottom right)
           if (building.startingPrice > 0)
             Positioned(
               bottom: 12,
               right: 12,
-              child: PriceTagPill(
-                price: building.formattedStartingPrice,
-              ),
+              child: PriceTagPill(price: building.formattedStartingPrice),
             ),
         ],
       ),
@@ -136,10 +103,7 @@ class _HoverImage extends StatelessWidget {
   final bool isHovered;
   final Widget child;
 
-  const _HoverImage({
-    required this.isHovered,
-    required this.child,
-  });
+  const _HoverImage({required this.isHovered, required this.child});
 
   @override
   Widget build(BuildContext context) {

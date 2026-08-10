@@ -118,7 +118,7 @@ class BuildingCard extends StatelessWidget {
                               // Description
                               Text(
                                 building.description,
-                                maxLines: 2,
+                                maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: AppColors.textSecondary,
@@ -126,55 +126,6 @@ class BuildingCard extends StatelessWidget {
                                   fontSize: 13,
                                 ),
                               ),
-
-                              const SizedBox(height: 14),
-
-                              // Key specification badges
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 6,
-                                children: [
-                                  if (building.areaSqm != null)
-                                    FeatureBadge(
-                                      icon: Icons.square_foot_rounded,
-                                      label: '${building.areaSqm!.toInt()}م²',
-                                    ),
-                                  if (building.buildingStructure != null)
-                                    FeatureBadge(
-                                      icon: Icons.foundation_rounded,
-                                      label: building.buildingStructure!,
-                                    ),
-                                  if (building.orientation != null)
-                                    FeatureBadge(
-                                      icon: Icons.explore_rounded,
-                                      label: building.orientation!,
-                                    ),
-                                  if (building.layoutNote != null)
-                                    FeatureBadge(
-                                      icon: Icons.space_dashboard_rounded,
-                                      label: building.layoutNote!,
-                                    ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 14),
-
-                              // Stats row (floors / units / available)
-                              BuildingStatsRow(building: building),
-
-                              // Construction progress
-                              if (building.isUnderConstruction) ...[
-                                const SizedBox(height: 14),
-                                ConstructionProgressBar(
-                                  progress: building.constructionProgress,
-                                ),
-                              ],
-
-                              // Amenities chips
-                              if (building.amenities.isNotEmpty) ...[
-                                const SizedBox(height: 14),
-                                AmenityChips(amenities: building.amenities),
-                              ],
 
                               const SizedBox(height: 18),
 
