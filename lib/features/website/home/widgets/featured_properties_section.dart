@@ -50,7 +50,7 @@ class _FeaturedPropertiesSectionState
                   future: _featuredFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator(color: Colors.white));
                     }
                     final featuredApartments = snapshot.data ?? [];
                     if (featuredApartments.isEmpty) {

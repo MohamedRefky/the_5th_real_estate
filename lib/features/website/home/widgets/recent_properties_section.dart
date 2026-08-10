@@ -46,7 +46,7 @@ class _RecentPropertiesSectionState extends State<RecentPropertiesSection> {
                 future: _recentFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator(color: Colors.white));
                   }
                   final recentApartments = snapshot.data ?? [];
                   if (recentApartments.isEmpty) {

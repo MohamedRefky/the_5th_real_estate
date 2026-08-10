@@ -96,7 +96,7 @@ class _AreaScreenState extends State<AreaScreen> {
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 64),
                               child: Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(color: Colors.white),
                               ),
                             )
                           else if (apartments.isEmpty)

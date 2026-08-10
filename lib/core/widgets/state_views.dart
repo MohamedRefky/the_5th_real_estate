@@ -8,9 +8,13 @@ class ScaffoldLoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('...')),
-      body: const Center(child: CircularProgressIndicator()),
+    return const Scaffold(
+      backgroundColor: AppColors.background,
+      body: Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

@@ -49,7 +49,7 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
         builder: (context, _) {
           if (_controller.loading) {
             return const Center(
-              child: CircularProgressIndicator(color: AppColors.accent),
+              child: CircularProgressIndicator(color: Colors.white),
             );
           }
           final buildings = _controller.filteredBuildings;
