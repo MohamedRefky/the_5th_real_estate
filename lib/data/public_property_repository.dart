@@ -59,18 +59,45 @@ class PublicPropertyRepository {
       if (Firebase.apps.isNotEmpty) {
         final byId = <String, Apartment>{};
 
-        // 1. Dynamic fetch: Read all area documents under `properties` and `buildings`
+        final targetAreas = {
+          ...DummyData.areas,
+          ...admin.areaOptions,
+          'جاردينيا',
+          'بيت الوطن',
+          'الأندلس',
+          'المستثمرين',
+          'النرجس الجديدة',
+          'النرجس',
+        };
+
+        // 1. Launch ALL queries simultaneously in parallel
+        final List<Future<dynamic>> futures = [
+          FirebaseFirestore.instance.collection('properties').get(),
+          FirebaseFirestore.instance.collection('buildings').get(),
+          FirebaseFirestore.instance.collectionGroup('units').get(),
+        ];
+
         for (final rootCol in ['properties', 'buildings']) {
-          try {
-            final rootSnap = await FirebaseFirestore.instance
-                .collection(rootCol)
-                .get();
+          for (final area in targetAreas) {
+            futures.add(
+              FirebaseFirestore.instance
+                  .collection(rootCol)
+                  .doc(area)
+                  .collection('units')
+                  .get(),
+            );
+          }
+        }
 
-            for (final areaDoc in rootSnap.docs) {
-              final areaId = areaDoc.id; // e.g. "جاردينيا", "المستثمرين", etc.
+        final results = await Future.wait(futures, eagerError: false);
+
+        // 2. Process root collections (indices 0 and 1)
+        for (var i = 0; i < 2; i++) {
+          final res = results[i];
+          if (res is QuerySnapshot<Map<String, dynamic>>) {
+            for (final areaDoc in res.docs) {
+              final areaId = areaDoc.id;
               final areaData = areaDoc.data();
-
-              // Check if the area document itself is a property document (legacy flat structure)
               if (areaData.containsKey('projectName') ||
                   areaData.containsKey('price') ||
                   areaData.containsKey('unitType')) {
@@ -85,99 +112,30 @@ class PublicPropertyRepository {
                   );
                 }
               }
-
-              // Read `properties/{areaId}/units` subcollection
-              try {
-                final unitsSnap = await areaDoc.reference.collection('units').get();
-                for (final unitDoc in unitsSnap.docs) {
-                  final data = unitDoc.data();
-                  final isPublished = (data['isPublished'] as bool?) ?? true;
-                  if (isPublished) {
-                    byId[unitDoc.id] = propertyToApartment(
-                      admin.Property.fromFirestore(
-                        unitDoc.id,
-                        data,
-                        fallbackArea: areaId, // <-- INFER AREA FROM PARENT DOC ID ("جاردينيا")!
-                      ),
-                    );
-                  }
-                }
-              } catch (e) {
-                if (kDebugMode) {
-                  print('Error fetching units for $rootCol/$areaId: $e');
-                }
-              }
-            }
-          } catch (e) {
-            if (kDebugMode) {
-              print('Error fetching $rootCol collection: $e');
             }
           }
         }
 
-        // 2. CollectionGroup query across all 'units' subcollections as a backup
-        try {
-          final groupSnap = await FirebaseFirestore.instance
-              .collectionGroup('units')
-              .get();
-          for (final doc in groupSnap.docs) {
-            if (!byId.containsKey(doc.id)) {
-              final data = doc.data();
-              final isPublished = (data['isPublished'] as bool?) ?? true;
-              if (isPublished) {
-                final parentAreaId = doc.reference.parent.parent?.id;
-                byId[doc.id] = propertyToApartment(
-                  admin.Property.fromFirestore(
-                    doc.id,
-                    data,
-                    fallbackArea: parentAreaId,
-                  ),
-                );
-              }
-            }
-          }
-        } catch (e) {
-          if (kDebugMode) {
-            print('CollectionGroup query notice: $e');
-          }
-        }
-
-        // 3. Fallback for hardcoded areas in admin.areaOptions & DummyData.areas
-        final targetAreas = {
-          ...DummyData.areas,
-          ...admin.areaOptions,
-          'جاردينيا',
-          'بيت الوطن',
-          'الأندلس',
-          'المستثمرين',
-          'النرجس الجديدة',
-          'النرجس',
-        };
-
-        for (final rootCol in ['properties', 'buildings']) {
-          for (final area in targetAreas) {
-            try {
-              final snap = await FirebaseFirestore.instance
-                  .collection(rootCol)
-                  .doc(area)
-                  .collection('units')
-                  .get();
-              for (final doc in snap.docs) {
-                if (!byId.containsKey(doc.id)) {
-                  final data = doc.data();
-                  final isPublished = (data['isPublished'] as bool?) ?? true;
-                  if (isPublished) {
-                    byId[doc.id] = propertyToApartment(
-                      admin.Property.fromFirestore(
-                        doc.id,
-                        data,
-                        fallbackArea: area,
-                      ),
-                    );
-                  }
+        // 3. Process unit subcollections (indices 2 onwards)
+        for (var i = 2; i < results.length; i++) {
+          final res = results[i];
+          if (res is QuerySnapshot<Map<String, dynamic>>) {
+            for (final doc in res.docs) {
+              if (!byId.containsKey(doc.id)) {
+                final data = doc.data();
+                final isPublished = (data['isPublished'] as bool?) ?? true;
+                if (isPublished) {
+                  final parentAreaId = doc.reference.parent.parent?.id;
+                  byId[doc.id] = propertyToApartment(
+                    admin.Property.fromFirestore(
+                      doc.id,
+                      data,
+                      fallbackArea: parentAreaId,
+                    ),
+                  );
                 }
               }
-            } catch (_) {}
+            }
           }
         }
 

@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:the_5th_real_estate/data/dummy_data.dart';
-
 import '../features/admin/models/admin_building.dart';
 import '../models/building.dart';
-import 'dummy_data.dart';
 import 'mappers/building_mapper.dart';
 
 class PublicBuildingRepository {

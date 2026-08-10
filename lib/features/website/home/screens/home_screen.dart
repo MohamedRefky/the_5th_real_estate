@@ -5,6 +5,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/metallic_gloss.dart';
 import '../../../../core/widgets/reveal_on_scroll.dart';
 import '../../../../data/dummy_data.dart';
+import '../../../../data/public_building_repository.dart';
+import '../../../../data/public_property_repository.dart';
 import '../widgets/area_card.dart';
 import '../widgets/contact_section.dart';
 import '../widgets/featured_properties_section.dart';
@@ -67,6 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+
+    // Warm up properties and buildings in parallel for lightning-fast loading
+    PublicPropertyRepository.instance.all(forceRefresh: false);
+    PublicBuildingRepository.instance.all();
   }
 
   /// Only tracks the active nav section; scroll-driven visuals listen to the
