@@ -18,8 +18,8 @@ class _FeaturedItem {
   const _FeaturedItem.building(this.building) : apartment = null;
 }
 
-/// Featured Properties section — Auto-scrolling, continuous glide showcase
-/// displaying all published apartments and buildings.
+/// Featured Properties section — Auto-scrolling carousel displaying
+/// original ApartmentCard and BuildingCard listings.
 class FeaturedPropertiesSection extends StatefulWidget {
   const FeaturedPropertiesSection({super.key});
 
@@ -75,8 +75,9 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
   void _startAutoScroll() {
     _scrollTimer?.cancel();
     _scrollTimer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      if (!mounted || _isUserInteracting || !_scrollController.hasClients)
+      if (!mounted || _isUserInteracting || !_scrollController.hasClients) {
         return;
+      }
       final maxScroll = _scrollController.position.maxScrollExtent;
       final currentScroll = _scrollController.offset;
 
@@ -123,9 +124,9 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
 
           const SizedBox(height: 20),
 
-          // ── Edge-to-Edge Full Width Continuous Ticker ─────────────────
+          // ── Horizontal Auto-Scrolling Carousel with Standard Cards ─────
           SizedBox(
-            height: 480,
+            height: 520,
             width: double.infinity,
             child: FutureBuilder<List<_FeaturedItem>>(
               future: _featuredFuture,
@@ -159,16 +160,16 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
                     child: ListView.separated(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 4,
+                        horizontal: 24,
+                        vertical: 8,
                       ),
                       scrollDirection: Axis.horizontal,
                       itemCount: displayItems.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 20),
+                      separatorBuilder: (_, _) => const SizedBox(width: 24),
                       itemBuilder: (context, index) {
                         final item = displayItems[index];
                         return SizedBox(
-                          width: 330,
+                          width: 350,
                           child: item.apartment != null
                               ? ApartmentCard(apartment: item.apartment!)
                               : BuildingCard(building: item.building!),
