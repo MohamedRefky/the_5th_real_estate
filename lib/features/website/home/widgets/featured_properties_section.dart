@@ -75,7 +75,10 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
   void _startAutoScroll() {
     _scrollTimer?.cancel();
     _scrollTimer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      if (!mounted || _isUserInteracting || !_scrollController.hasClients) {
+      if (!mounted ||
+          _isUserInteracting ||
+          !_scrollController.hasClients ||
+          !_scrollController.position.hasContentDimensions) {
         return;
       }
       final maxScroll = _scrollController.position.maxScrollExtent;
