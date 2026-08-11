@@ -25,7 +25,7 @@ class BuildingFormController extends ChangeNotifier {
   late final TextEditingController name;
   late final TextEditingController description;
   late final TextEditingController mainImageUrl;
-  late final TextEditingController additionalImageUrls;
+  final List<TextEditingController> extraImageControllers = [];
   late final TextEditingController videoUrl;
 
   // Selectable state
@@ -42,8 +42,11 @@ class BuildingFormController extends ChangeNotifier {
     final allImages = b?.imageUrls ?? const <String>[];
     mainImageUrl = TextEditingController(
         text: isEdit && allImages.isNotEmpty ? allImages.first : '');
-    additionalImageUrls = TextEditingController(
-        text: isEdit && allImages.length > 1 ? allImages.sublist(1).join('\n') : '');
+    if (isEdit && allImages.length > 1) {
+      for (final url in allImages.sublist(1)) {
+        extraImageControllers.add(TextEditingController(text: url));
+      }
+    }
     videoUrl = TextEditingController(text: isEdit ? (b?.videoUrl ?? '') : '');
 
     area = b?.area ?? _initialArea ?? 'المستثمرين';
@@ -63,6 +66,19 @@ class BuildingFormController extends ChangeNotifier {
     }
   }
 
+  void addExtraImageField([String initialText = '']) {
+    extraImageControllers.add(TextEditingController(text: initialText));
+    notifyListeners();
+  }
+
+  void removeExtraImageField(int index) {
+    if (index >= 0 && index < extraImageControllers.length) {
+      extraImageControllers[index].dispose();
+      extraImageControllers.removeAt(index);
+      notifyListeners();
+    }
+  }
+
   // ── Save ───────────────────────────────────────────────────────────
 
   /// Validates and saves. Returns true on success; rethrows on failure.
@@ -72,9 +88,8 @@ class BuildingFormController extends ChangeNotifier {
     notifyListeners();
     try {
       final mainUrl = sanitizeImageUrl(mainImageUrl.text.trim());
-      final extraUrls = additionalImageUrls.text
-          .split(RegExp(r'[\n,]'))
-          .map((s) => sanitizeImageUrl(s.trim()))
+      final extraUrls = extraImageControllers
+          .map((ctrl) => sanitizeImageUrl(ctrl.text.trim()))
           .where((s) => s.isNotEmpty)
           .toList();
       final parsedImageUrls = <String>[
@@ -125,7 +140,9 @@ class BuildingFormController extends ChangeNotifier {
     name.dispose();
     description.dispose();
     mainImageUrl.dispose();
-    additionalImageUrls.dispose();
+    for (final ctrl in extraImageControllers) {
+      ctrl.dispose();
+    }
     videoUrl.dispose();
     super.dispose();
   }

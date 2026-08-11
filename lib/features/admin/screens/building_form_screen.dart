@@ -110,14 +110,59 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                           'رابط صورة الواجهة الرئيسية (صورة الغلاف)',
                           prefixIcon: Icons.photo_size_select_actual_rounded,
                         ),
-                        const SizedBox(height: 12),
-                        FormTextField(
-                          c.additionalImageUrls,
-                          'روابط صور التفاصيل الإضافية (اختياري - رابط في كل سطر)',
-                          prefixIcon: Icons.collections_rounded,
-                          maxLines: 3,
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'صور التفاصيل الإضافية (اختياري)',
+                              style: TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextButton.icon(
+                              onPressed: c.addExtraImageField,
+                              icon: const Icon(Icons.add_photo_alternate_rounded,
+                                  size: 18),
+                              label: const Text('إضافة صورة'),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 12),
+                        if (c.extraImageControllers.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 6),
+                            child: Text(
+                              'اضغط على "+ إضافة صورة" لإضافة صورة تفاصيل للعمارة.',
+                              style: TextStyle(
+                                  color: AppColors.textHint, fontSize: 12),
+                            ),
+                          ),
+                        for (int i = 0;
+                            i < c.extraImageControllers.length;
+                            i++) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: FormTextField(
+                                  c.extraImageControllers[i],
+                                  'رابط صورة التفاصيل (${i + 1})',
+                                  prefixIcon: Icons.collections_rounded,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                tooltip: 'حذف الصورة',
+                                icon: const Icon(Icons.delete_outline_rounded,
+                                    color: AppColors.error),
+                                onPressed: () => c.removeExtraImageField(i),
+                              ),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: 16),
                         FormTextField(
                           c.videoUrl,
                           'رابط فيديو المعاينة (اختياري)',
