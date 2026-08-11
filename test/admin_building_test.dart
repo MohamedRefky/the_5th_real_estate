@@ -94,6 +94,20 @@ void main() {
       expect(parsed.description, 'عمارة كاملة');
     });
 
+    test('fromFirestore normalizes free-text area to the canonical folder', () {
+      final parsed = AdminBuilding.fromFirestore('doc_5', {
+        'name': 'x',
+        'description': '',
+        'area': 'جاردنيا هايتس 3',
+        'startingPrice': 100,
+        'totalFloors': 5,
+        'totalUnits': 10,
+        'availableUnits': 4,
+        'whatsappNumber': '+20',
+      });
+      expect(parsed.area, 'جاردينيا');
+    });
+
     test('fromFirestore defaults missing fields', () {
       final parsed = AdminBuilding.fromFirestore('doc_2', {
         'name': 'x',

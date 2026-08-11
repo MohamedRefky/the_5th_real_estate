@@ -361,7 +361,7 @@ class Property {
       createdAt: _readDate(data['createdAt']),
       updatedAt: _readDate(data['updatedAt']),
       isPublished: (data['isPublished'] as bool?) ?? true,
-      area: _normalizeArea(rawArea),
+      area: normalizeArea(rawArea),
     );
   }
 
@@ -399,7 +399,10 @@ String _normalizeFloor(String? rawFloor) {
   return trimmed;
 }
 
-String _normalizeArea(String? rawArea) {
+/// Maps free-text area names onto the canonical [areaOptions] folder names so
+/// documents always land in the folder the website reads. Shared by both the
+/// property and building models.
+String normalizeArea(String? rawArea) {
   if (rawArea == null || rawArea.trim().isEmpty) return areaOptions.first;
   final trimmed = rawArea.trim();
   if (areaOptions.contains(trimmed)) return trimmed;

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -109,6 +111,45 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     });
   }
 
+  /// Guesses whether the pasted JSON is a list of buildings or apartments by
+  /// looking at the first item's fields. Returns null when it cannot tell.
+  ImportType? _detectImportType(String rawJson) {
+    dynamic decoded;
+    try {
+      decoded = jsonDecode(rawJson);
+    } catch (_) {
+      return null;
+    }
+    final list = decoded is List ? decoded : [decoded];
+    if (list.isEmpty) return null;
+    final first = list.first;
+    if (first is! Map) return null;
+    final item = Map<String, dynamic>.from(first);
+
+    final hasBuildingMarkers = [
+      'buildingStructure',
+      'availableUnits',
+      'layoutNote',
+      'amenities',
+    ].any(item.containsKey);
+
+    final unitType = (item['unitType'] as String?)?.trim();
+    final isBuildingUnit =
+        unitType == 'عمارة' || unitType == 'عماره';
+    final isApartmentUnit = unitType != null &&
+        ['شقة', 'دوبلكس', 'فيلا', 'استوديو'].contains(unitType);
+    final hasApartmentMarkers = [
+      'bedrooms',
+      'priceNote',
+      'hasReception',
+    ].any(item.containsKey);
+
+    if (hasBuildingMarkers) return ImportType.buildings;
+    if (isBuildingUnit && hasApartmentMarkers) return ImportType.properties;
+    if (isApartmentUnit || hasApartmentMarkers) return ImportType.properties;
+    return null;
+  }
+
   void _loadSampleData() {
     _jsonController.text = _importType == ImportType.properties
         ? _samplePropertyJson
@@ -138,6 +179,14 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     if (text.isEmpty) {
       _clearReports();
       return;
+    }
+
+    // Auto-switch to the correct tab based on the pasted JSON so buildings
+    // never get saved into the apartments collection (and vice versa).
+    final detected = _detectImportType(text);
+    if (detected != null && detected != _importType) {
+      _importType = detected;
+      _clearReports();
     }
 
     setState(() {

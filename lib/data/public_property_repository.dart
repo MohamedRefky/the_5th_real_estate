@@ -127,8 +127,20 @@ class PublicPropertyRepository {
           final res = results[i];
           if (res is QuerySnapshot<Map<String, dynamic>>) {
             for (final doc in res.docs) {
+              // Only apartment/unit documents live under `properties/...`.
+              // Docs under `buildings/...` belong to the building repository.
+              if (doc.reference.path.contains('/buildings/')) continue;
+              final data = doc.data();
+              // Mis-uploaded buildings (saved into properties by mistake) carry
+              // building-only fields and must never show up in the apartments
+              // section — they belong in the buildings section.
+              if (data.containsKey('buildingStructure') ||
+                  data.containsKey('availableUnits') ||
+                  data.containsKey('totalFloors') ||
+                  data.containsKey('amenities')) {
+                continue;
+              }
               if (!byId.containsKey(doc.id)) {
-                final data = doc.data();
                 final isPublished = (data['isPublished'] as bool?) ?? true;
                 if (isPublished) {
                   final parentAreaId = doc.reference.parent.parent?.id;

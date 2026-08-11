@@ -2,6 +2,7 @@ library;
 
 import '../../../models/apartment.dart';
 import '../../../core/utils/image_url_helper.dart';
+import 'property.dart' show normalizeArea;
 
 /// Structured building listing model matching the Firestore
 /// `buildings/{area}/units` subcollections managed by the admin dashboard.
@@ -260,7 +261,7 @@ class AdminBuilding {
       description: (data['description'] as String?)?.trim() ??
           (data['details'] as String?)?.trim() ??
           '',
-      area: rawArea,
+      area: normalizeArea(rawArea),
       areaSqm: (data['areaSqm'] as num?)?.toDouble(),
       buildingStructure: data['buildingStructure'] as String?,
       orientation: data['orientation'] as String?,
