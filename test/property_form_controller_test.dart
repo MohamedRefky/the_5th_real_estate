@@ -96,7 +96,8 @@ void main() {
       );
       final c = PropertyFormController(p);
       expect(c.mainImageUrl.text, 'https://a/1.jpg');
-      expect(c.additionalImageUrls.text, 'https://a/2.jpg');
+      expect(c.extraImageControllers.length, 1);
+      expect(c.extraImageControllers.first.text, 'https://a/2.jpg');
       c.dispose();
     });
   });

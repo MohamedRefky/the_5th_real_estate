@@ -70,8 +70,9 @@ class PropertyService {
 
     // 3. Collection group (best effort fallback)
     try {
-      final groupSnap =
-          await FirebaseFirestore.instance.collectionGroup('units').get();
+      final groupSnap = await FirebaseFirestore.instance
+          .collectionGroup('units')
+          .get();
       for (final doc in groupSnap.docs) {
         if (!byId.containsKey(doc.id)) {
           final data = doc.data();
@@ -111,22 +112,51 @@ class PropertyService {
 
   /// Creates a new property document in its area folder.
   Future<String> create(Property property) async {
-    final doc = await _units(property.area).add(
-      property.toFirestore(),
-    );
+    final doc = await _units(property.area).add(property.toFirestore());
     PublicPropertyRepository.instance.invalidate();
     return doc.id;
   }
 
-  /// Updates an existing property.
-  Future<void> update(
+  /// Resolves the actual Firestore document location for the property.
+  /// This is required because some documents may still only exist in the
+  /// legacy flat collection or may have stale area metadata in the model.
+  Future<DocumentReference<Map<String, dynamic>>> _resolveDocumentRef(
     String id,
-    Property property,
+    String area,
   ) async {
-    await _units(property.area).doc(id).set(
-          property.toFirestore(isUpdate: true),
-          SetOptions(merge: true),
-        );
+    final primaryRef = _units(area).doc(id);
+    final primarySnap = await primaryRef.get();
+    if (primarySnap.exists) return primaryRef;
+
+    final legacyRef = _legacyCollection.doc(id);
+    final legacySnap = await legacyRef.get();
+    if (legacySnap.exists) return legacyRef;
+
+    final groupSnap = await FirebaseFirestore.instance
+        .collectionGroup('units')
+        .get();
+    for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
+      if (doc.reference.path.contains('/properties/')) {
+        return doc.reference;
+      }
+    }
+    DocumentReference<Map<String, dynamic>>? fallbackRef;
+    for (final doc in groupSnap.docs) {
+      if (doc.id == id) {
+        fallbackRef = doc.reference;
+        break;
+      }
+    }
+    return fallbackRef ?? primaryRef;
+  }
+
+  /// Updates an existing property.
+  Future<void> update(String id, Property property) async {
+    final docRef = await _resolveDocumentRef(id, property.area);
+    await docRef.set(
+      property.toFirestore(isUpdate: true),
+      SetOptions(merge: true),
+    );
 
     try {
       final legacyRef = _legacyCollection.doc(id);
@@ -144,19 +174,54 @@ class PropertyService {
 
   /// Toggles published status without touching the rest of the document.
   Future<void> setPublished(String id, Property property, bool value) async {
-    await _units(property.area).doc(id).update({
+    final docRef = await _resolveDocumentRef(id, property.area);
+    await docRef.update({
       'isPublished': value,
       'updatedAt': FieldValue.serverTimestamp(),
     });
     PublicPropertyRepository.instance.invalidate();
   }
 
-  /// Deletes the property document and its images from Storage.
+  /// Deletes the property document (from every location it may live in) and
+  /// its images from Storage.
   Future<void> delete(String id, Property property) async {
     if (property.imageUrls.isNotEmpty) {
       await _deleteStorageFiles(property.imageUrls);
     }
-    await _units(property.area).doc(id).delete();
+
+    try {
+      final docRef = await _resolveDocumentRef(id, property.area);
+      await docRef.delete();
+    } catch (_) {}
+
+    // 1. Primary per-area subcollection.
+    if (property.area.trim().isNotEmpty) {
+      try {
+        await _units(property.area).doc(id).delete();
+      } catch (_) {}
+    }
+
+    // 2. Legacy root collection.
+    try {
+      final legacyRef = _legacyCollection.doc(id);
+      final legacySnap = await legacyRef.get();
+      if (legacySnap.exists) {
+        await legacyRef.delete();
+      }
+    } catch (_) {}
+
+    // 3. Any other subcollection path holding this document id.
+    try {
+      final groupSnap = await FirebaseFirestore.instance
+          .collectionGroup('units')
+          .get();
+      for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
+        if (doc.reference.path.contains('/properties/')) {
+          await doc.reference.delete();
+        }
+      }
+    } catch (_) {}
+
     PublicPropertyRepository.instance.invalidate();
   }
 
