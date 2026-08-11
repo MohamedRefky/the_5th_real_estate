@@ -22,6 +22,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
   bool _busy = false;
   bool _initializing = true;
+  bool _showPassword = false;
   String? _error;
 
   @override
@@ -179,10 +180,20 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
               FormTextField(
                 _passwordController,
                 'كلمة المرور',
-                obscureText: true,
+                obscureText: !_showPassword,
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _submit(),
                 prefixIcon: Icons.lock_rounded,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _showPassword
+                        ? Icons.visibility_off_rounded
+                        : Icons.visibility_rounded,
+                    color: AppColors.textSecondary,
+                  ),
+                  onPressed: () =>
+                      setState(() => _showPassword = !_showPassword),
+                ),
                 fillColor: AppColors.background,
                 validator: (v) =>
                     (v == null || v.isEmpty) ? 'أدخل كلمة المرور' : null,

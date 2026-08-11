@@ -25,6 +25,7 @@ class FormSectionTitle extends StatelessWidget {
 InputDecoration propertyInputDecoration(
   String label, {
   IconData? prefixIcon,
+  Widget? suffixIcon,
   Color fillColor = AppColors.surface,
 }) {
   return InputDecoration(
@@ -37,6 +38,7 @@ InputDecoration propertyInputDecoration(
     prefixIcon: prefixIcon == null
         ? null
         : Icon(prefixIcon, color: AppColors.accent),
+    suffixIcon: suffixIcon,
     filled: true,
     fillColor: fillColor,
     focusedBorder: OutlineInputBorder(
@@ -62,6 +64,7 @@ class FormTextField extends StatelessWidget {
   final int? maxLines;
   final String? Function(String?)? validator;
   final IconData? prefixIcon;
+  final Widget? suffixIcon;
   final Color fillColor;
   final bool obscureText;
   final TextInputAction? textInputAction;
@@ -75,6 +78,7 @@ class FormTextField extends StatelessWidget {
     this.maxLines = 1,
     this.validator,
     this.prefixIcon,
+    this.suffixIcon,
     this.fillColor = AppColors.surface,
     this.obscureText = false,
     this.textInputAction,
@@ -96,6 +100,7 @@ class FormTextField extends StatelessWidget {
       decoration: propertyInputDecoration(
         label,
         prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
         fillColor: fillColor,
       ),
     );
