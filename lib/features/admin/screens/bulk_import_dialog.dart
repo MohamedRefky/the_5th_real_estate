@@ -54,8 +54,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     "priceUsd": null,
     "description": "شقة ممتازة الدور الأول بحري، مدفوع العدادات وجاهزة للتسليم",
     "imageUrls": [
-      "https://i.ibb.co/mF2PpKwF/image.jpg",
-      "https://i.ibb.co/HD5SSpms/Whats-App-Image.jpg"
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg"
     ],
     "videoUrl": null,
     "isPublished": true
@@ -83,7 +82,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
       "كاميرات مراقبة"
     ],
     "imageUrls": [
-      "https://i.ibb.co/mF2PpKwF/building1.jpg"
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg"
     ],
     "videoUrl": null,
     "isPublished": true

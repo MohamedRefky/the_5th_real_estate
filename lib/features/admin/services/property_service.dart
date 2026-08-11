@@ -123,9 +123,22 @@ class PropertyService {
     String id,
     Property property,
   ) async {
-    await _units(property.area).doc(id).update(
+    await _units(property.area).doc(id).set(
           property.toFirestore(isUpdate: true),
+          SetOptions(merge: true),
         );
+
+    try {
+      final legacyRef = _legacyCollection.doc(id);
+      final legacySnap = await legacyRef.get();
+      if (legacySnap.exists) {
+        await legacyRef.set(
+          property.toFirestore(isUpdate: true),
+          SetOptions(merge: true),
+        );
+      }
+    } catch (_) {}
+
     PublicPropertyRepository.instance.invalidate();
   }
 

@@ -126,11 +126,27 @@ class BuildingService {
     final keptUrls = building.imageUrls
         .where((url) => !removedImageUrls.contains(url))
         .toList();
-    await _units(building.area).doc(id).update(
+    await _units(building.area).doc(id).set(
           building
               .copyWith(imageUrls: [...keptUrls, ...urls])
               .toFirestore(isUpdate: true),
+          SetOptions(merge: true),
         );
+
+    try {
+      final legacyRef =
+          FirebaseFirestore.instance.collection('buildings').doc(id);
+      final legacySnap = await legacyRef.get();
+      if (legacySnap.exists) {
+        await legacyRef.set(
+          building
+              .copyWith(imageUrls: [...keptUrls, ...urls])
+              .toFirestore(isUpdate: true),
+          SetOptions(merge: true),
+        );
+      }
+    } catch (_) {}
+
     PublicBuildingRepository.instance.invalidate();
   }
 

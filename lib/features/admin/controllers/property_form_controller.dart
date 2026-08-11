@@ -7,8 +7,11 @@ import '../services/property_service.dart';
 /// Holds all state for the add/edit unit form: text controllers, enum
 /// selections, URL inputs and the save flow.
 class PropertyFormController extends ChangeNotifier {
-  PropertyFormController(this.property,
-      {UnitType? initialUnitType, String? initialArea}) {
+  PropertyFormController(
+    this.property, {
+    UnitType? initialUnitType,
+    String? initialArea,
+  }) {
     _initialUnitType = initialUnitType;
     _initialArea = initialArea;
     _init();
@@ -52,25 +55,37 @@ class PropertyFormController extends ChangeNotifier {
     final p = property;
     isEdit = p != null && p.id != null && p.id!.isNotEmpty;
 
-    projectName = TextEditingController(text: isEdit ? (p?.projectName ?? '') : '');
-    buildingLabel = TextEditingController(text: isEdit ? (p?.buildingLabel ?? '') : '');
+    projectName = TextEditingController(
+      text: isEdit ? (p?.projectName ?? '') : '',
+    );
+    buildingLabel = TextEditingController(
+      text: isEdit ? (p?.buildingLabel ?? '') : '',
+    );
     areaSqm = TextEditingController(
-        text: (isEdit && p != null) ? _fmtNum(p.areaSqm) : '');
+      text: (isEdit && p != null) ? _fmtNum(p.areaSqm) : '',
+    );
     bedrooms = TextEditingController(
-        text: (isEdit && p != null) ? p.bedrooms.toString() : '');
+      text: (isEdit && p != null) ? p.bedrooms.toString() : '',
+    );
     bathrooms = TextEditingController(
-        text: (isEdit && p != null) ? p.bathrooms.toString() : '');
+      text: (isEdit && p != null) ? p.bathrooms.toString() : '',
+    );
     price = TextEditingController(
-        text: (isEdit && p != null) ? _fmtNum(p.price) : '');
+      text: (isEdit && p != null) ? _fmtNum(p.price) : '',
+    );
     priceUsd = TextEditingController(
-        text: (isEdit && p != null && p.priceUsd != null)
-            ? _fmtNum(p.priceUsd!)
-            : '');
-    description = TextEditingController(text: isEdit ? (p?.description ?? '') : '');
-    
+      text: (isEdit && p != null && p.priceUsd != null)
+          ? _fmtNum(p.priceUsd!)
+          : '',
+    );
+    description = TextEditingController(
+      text: isEdit ? (p?.description ?? '') : '',
+    );
+
     final allImages = p?.imageUrls ?? const <String>[];
     mainImageUrl = TextEditingController(
-        text: isEdit && allImages.isNotEmpty ? allImages.first : '');
+      text: isEdit && allImages.isNotEmpty ? allImages.first : '',
+    );
     if (isEdit && allImages.length > 1) {
       for (final url in allImages.sublist(1)) {
         extraImageControllers.add(TextEditingController(text: url));
@@ -93,9 +108,25 @@ class PropertyFormController extends ChangeNotifier {
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
 
   double? _parseOptionalDouble(String text) {
-    final value = double.tryParse(text.trim());
-    if (value == null || value <= 0) return null;
-    return value;
+    final val = _safeParseDouble(text, -1);
+    if (val <= 0) return null;
+    return val;
+  }
+
+  double _safeParseDouble(String text, [double fallback = 0.0]) {
+    var s = text.trim();
+    if (s.isEmpty) return fallback;
+    const eastern = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    const western = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    for (int i = 0; i < 10; i++) {
+      s = s.replaceAll(eastern[i], western[i]);
+    }
+    s = s.replaceAll(',', '').replaceAll(' ', '');
+    return double.tryParse(s) ?? fallback;
+  }
+
+  int _safeParseInt(String text, [int fallback = 0]) {
+    return _safeParseDouble(text, fallback.toDouble()).round();
   }
 
   // ── Validators ─────────────────────────────────────────────────────
@@ -197,8 +228,9 @@ class PropertyFormController extends ChangeNotifier {
         if (mainUrl.isNotEmpty) mainUrl,
         ...extraUrls,
       ];
-      final parsedVideoUrl =
-          videoUrl.text.trim().isEmpty ? null : videoUrl.text.trim();
+      final parsedVideoUrl = videoUrl.text.trim().isEmpty
+          ? null
+          : videoUrl.text.trim();
 
       final prop = Property(
         id: property?.id,
@@ -210,13 +242,13 @@ class PropertyFormController extends ChangeNotifier {
         floor: floor ?? 'أرضي',
         area: area,
         orientation: orientation,
-        areaSqm: double.parse(areaSqm.text.trim()),
-        bedrooms: int.parse(bedrooms.text.trim()),
-        bathrooms: int.parse(bathrooms.text.trim()),
+        areaSqm: _safeParseDouble(areaSqm.text),
+        bedrooms: _safeParseInt(bedrooms.text),
+        bathrooms: _safeParseInt(bathrooms.text),
         hasReception: hasReception,
         hasKitchen: hasKitchen,
         finishingStatus: finishingStatus ?? PropertyFinishing.shell,
-        price: double.parse(price.text.trim()),
+        price: _safeParseDouble(price.text),
         priceNote: priceNote,
         priceUsd: _parseOptionalDouble(priceUsd.text),
         description: description.text.trim().isEmpty
@@ -228,7 +260,7 @@ class PropertyFormController extends ChangeNotifier {
       );
 
       final service = PropertyService.instance;
-      if (isEdit) {
+      if (isEdit && property?.id != null && property!.id!.isNotEmpty) {
         await service.update(property!.id!, prop);
       } else {
         await service.create(prop);
