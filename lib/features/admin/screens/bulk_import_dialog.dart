@@ -57,8 +57,10 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     "priceNote": "بالعداد",
     "priceUsd": null,
     "description": "شقة ممتازة الدور الأول بحري، مدفوع العدادات وجاهزة للتسليم",
-    "imageUrls": [
-      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg"
+    "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg",
+    "detailImageUrls": [
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464781/WhatsApp_Image_2026-08-11_at_12.32.02_AM.jpg",
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464782/WhatsApp_Image_2026-08-11_at_12.32.03_AM.jpg"
     ],
     "videoUrl": null,
     "isPublished": true
@@ -85,8 +87,9 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
       "جراج خاص",
       "كاميرات مراقبة"
     ],
-    "imageUrls": [
-      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg"
+    "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg",
+    "detailImageUrls": [
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464781/WhatsApp_Image_2026-08-11_at_12.32.02_AM.jpg"
     ],
     "videoUrl": null,
     "isPublished": true
@@ -460,8 +463,8 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                     ),
                     decoration: InputDecoration(
                       hintText: _importType == ImportType.properties
-                          ? 'الصق كود الـ JSON لشقق والوحدات هنا (مصفوفة JSON)...'
-                          : 'الصق كود الـ JSON للعمارات هنا (مصفوفة JSON)...',
+                          ? 'الصق كود الـ JSON هنا (مصفوفة) — صورة الواجه في facadeImageUrl وباقي صور الشقة في detailImageUrls'
+                          : 'الصق كود الـ JSON هنا (مصفوفة) — صورة الواجه في facadeImageUrl وباقي صور العمارة في detailImageUrls',
                       filled: true,
                       fillColor: AppColors.cream,
                       alignLabelWithHint: true,

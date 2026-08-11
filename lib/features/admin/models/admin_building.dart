@@ -1,6 +1,7 @@
 library;
 
 import '../../../models/apartment.dart';
+import '../../../core/utils/image_url_helper.dart';
 
 /// Structured building listing model matching the Firestore
 /// `buildings/{area}/units` subcollections managed by the admin dashboard.
@@ -118,6 +119,15 @@ class AdminBuilding {
     return '$thousands ألف جنيه';
   }
 
+  /// Facade / main image — always the first image in [imageUrls].
+  /// Stored separately in Firestore so facade and interior photos never mix.
+  String? get facadeImageUrl =>
+      imageUrls.isNotEmpty ? imageUrls.first : null;
+
+  /// The rest of the building images (interior, floors, amenities, ...).
+  List<String> get detailImageUrls =>
+      imageUrls.length > 1 ? imageUrls.sublist(1) : const <String>[];
+
   AdminBuilding copyWith({
     String? id,
     String? name,
@@ -191,6 +201,8 @@ class AdminBuilding {
       'whatsappNumber': whatsappNumber,
       'amenities': amenities,
       'imageUrls': imageUrls,
+      'facadeImageUrl': facadeImageUrl,
+      'detailImageUrls': detailImageUrls,
       'videoUrl': videoUrl,
       'isPublished': isPublished,
       'createdAt': isUpdate ? (createdAt ?? now) : now,
@@ -204,10 +216,50 @@ class AdminBuilding {
     String? fallbackArea,
   }) {
     final rawArea = (data['area'] as String?) ?? fallbackArea ?? '';
+
+    final List<String> parsedImages = [];
+
+    void addImage(dynamic value) {
+      if (value == null) return;
+      if (value is List) {
+        for (final item in value) {
+          addImage(item);
+        }
+      } else if (value is String) {
+        final cleaned = sanitizeImageUrl(value);
+        if (cleaned.isNotEmpty && !parsedImages.contains(cleaned)) {
+          parsedImages.add(cleaned);
+        }
+      }
+    }
+
+    // Facade / main image comes first so it becomes the website cover.
+    addImage(data['facadeImageUrl']);
+    addImage(data['mainImageUrl']);
+    addImage(data['coverImageUrl']);
+    addImage(data['coverUrl']);
+    // Combined gallery (legacy documents).
+    addImage(data['imageUrls']);
+    addImage(data['imageUrl']);
+    addImage(data['images']);
+    // Detail / interior images.
+    addImage(data['detailImageUrls']);
+    addImage(data['additionalImageUrls']);
+    addImage(data['gallery']);
+    addImage(data['galleryUrls']);
+    // Legacy fallbacks.
+    addImage(data['photo']);
+    addImage(data['photos']);
+
     return AdminBuilding(
       id: docId,
-      name: (data['name'] as String?) ?? '',
-      description: (data['description'] as String?) ?? '',
+      name: (data['name'] as String?)?.trim() ??
+          (data['projectName'] as String?)?.trim() ??
+          (data['title'] as String?)?.trim() ??
+          '',
+      description: (data['description'] as String?)?.trim() ??
+          (data['details'] as String?)?.trim() ??
+          '',
       area: rawArea,
       areaSqm: (data['areaSqm'] as num?)?.toDouble(),
       buildingStructure: data['buildingStructure'] as String?,
@@ -229,9 +281,7 @@ class AdminBuilding {
       amenities: ((data['amenities'] as List?) ?? const [])
           .map((e) => e as String)
           .toList(),
-      imageUrls: ((data['imageUrls'] as List?) ?? const [])
-          .map((e) => e as String)
-          .toList(),
+      imageUrls: parsedImages,
       videoUrl: data['videoUrl'] as String?,
       isPublished: (data['isPublished'] as bool?) ?? true,
       createdAt: _readDate(data['createdAt']),

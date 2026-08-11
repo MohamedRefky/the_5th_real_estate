@@ -33,6 +33,8 @@ void main() {
       expect(map['area'], 'جاردينيا');
       expect(map['finishingStatus'], 'superLux');
       expect(map['isPublished'], false);
+      expect(map['facadeImageUrl'], 'a.jpg');
+      expect(map['detailImageUrls'], ['b.jpg']);
 
       final parsed = AdminBuilding.fromFirestore('doc_1', map);
       expect(parsed.id, 'doc_1');
@@ -46,8 +48,50 @@ void main() {
       expect(parsed.constructionProgress, 0.75);
       expect(parsed.whatsappNumber, '+201000000003');
       expect(parsed.amenities, ['مصعد', 'حراسة']);
-      expect(parsed.imageUrls, ['a.jpg', 'b.jpg']);
+      expect(parsed.imageUrls, ['https://a.jpg', 'https://b.jpg']);
+      expect(parsed.facadeImageUrl, 'https://a.jpg');
+      expect(parsed.detailImageUrls, ['https://b.jpg']);
       expect(parsed.isPublished, false);
+    });
+
+    test('fromFirestore parses split facade/detail image fields', () {
+      final parsed = AdminBuilding.fromFirestore('doc_3', {
+        'name': 'x',
+        'description': '',
+        'area': 'جاردينيا',
+        'startingPrice': 100,
+        'totalFloors': 5,
+        'totalUnits': 10,
+        'availableUnits': 4,
+        'whatsappNumber': '+20',
+        'facadeImageUrl': 'https://a/facade.jpg',
+        'detailImageUrls': [
+          'https://a/room1.jpg',
+          'https://a/room2.jpg',
+        ],
+      });
+      expect(parsed.imageUrls, [
+        'https://a/facade.jpg',
+        'https://a/room1.jpg',
+        'https://a/room2.jpg',
+      ]);
+      expect(parsed.facadeImageUrl, 'https://a/facade.jpg');
+      expect(parsed.detailImageUrls, ['https://a/room1.jpg', 'https://a/room2.jpg']);
+    });
+
+    test('fromFirestore falls back to projectName when name is missing', () {
+      final parsed = AdminBuilding.fromFirestore('doc_4', {
+        'projectName': 'عمارة جاردنيا هايتس 3',
+        'description': 'عمارة كاملة',
+        'area': 'جاردينيا',
+        'price': 18500000,
+        'totalFloors': 3,
+        'totalUnits': 6,
+        'availableUnits': 2,
+        'whatsappNumber': '+20',
+      });
+      expect(parsed.name, 'عمارة جاردنيا هايتس 3');
+      expect(parsed.description, 'عمارة كاملة');
     });
 
     test('fromFirestore defaults missing fields', () {

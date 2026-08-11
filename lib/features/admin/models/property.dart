@@ -19,8 +19,17 @@ enum UnitType {
   final String label;
   const UnitType(this.label);
 
-  static UnitType fromLabel(String label) =>
-      values.firstWhere((v) => v.label == label, orElse: () => UnitType.apartment);
+  static UnitType fromLabel(String label) {
+    final trimmed = label.trim();
+    if (trimmed == 'عمارة') return UnitType.building;
+    if (trimmed == 'دوبلكس') return UnitType.duplex;
+    if (trimmed == 'فيلا') return UnitType.villa;
+    if (trimmed == 'استوديو') return UnitType.studio;
+    return values.firstWhere(
+      (v) => v.label == trimmed,
+      orElse: () => UnitType.apartment,
+    );
+  }
 }
 
 /// Orientation of the unit relative to the street.
@@ -218,6 +227,15 @@ class Property {
     return '${price.toStringAsFixed(0)} ج';
   }
 
+  /// Facade / main image — always the first image in [imageUrls].
+  /// Stored separately in Firestore so facade and interior photos never mix.
+  String? get facadeImageUrl =>
+      imageUrls.isNotEmpty ? imageUrls.first : null;
+
+  /// The rest of the apartment images (interior, rooms, kitchen, ...).
+  List<String> get detailImageUrls =>
+      imageUrls.length > 1 ? imageUrls.sublist(1) : const <String>[];
+
   Map<String, dynamic> toFirestore({bool isUpdate = false}) {
     final now = DateTime.now();
     return {
@@ -238,6 +256,8 @@ class Property {
       'description': description,
       'imageUrls': imageUrls,
       'imageUrl': imageUrls.firstOrNull,
+      'facadeImageUrl': facadeImageUrl,
+      'detailImageUrls': detailImageUrls,
       'videoUrl': videoUrl,
       'createdAt': isUpdate ? (createdAt ?? now) : now,
       'updatedAt': now,
@@ -267,13 +287,23 @@ class Property {
       }
     }
 
+    // Facade / main image comes first so it becomes the website cover.
+    addImage(data['facadeImageUrl']);
+    addImage(data['mainImageUrl']);
+    addImage(data['coverImageUrl']);
+    addImage(data['coverUrl']);
+    // Combined gallery (legacy documents).
     addImage(data['imageUrls']);
     addImage(data['imageUrl']);
     addImage(data['images']);
+    // Detail / interior images (facade vs rest of the apartment).
+    addImage(data['detailImageUrls']);
+    addImage(data['additionalImageUrls']);
+    addImage(data['gallery']);
+    addImage(data['galleryUrls']);
+    // Legacy fallbacks.
     addImage(data['photo']);
     addImage(data['photos']);
-    addImage(data['coverImageUrl']);
-    addImage(data['coverUrl']);
 
     final rawVideoUrl = (data['videoUrl'] as String?) ?? (data['video'] as String?);
 
