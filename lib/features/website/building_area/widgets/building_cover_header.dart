@@ -1,5 +1,6 @@
-import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import '../../../../core/utils/image_url_helper.dart';
 import '../../../../core/widgets/cover_image_fallback.dart';
 import '../../../../core/widgets/price_tag_pill.dart';
 import '../../../../models/building.dart';
@@ -28,28 +29,12 @@ class BuildingCoverHeader extends StatelessWidget {
       child: Stack(
         children: [
           if (coverUrl != null && coverUrl.isNotEmpty) ...[
-            // Blurred background image
-            Positioned.fill(
-              child: Image.network(
-                coverUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    CoverImageFallback(assetPath: areaImage, iconAlpha: 0.15),
-              ),
-            ),
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(color: Colors.black.withValues(alpha: 0.35)),
-              ),
-            ),
-            // Uncropped contained main image
             Positioned.fill(
               child: _HoverImage(
                 isHovered: isHovered,
                 child: Image.network(
-                  coverUrl,
-                  fit: BoxFit.contain,
+                  sanitizeImageUrl(coverUrl),
+                  fit: BoxFit.cover,
                   alignment: Alignment.center,
                   errorBuilder: (context, error, stackTrace) =>
                       CoverImageFallback(assetPath: areaImage, iconAlpha: 0.15),

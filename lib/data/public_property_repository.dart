@@ -103,13 +103,19 @@ class PublicPropertyRepository {
                   areaData.containsKey('unitType')) {
                 final isPublished = (areaData['isPublished'] as bool?) ?? true;
                 if (isPublished) {
-                  byId[areaDoc.id] = propertyToApartment(
-                    admin.Property.fromFirestore(
-                      areaDoc.id,
-                      areaData,
-                      fallbackArea: areaData['area'] as String? ?? areaId,
-                    ),
-                  );
+                  try {
+                    byId[areaDoc.id] = propertyToApartment(
+                      admin.Property.fromFirestore(
+                        areaDoc.id,
+                        areaData,
+                        fallbackArea: areaData['area'] as String? ?? areaId,
+                      ),
+                    );
+                  } catch (e) {
+                    if (kDebugMode) {
+                      print('Error parsing property doc ${areaDoc.id}: $e');
+                    }
+                  }
                 }
               }
             }
@@ -126,13 +132,19 @@ class PublicPropertyRepository {
                 final isPublished = (data['isPublished'] as bool?) ?? true;
                 if (isPublished) {
                   final parentAreaId = doc.reference.parent.parent?.id;
-                  byId[doc.id] = propertyToApartment(
-                    admin.Property.fromFirestore(
-                      doc.id,
-                      data,
-                      fallbackArea: parentAreaId,
-                    ),
-                  );
+                  try {
+                    byId[doc.id] = propertyToApartment(
+                      admin.Property.fromFirestore(
+                        doc.id,
+                        data,
+                        fallbackArea: parentAreaId,
+                      ),
+                    );
+                  } catch (e) {
+                    if (kDebugMode) {
+                      print('Error parsing unit doc ${doc.id}: $e');
+                    }
+                  }
                 }
               }
             }

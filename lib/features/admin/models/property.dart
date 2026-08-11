@@ -251,25 +251,29 @@ class Property {
     Map<String, dynamic> data, {
     String? fallbackArea,
   }) {
-    final rawImages = data['imageUrls'] ??
-        data['imageUrl'] ??
-        data['images'] ??
-        data['photo'] ??
-        data['photos'] ??
-        data['coverImageUrl'];
-
     final List<String> parsedImages = [];
-    if (rawImages is List) {
-      for (final e in rawImages) {
-        if (e != null) {
-          final cleaned = sanitizeImageUrl(e.toString());
-          if (cleaned.isNotEmpty) parsedImages.add(cleaned);
+
+    void addImage(dynamic value) {
+      if (value == null) return;
+      if (value is List) {
+        for (final item in value) {
+          addImage(item);
+        }
+      } else if (value is String) {
+        final cleaned = sanitizeImageUrl(value);
+        if (cleaned.isNotEmpty && !parsedImages.contains(cleaned)) {
+          parsedImages.add(cleaned);
         }
       }
-    } else if (rawImages is String && rawImages.trim().isNotEmpty) {
-      final cleaned = sanitizeImageUrl(rawImages);
-      if (cleaned.isNotEmpty) parsedImages.add(cleaned);
     }
+
+    addImage(data['imageUrls']);
+    addImage(data['imageUrl']);
+    addImage(data['images']);
+    addImage(data['photo']);
+    addImage(data['photos']);
+    addImage(data['coverImageUrl']);
+    addImage(data['coverUrl']);
 
     final rawVideoUrl = (data['videoUrl'] as String?) ?? (data['video'] as String?);
 
@@ -324,11 +328,24 @@ class Property {
       videoUrl: rawVideoUrl != null && rawVideoUrl.trim().isNotEmpty
           ? rawVideoUrl.trim()
           : null,
-      createdAt: (data['createdAt'] as dynamic)?.toDate(),
-      updatedAt: (data['updatedAt'] as dynamic)?.toDate(),
+      createdAt: _readDate(data['createdAt']),
+      updatedAt: _readDate(data['updatedAt']),
       isPublished: (data['isPublished'] as bool?) ?? true,
       area: _normalizeArea(rawArea),
     );
+  }
+
+  static DateTime? _readDate(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) {
+      return DateTime.tryParse(value);
+    }
+    try {
+      return (value as dynamic).toDate() as DateTime?;
+    } catch (_) {
+      return null;
+    }
   }
 }
 

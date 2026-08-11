@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
@@ -67,31 +65,14 @@ class ApartmentCard extends StatelessWidget {
                       // Background Image (Cover URL > Area Asset > Fallback)
                       if (apt.coverImageUrl != null &&
                           apt.coverImageUrl!.isNotEmpty) ...[
-                        // 1. Blurred background image filling container
-                        Positioned.fill(
-                          child: Image.network(
-                            sanitizeImageUrl(apt.coverImageUrl!),
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => const SizedBox.shrink(),
-                          ),
-                        ),
-                        Positioned.fill(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                            child: Container(
-                              color: Colors.black.withValues(alpha: 0.35),
-                            ),
-                          ),
-                        ),
-                        // 2. Uncropped full contained main image
                         Positioned.fill(
                           child: AnimatedScale(
-                            scale: isHovered ? 1.04 : 1.0,
+                            scale: isHovered ? 1.05 : 1.0,
                             duration: const Duration(milliseconds: 350),
                             curve: Curves.easeOutCubic,
                             child: Image.network(
                               sanitizeImageUrl(apt.coverImageUrl!),
-                              fit: BoxFit.contain,
+                              fit: BoxFit.cover,
                               alignment: Alignment.center,
                               filterQuality: FilterQuality.high,
                               errorBuilder: (_, _, _) => areaImage != null
@@ -100,7 +81,6 @@ class ApartmentCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // 3. Subtle dark gradient overlay
                         Positioned.fill(
                           child: DecoratedBox(
                             decoration: BoxDecoration(
@@ -110,7 +90,7 @@ class ApartmentCard extends StatelessWidget {
                                 colors: [
                                   Colors.black.withValues(alpha: 0.25),
                                   Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.45),
+                                  Colors.black.withValues(alpha: 0.55),
                                 ],
                               ),
                             ),

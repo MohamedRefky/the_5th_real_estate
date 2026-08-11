@@ -133,7 +133,7 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
                   const SizedBox(height: 28),
 
                   // ── 5. Image Gallery ────────────────────────────
-                  if (apartment.imageUrls.length > 1) ...[
+                  if (apartment.imageUrls.isNotEmpty) ...[
                     const SectionHeader(
                       title: 'معرض صور الشقة',
                       icon: Icons.photo_library_rounded,
