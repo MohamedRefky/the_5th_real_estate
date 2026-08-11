@@ -31,7 +31,7 @@ class _AdminRouteGuardState extends State<AdminRouteGuard> {
       if (!mounted) return;
       setState(() {
         _ready = true;
-        _signedIn = AuthController.instance.isSignedIn;
+        _signedIn = AuthController.instance.isAuthorizedAdmin;
       });
     } catch (e) {
       if (!mounted) return;

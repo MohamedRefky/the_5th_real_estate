@@ -60,11 +60,13 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       Navigator.pushReplacementNamed(context, RoutesNames.adminDashboard);
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      setState(() => _error = e.code == 'wrong-password' ||
-              e.code == 'user-not-found' ||
-              e.code == 'invalid-credential'
-          ? 'بيانات الدخول غير صحيحة'
-          : 'فشل تسجيل الدخول: ${e.message}');
+      setState(() => _error = e.code == 'unauthorized-admin'
+          ? (e.message ?? 'عفواً، هذا البريد غير مصرح له بالوصول إلى لوحة التحكم.')
+          : e.code == 'wrong-password' ||
+                  e.code == 'user-not-found' ||
+                  e.code == 'invalid-credential'
+              ? 'بيانات الدخول غير صحيحة'
+              : 'فشل تسجيل الدخول: ${e.message}');
     } catch (e) {
       if (!mounted) return;
       setState(() => _error = '$e');
@@ -84,11 +86,13 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       Navigator.pushReplacementNamed(context, RoutesNames.adminDashboard);
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      setState(() => _error = e.code == 'popup-closed-by-user'
-          ? 'تم إغلاق النافذة قبل إتمام الدخول'
-          : e.code == 'operation-not-allowed'
-              ? 'Google sign-in غير مفعّل في Firebase'
-              : 'فشل الدخول بواسطة Google: ${e.message}');
+      setState(() => _error = e.code == 'unauthorized-admin'
+          ? (e.message ?? 'عفواً، هذا البريد غير مصرح له بالوصول إلى لوحة التحكم.')
+          : e.code == 'popup-closed-by-user'
+              ? 'تم إغلاق النافذة قبل إتمام الدخول'
+              : e.code == 'operation-not-allowed'
+                  ? 'Google sign-in غير مفعّل في Firebase'
+                  : 'فشل الدخول بواسطة Google: ${e.message}');
     } catch (e) {
       if (!mounted) return;
       setState(() => _error = '$e');

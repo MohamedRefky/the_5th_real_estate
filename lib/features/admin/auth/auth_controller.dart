@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/firebase/app_firebase.dart';
 
 /// Auth state notifier for the hidden admin area.
@@ -15,6 +16,15 @@ class AuthController extends ChangeNotifier {
 
   User? get user => FirebaseAuth.instance.currentUser;
   bool get isSignedIn => user != null;
+
+  /// Returns true ONLY if the current signed-in user's email is in the allowed admin list.
+  bool get isAuthorizedAdmin {
+    final u = user;
+    if (u == null || u.email == null || u.email!.trim().isEmpty) return false;
+    final email = u.email!.trim().toLowerCase();
+    return AppConstants.allowedAdminEmails
+        .any((allowed) => allowed.toLowerCase() == email);
+  }
 
   bool _listening = false;
   bool _initialized = false;
@@ -31,12 +41,24 @@ class AuthController extends ChangeNotifier {
     _initialized = true;
   }
 
+  void _checkAuthorization() {
+    if (user != null && !isAuthorizedAdmin) {
+      signOut();
+      throw FirebaseAuthException(
+        code: 'unauthorized-admin',
+        message:
+            'عفواً، هذا البريد الإلكتروني ليس مصرحاً له بالوصول إلى لوحة التحكم.',
+      );
+    }
+  }
+
   /// Signs in with email + password (admin account only — no sign-up UI).
   Future<void> signIn(String email, String password) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email.trim(),
       password: password,
     );
+    _checkAuthorization();
   }
 
   /// Signs in with the Google account (popup flow — web only).
@@ -51,6 +73,7 @@ class AuthController extends ChangeNotifier {
       );
     }
     await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+    _checkAuthorization();
   }
 
   /// Signs out of Firebase Auth.

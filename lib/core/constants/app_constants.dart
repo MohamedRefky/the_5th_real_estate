@@ -6,6 +6,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'admin_config.dart';
+
 /// Data model representing a sales team contact representative.
 class TeamContact {
   final String id;
@@ -32,6 +34,9 @@ class TeamContact {
 
 class AppConstants {
   AppConstants._();
+
+  /// Whitelist of emails authorized to access the admin dashboard.
+  static List<String> get allowedAdminEmails => AdminConfig.allowedAdminEmails;
 
   /// Sales Team Representatives: Mr. Mohamed Eldamen & Mr. Hamada Badea
   static const List<TeamContact> teamContacts = [
