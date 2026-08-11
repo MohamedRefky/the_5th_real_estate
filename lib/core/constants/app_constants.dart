@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Data model representing a sales team contact representative.
 class TeamContact {
   final String id;
-  final String name;
+  final String nameEn;
+  final String nameAr;
   final String title;
   final String whatsappNumber;
   final String facebookUrl;
@@ -17,12 +18,16 @@ class TeamContact {
 
   const TeamContact({
     required this.id,
-    required this.name,
+    required this.nameEn,
+    required this.nameAr,
     required this.title,
     required this.whatsappNumber,
     required this.facebookUrl,
     required this.initials,
   });
+
+  /// Convenient accessor for primary display name (English at top)
+  String get name => nameEn;
 }
 
 class AppConstants {
@@ -32,19 +37,21 @@ class AppConstants {
   static const List<TeamContact> teamContacts = [
     TeamContact(
       id: 'eldamen',
-      name: 'أ. محمد الضامن',
-      title: 'Mr. Mohamed Eldamen — مسؤول المبيعات والمعاينات',
+      nameEn: 'Mr. Mohamed Eldamen',
+      nameAr: 'أ. محمد الضامن',
+      title: 'أ. محمد الضامن — مسؤول المبيعات والمعاينات',
       whatsappNumber: '+201555206857',
       facebookUrl: 'https://www.facebook.com/share/1BtUFpMkhX/?mibextid=wwXIfr',
-      initials: 'م.ض',
+      initials: 'M.E',
     ),
     TeamContact(
       id: 'badea',
-      name: 'أ. حمادة بديع',
-      title: 'Mr. Hamada Badea — مسؤول المبيعات والمعاينات',
+      nameEn: 'Mr. Hamada Badea',
+      nameAr: 'أ. حمادة بديع',
+      title: 'أ. حمادة بديع — مسؤول المبيعات والمعاينات',
       whatsappNumber: '+201107861171',
       facebookUrl: 'https://www.facebook.com/share/1LqHtgX5SC/?mibextid=wwXIfr',
-      initials: 'ح.ب',
+      initials: 'H.B',
     ),
   ];
 

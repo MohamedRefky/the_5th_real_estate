@@ -362,7 +362,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                contact.name,
+                                contact.nameEn,
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w900,
                                   color: AppColors.textPrimary,
@@ -398,7 +398,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                 // Action Buttons
                 if (isWhatsAppOnly) ...[
                   _ActionButton(
-                    label: 'مراسلة ${contact.name} عبر واتساب',
+                    label: 'مراسلة ${contact.nameAr} عبر واتساب',
                     icon: FontAwesomeIcons.whatsapp,
                     gradient: const LinearGradient(
                       colors: [Color(0xFF25D366), Color(0xFF128C7E)],
@@ -409,13 +409,13 @@ class _GlassRepresentativeCard extends StatelessWidget {
                         phoneNumber: contact.whatsappNumber,
                         message: message.isNotEmpty
                             ? message
-                            : 'مرحباً ${contact.name}، أود الاستفسار عن العقارات المتاحة وتحديد موعد معاينة',
+                            : 'مرحباً ${contact.nameAr}، أود الاستفسار عن العقارات المتاحة وتحديد موعد معاينة',
                       );
                     },
                   ),
                 ] else if (isFacebookOnly) ...[
                   _ActionButton(
-                    label: 'زيارة بروفايل ${contact.name} على فيسبوك',
+                    label: 'زيارة بروفايل ${contact.nameAr} على فيسبوك',
                     icon: FontAwesomeIcons.facebookF,
                     gradient: const LinearGradient(
                       colors: [Color(0xFF1877F2), Color(0xFF0F52AC)],
@@ -441,7 +441,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                               phoneNumber: contact.whatsappNumber,
                               message: message.isNotEmpty
                                   ? message
-                                  : 'مرحباً ${contact.name}، أود الاستفسار عن العقارات المتاحة',
+                                  : 'مرحباً ${contact.nameAr}، أود الاستفسار عن العقارات المتاحة',
                             );
                           },
                         ),
