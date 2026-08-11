@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../data/public_building_repository.dart';
@@ -25,22 +26,76 @@ class BuildingService {
 
   /// All buildings (published and hidden) across all areas, newest first.
   Future<List<AdminBuilding>> fetchAll() async {
-    final results = await Future.wait([
-      for (final area in areaOptions) _units(area).get(),
-    ]);
-    final docs = <AdminBuilding>[];
-    for (final snap in results) {
-      docs.addAll(snap.docs
-          .map((doc) => AdminBuilding.fromFirestore(doc.id, doc.data())));
+    final byId = <String, AdminBuilding>{};
+
+    // 1. Per-area subcollections
+    for (final area in areaOptions) {
+      try {
+        final snap = await _units(area).get();
+        for (final doc in snap.docs) {
+          byId[doc.id] = AdminBuilding.fromFirestore(
+            doc.id,
+            doc.data(),
+            fallbackArea: doc.data()['area'] as String? ?? area,
+          );
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error fetching buildings for area $area: $e');
+        }
+      }
     }
-    docs.sort((a, b) {
-      final aT = a.updatedAt ?? a.createdAt;
-      final bT = b.updatedAt ?? b.createdAt;
-      if (aT == null && bT == null) return 0;
-      if (aT == null) return 1;
-      if (bT == null) return -1;
-      return bT.compareTo(aT);
-    });
+
+    // 2. Legacy root collection
+    try {
+      final legacySnap =
+          await FirebaseFirestore.instance.collection('buildings').get();
+      for (final doc in legacySnap.docs) {
+        if (!byId.containsKey(doc.id)) {
+          byId[doc.id] = AdminBuilding.fromFirestore(doc.id, doc.data());
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching legacy buildings: $e');
+      }
+    }
+
+    // 3. Collection group (best effort fallback)
+    try {
+      final groupSnap =
+          await FirebaseFirestore.instance.collectionGroup('units').get();
+      for (final doc in groupSnap.docs) {
+        if (!byId.containsKey(doc.id)) {
+          final data = doc.data();
+          if (data.containsKey('totalFloors') ||
+              data.containsKey('availableUnits') ||
+              data.containsKey('buildingStructure') ||
+              doc.reference.path.contains('buildings')) {
+            final parentAreaId = doc.reference.parent.parent?.id;
+            byId[doc.id] = AdminBuilding.fromFirestore(
+              doc.id,
+              data,
+              fallbackArea: data['area'] as String? ?? parentAreaId,
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching collectionGroup building units: $e');
+      }
+    }
+
+    final docs = byId.values.toList()
+      ..sort((a, b) {
+        final aT = a.updatedAt ?? a.createdAt;
+        final bT = b.updatedAt ?? b.createdAt;
+        if (aT == null && bT == null) return 0;
+        if (aT == null) return 1;
+        if (bT == null) return -1;
+        return bT.compareTo(aT);
+      });
     return docs;
   }
 

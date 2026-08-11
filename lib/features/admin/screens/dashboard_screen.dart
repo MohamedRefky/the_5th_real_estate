@@ -516,16 +516,42 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         child:
                             CircularProgressIndicator(color: AppColors.accent),
                       )
-                    : TabBarView(
-                        controller: _tabController,
-                        children: _areas.map((area) {
-                          return _buildAreaList(
-                            targetArea: area,
-                            units: units,
-                            buildings: buildings,
-                          );
-                        }).toList(),
-                      ),
+                    : snapshot.hasError
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.error_outline_rounded,
+                                      color: AppColors.error, size: 48),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'تعذر جلب البيانات من Firebase:\n${snapshot.error}',
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        const TextStyle(color: AppColors.error),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton.icon(
+                                    onPressed: _reload,
+                                    icon: const Icon(Icons.refresh_rounded),
+                                    label: const Text('إعادة المحاولة'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : TabBarView(
+                            controller: _tabController,
+                            children: _areas.map((area) {
+                              return _buildAreaList(
+                                targetArea: area,
+                                units: units,
+                                buildings: buildings,
+                              );
+                            }).toList(),
+                          ),
               ),
             ],
           ),

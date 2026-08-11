@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../data/public_property_repository.dart';
 import '../models/property.dart';
@@ -29,21 +30,73 @@ class PropertyService {
           .collection('units');
 
   /// All properties (published and hidden) across the new per-area folders
-  /// plus any remaining legacy flat docs, newest first.
+  /// plus legacy flat docs and collectionGroup units, newest first.
   Future<List<Property>> fetchAll() async {
-    final areaSnaps = await Future.wait([
-      for (final area in areaOptions) _units(area).get(),
-    ]);
-
-    // Legacy flat docs are still read until the migration deletes them.
-    final legacySnap = await _legacyCollection.get();
-
     final byId = <String, Property>{};
-    for (final snap in [legacySnap, ...areaSnaps]) {
-      for (final doc in snap.docs) {
-        byId[doc.id] = Property.fromFirestore(doc.id, doc.data());
+    Object? lastError;
+
+    // 1. Per-area subcollections
+    for (final area in areaOptions) {
+      try {
+        final snap = await _units(area).get();
+        for (final doc in snap.docs) {
+          byId[doc.id] = Property.fromFirestore(
+            doc.id,
+            doc.data(),
+            fallbackArea: doc.data()['area'] as String? ?? area,
+          );
+        }
+      } catch (e) {
+        lastError = e;
+        if (kDebugMode) {
+          print('Error fetching properties for area $area: $e');
+        }
       }
     }
+
+    // 2. Legacy root collection
+    try {
+      final legacySnap = await _legacyCollection.get();
+      for (final doc in legacySnap.docs) {
+        if (!byId.containsKey(doc.id)) {
+          byId[doc.id] = Property.fromFirestore(doc.id, doc.data());
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching legacy properties: $e');
+      }
+    }
+
+    // 3. Collection group (best effort fallback)
+    try {
+      final groupSnap =
+          await FirebaseFirestore.instance.collectionGroup('units').get();
+      for (final doc in groupSnap.docs) {
+        if (!byId.containsKey(doc.id)) {
+          final data = doc.data();
+          if (data.containsKey('unitType') ||
+              data.containsKey('bedrooms') ||
+              doc.reference.path.contains('properties')) {
+            final parentAreaId = doc.reference.parent.parent?.id;
+            byId[doc.id] = Property.fromFirestore(
+              doc.id,
+              data,
+              fallbackArea: data['area'] as String? ?? parentAreaId,
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching collectionGroup units: $e');
+      }
+    }
+
+    if (byId.isEmpty && lastError != null) {
+      throw lastError;
+    }
+
     final items = byId.values.toList()
       ..sort((a, b) {
         final aT = a.updatedAt ?? a.createdAt;

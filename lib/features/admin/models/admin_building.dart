@@ -200,13 +200,15 @@ class AdminBuilding {
 
   factory AdminBuilding.fromFirestore(
     String docId,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    String? fallbackArea,
+  }) {
+    final rawArea = (data['area'] as String?) ?? fallbackArea ?? '';
     return AdminBuilding(
       id: docId,
       name: (data['name'] as String?) ?? '',
       description: (data['description'] as String?) ?? '',
-      area: (data['area'] as String?) ?? '',
+      area: rawArea,
       areaSqm: (data['areaSqm'] as num?)?.toDouble(),
       buildingStructure: data['buildingStructure'] as String?,
       orientation: data['orientation'] as String?,
