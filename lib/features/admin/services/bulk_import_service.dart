@@ -171,14 +171,22 @@ class BulkImportService {
   }
 
   /// Bulk import Properties into Firestore.
+  ///
+  /// When [overrideArea] is provided every item is stored inside that area's
+  /// folder (`properties/{area}/units`) regardless of its own `area` field.
+  /// Pass null to keep each item's own area (default behavior).
   Future<void> uploadPropertiesInBulk(
     List<Property> properties, {
+    String? overrideArea,
     void Function(int current, int total)? onProgress,
   }) async {
     final total = properties.length;
     for (int i = 0; i < total; i++) {
       final item = properties[i];
-      await PropertyService.instance.create(item);
+      final target = overrideArea != null && overrideArea.trim().isNotEmpty
+          ? item.copyWith(area: overrideArea.trim())
+          : item;
+      await PropertyService.instance.create(target);
       if (onProgress != null) {
         onProgress(i + 1, total);
       }
@@ -186,14 +194,22 @@ class BulkImportService {
   }
 
   /// Bulk import Buildings into Firestore.
+  ///
+  /// When [overrideArea] is provided every item is stored inside that area's
+  /// folder (`buildings/{area}/units`) regardless of its own `area` field.
+  /// Pass null to keep each item's own area (default behavior).
   Future<void> uploadBuildingsInBulk(
     List<AdminBuilding> buildings, {
+    String? overrideArea,
     void Function(int current, int total)? onProgress,
   }) async {
     final total = buildings.length;
     for (int i = 0; i < total; i++) {
       final item = buildings[i];
-      await BuildingService.instance.create(item, []);
+      final target = overrideArea != null && overrideArea.trim().isNotEmpty
+          ? item.copyWith(area: overrideArea.trim())
+          : item;
+      await BuildingService.instance.create(target, []);
       if (onProgress != null) {
         onProgress(i + 1, total);
       }

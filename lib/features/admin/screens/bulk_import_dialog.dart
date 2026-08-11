@@ -27,6 +27,10 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
   ImportType _importType = ImportType.properties;
   final _jsonController = TextEditingController();
 
+  /// Empty string means "auto": every item keeps the area from its own JSON.
+  static const String _autoArea = '';
+  String _overrideArea = _autoArea;
+
   bool _isAnalyzing = false;
   bool _isUploading = false;
   int _uploadCurrent = 0;
@@ -170,9 +174,11 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     });
 
     try {
+      final overrideArea = _overrideArea.trim().isEmpty ? null : _overrideArea.trim();
       if (_importType == ImportType.properties) {
         await BulkImportService.instance.uploadPropertiesInBulk(
           propValid,
+          overrideArea: overrideArea,
           onProgress: (current, total) {
             if (mounted) {
               setState(() {
@@ -185,6 +191,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
       } else {
         await BulkImportService.instance.uploadBuildingsInBulk(
           buildValid,
+          overrideArea: overrideArea,
           onProgress: (current, total) {
             if (mounted) {
               setState(() {
@@ -353,6 +360,45 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 14),
+
+            // ── Target Area Selector ────────────────────────────────
+            DropdownButtonFormField<String>(
+              initialValue: _overrideArea,
+              isExpanded: true,
+              dropdownColor: AppColors.surface,
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                labelText: 'المكان / المنطقة للإضافة',
+                hintText: 'اختر المنطقة...',
+                helperText: 'اختر المنطقة قبل الرفع لتخزين كل الداتا في مكانها الصحيح',
+                filled: true,
+                fillColor: AppColors.cream,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.divider),
+                ),
+              ),
+              items: [
+                DropdownMenuItem<String>(
+                  value: _autoArea,
+                  child: const Text('تلقائي (حسب منطقة كل عنصر في الكود)'),
+                ),
+                ...areaOptions.map(
+                  (area) => DropdownMenuItem<String>(
+                    value: area,
+                    child: Text(area),
+                  ),
+                ),
+              ],
+              onChanged: _isUploading
+                  ? null
+                  : (value) {
+                      setState(() {
+                        _overrideArea = value ?? _autoArea;
+                      });
+                    },
             ),
             const SizedBox(height: 14),
 
