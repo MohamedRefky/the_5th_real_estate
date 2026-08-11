@@ -33,3 +33,26 @@ class DummyData {
   static Apartment? getById(String id) => null;
   static Building? getBuildingById(String id) => null;
 }
+
+/// Neighborhoods shown as their own cards in the "عمارات" section.
+const List<String> buildingMainAreas = [
+  'المستثمرين',
+  'الأندلس 1 و 2',
+  'الأندلس عائلي',
+  'جاردينيا',
+  'بيت الوطن',
+  'النرجس الجديدة',
+];
+
+/// Remaining neighborhoods grouped under the "أحياء أخرى متنوعة" card.
+const List<String> buildingOtherAreas = [
+  'النرجس عمارات',
+  'النرجس فيلات',
+  'البنفسج عمارات',
+  'البنفسج فيلات',
+  'الياسمين الزوجي فيلات',
+  'الياسمين الفردي فيلات',
+];
+
+/// Label for the combined "other areas" box in the buildings section.
+const String buildingOtherAreasLabel = 'أحياء أخرى متنوعة';

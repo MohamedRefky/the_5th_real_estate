@@ -12,7 +12,14 @@ import '../widgets/building_card.dart';
 class BuildingsAreaScreen extends StatefulWidget {
   final String areaName;
 
-  const BuildingsAreaScreen({super.key, required this.areaName});
+  /// When set, loads buildings across all these areas (combined box).
+  final List<String>? areas;
+
+  const BuildingsAreaScreen({
+    super.key,
+    required this.areaName,
+    this.areas,
+  });
 
   @override
   State<BuildingsAreaScreen> createState() => _BuildingsAreaScreenState();
@@ -24,7 +31,10 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = BuildingsAreaController(widget.areaName)..load();
+    _controller = BuildingsAreaController(
+      widget.areaName,
+      areas: widget.areas,
+    )..load();
   }
 
   @override

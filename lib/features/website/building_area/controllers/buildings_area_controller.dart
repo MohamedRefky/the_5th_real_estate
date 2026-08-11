@@ -11,10 +11,14 @@ import '../../../../models/building.dart';
 class BuildingsAreaController extends ChangeNotifier {
   BuildingsAreaController(
     this.areaName, {
+    this.areas,
     PublicBuildingRepository? repository,
   }) : _repository = repository ?? PublicBuildingRepository.instance;
 
   final String areaName;
+
+  /// When set, loads buildings across all these areas (combined box).
+  final List<String>? areas;
   final PublicBuildingRepository _repository;
 
   List<Building> _allBuildings = [];
@@ -34,7 +38,20 @@ class BuildingsAreaController extends ChangeNotifier {
     _loading = true;
     notifyListeners();
     try {
-      _allBuildings = await _repository.byArea(areaName);
+      final targetAreas = areas;
+      if (targetAreas != null) {
+        final results = await Future.wait(
+          targetAreas.map((a) => _repository.byArea(a)),
+        );
+        final seen = <String>{};
+        _allBuildings = [
+          for (final list in results)
+            for (final b in list)
+              if (seen.add(b.id)) b,
+        ];
+      } else {
+        _allBuildings = await _repository.byArea(areaName);
+      }
     } finally {
       _loading = false;
     }

@@ -68,6 +68,23 @@ void main() {
       c.dispose();
     });
 
+    test('loads buildings across multiple areas (combined box)', () async {
+      final repo = _FakeBuildingRepository([
+        _bldg('b1'),
+        _bldg('b2', area: 'النرجس عمارات'),
+        _bldg('b3', area: 'البنفسج فيلات'),
+        _bldg('b4', area: 'جاردينيا'),
+      ]);
+      final c = BuildingsAreaController(
+        'أحياء أخرى متنوعة',
+        areas: const ['النرجس عمارات', 'البنفسج فيلات'],
+        repository: repo,
+      );
+      await c.load();
+      expect(c.filteredBuildings.length, 2);
+      c.dispose();
+    });
+
     test('status pills filter and notify', () async {
       final repo = _FakeBuildingRepository([
         _bldg('b1'),

@@ -49,11 +49,18 @@ class _HomeScreenState extends State<HomeScreen> {
     'تواصل معنا',
   ];
 
-  /// Precomputed building counts (avoids re-filtering on every grid item build).
-  late final Map<String, int> _buildingCounts = {
-    for (final area in DummyData.areas)
-      area: DummyData.getBuildingsByArea(area).length,
-  };
+  /// Precomputed building counts per area (from Firestore, avoids re-filtering
+  /// on every grid item build).
+  late final Future<Map<String, int>> _buildingCounts = _loadBuildingCounts();
+
+  Future<Map<String, int>> _loadBuildingCounts() async {
+    final all = await PublicBuildingRepository.instance.all();
+    final counts = <String, int>{};
+    for (final area in DummyData.areas) {
+      counts[area] = all.where((b) => b.area == area).length;
+    }
+    return counts;
+  }
 
   Map<String, GlobalKey> get _sectionKeys => {
     'لماذا نحن': _whyKey,
@@ -243,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icons.apartment_rounded,
                     title: 'عمارات',
                     subtitle:
-                        'استكشف المشروعات والعمارات السكنية في الـ 5 أحياء',
+                        'استكشف المشروعات والعمارات السكنية في أحياء التجمع الخامس',
                   ),
                 ),
 
@@ -256,39 +263,67 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1200),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final crossAxisCount = _getCrossAxisCount(
-                            constraints.maxWidth,
-                          );
-                          return GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 24,
-                                  mainAxisSpacing: 24,
-                                  childAspectRatio: 1.05,
-                                ),
-                            itemCount: DummyData.areas.length,
-                            itemBuilder: (context, index) {
-                              final area = DummyData.areas[index];
-                              final bldCount = _buildingCounts[area] ?? 0;
-                              return RevealOnScroll(
-                                direction: RevealDirection.elasticPop,
-                                delayMilliseconds: index * 80,
-                                child: AreaCard(
-                                  areaName: area,
-                                  customBadgeText: '$bldCount عمارة متاحة',
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      RoutesNames.buildingsArea,
-                                      arguments: area,
+                      child: FutureBuilder<Map<String, int>>(
+                        future: _buildingCounts,
+                        builder: (context, countsSnapshot) {
+                          final counts = countsSnapshot.data ?? const <String, int>{};
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              final crossAxisCount = _getCrossAxisCount(
+                                constraints.maxWidth,
+                              );
+                              final totalItems = buildingMainAreas.length + 1;
+                              return GridView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: 24,
+                                      mainAxisSpacing: 24,
+                                      childAspectRatio: 1.05,
+                                    ),
+                                itemCount: totalItems,
+                                itemBuilder: (context, index) {
+                                  if (index == buildingMainAreas.length) {
+                                    return RevealOnScroll(
+                                      direction: RevealDirection.elasticPop,
+                                      delayMilliseconds: index * 80,
+                                      child: AreaCard(
+                                        areaName: buildingOtherAreasLabel,
+                                        customBadgeText:
+                                            'عمارات بأماكن متنوعة',
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            RoutesNames.buildingsArea,
+                                            arguments: {
+                                              'label': buildingOtherAreasLabel,
+                                              'areas': buildingOtherAreas,
+                                            },
+                                          );
+                                        },
+                                      ),
                                     );
-                                  },
-                                ),
+                                  }
+                                  final area = buildingMainAreas[index];
+                                  final bldCount = counts[area] ?? 0;
+                                  return RevealOnScroll(
+                                    direction: RevealDirection.elasticPop,
+                                    delayMilliseconds: index * 80,
+                                    child: AreaCard(
+                                      areaName: area,
+                                      customBadgeText: '$bldCount عمارة متاحة',
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          RoutesNames.buildingsArea,
+                                          arguments: area,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
                               );
                             },
                           );

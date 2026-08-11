@@ -40,10 +40,22 @@ class AppRouter {
         return _buildRoute(AreaScreen(areaName: areaName), settings);
 
       case RoutesNames.buildingsArea:
-        final areaName = (settings.arguments is String)
-            ? (settings.arguments as String)
-            : 'المستثمرين';
-        return _buildRoute(BuildingsAreaScreen(areaName: areaName), settings);
+        final args = settings.arguments;
+        if (args is Map) {
+          final label = (args['label'] as String?) ?? 'أحياء أخرى متنوعة';
+          final areas = (args['areas'] as List<Object?>?)
+              ?.map((e) => e as String)
+              .toList();
+          return _buildRoute(
+            BuildingsAreaScreen(areaName: label, areas: areas),
+            settings,
+          );
+        }
+        final areaName = (args is String) ? args : 'المستثمرين';
+        return _buildRoute(
+          BuildingsAreaScreen(areaName: areaName),
+          settings,
+        );
 
       case RoutesNames.apartmentDetails:
         final apartmentId = (settings.arguments is String)

@@ -94,6 +94,7 @@ class AppConstants {
     'البنفسج فيلات': Icons.villa_rounded,
     'الياسمين الزوجي فيلات': Icons.villa_rounded,
     'الياسمين الفردي فيلات': Icons.villa_rounded,
+    'أحياء أخرى متنوعة': Icons.holiday_village_rounded,
   };
 
   /// Resolves the representative icon for [area], or a fallback.
