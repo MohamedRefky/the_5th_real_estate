@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/image_url_helper.dart';
 import '../../../../core/widgets/adaptive_network_image.dart';
 import '../../../../core/widgets/details_table.dart';
@@ -217,41 +215,6 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
                           layout: DetailsTableLayout.flex,
                         ),
                       ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // ── Browse Apartments Button ───────────────────
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          RoutesNames.area,
-                          arguments: building.area,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.textOnPrimary,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 28,
-                          vertical: 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 4,
-                      ),
-                      icon: const Icon(Icons.apartment_rounded),
-                      label: Text(
-                        'عرض الشقق المتاحة في ${building.area}',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                     ),
                   ),
 
