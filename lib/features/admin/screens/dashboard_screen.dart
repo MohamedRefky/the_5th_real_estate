@@ -3,20 +3,26 @@ import 'package:flutter/material.dart';
 import '../../../app/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../auth/auth_controller.dart';
+import '../data/area_catalog.dart';
 import '../models/admin_building.dart';
 import '../models/property.dart';
 import '../services/building_service.dart';
-import '../services/data_migration_service.dart';
 import '../services/property_service.dart';
+import '../widgets/admin_area_card.dart';
 import '../widgets/admin_building_card.dart';
 import '../widgets/message_view.dart';
 import '../widgets/property_card.dart';
 import 'building_form_screen.dart';
 import 'property_form_screen.dart';
 
-/// Hidden admin dashboard — lists all units and buildings organized by neighborhood
-/// tabs (الكل, المستثمرين, الأندلس 1/2, جاردينيا, بيت الوطن, النرجس, البنفسج, الياسمين)
-/// with edit / delete / publish toggles and live Firestore sync.
+/// Simplified & Ultra-Clean Admin Dashboard.
+///
+/// Features a streamlined single-page workflow with:
+///  - High-visibility Add buttons at the top
+///  - Live Stats Overview
+///  - Instant Search & Neighborhood Dropdown Filter
+///  - Unified listings view with toggle switches, edit & delete buttons
+///  - Optional district-grouped overview
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
 
@@ -24,44 +30,26 @@ class AdminDashboardScreen extends StatefulWidget {
   State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
 }
 
-class _AdminDashboardScreenState extends State<AdminDashboardScreen>
-    with SingleTickerProviderStateMixin {
+class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   late Future<List<Property>> _unitsFuture;
   late Future<List<AdminBuilding>> _buildingsFuture;
 
-  late TabController _tabController;
-
-  static const List<String> _areas = [
-    'الكل',
-    'المستثمرين',
-    'الأندلس 1 و 2',
-    'الأندلس عائلي',
-    'جاردينيا',
-    'بيت الوطن',
-    'النرجس الجديدة',
-    'النرجس عمارات',
-    'النرجس فيلات',
-    'البنفسج عمارات',
-    'البنفسج فيلات',
-    'الياسمين الزوجي فيلات',
-    'الياسمين الفردي فيلات',
-  ];
-
-  String _searchQuery = '';
+  String _selectedArea = 'الكل';
   String _filterType = 'all'; // 'all', 'unit', 'building'
-  bool _showSearch = false;
+  String _statusFilter = 'all'; // 'all', 'published', 'hidden'
+  String _searchQuery = '';
+  String _viewMode = 'list'; // 'list', 'areas'
+
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _areas.length, vsync: this);
     _reload();
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -93,125 +81,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
         .replaceAll('جاردنيا', 'جاردينيا');
     if (cleanItem == cleanTarget) return true;
     return cleanItem.contains(cleanTarget) || cleanTarget.contains(cleanItem);
-  }
-
-  Future<void> _openAddChooser() async {
-    final activeAreaIndex = _tabController.index;
-    final defaultArea =
-        activeAreaIndex > 0 ? _areas[activeAreaIndex] : 'المستثمرين';
-
-    final choice = await showDialog<String>(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppColors.divider),
-        ),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 420),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'إضافة عقار جديد ($defaultArea)',
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    icon: const Icon(Icons.close_rounded,
-                        color: AppColors.textSecondary, size: 20),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              _chooserOption(
-                icon: Icons.apartment_rounded,
-                title: 'شقة / فيلا / دوبلكس / استوديو',
-                subtitle: 'تضاف في قسم $defaultArea',
-                value: 'unit',
-              ),
-              const SizedBox(height: 12),
-              _chooserOption(
-                icon: Icons.business_rounded,
-                title: 'عمارة بالكامل',
-                subtitle: 'تضاف في قسم $defaultArea',
-                value: 'building',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    if (!mounted) return;
-    if (choice == 'building') {
-      await _openBuildingForm(initialArea: defaultArea);
-    } else if (choice == 'unit') {
-      await _openUnitForm(initialArea: defaultArea);
-    }
-    _reload();
-  }
-
-  Widget _chooserOption({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required String value,
-  }) {
-    return Material(
-      color: AppColors.background,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: () => Navigator.pop(context, value),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
-            children: [
-              Icon(icon, color: AppColors.accent, size: 30),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_left_rounded,
-                  color: AppColors.textSecondary),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Future<void> _openUnitForm({Property? property, String? initialArea}) async {
@@ -269,7 +138,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: AppColors.divider),
         ),
-        title: Text(title, style: const TextStyle(color: AppColors.textPrimary)),
+        title:
+            Text(title, style: const TextStyle(color: AppColors.textPrimary)),
         content: Text(message,
             style: const TextStyle(color: AppColors.textSecondary)),
         actions: [
@@ -300,98 +170,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     _reload();
   }
 
-  Future<void> _runMigration() async {
-    final proceed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.divider),
-        ),
-        title: const Text('ترحيل البيانات القديمة؟',
-            style: TextStyle(color: AppColors.textPrimary)),
-        content: const Text(
-          'هتتحول الوحدات اللي في كلكشن properties القديم إلى فولدرات المناطق الجديدة (كل وحدة في فولدر حيها). تبقى تكمل بعدها وتشيل الكلكشن القديم.',
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('إلغاء',
-                style: TextStyle(color: AppColors.textSecondary)),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.accent),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('ترحيل'),
-          ),
-        ],
-      ),
-    );
-    if (proceed != true) return;
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('جاري الترحيل...')),
-    );
-
-    final result = await DataMigrationService.migrateLegacyProperties();
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          result.hasFailures
-              ? 'تم ترحيل ${result.migrated}، فشل ${result.failed} (انقلهم يدوياً).'
-              : 'تم ترحيل ${result.migrated}، ${result.skipped} مكررة بالفعل.',
-        ),
-      ),
-    );
-
-    final deleteLegacy = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.divider),
-        ),
-        title: const Text('مسح كلكشن properties القديم؟',
-            style: TextStyle(color: AppColors.textPrimary)),
-        content: const Text(
-          'بعد الترحيل الناجح ممكن تتشال الدوكس القديمة من الكلكشن المسطح عشان الموقع ما يقراهاش تاني.',
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('بعدين',
-                style: TextStyle(color: AppColors.textSecondary)),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('امسح القديم'),
-          ),
-        ],
-      ),
-    );
-    if (deleteLegacy != true) {
-      _reload();
-      return;
-    }
-
-    final cleanup = await DataMigrationService.migrateLegacyProperties(
-      deleteLegacy: true,
-    );
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('اتمسح ${cleanup.deleted} مستند قديم.')),
-    );
-    _reload();
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
@@ -408,52 +186,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           appBar: AppBar(
             backgroundColor: AppColors.surface,
             elevation: 0,
-            title: _showSearch
-                ? TextField(
-                    controller: _searchController,
-                    autofocus: true,
-                    style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      hintText: 'ابحث بالاسم، الوصف، أو الحي...',
-                      hintStyle: const TextStyle(color: AppColors.textHint),
-                      border: InputBorder.none,
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.close_rounded,
-                            color: AppColors.textSecondary),
-                        onPressed: () {
-                          setState(() {
-                            _showSearch = false;
-                            _searchQuery = '';
-                            _searchController.clear();
-                          });
-                        },
-                      ),
-                    ),
-                    onChanged: (val) =>
-                        setState(() => _searchQuery = val.trim().toLowerCase()),
-                  )
-                : const Text(
-                    'لوحة تحكم العقارات',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-            actions: [
-              IconButton(
-                tooltip: _showSearch ? 'إغلاق البحث' : 'بحث',
-                onPressed: () => setState(() => _showSearch = !_showSearch),
-                icon: Icon(
-                  _showSearch
-                      ? Icons.search_off_rounded
-                      : Icons.search_rounded,
-                  color: AppColors.accent,
-                ),
+            title: const Text(
+              'لوحة تحكم الأدمن',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w800,
+                fontSize: 19,
               ),
+            ),
+            actions: [
               IconButton(
                 tooltip: 'تحديث البيانات',
                 onPressed: _reload,
-                icon: const Icon(Icons.refresh_rounded, color: AppColors.accent),
+                icon:
+                    const Icon(Icons.refresh_rounded, color: AppColors.accent),
               ),
               IconButton(
                 tooltip: 'تسجيل الخروج',
@@ -461,105 +207,173 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 icon: const Icon(Icons.logout_rounded, color: AppColors.error),
               ),
             ],
-            bottom: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              labelColor: AppColors.accent,
-              unselectedLabelColor: AppColors.textSecondary,
-              indicatorColor: AppColors.accent,
-              indicatorWeight: 3,
-              labelStyle:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              tabs: _areas.map((area) {
-                final areaUnits =
-                    units.where((u) => _areaMatches(u.area, area)).length;
-                final areaBlds = buildings
-                    .where((b) => _areaMatches(b.area, area))
-                    .length;
-                final totalCount = areaUnits + areaBlds;
-                return Tab(
-                  text: '$area ${totalCount > 0 ? "($totalCount)" : ""}',
-                );
-              }).toList(),
-            ),
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            backgroundColor: AppColors.accent,
-            foregroundColor: AppColors.textOnPrimary,
-            onPressed: _openAddChooser,
-            icon: const Icon(Icons.add_rounded),
-            label: const Text('إضافة عقار'),
-          ),
-          body: Column(
-            children: [
-              // Type Sub-Filter Bar
-              Container(
-                color: AppColors.surface,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(
-                  children: [
-                    const Text(
-                      'عرض:',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.bold,
+          body: isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppColors.accent),
+                )
+              : snapshot.hasError
+                  ? _buildError(snapshot.error!)
+                  : RefreshIndicator(
+                      color: AppColors.accent,
+                      onRefresh: () async => _reload(),
+                      child: ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          // ── 1. Prominent Quick Add Buttons ─────────
+                          _buildQuickAddHeader(),
+                          const SizedBox(height: 16),
+
+                          // ── 2. Simple Stats Row ────────────────────
+                          _buildStatsRow(units, buildings),
+                          const SizedBox(height: 20),
+
+                          // ── 3. Controls & View Mode Toggle ─────────
+                          _buildControlsBar(),
+                          const SizedBox(height: 16),
+
+                          // ── 4. Main Body Content ───────────────────
+                          if (_viewMode == 'areas')
+                            _buildAreaOverview(units, buildings)
+                          else
+                            _buildListContent(units, buildings),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    _buildFilterChip('all', 'الكل'),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('unit', 'شقق وفيلات'),
-                    const SizedBox(width: 8),
-                    _buildFilterChip('building', 'عمارات'),
-                  ],
+        );
+      },
+    );
+  }
+
+  Widget _buildError(Object error) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline_rounded,
+                color: AppColors.error, size: 48),
+            const SizedBox(height: 12),
+            Text(
+              'تعذر جلب البيانات من Firebase:\n$error',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColors.error),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _reload,
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('إعادة المحاولة'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Quick Add Header Buttons ──────────────────────────────────────────
+
+  Widget _buildQuickAddHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.divider),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'إضافة عقار جديد',
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () => _openUnitForm(
+                      initialArea:
+                          _selectedArea == 'الكل' ? null : _selectedArea),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: AppColors.textOnPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.add_home_rounded, size: 20),
+                  label: const Text(
+                    'إضافة شقة / فيلا',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
                 ),
               ),
-              const Divider(height: 1, color: AppColors.divider),
-              // Main Tab Views per Area
+              const SizedBox(width: 12),
               Expanded(
-                child: isLoading
-                    ? const Center(
-                        child:
-                            CircularProgressIndicator(color: AppColors.accent),
-                      )
-                    : snapshot.hasError
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.error_outline_rounded,
-                                      color: AppColors.error, size: 48),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    'تعذر جلب البيانات من Firebase:\n${snapshot.error}',
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        const TextStyle(color: AppColors.error),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton.icon(
-                                    onPressed: _reload,
-                                    icon: const Icon(Icons.refresh_rounded),
-                                    label: const Text('إعادة المحاولة'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : TabBarView(
-                            controller: _tabController,
-                            children: _areas.map((area) {
-                              return _buildAreaList(
-                                targetArea: area,
-                                units: units,
-                                buildings: buildings,
-                              );
-                            }).toList(),
-                          ),
+                child: FilledButton.icon(
+                  onPressed: () => _openBuildingForm(
+                      initialArea:
+                          _selectedArea == 'الكل' ? null : _selectedArea),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF7C3AED),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  icon: const Icon(Icons.domain_add_rounded, size: 20),
+                  label: const Text(
+                    'إضافة عمارة كاملة',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                ),
               ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Stats Summary Bar ─────────────────────────────────────────────────
+
+  Widget _buildStatsRow(List<Property> units, List<AdminBuilding> buildings) {
+    final publishedUnits = units.where((u) => u.isPublished).length;
+    final publishedBuildings = buildings.where((b) => b.isPublished).length;
+    final totalPublished = publishedUnits + publishedBuildings;
+    final totalHidden = (units.length + buildings.length) - totalPublished;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.divider),
+          ),
+          child: Row(
+            children: [
+              _statItem(Icons.apartment_rounded, units.length, 'شقق وفيلات',
+                  AppColors.accent),
+              _statDivider(),
+              _statItem(Icons.business_rounded, buildings.length, 'عمارات',
+                  const Color(0xFFC084FC)),
+              _statDivider(),
+              _statItem(Icons.visibility_rounded, totalPublished, 'منشور',
+                  AppColors.success),
+              _statDivider(),
+              _statItem(Icons.visibility_off_rounded, totalHidden, 'مخفي',
+                  AppColors.warning),
             ],
           ),
         );
@@ -567,35 +381,215 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     );
   }
 
-  Widget _buildFilterChip(String value, String label) {
+  Widget _statItem(IconData icon, int count, String label, Color color) {
+    return Expanded(
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 4),
+          Text(
+            '$count',
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style:
+                const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statDivider() {
+    return Container(width: 1, height: 44, color: AppColors.divider);
+  }
+
+  // ── Unified Controls & Filters ────────────────────────────────────────
+
+  Widget _buildControlsBar() {
+    final allAreasOptions = ['الكل', ...areaOptions];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.divider),
+      ),
+      child: Column(
+        children: [
+          // Row 1: Search Box & View Mode Toggle
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: 'ابحث باسم المشروع، العمارة، أو الكلمات...',
+                    hintStyle:
+                        const TextStyle(color: AppColors.textHint, fontSize: 13),
+                    prefixIcon:
+                        const Icon(Icons.search_rounded, color: AppColors.accent),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear_rounded,
+                                color: AppColors.textSecondary, size: 18),
+                            onPressed: () {
+                              setState(() {
+                                _searchQuery = '';
+                                _searchController.clear();
+                              });
+                            },
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: AppColors.background,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.divider),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: AppColors.divider),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          const BorderSide(color: AppColors.accent, width: 1.5),
+                    ),
+                  ),
+                  onChanged: (val) =>
+                      setState(() => _searchQuery = val.trim().toLowerCase()),
+                ),
+              ),
+              const SizedBox(width: 10),
+              // View Mode Selector (List vs Areas)
+              SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment(
+                    value: 'list',
+                    icon: Icon(Icons.format_list_bulleted_rounded, size: 18),
+                    label: Text('القائمة'),
+                  ),
+                  ButtonSegment(
+                    value: 'areas',
+                    icon: Icon(Icons.grid_view_rounded, size: 18),
+                    label: Text('المناطق'),
+                  ),
+                ],
+                selected: {_viewMode},
+                onSelectionChanged: (val) =>
+                    setState(() => _viewMode = val.first),
+                style: ButtonStyle(
+                  visualDensity: VisualDensity.compact,
+                  backgroundColor: WidgetStateProperty.resolveWith(
+                    (states) => states.contains(WidgetState.selected)
+                        ? AppColors.accent.withValues(alpha: 0.15)
+                        : AppColors.background,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          if (_viewMode == 'list') ...[
+            const SizedBox(height: 14),
+            // Row 2: Area Selector Dropdown + Type Filters
+            Wrap(
+              spacing: 12,
+              runSpacing: 10,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.spaceBetween,
+              children: [
+                // Area Dropdown
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.divider),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: allAreasOptions.contains(_selectedArea)
+                          ? _selectedArea
+                          : 'الكل',
+                      icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                          color: AppColors.accent),
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                      onChanged: (val) {
+                        if (val != null) setState(() => _selectedArea = val);
+                      },
+                      items: allAreasOptions.map((area) {
+                        return DropdownMenuItem<String>(
+                          value: area,
+                          child: Text(area == 'الكل' ? 'كل المناطق 🏙️' : area),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+
+                // Type Filter Chips
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _filterChip('all', 'الكل'),
+                    const SizedBox(width: 6),
+                    _filterChip('unit', 'شقق/فيلات'),
+                    const SizedBox(width: 6),
+                    _filterChip('building', 'عمارات'),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _filterChip(String value, String label) {
     final isSelected = _filterType == value;
-    return FilterChip(
+    return ChoiceChip(
       selected: isSelected,
       label: Text(label),
       labelStyle: TextStyle(
         color: isSelected ? AppColors.textOnPrimary : AppColors.textPrimary,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        fontSize: 13,
+        fontSize: 12,
       ),
       selectedColor: AppColors.accent,
       backgroundColor: AppColors.background,
-      checkmarkColor: AppColors.textOnPrimary,
       onSelected: (_) => setState(() => _filterType = value),
     );
   }
 
-  Widget _buildAreaList({
-    required String targetArea,
-    required List<Property> units,
-    required List<AdminBuilding> buildings,
-  }) {
+  // ── Unified Listings Content View ─────────────────────────────────────
+
+  Widget _buildListContent(
+      List<Property> units, List<AdminBuilding> buildings) {
     // 1. Filter by Area
     final areaUnits =
-        units.where((u) => _areaMatches(u.area, targetArea)).toList();
+        units.where((u) => _areaMatches(u.area, _selectedArea)).toList();
     final areaBuildings =
-        buildings.where((b) => _areaMatches(b.area, targetArea)).toList();
+        buildings.where((b) => _areaMatches(b.area, _selectedArea)).toList();
 
-    // 2. Search Query filter
+    // 2. Filter by Search Query
     final query = _searchQuery.toLowerCase();
     final filteredUnits = areaUnits.where((u) {
       if (query.isEmpty) return true;
@@ -611,98 +605,176 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           b.area.toLowerCase().contains(query);
     }).toList();
 
-    // 3. Filter by Type
     final showUnits = _filterType == 'all' || _filterType == 'unit';
     final showBuildings = _filterType == 'all' || _filterType == 'building';
 
-    final totalItems = (showUnits ? filteredUnits.length : 0) +
-        (showBuildings ? filteredBuildings.length : 0);
+    final displayUnits = showUnits ? filteredUnits : <Property>[];
+    final displayBuildings = showBuildings ? filteredBuildings : <AdminBuilding>[];
 
-    if (totalItems == 0) {
-      return RefreshIndicator(
-        color: AppColors.accent,
-        onRefresh: () async => _reload(),
-        child: ListView(
-          padding: const EdgeInsets.all(24),
-          children: [
-            const SizedBox(height: 40),
-            MessageView(
-              icon: Icons.location_off_rounded,
-              title: 'لا توجد عقارات في $targetArea',
-              message:
-                  'اضغط على زر "إضافة عقار" لرفع شقة أو عمارة جديدة في هذه المنطقة.',
-            ),
-          ],
+    final totalCount = displayUnits.length + displayBuildings.length;
+
+    if (totalCount == 0) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
+        child: MessageView(
+          icon: Icons.search_off_rounded,
+          title: 'لا توجد عقارات مطابقة',
+          message:
+              'لم نجد عقارات تطابق خيارات البحث الحالية. يمكنك تغيير التصفية أو إضافة عقار جديد.',
         ),
       );
     }
 
-    return RefreshIndicator(
-      color: AppColors.accent,
-      onRefresh: () async => _reload(),
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-        children: [
-          if (showUnits && filteredUnits.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8, top: 4),
-              child: Row(
-                children: [
-                  const Icon(Icons.apartment_rounded,
-                      color: AppColors.accent, size: 18),
-                  const SizedBox(width: 6),
-                  Text(
-                    'الشقق والفيلات (${filteredUnits.length})',
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ...filteredUnits.map((property) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: PropertyCard(
-                    property: property,
-                    onEdit: () => _openUnitForm(property: property),
-                    onDelete: () => _confirmDeleteUnit(property),
-                    onToggle: (v) => _togglePublishedUnit(property, v),
-                  ),
-                )),
-          ],
-          if (showBuildings && filteredBuildings.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8, top: 16),
-              child: Row(
-                children: [
-                  const Icon(Icons.business_rounded,
-                      color: Colors.purple, size: 18),
-                  const SizedBox(width: 6),
-                  Text(
-                    'العمارات السكنية (${filteredBuildings.length})',
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ...filteredBuildings.map((building) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: AdminBuildingCard(
-                    building: building,
-                    onEdit: () => _openBuildingForm(building: building),
-                    onDelete: () => _confirmDeleteBuilding(building),
-                    onToggle: (v) => _togglePublishedBuilding(building, v),
-                  ),
-                )),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (displayUnits.isNotEmpty) ...[
+          _sectionHeader(
+            icon: Icons.apartment_rounded,
+            color: AppColors.accent,
+            label: 'الشقق والفيلات',
+            count: displayUnits.length,
+          ),
+          const SizedBox(height: 8),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: displayUnits.length,
+            itemBuilder: (context, index) {
+              final property = displayUnits[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: PropertyCard(
+                  property: property,
+                  onEdit: () => _openUnitForm(property: property),
+                  onDelete: () => _confirmDeleteUnit(property),
+                  onToggle: (v) => _togglePublishedUnit(property, v),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
         ],
-      ),
+        if (displayBuildings.isNotEmpty) ...[
+          _sectionHeader(
+            icon: Icons.business_rounded,
+            color: const Color(0xFFC084FC),
+            label: 'العمارات السكنية',
+            count: displayBuildings.length,
+          ),
+          const SizedBox(height: 8),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: displayBuildings.length,
+            itemBuilder: (context, index) {
+              final building = displayBuildings[index];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: AdminBuildingCard(
+                  building: building,
+                  onEdit: () => _openBuildingForm(building: building),
+                  onDelete: () => _confirmDeleteBuilding(building),
+                  onToggle: (v) => _togglePublishedBuilding(building, v),
+                ),
+              );
+            },
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _sectionHeader({
+    required IconData icon,
+    required Color color,
+    required String label,
+    required int count,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 8),
+        Text(
+          '$label ($count)',
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Area Overview Grid ────────────────────────────────────────────────
+
+  Widget _buildAreaOverview(
+      List<Property> units, List<AdminBuilding> buildings) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final group in adminAreaGroups) ...[
+          Row(
+            children: [
+              Icon(group.icon, color: AppColors.accent, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                group.title,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _buildAreaGrid(units, buildings, group.areas),
+          const SizedBox(height: 22),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildAreaGrid(
+    List<Property> units,
+    List<AdminBuilding> buildings,
+    List<String> areas,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final twoColumns = constraints.maxWidth >= 640;
+        final cardWidth = twoColumns
+            ? (constraints.maxWidth - 12) / 2
+            : constraints.maxWidth;
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            for (final area in areas)
+              SizedBox(
+                width: cardWidth,
+                child: AdminAreaCard(
+                  area: area,
+                  unitCount:
+                      units.where((u) => _areaMatches(u.area, area)).length,
+                  buildingCount: buildings
+                      .where((b) => _areaMatches(b.area, area))
+                      .length,
+                  onOpen: () {
+                    setState(() {
+                      _selectedArea = area;
+                      _viewMode = 'list';
+                    });
+                  },
+                  onAddUnit: () => _openUnitForm(initialArea: area),
+                  onAddBuilding: () => _openBuildingForm(initialArea: area),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
