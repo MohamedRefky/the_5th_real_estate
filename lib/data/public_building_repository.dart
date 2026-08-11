@@ -6,10 +6,10 @@ import '../models/building.dart';
 import 'mappers/building_mapper.dart';
 
 class PublicBuildingRepository {
-  PublicBuildingRepository._();
+  PublicBuildingRepository();
 
   static final PublicBuildingRepository instance =
-      PublicBuildingRepository._();
+      PublicBuildingRepository();
 
   List<Building>? _cache;
 

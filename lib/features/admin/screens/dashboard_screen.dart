@@ -15,7 +15,7 @@ import 'building_form_screen.dart';
 import 'property_form_screen.dart';
 
 /// Hidden admin dashboard — lists all units and buildings organized by neighborhood
-/// tabs (الكل, المستثمرين, الأندلس, جاردينيا, بيت الوطن, النرجس الجديدة)
+/// tabs (الكل, المستثمرين, الأندلس 1/2, جاردينيا, بيت الوطن, النرجس, البنفسج, الياسمين)
 /// with edit / delete / publish toggles and live Firestore sync.
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -34,10 +34,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   static const List<String> _areas = [
     'الكل',
     'المستثمرين',
-    'الأندلس',
+    'الأندلس 1 و 2',
+    'الأندلس عائلي',
     'جاردينيا',
     'بيت الوطن',
     'النرجس الجديدة',
+    'النرجس عمارات',
+    'النرجس فيلات',
+    'البنفسج عمارات',
+    'البنفسج فيلات',
+    'الياسمين الزوجي فيلات',
+    'الياسمين الفردي فيلات',
   ];
 
   String _searchQuery = '';

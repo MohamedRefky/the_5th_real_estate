@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../controllers/building_form_controller.dart';
 import '../models/admin_building.dart';
+import '../models/property.dart' show areaOptions;
 import '../widgets/property_form_widgets.dart';
 
 /// Add / edit a whole building (عمارة). Reached from the dashboard's type
@@ -88,13 +89,7 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                         FormDropdown<String>(
                           label: 'الحي/المنطقة',
                           value: c.area,
-                          items: const [
-                            'المستثمرين',
-                            'الأندلس',
-                            'جاردينيا',
-                            'بيت الوطن',
-                            'النرجس الجديدة',
-                          ],
+                          items: areaOptions,
                           labelOf: (v) => v,
                           onChanged: c.setArea,
                         ),

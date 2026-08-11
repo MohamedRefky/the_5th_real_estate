@@ -9,10 +9,17 @@ class DummyData {
   /// All available neighborhood names.
   static const List<String> areas = [
     'المستثمرين',
-    'الأندلس',
+    'الأندلس 1 و 2',
+    'الأندلس عائلي',
     'جاردينيا',
     'بيت الوطن',
     'النرجس الجديدة',
+    'النرجس عمارات',
+    'النرجس فيلات',
+    'البنفسج عمارات',
+    'البنفسج فيلات',
+    'الياسمين الزوجي فيلات',
+    'الياسمين الفردي فيلات',
   ];
 
   /// Mock building listings (empty — only Firestore data is loaded).

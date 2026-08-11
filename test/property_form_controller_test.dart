@@ -10,9 +10,9 @@ void main() {
       expect(c.isEdit, false);
       expect(c.projectName.text, '');
       expect(c.unitType, UnitType.apartment);
-      expect(c.floor, floorOptions[1]);
+      expect(c.floor, isNull);
       expect(c.area, areaOptions.first);
-      expect(c.finishingStatus, PropertyFinishing.shell);
+      expect(c.finishingStatus, isNull);
       expect(c.hasReception, true);
       expect(c.hasKitchen, true);
       expect(c.isPublished, true);
@@ -63,11 +63,11 @@ void main() {
       c.addListener(() => notified++);
       c.setUnitType(UnitType.duplex);
       c.setFloor('تاني');
-      c.setArea('الأندلس');
+      c.setArea('الأندلس 1 و 2');
       c.setHasKitchen(false);
       expect(c.unitType, UnitType.duplex);
       expect(c.floor, 'تاني');
-      expect(c.area, 'الأندلس');
+      expect(c.area, 'الأندلس 1 و 2');
       expect(c.hasKitchen, false);
       expect(notified, 4);
       c.dispose();

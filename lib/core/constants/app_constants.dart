@@ -82,11 +82,18 @@ class AppConstants {
   /// Mapping from area name to its representative icon.
   static const Map<String, IconData> areaIcons = {
     'المستثمرين': Icons.business_rounded,
-    'الأندلس': Icons.villa_rounded,
+    'الأندلس 1 و 2': Icons.villa_rounded,
+    'الأندلس عائلي': Icons.family_restroom_rounded,
     'جاردينيا': Icons.park_rounded,
     'بيت الوطن': Icons.home_work_rounded,
     'النرجس': Icons.local_florist_rounded,
     'النرجس الجديدة': Icons.local_florist_rounded,
+    'النرجس عمارات': Icons.apartment_rounded,
+    'النرجس فيلات': Icons.villa_rounded,
+    'البنفسج عمارات': Icons.apartment_rounded,
+    'البنفسج فيلات': Icons.villa_rounded,
+    'الياسمين الزوجي فيلات': Icons.villa_rounded,
+    'الياسمين الفردي فيلات': Icons.villa_rounded,
   };
 
   /// Resolves the representative icon for [area], or a fallback.

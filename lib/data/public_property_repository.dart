@@ -13,10 +13,10 @@ import 'mappers/property_mapper.dart';
 /// stored in Firestore by the admin dashboard. Firestore listings appear on
 /// the website instantly after being added.
 class PublicPropertyRepository {
-  PublicPropertyRepository._();
+  PublicPropertyRepository();
 
   static final PublicPropertyRepository instance =
-      PublicPropertyRepository._();
+      PublicPropertyRepository();
 
   List<Apartment>? _cache;
 

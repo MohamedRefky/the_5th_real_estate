@@ -85,10 +85,17 @@ const List<String> floorOptions = [
 /// Neighborhood options for the admin form (mirrors the public site areas).
 const List<String> areaOptions = [
   'المستثمرين',
-  'الأندلس',
+  'الأندلس 1 و 2',
+  'الأندلس عائلي',
   'جاردينيا',
   'بيت الوطن',
   'النرجس الجديدة',
+  'النرجس عمارات',
+  'النرجس فيلات',
+  'البنفسج عمارات',
+  'البنفسج فيلات',
+  'الياسمين الزوجي فيلات',
+  'الياسمين الفردي فيلات',
 ];
 
 class Property {

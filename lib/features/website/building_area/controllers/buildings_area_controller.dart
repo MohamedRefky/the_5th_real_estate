@@ -9,11 +9,13 @@ import '../../../../models/building.dart';
 /// Extracted from `BuildingsAreaScreen` so the screen only renders widgets
 /// while the data flow lives here and stays unit-testable.
 class BuildingsAreaController extends ChangeNotifier {
-  BuildingsAreaController(this.areaName);
+  BuildingsAreaController(
+    this.areaName, {
+    PublicBuildingRepository? repository,
+  }) : _repository = repository ?? PublicBuildingRepository.instance;
 
   final String areaName;
-  final PublicBuildingRepository _repository =
-      PublicBuildingRepository.instance;
+  final PublicBuildingRepository _repository;
 
   List<Building> _allBuildings = [];
   List<Building> _filteredBuildings = [];
