@@ -229,14 +229,22 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                         ),
                         const SizedBox(height: 12),
                         FormTextField(
-                          c.imageUrls,
-                          'روابط الصور (رابط في كل سطر أو مفصولة بفاصلة)',
+                          c.mainImageUrl,
+                          'رابط صورة الواجهة الرئيسية (صورة الغلاف)',
+                          prefixIcon: Icons.photo_size_select_actual_rounded,
+                        ),
+                        const SizedBox(height: 12),
+                        FormTextField(
+                          c.additionalImageUrls,
+                          'روابط صور التفاصيل الإضافية (اختياري - رابط في كل سطر)',
+                          prefixIcon: Icons.collections_rounded,
                           maxLines: 3,
                         ),
                         const SizedBox(height: 12),
                         FormTextField(
                           c.videoUrl,
                           'رابط فيديو المعاينة (اختياري)',
+                          prefixIcon: Icons.video_library_rounded,
                         ),
                       ],
                     );

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/image_url_helper.dart';
+import '../../../../core/widgets/adaptive_network_image.dart';
 import '../../../../core/widgets/details_table.dart';
 import '../../../../core/widgets/reveal_on_scroll.dart';
 import '../../../../core/widgets/section_header.dart';
@@ -105,6 +107,35 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
+
+                  // ── Image Gallery (if more than 1 image) ────────
+                  if (building.imageUrls.length > 1) ...[
+                    const SectionHeader(
+                      title: 'معرض صور العمارة والتفاصيل',
+                      icon: Icons.photo_library_rounded,
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      height: 180,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: building.imageUrls.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final cleanUrl = sanitizeImageUrl(
+                            building.imageUrls[index],
+                          );
+                          return AdaptiveNetworkImage(
+                            url: cleanUrl,
+                            targetHeight: 180,
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () => _openImageDialog(context, cleanUrl),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
 
                   // ── Title & Badges (From Left) ─────────────────
                   RevealOnScroll(
@@ -229,6 +260,40 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  void _openImageDialog(BuildContext context, String url) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.black,
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(
+                  url,
+                  fit: BoxFit.contain,
+                  filterQuality: FilterQuality.high,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.close_rounded,
+                  color: Colors.white,
+                  size: 32,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
         ),
       ),
     );

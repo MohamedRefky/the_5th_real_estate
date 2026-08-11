@@ -24,7 +24,8 @@ class BuildingFormController extends ChangeNotifier {
   // Text controllers
   late final TextEditingController name;
   late final TextEditingController description;
-  late final TextEditingController imageUrls;
+  late final TextEditingController mainImageUrl;
+  late final TextEditingController additionalImageUrls;
   late final TextEditingController videoUrl;
 
   // Selectable state
@@ -38,8 +39,11 @@ class BuildingFormController extends ChangeNotifier {
 
     name = TextEditingController(text: isEdit ? (b?.name ?? '') : '');
     description = TextEditingController(text: isEdit ? (b?.description ?? '') : '');
-    imageUrls = TextEditingController(
-        text: isEdit ? (b?.imageUrls.join('\n') ?? '') : '');
+    final allImages = b?.imageUrls ?? const <String>[];
+    mainImageUrl = TextEditingController(
+        text: isEdit && allImages.isNotEmpty ? allImages.first : '');
+    additionalImageUrls = TextEditingController(
+        text: isEdit && allImages.length > 1 ? allImages.sublist(1).join('\n') : '');
     videoUrl = TextEditingController(text: isEdit ? (b?.videoUrl ?? '') : '');
 
     area = b?.area ?? _initialArea ?? 'المستثمرين';
@@ -67,11 +71,16 @@ class BuildingFormController extends ChangeNotifier {
     saving = true;
     notifyListeners();
     try {
-      final parsedImageUrls = imageUrls.text
+      final mainUrl = sanitizeImageUrl(mainImageUrl.text.trim());
+      final extraUrls = additionalImageUrls.text
           .split(RegExp(r'[\n,]'))
           .map((s) => sanitizeImageUrl(s.trim()))
           .where((s) => s.isNotEmpty)
           .toList();
+      final parsedImageUrls = <String>[
+        if (mainUrl.isNotEmpty) mainUrl,
+        ...extraUrls,
+      ];
       final parsedVideoUrl =
           videoUrl.text.trim().isEmpty ? null : videoUrl.text.trim();
 
@@ -115,7 +124,8 @@ class BuildingFormController extends ChangeNotifier {
   void dispose() {
     name.dispose();
     description.dispose();
-    imageUrls.dispose();
+    mainImageUrl.dispose();
+    additionalImageUrls.dispose();
     videoUrl.dispose();
     super.dispose();
   }
