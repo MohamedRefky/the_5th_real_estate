@@ -124,9 +124,29 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                             ),
                             TextButton.icon(
                               onPressed: c.addExtraImageField,
-                              icon: const Icon(Icons.add_photo_alternate_rounded,
-                                  size: 18),
-                              label: const Text('إضافة صورة'),
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppColors.accent,
+                                backgroundColor: AppColors.accentLight,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: const BorderSide(color: AppColors.accentLine),
+                                ),
+                              ),
+                              icon: const Icon(
+                                Icons.add_photo_alternate_rounded,
+                                size: 18,
+                                color: AppColors.accent,
+                              ),
+                              label: const Text(
+                                'إضافة صورة',
+                                style: TextStyle(
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
                             ),
                           ],
                         ),

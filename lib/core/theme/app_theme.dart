@@ -159,6 +159,34 @@ class AppTheme {
         ),
       ),
 
+      // Text Buttons
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.accent,
+          textStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            fontFamily: fontFamily,
+          ),
+        ),
+      ),
+
+      // Outlined Buttons
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.textPrimary,
+          side: const BorderSide(color: AppColors.divider),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          textStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            fontFamily: fontFamily,
+          ),
+        ),
+      ),
+
       // Input Decoration
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
