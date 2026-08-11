@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/image_url_helper.dart';
 import '../models/admin_building.dart';
 
 /// Compact row card for a single building on the admin dashboard.
@@ -26,9 +27,79 @@ class AdminBuildingCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.divider),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       child: Row(
         children: [
+          // Image Thumbnail Preview Box
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              width: 80,
+              height: 80,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (building.imageUrls.isNotEmpty)
+                    Image.network(
+                      sanitizeImageUrl(building.imageUrls.first),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => Container(
+                        color: AppColors.primary,
+                        child: const Icon(
+                          Icons.broken_image_rounded,
+                          color: AppColors.textSecondary,
+                          size: 24,
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      color: AppColors.cream,
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.business_rounded,
+                            color: AppColors.textHint,
+                            size: 22,
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'بدون صور',
+                            style: TextStyle(
+                              fontSize: 9.5,
+                              color: AppColors.textHint,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (building.imageUrls.length > 1)
+                    Positioned(
+                      bottom: 4,
+                      right: 4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '${building.imageUrls.length} صور',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
