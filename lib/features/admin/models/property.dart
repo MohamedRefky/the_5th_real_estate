@@ -114,6 +114,10 @@ class Property {
   final PropertyFinishing finishingStatus;
   final double price;
   final PriceNote? priceNote;
+
+  /// Optional asking price in US Dollars, separate from the EGP [price].
+  final double? priceUsd;
+
   final String? description;
   final List<String> imageUrls;
   final String? videoUrl;
@@ -139,6 +143,7 @@ class Property {
     required this.finishingStatus,
     required this.price,
     this.priceNote,
+    this.priceUsd,
     this.description,
     this.imageUrls = const [],
     this.videoUrl,
@@ -163,6 +168,7 @@ class Property {
     PropertyFinishing? finishingStatus,
     double? price,
     PriceNote? priceNote,
+    double? priceUsd,
     String? description,
     List<String>? imageUrls,
     String? videoUrl,
@@ -186,6 +192,7 @@ class Property {
       finishingStatus: finishingStatus ?? this.finishingStatus,
       price: price ?? this.price,
       priceNote: priceNote ?? this.priceNote,
+      priceUsd: priceUsd ?? this.priceUsd,
       description: description ?? this.description,
       imageUrls: imageUrls ?? this.imageUrls,
       videoUrl: videoUrl ?? this.videoUrl,
@@ -227,6 +234,7 @@ class Property {
       'finishingStatus': finishingStatus.label,
       'price': price,
       'priceNote': priceNote?.label,
+      'priceUsd': priceUsd,
       'description': description,
       'imageUrls': imageUrls,
       'imageUrl': imageUrls.firstOrNull,
@@ -310,6 +318,7 @@ class Property {
           PropertyFinishing.fromLabel(data['finishingStatus'] as String? ?? ''),
       price: rawPrice,
       priceNote: PriceNote.fromLabel(data['priceNote'] as String?),
+      priceUsd: (data['priceUsd'] as num?)?.toDouble(),
       description: rawDesc,
       imageUrls: parsedImages,
       videoUrl: rawVideoUrl != null && rawVideoUrl.trim().isNotEmpty

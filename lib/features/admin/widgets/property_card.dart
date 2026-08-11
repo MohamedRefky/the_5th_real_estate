@@ -4,8 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../models/property.dart';
 
 /// Compact row card for a single property on the admin dashboard.
-class PropertyCard extends StatelessWidget {
-  final Property property;
+class PropertyCard extends StatelessWidget {  final Property property;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
   final ValueChanged<bool> onToggle;
@@ -121,6 +120,17 @@ class PropertyCard extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                if (property.priceUsd != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '≈ ${_formatUsd(property.priceUsd!)} دولار',
+                    style: const TextStyle(
+                      color: AppColors.success,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -143,4 +153,23 @@ class PropertyCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Compact USD formatting (e.g. 120000 → "120 ألف").
+String _formatUsd(double value) {
+  if (value >= 1000000) {
+    final millions = value / 1000000;
+    final formatted = millions == millions.roundToDouble()
+        ? millions.toStringAsFixed(0)
+        : millions.toStringAsFixed(1);
+    return '$formatted مليون';
+  }
+  if (value >= 1000) {
+    final thousands = value / 1000;
+    final formatted = thousands == thousands.roundToDouble()
+        ? thousands.toStringAsFixed(0)
+        : thousands.toStringAsFixed(1);
+    return '$formatted ألف';
+  }
+  return value.toStringAsFixed(0);
 }

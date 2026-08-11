@@ -184,8 +184,86 @@ class FormSwitchRow extends StatelessWidget {
   }
 }
 
-/// Smart Price Input Field with unit selector (مليون / ألف / جنيه).
-/// Allows typing simple numbers like `18` or `3.5` or `115` when "مليون" is selected.
+/// Renders a number as Arabic words, e.g. `1800000` → `1 مليون و 800 ألف`.
+String _formatArabicWords(double value) {
+  final int amount = value.round();
+
+  final int millions = amount ~/ 1000000;
+  final int remainder = amount % 1000000;
+  final int thousands = remainder ~/ 1000;
+  final int rest = remainder % 1000;
+
+  final List<String> parts = [];
+  if (millions > 0) {
+    if (millions == 1) {
+      parts.add('مليون');
+    } else if (millions == 2) {
+      parts.add('مليونان');
+    } else if (millions >= 3 && millions <= 10) {
+      parts.add('$millions ملايين');
+    } else {
+      parts.add('$millions مليون');
+    }
+  }
+
+  if (thousands > 0) {
+    if (thousands == 1) {
+      parts.add('ألف');
+    } else if (thousands == 2) {
+      parts.add('ألفان');
+    } else if (thousands >= 3 && thousands <= 10) {
+      parts.add('$thousands آلاف');
+    } else {
+      parts.add('$thousands ألف');
+    }
+  }
+
+  if (rest > 0) {
+    parts.add('$rest');
+  }
+
+  if (parts.isEmpty) return '$amount';
+  return parts.join(' و ');
+}
+
+/// Accent preview box showing the final amount in Arabic words.
+class AmountPreviewBox extends StatelessWidget {
+  final String text;
+
+  const AmountPreviewBox({super.key, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.accent.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle_rounded,
+              size: 18, color: AppColors.accent),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Smart Price Input Field for the Egyptian-pound price, always entered in
+/// millions (e.g. `18` or `3.5`). The stored value is the number × 1,000,000.
 class PriceInputField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
@@ -194,7 +272,7 @@ class PriceInputField extends StatefulWidget {
   const PriceInputField({
     super.key,
     required this.controller,
-    this.label = 'السعر (ج.م)',
+    this.label = 'السعر بالجنيه (بالمليون)',
     this.validator,
   });
 
@@ -203,8 +281,6 @@ class PriceInputField extends StatefulWidget {
 }
 
 class _PriceInputFieldState extends State<PriceInputField> {
-  // Unit options: 'million' (default), 'thousand', 'egp'
-  String _selectedUnit = 'million';
   late final TextEditingController _displayController;
 
   @override
@@ -226,30 +302,13 @@ class _PriceInputFieldState extends State<PriceInputField> {
     final rawText = widget.controller.text.trim();
     final double? val = double.tryParse(rawText);
     if (val != null && val > 0) {
-      if (val >= 1000000 && (val % 1000 == 0)) {
-        _selectedUnit = 'million';
-        _displayController.text = _fmtNum(val / 1000000);
-      } else if (val >= 1000 && (val % 100 == 0)) {
-        _selectedUnit = 'thousand';
-        _displayController.text = _fmtNum(val / 1000);
-      } else {
-        _selectedUnit = 'egp';
-        _displayController.text = _fmtNum(val);
-      }
+      _displayController.text = _fmtNum(val / 1000000);
     } else {
-      _selectedUnit = 'million';
       _displayController.text = '';
     }
   }
 
   void _onDisplayChanged() {
-    _syncToTarget();
-  }
-
-  void _changeUnit(String unit) {
-    setState(() {
-      _selectedUnit = unit;
-    });
     _syncToTarget();
   }
 
@@ -259,13 +318,7 @@ class _PriceInputFieldState extends State<PriceInputField> {
     if (val == null || val <= 0) {
       widget.controller.text = '';
     } else {
-      double total = val;
-      if (_selectedUnit == 'million') {
-        total = val * 1000000;
-      } else if (_selectedUnit == 'thousand') {
-        total = val * 1000;
-      }
-      widget.controller.text = _fmtNum(total);
+      widget.controller.text = _fmtNum(val * 1000000);
     }
     if (mounted) setState(() {});
   }
@@ -273,84 +326,26 @@ class _PriceInputFieldState extends State<PriceInputField> {
   String _fmtNum(double v) =>
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
 
-  String _formatArabicText(String input) {
-    final double? val = double.tryParse(input.trim());
-    if (val == null || val <= 0) return '';
-    final int amount = val.round();
-
-    final int millions = amount ~/ 1000000;
-    final int remainder = amount % 1000000;
-    final int thousands = remainder ~/ 1000;
-    final int rest = remainder % 1000;
-
-    final List<String> parts = [];
-    if (millions > 0) {
-      if (millions == 1) {
-        parts.add('مليون');
-      } else if (millions == 2) {
-        parts.add('مليونان');
-      } else if (millions >= 3 && millions <= 10) {
-        parts.add('$millions ملايين');
-      } else {
-        parts.add('$millions مليون');
-      }
-    }
-
-    if (thousands > 0) {
-      if (thousands == 1) {
-        parts.add('ألف');
-      } else if (thousands == 2) {
-        parts.add('ألفان');
-      } else if (thousands >= 3 && thousands <= 10) {
-        parts.add('$thousands آلاف');
-      } else {
-        parts.add('$thousands ألف');
-      }
-    }
-
-    if (rest > 0) {
-      parts.add('$rest');
-    }
-
-    if (parts.isEmpty) {
-      return '$amount جنيه';
-    }
-
-    return '${parts.join(' و ')} جنيه';
-  }
-
   @override
   Widget build(BuildContext context) {
     final targetText = widget.controller.text;
-    final arabicText = _formatArabicText(targetText);
+    final double? targetVal = double.tryParse(targetText.trim());
+    final arabicText = (targetVal == null || targetVal <= 0)
+        ? ''
+        : _formatArabicWords(targetVal);
 
-    String inputHint = 'أدخل المبلغ بالمليون (مثال: 18 أو 3.5 أو 115)';
-    if (_selectedUnit == 'thousand') {
-      inputHint = 'أدخل المبلغ بالألف (مثال: 500 أو 750)';
-    } else if (_selectedUnit == 'egp') {
-      inputHint = 'أدخل المبلغ الكامل بالجنيه (مثال: 3500000)';
-    }
+    const inputHint = 'أدخل المبلغ بالمليون (مثال: 18 أو 3.5)';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              widget.label,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const Spacer(),
-            _unitChip('💰 بالمليون', 'million'),
-            const SizedBox(width: 6),
-            _unitChip('💵 بالألف', 'thousand'),
-            const SizedBox(width: 6),
-            _unitChip('🔢 جنيه', 'egp'),
-          ],
+        Text(
+          widget.label,
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         FormTextField(
@@ -368,62 +363,79 @@ class _PriceInputFieldState extends State<PriceInputField> {
         ),
         if (arabicText.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.check_circle_rounded,
-                    size: 18, color: AppColors.accent),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'المبلغ النهائي: $arabicText',
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          AmountPreviewBox(text: 'المبلغ النهائي: $arabicText جنيه'),
         ],
       ],
     );
   }
+}
 
-  Widget _unitChip(String label, String unitKey) {
-    final isSelected = _selectedUnit == unitKey;
-    return InkWell(
-      onTap: () => _changeUnit(unitKey),
-      borderRadius: BorderRadius.circular(8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.accent
-              : AppColors.surface,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? AppColors.accent : AppColors.divider,
+/// Dollar price field with a live Arabic preview of the final amount.
+class UsdPriceInputField extends StatefulWidget {
+  final TextEditingController controller;
+  final String label;
+  final String? Function(String?)? validator;
+
+  const UsdPriceInputField({
+    super.key,
+    required this.controller,
+    this.label = 'السعر بالدولار (اختياري)',
+    this.validator,
+  });
+
+  @override
+  State<UsdPriceInputField> createState() => _UsdPriceInputFieldState();
+}
+
+class _UsdPriceInputFieldState extends State<UsdPriceInputField> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onChanged);
+    super.dispose();
+  }
+
+  void _onChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final text = widget.controller.text.trim();
+    final double? val = double.tryParse(text);
+    final arabicText = (val == null || val <= 0)
+        ? ''
+        : _formatArabicWords(val);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.label,
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? AppColors.textOnPrimary : AppColors.textSecondary,
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-          ),
+        const SizedBox(height: 8),
+        FormTextField(
+          widget.controller,
+          'أدخل السعر بالدولار',
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          validator: widget.validator,
+          prefixIcon: Icons.attach_money_rounded,
         ),
-      ),
+        if (arabicText.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          AmountPreviewBox(text: 'المبلغ النهائي: $arabicText دولار'),
+        ],
+      ],
     );
   }
 }

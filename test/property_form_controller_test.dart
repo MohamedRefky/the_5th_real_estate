@@ -32,6 +32,7 @@ void main() {
         hasKitchen: false,
         finishingStatus: PropertyFinishing.superLux,
         price: 2500000,
+        priceUsd: 120000,
         area: 'جاردينيا',
       );
       final c = PropertyFormController(p);
@@ -42,6 +43,7 @@ void main() {
       expect(c.area, 'جاردينيا');
       expect(c.areaSqm.text, '200');
       expect(c.price.text, '2500000');
+      expect(c.priceUsd.text, '120000');
       expect(c.hasReception, false);
       expect(c.hasKitchen, false);
       c.dispose();
@@ -54,6 +56,10 @@ void main() {
       expect(c.numberValidator('abc'), isNotNull);
       expect(c.numberValidator('0'), isNotNull);
       expect(c.numberValidator('10'), isNull);
+      expect(c.optionalNumberValidator(''), isNull);
+      expect(c.optionalNumberValidator('  '), isNull);
+      expect(c.optionalNumberValidator('abc'), isNotNull);
+      expect(c.optionalNumberValidator('10'), isNull);
       c.dispose();
     });
 
@@ -73,7 +79,7 @@ void main() {
       c.dispose();
     });
 
-    test('initializes image URLs text field for an existing property', () {
+    test('initializes image URLs text fields for an existing property', () {
       final p = Property(
         id: 'x',
         projectName: 'ن',
@@ -89,7 +95,8 @@ void main() {
         imageUrls: ['https://a/1.jpg', 'https://a/2.jpg'],
       );
       final c = PropertyFormController(p);
-      expect(c.imageUrls.text, 'https://a/1.jpg\nhttps://a/2.jpg');
+      expect(c.mainImageUrl.text, 'https://a/1.jpg');
+      expect(c.additionalImageUrls.text, 'https://a/2.jpg');
       c.dispose();
     });
   });

@@ -205,8 +205,13 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                         const SizedBox(height: 12),
                         PriceInputField(
                           controller: c.price,
-                          label: 'السعر (ج.م)',
+                          label: 'السعر بالجنيه',
                           validator: c.numberValidator,
+                        ),
+                        const SizedBox(height: 12),
+                        UsdPriceInputField(
+                          controller: c.priceUsd,
+                          validator: c.optionalNumberValidator,
                         ),
                         const SizedBox(height: 16),
                         FormSwitchRow(

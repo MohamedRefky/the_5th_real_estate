@@ -29,6 +29,7 @@ class PropertyFormController extends ChangeNotifier {
   late final TextEditingController bedrooms;
   late final TextEditingController bathrooms;
   late final TextEditingController price;
+  late final TextEditingController priceUsd;
   late final TextEditingController description;
   late final TextEditingController mainImageUrl;
   late final TextEditingController additionalImageUrls;
@@ -61,6 +62,10 @@ class PropertyFormController extends ChangeNotifier {
         text: (isEdit && p != null) ? p.bathrooms.toString() : '');
     price = TextEditingController(
         text: (isEdit && p != null) ? _fmtNum(p.price) : '');
+    priceUsd = TextEditingController(
+        text: (isEdit && p != null && p.priceUsd != null)
+            ? _fmtNum(p.priceUsd!)
+            : '');
     description = TextEditingController(text: isEdit ? (p?.description ?? '') : '');
     
     final allImages = p?.imageUrls ?? const <String>[];
@@ -84,6 +89,12 @@ class PropertyFormController extends ChangeNotifier {
   String _fmtNum(double v) =>
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
 
+  double? _parseOptionalDouble(String text) {
+    final value = double.tryParse(text.trim());
+    if (value == null || value <= 0) return null;
+    return value;
+  }
+
   // ── Validators ─────────────────────────────────────────────────────
 
   String? requiredValidator(String? v) =>
@@ -94,6 +105,12 @@ class PropertyFormController extends ChangeNotifier {
     if (val == null) return 'أدخل رقماً صحيحاً';
     if (!allowZero && val <= 0) return 'أدخل رقماً أكبر من صفر';
     return null;
+  }
+
+  /// Allows an empty value but still validates numbers when filled.
+  String? optionalNumberValidator(String? v) {
+    if (v == null || v.trim().isEmpty) return null;
+    return numberValidator(v);
   }
 
   // ── Field setters ──────────────────────────────────────────────────
@@ -186,6 +203,7 @@ class PropertyFormController extends ChangeNotifier {
         finishingStatus: finishingStatus ?? PropertyFinishing.shell,
         price: double.parse(price.text.trim()),
         priceNote: priceNote,
+        priceUsd: _parseOptionalDouble(priceUsd.text),
         description: description.text.trim().isEmpty
             ? null
             : description.text.trim(),
@@ -215,6 +233,7 @@ class PropertyFormController extends ChangeNotifier {
     bedrooms.dispose();
     bathrooms.dispose();
     price.dispose();
+    priceUsd.dispose();
     description.dispose();
     mainImageUrl.dispose();
     additionalImageUrls.dispose();
