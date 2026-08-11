@@ -11,6 +11,7 @@ import '../widgets/admin_building_card.dart';
 import '../widgets/message_view.dart';
 import '../widgets/property_card.dart';
 import 'building_form_screen.dart';
+import 'bulk_import_dialog.dart';
 import 'property_form_screen.dart';
 
 /// Ultra-Simple & Minimal Admin Dashboard.
@@ -253,53 +254,88 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   // ── Dynamic Action Buttons ──────────────────────────────────────────
 
+  Future<void> _openBulkImport() async {
+    final imported = await BulkImportDialog.show(context);
+    if (imported == true && mounted) {
+      _reload();
+    }
+  }
+
   Widget _buildAddButtons() {
     final areaText = _selectedArea == 'الكل' ? '' : ' في $_selectedArea';
     final unitLabel = 'إضافة شقة / فيلا$areaText';
     final buildingLabel = 'إضافة عمارة$areaText';
 
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: FilledButton.icon(
-            onPressed: () => _openUnitForm(
-                initialArea: _selectedArea == 'الكل' ? null : _selectedArea),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.accent,
-              foregroundColor: AppColors.textOnPrimary,
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => _openUnitForm(
+                    initialArea: _selectedArea == 'الكل' ? null : _selectedArea),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.accent,
+                  foregroundColor: AppColors.textOnPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                icon: const Icon(Icons.add_rounded, size: 20),
+                label: Text(
+                  unitLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                ),
               ),
             ),
-            icon: const Icon(Icons.add_rounded, size: 20),
-            label: Text(
-              unitLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+            const SizedBox(width: 10),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => _openBuildingForm(
+                    initialArea: _selectedArea == 'الكل' ? null : _selectedArea),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF7C3AED),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                icon: const Icon(Icons.business_rounded, size: 19),
+                label: Text(
+                  buildingLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: FilledButton.icon(
-            onPressed: () => _openBuildingForm(
-                initialArea: _selectedArea == 'الكل' ? null : _selectedArea),
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF7C3AED),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        const SizedBox(height: 10),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: _openBulkImport,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.accent,
+              backgroundColor: AppColors.accentLight,
+              side: const BorderSide(color: AppColors.accentLine),
+              padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            icon: const Icon(Icons.business_rounded, size: 19),
-            label: Text(
-              buildingLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+            icon: const Icon(Icons.upload_file_rounded, size: 20),
+            label: const Text(
+              'الرفع الجماعي من كود JSON (شقق وعمارات) 📄',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
             ),
           ),
         ),

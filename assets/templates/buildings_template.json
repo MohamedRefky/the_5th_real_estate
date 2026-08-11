@@ -1,0 +1,28 @@
+[
+  {
+    "name": "عمارة كاملة في جاردينيا هايتس ٣ حرف أ",
+    "area": "جاردينيا",
+    "description": "عمارة موقع ممتاز 286م، مبنية بيزمنت وأرضي وأول و 2 روف. الدور ينفع شقتين، فيس ميدان وخلفي حديقة.",
+    "startingPrice": 12000000,
+    "areaSqm": 286,
+    "buildingStructure": "بيزمنت + أرضي + أول + 2 روف",
+    "orientation": "دبل فيس",
+    "layoutNote": "الدور ينفع شقتين",
+    "totalFloors": 4,
+    "totalUnits": 8,
+    "availableUnits": 4,
+    "finishingStatus": "semiFinished",
+    "whatsappNumber": "01000000000",
+    "amenities": [
+      "مصعد",
+      "جراج خاص",
+      "كاميرات مراقبة"
+    ],
+    "imageUrls": [
+      "https://i.ibb.co/mF2PpKwF/building1.jpg",
+      "https://i.ibb.co/mF2PpKwF/building2.jpg"
+    ],
+    "videoUrl": null,
+    "isPublished": true
+  }
+]

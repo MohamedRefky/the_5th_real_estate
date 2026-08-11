@@ -1,0 +1,49 @@
+[
+  {
+    "projectName": "شقة 200م الأندلس 1 و 2",
+    "area": "الأندلس 1 و 2",
+    "buildingLabel": "عمارة 15",
+    "unitType": "شقة",
+    "floor": "أول",
+    "orientation": "خلفي",
+    "areaSqm": 200,
+    "bedrooms": 3,
+    "bathrooms": 3,
+    "hasReception": true,
+    "hasKitchen": true,
+    "finishingStatus": "نص تشطيب",
+    "price": 2500000,
+    "priceNote": "بالعداد",
+    "priceUsd": null,
+    "description": "شقة ممتازة الدور الأول بحري، مدفوع العدادات وجاهزة للتسليم",
+    "imageUrls": [
+      "https://i.ibb.co/mF2PpKwF/image.jpg",
+      "https://i.ibb.co/HD5SSpms/Whats-App-Image.jpg"
+    ],
+    "videoUrl": null,
+    "isPublished": true
+  },
+  {
+    "projectName": "شقة 180م جاردينيا هايتس",
+    "area": "جاردينيا",
+    "buildingLabel": "حرف أ",
+    "unitType": "شقة",
+    "floor": "تاني",
+    "orientation": "أمامي",
+    "areaSqm": 180,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "hasReception": true,
+    "hasKitchen": true,
+    "finishingStatus": "سوبر لوكس",
+    "price": 3100000,
+    "priceNote": "كاش",
+    "priceUsd": null,
+    "description": "تشطيب كامل سوبر لوكس على المفتاح موقع متميز",
+    "imageUrls": [
+      "https://i.ibb.co/mF2PpKwF/image2.jpg"
+    ],
+    "videoUrl": null,
+    "isPublished": true
+  }
+]

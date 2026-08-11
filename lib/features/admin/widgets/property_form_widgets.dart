@@ -130,6 +130,11 @@ class FormDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveItems = List<T>.from(items);
+    if (value != null && !effectiveItems.contains(value)) {
+      effectiveItems.add(value as T);
+    }
+
     return DropdownButtonFormField<T>(
       initialValue: value,
       validator: validator,
@@ -141,7 +146,7 @@ class FormDropdown<T> extends StatelessWidget {
       dropdownColor: AppColors.surface,
       style: const TextStyle(color: AppColors.textPrimary),
       decoration: propertyInputDecoration(label),
-      items: items
+      items: effectiveItems
           .map((v) => DropdownMenuItem<T>(
                 value: v,
                 child: Text(labelOf(v)),

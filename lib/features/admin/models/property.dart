@@ -307,7 +307,7 @@ class Property {
       projectName: rawName,
       buildingLabel: data['buildingLabel'] as String?,
       unitType: UnitType.fromLabel(data['unitType'] as String? ?? ''),
-      floor: (data['floor'] as String?) ?? 'أرضي',
+      floor: _normalizeFloor(data['floor'] as String?),
       orientation: PropertyOrientation.fromLabel(data['orientation'] as String?),
       areaSqm: ((data['areaSqm'] as num?) ?? 0).toDouble(),
       bedrooms: (data['bedrooms'] as num?)?.toInt() ?? 0,
@@ -327,7 +327,44 @@ class Property {
       createdAt: (data['createdAt'] as dynamic)?.toDate(),
       updatedAt: (data['updatedAt'] as dynamic)?.toDate(),
       isPublished: (data['isPublished'] as bool?) ?? true,
-      area: rawArea,
+      area: _normalizeArea(rawArea),
     );
   }
+}
+
+String _normalizeFloor(String? rawFloor) {
+  if (rawFloor == null || rawFloor.trim().isEmpty) return 'أرضي';
+  final trimmed = rawFloor.trim();
+  if (floorOptions.contains(trimmed)) return trimmed;
+
+  if (trimmed == 'ثاني') return 'تاني';
+  if (trimmed == 'ثالث') return 'تالت';
+  if (trimmed == 'الارضي' || trimmed == 'الأرضى') return 'أرضي';
+  if (trimmed == 'الاول' || trimmed == 'الأول') return 'أول';
+  if (trimmed == 'الثاني' || trimmed == 'الثانى') return 'تاني';
+  if (trimmed == 'الثالث') return 'تالت';
+  if (trimmed == 'الرابع') return 'رابع';
+  if (trimmed == 'الخامس') return 'خامس';
+
+  for (final option in floorOptions) {
+    if (trimmed.contains(option)) return option;
+  }
+  return trimmed;
+}
+
+String _normalizeArea(String? rawArea) {
+  if (rawArea == null || rawArea.trim().isEmpty) return areaOptions.first;
+  final trimmed = rawArea.trim();
+  if (areaOptions.contains(trimmed)) return trimmed;
+
+  if (trimmed.contains('جارد') || trimmed.contains('gardenia')) return 'جاردينيا';
+  if (trimmed.contains('بيت الوطن') || trimmed.contains('بيت_الوطن')) return 'بيت الوطن';
+  if (trimmed.contains('أندلس') || trimmed.contains('اندلس')) return 'الأندلس 1 و 2';
+  if (trimmed.contains('نرجس جديدة') || trimmed.contains('نرجس الجديدة')) return 'النرجس الجديدة';
+  if (trimmed.contains('نرجس')) return 'النرجس عمارات';
+  if (trimmed.contains('مستثمرين')) return 'المستثمرين';
+  if (trimmed.contains('بنفسج')) return 'البنفسج عمارات';
+  if (trimmed.contains('ياسمين')) return 'الياسمين الزوجي فيلات';
+
+  return trimmed;
 }
