@@ -206,12 +206,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       child: ListView(
                         padding: const EdgeInsets.all(16),
                         children: [
-                          // ── 1. Fast Add Buttons ─────────────────
-                          _buildAddButtons(),
-                          const SizedBox(height: 16),
-
-                          // ── 2. Quick Search & Area Selector ────
+                          // ── 1. Quick Search & Area Selector ────
                           _buildSearchAndFilters(),
+                          const SizedBox(height: 14),
+
+                          // ── 2. Dynamic Add Buttons ──────────────
+                          _buildAddButtons(),
                           const SizedBox(height: 16),
 
                           // ── 3. List Content ────────────────────
@@ -251,9 +251,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     );
   }
 
-  // ── 1. Action Buttons ──────────────────────────────────────────────
+  // ── Dynamic Action Buttons ──────────────────────────────────────────
 
   Widget _buildAddButtons() {
+    final areaText = _selectedArea == 'الكل' ? '' : ' في $_selectedArea';
+    final unitLabel = 'إضافة شقة / فيلا$areaText';
+    final buildingLabel = 'إضافة عمارة$areaText';
+
     return Row(
       children: [
         Expanded(
@@ -263,19 +267,21 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.accent,
               foregroundColor: AppColors.textOnPrimary,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            icon: const Icon(Icons.add_rounded, size: 22),
-            label: const Text(
-              'إضافة شقة / فيلا',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            icon: const Icon(Icons.add_rounded, size: 20),
+            label: Text(
+              unitLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
           child: FilledButton.icon(
             onPressed: () => _openBuildingForm(
@@ -283,15 +289,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF7C3AED),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            icon: const Icon(Icons.business_rounded, size: 20),
-            label: const Text(
-              'إضافة عمارة',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            icon: const Icon(Icons.business_rounded, size: 19),
+            label: Text(
+              buildingLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
             ),
           ),
         ),
