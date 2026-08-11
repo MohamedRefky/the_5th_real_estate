@@ -398,7 +398,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                 // Action Buttons
                 if (isWhatsAppOnly) ...[
                   _ActionButton(
-                    label: 'مراسلة ${contact.nameAr} عبر واتساب',
+                    label: 'مراسلة ${contact.nameEn} عبر واتساب',
                     icon: FontAwesomeIcons.whatsapp,
                     gradient: const LinearGradient(
                       colors: [Color(0xFF25D366), Color(0xFF128C7E)],
@@ -409,13 +409,13 @@ class _GlassRepresentativeCard extends StatelessWidget {
                         phoneNumber: contact.whatsappNumber,
                         message: message.isNotEmpty
                             ? message
-                            : 'مرحباً ${contact.nameAr}، أود الاستفسار عن العقارات المتاحة وتحديد موعد معاينة',
+                            : 'مرحباً ${contact.nameEn}، أود الاستفسار عن العقارات المتاحة وتحديد موعد معاينة',
                       );
                     },
                   ),
                 ] else if (isFacebookOnly) ...[
                   _ActionButton(
-                    label: 'زيارة بروفايل ${contact.nameAr} على فيسبوك',
+                    label: 'زيارة بروفايل ${contact.nameEn} على فيسبوك',
                     icon: FontAwesomeIcons.facebookF,
                     gradient: const LinearGradient(
                       colors: [Color(0xFF1877F2), Color(0xFF0F52AC)],
@@ -441,7 +441,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                               phoneNumber: contact.whatsappNumber,
                               message: message.isNotEmpty
                                   ? message
-                                  : 'مرحباً ${contact.nameAr}، أود الاستفسار عن العقارات المتاحة',
+                                  : 'مرحباً ${contact.nameEn}، أود الاستفسار عن العقارات المتاحة',
                             );
                           },
                         ),
