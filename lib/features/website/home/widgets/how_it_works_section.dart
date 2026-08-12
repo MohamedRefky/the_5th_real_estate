@@ -13,28 +13,24 @@ class HowItWorksSection extends StatelessWidget {
         String stepNumber,
         IconData icon,
         String title,
-        String emoji,
         String desc,
       })> _steps = [
     (
       stepNumber: '1',
       icon: Icons.search_rounded,
       title: 'تصفح واختر عقارك',
-      emoji: '🔍',
       desc: 'استكشف كل وحدات التجمع الخامس المتاحة، وفلتر حسب الدور والتشطيب والمساحة للوصول لاختيارك المثالي'
     ),
     (
       stepNumber: '2',
       icon: Icons.mark_chat_read_rounded,
       title: 'احجز معاينة فورية',
-      emoji: '💬',
       desc: 'تواصل مباشرة عبر واتساب لتحديد موعد المعاينة المناسب لك، واحصل على إجابة فورية عن كل استفساراتك'
     ),
     (
       stepNumber: '3',
       icon: Icons.vpn_key_rounded,
       title: 'استلم مفتاحك',
-      emoji: '🔑',
       desc: 'أكمل إجراءات التعاقد بسهولة وأمان، واستلم مفتاح وحدتك السكنية الجديدة'
     ),
   ];
@@ -117,7 +113,7 @@ class HowItWorksSection extends StatelessWidget {
 
   Widget _buildStepCard(
     BuildContext context,
-    ({String stepNumber, IconData icon, String title, String emoji, String desc}) step,
+    ({String stepNumber, IconData icon, String title, String desc}) step,
   ) {
     final theme = Theme.of(context);
 
@@ -171,9 +167,9 @@ class HowItWorksSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Title with emoji
+                // Title
                 Text(
-                  '${step.title} ${step.emoji}',
+                  step.title,
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
