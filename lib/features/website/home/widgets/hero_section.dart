@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -204,16 +206,26 @@ class _HeroSectionState extends State<HeroSection>
                       spacing: 16,
                       runSpacing: 12,
                       alignment: WrapAlignment.center,
-                      children: [
-                        _GlassHeroStat(value: '+50', label: 'مشروع فاخر'),
-                        _GlassHeroStat(value: '5', label: 'أحياء راقية'),
+                      children: const [
+                        _GlassHeroStat(
+                          value: '+50',
+                          label: 'مشاريع فاخرة',
+                          icon: Icons.location_city_rounded,
+                        ),
+                        _GlassHeroStat(
+                          value: 'أحياء راقية',
+                          label: 'تغطي أكثر من 12 حيّ',
+                          icon: Icons.map_rounded,
+                        ),
                         _GlassHeroStat(
                           value: 'ثقة وأمان',
-                          label: 'خدمة واستشارات',
+                          label: 'خدمات واستشارات',
+                          icon: Icons.verified_user_rounded,
                         ),
                         _GlassHeroStat(
                           value: '100%',
                           label: 'تعاقدات رسمية موثقة',
+                          icon: Icons.assignment_turned_in_rounded,
                         ),
                       ],
                     ),
@@ -345,36 +357,92 @@ class _HeroEntrance extends StatelessWidget {
 class _GlassHeroStat extends StatelessWidget {
   final String value;
   final String label;
+  final IconData? icon;
 
-  const _GlassHeroStat({required this.value, required this.label});
+  const _GlassHeroStat({
+    required this.value,
+    required this.label,
+    this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return GlassContainer(
-      borderRadius: 20,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      borderColor: AppColors.accent.withValues(alpha: 0.2),
-      borderWidth: 0.5,
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: AppColors.accent,
-              fontWeight: FontWeight.w900,
-              fontSize: 22,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
+          decoration: BoxDecoration(
+            color: AppColors.surface.withValues(alpha: 0.65),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.35),
+              width: 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.12),
+                blurRadius: 12,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(9),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 18,
+                    color: AppColors.accent,
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: AppColors.accent,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
