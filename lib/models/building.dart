@@ -167,35 +167,44 @@ class Building {
       totalFloors: json['totalFloors'] as int? ?? 1,
       totalUnits: json['totalUnits'] as int? ?? 0,
       availableUnits: json['availableUnits'] as int? ?? 0,
-      finishingStatus: FinishingStatus.values.firstWhere(
-        (e) => e.name == json['finishingStatus'],
-        orElse: () => FinishingStatus.semiFinished,
-      ),
+      finishingStatus: (() {
+        final raw = json['finishingStatus'] as String?;
+        if (raw == null || raw == 'null') return FinishingStatus.semiFinished;
+        return FinishingStatus.values.where(
+          (e) => e.name == raw || e.label == raw || raw.contains('تشطيب')
+        ).firstOrNull ?? FinishingStatus.semiFinished;
+      })(),
       isUnderConstruction: json['isUnderConstruction'] as bool? ?? false,
       deliveryDate: json['deliveryDate'] != null
-          ? DateTime.tryParse(json['deliveryDate'] as String)
+          ? DateTime.tryParse(json['deliveryDate'].toString())
           : null,
       constructionProgress:
           (json['constructionProgress'] as num?)?.toDouble() ?? 1.0,
       milestones: (json['milestones'] as List<dynamic>?)
-              ?.map((m) =>
-                  ConstructionMilestone.fromJson(m as Map<String, dynamic>))
+              ?.map((m) {
+                try {
+                  return ConstructionMilestone.fromJson(m as Map<String, dynamic>);
+                } catch (_) {
+                  return null;
+                }
+              })
+              .whereType<ConstructionMilestone>()
               .toList() ??
           [],
       whatsappNumber: json['whatsappNumber'] as String? ?? '',
       amenities: (json['amenities'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
       imageUrls: (json['imageUrls'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => e.toString())
               .toList() ??
           [],
       createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'].toString())
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'] as String)
+          ? DateTime.tryParse(json['updatedAt'].toString())
           : null,
     );
   }

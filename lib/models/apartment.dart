@@ -383,16 +383,19 @@ class Apartment {
       description: json['description'] as String? ?? '',
       freeDescription: json['freeDescription'] as String?,
       area: json['area'] as String? ?? '',
-      unitType: UnitType.values.firstWhere(
-        (e) => e.name == json['unitType'] || e.label == json['unitType'],
-        orElse: () => UnitType.apartment,
-      ),
+      unitType: (() {
+        final raw = json['unitType'] as String?;
+        if (raw == null || raw == 'null') return UnitType.apartment;
+        return UnitType.values.where(
+          (e) => e.name == raw || e.label == raw
+        ).firstOrNull ?? UnitType.apartment;
+      })(),
       price: (json['price'] as num?)?.toDouble() ?? 0,
       priceNotes: (json['priceNotes'] as List<dynamic>?)
-              ?.map((n) => PriceNote.values.firstWhere(
+              ?.map((n) => PriceNote.values.where(
                     (e) => e.name == n || e.label == n,
-                    orElse: () => PriceNote.cash,
-                  ))
+                  ).firstOrNull)
+              .whereType<PriceNote>()
               .toSet() ??
           {},
       priceNote: cleanPriceNote,
@@ -406,10 +409,13 @@ class Apartment {
           ? 'ريسبشن'
           : (json['reception'] as String?),
       hasSeparateKitchen: json['hasKitchen'] as bool? ?? json['hasSeparateKitchen'] as bool? ?? false,
-      finishingStatus: FinishingStatus.values.firstWhere(
-        (e) => e.name == json['finishingStatus'] || e.label == json['finishingStatus'],
-        orElse: () => FinishingStatus.semiFinished,
-      ),
+      finishingStatus: (() {
+        final raw = json['finishingStatus'] as String?;
+        if (raw == null || raw == 'null') return FinishingStatus.semiFinished;
+        return FinishingStatus.values.where(
+          (e) => e.name == raw || e.label == raw || raw.contains('تشطيب')
+        ).firstOrNull ?? FinishingStatus.semiFinished;
+      })(),
       orientation: cleanOrientation != null
           ? ApartmentOrientation.values
               .where((e) => e.name == cleanOrientation || e.label == cleanOrientation)
@@ -417,13 +423,19 @@ class Apartment {
           : null,
       isUnderConstruction: json['isUnderConstruction'] as bool? ?? false,
       deliveryDate: json['deliveryDate'] != null
-          ? DateTime.tryParse(json['deliveryDate'] as String)
+          ? DateTime.tryParse(json['deliveryDate'].toString())
           : null,
       constructionProgress:
           (json['constructionProgress'] as num?)?.toDouble() ?? 1.0,
       milestones: (json['milestones'] as List<dynamic>?)
-              ?.map((m) =>
-                  ConstructionMilestone.fromJson(m as Map<String, dynamic>))
+              ?.map((m) {
+                try {
+                  return ConstructionMilestone.fromJson(m as Map<String, dynamic>);
+                } catch (_) {
+                  return null;
+                }
+              })
+              .whereType<ConstructionMilestone>()
               .toList() ??
           [],
       whatsappNumber: json['whatsappNumber'] as String? ?? '',
