@@ -11,6 +11,7 @@ import '../../../../core/widgets/info_chip.dart';
 import '../../../../core/widgets/price_tag_pill.dart';
 import '../../../../core/widgets/status_badge.dart';
 import '../../../../models/apartment.dart';
+import 'apartment_action_buttons.dart';
 
 /// A premium card displaying an apartment listing in the Area Screen.
 ///
@@ -272,6 +273,11 @@ class ApartmentCard extends StatelessWidget {
                           ],
                         ),
                       ],
+
+                      const SizedBox(height: 16),
+
+                      // Action buttons (WhatsApp + details)
+                      ApartmentActionButtons(apartment: apt),
                     ],
                   ),
                 ),

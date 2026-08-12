@@ -4,19 +4,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../app/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/contact_chooser_modal.dart';
-import '../../../../models/building.dart';
+import '../../../../models/apartment.dart';
 
-/// Building card action row: Luxury WhatsApp CTA + "تفاصيل العمارة" button.
-class BuildingActionButtons extends StatelessWidget {
-  final Building building;
+/// Apartment card action row: Luxury WhatsApp CTA + "تفاصيل الشقة" button.
+class ApartmentActionButtons extends StatelessWidget {
+  final Apartment apartment;
 
-  const BuildingActionButtons({super.key, required this.building});
+  const ApartmentActionButtons({super.key, required this.apartment});
 
   Future<void> _openWhatsapp(BuildContext context) async {
     await showContactChooserModal(
       context,
       message:
-          'مرحباً، أود الاستفسار عن ${building.name} في حي ${building.area}.',
+          'مرحباً، أود الاستفسار عن ${apartment.title} في ${apartment.area}.',
       platform: ContactPlatform.whatsapp,
     );
   }
@@ -24,8 +24,8 @@ class BuildingActionButtons extends StatelessWidget {
   void _openDetails(BuildContext context) {
     Navigator.pushNamed(
       context,
-      RoutesNames.buildingDetails,
-      arguments: building.id,
+      RoutesNames.apartmentDetails,
+      arguments: apartment.id,
     );
   }
 
@@ -112,7 +112,7 @@ class BuildingActionButtons extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
                     Text(
-                      'تفاصيل العمارة',
+                      'تفاصيل الشقة',
                       style: TextStyle(
                         color: AppColors.textOnPrimary,
                         fontWeight: FontWeight.w900,
