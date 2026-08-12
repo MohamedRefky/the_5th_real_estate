@@ -2,7 +2,7 @@
   {
     "name": "عمارة جاردنيا هايتس 3 - حرف أ",
     "area": "جاردينيا",
-    "description": "عمارة كاملة، موقع ممتاز 286م، دبل فيس، الدور ينفع شقتين، فيس ميدان وخلفي حديقة.",
+    "description": "عمارة كاملة، مبنية بيزمنت وأرضي وأول، دبل فيس، الدور ينفع شقتين.",
     "startingPrice": 18500000,
     "areaSqm": 286,
     "buildingStructure": "بيزمنت + أرضي + أول",
@@ -10,18 +10,16 @@
     "layoutNote": "الدور ينفع شقتين",
     "totalFloors": 3,
     "totalUnits": 6,
-    "availableUnits": 2,
+    "availableUnits": 6,
     "finishingStatus": "semiFinished",
-    "whatsappNumber": "01000000000",
+    "isUnderConstruction": false,
     "amenities": [
-      "مصعد",
-      "جراج خاص",
-      "كاميرات مراقبة"
+      "جراج خاص"
     ],
     "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg",
     "detailImageUrls": [
-      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464781/WhatsApp_Image_2026-08-11_at_12.32.02_AM.jpg",
-      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464782/WhatsApp_Image_2026-08-11_at_12.32.03_AM.jpg"
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786371432/WhatsApp_Image_2026-08-07_at_9.42.15_PM.jpg",
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786371432/WhatsApp_Image_2026-08-07_at_9.42.15_PM.jpg"
     ],
     "videoUrl": null,
     "isPublished": true

@@ -43,26 +43,25 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
 
   static const String _samplePropertyJson = '''[
   {
-    "projectName": "شقة 200م الأندلس 1 و 2",
-    "area": "الأندلس 1 و 2",
-    "buildingLabel": "عمارة 15",
+    "projectName": "شقة 125م جاردنيا هايتس 2",
+    "area": "جاردينيا",
+    "buildingLabel": null,
     "unitType": "شقة",
-    "floor": "أول",
-    "orientation": "خلفي",
-    "areaSqm": 200,
-    "bedrooms": 3,
-    "bathrooms": 3,
+    "floor": "تاني",
+    "orientation": null,
+    "areaSqm": 125,
+    "bedrooms": 2,
+    "bathrooms": 1,
     "hasReception": true,
     "hasKitchen": true,
     "finishingStatus": "نص تشطيب",
-    "price": 2500000,
+    "price": 2675000,
     "priceNote": "بالعداد",
     "priceUsd": null,
-    "description": "شقة ممتازة الدور الأول بحري، مدفوع العدادات وجاهزة للتسليم",
-    "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg",
+    "description": "شقة دور تاني، غرفتين وريسبشن وحمام ومطبخ",
+    "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786371432/WhatsApp_Image_2026-08-07_at_9.42.15_PM.jpg",
     "detailImageUrls": [
-      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464781/WhatsApp_Image_2026-08-11_at_12.32.02_AM.jpg",
-      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464782/WhatsApp_Image_2026-08-11_at_12.32.03_AM.jpg"
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg"
     ],
     "videoUrl": null,
     "isPublished": true
@@ -71,26 +70,25 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
 
   static const String _sampleBuildingJson = '''[
   {
-    "name": "عمارة كاملة في جاردينيا هايتس ٣ حرف أ",
+    "name": "عمارة جاردنيا هايتس 3 - حرف أ",
     "area": "جاردينيا",
-    "description": "عمارة موقع ممتاز 286م، مبنية بيزمنت وأرضي وأول و 2 روف. الدور ينفع شقتين، فيس ميدان وخلفي حديقة.",
-    "startingPrice": 12000000,
+    "description": "عمارة كاملة، مبنية بيزمنت وأرضي وأول، دبل فيس، الدور ينفع شقتين.",
+    "startingPrice": 18500000,
     "areaSqm": 286,
-    "buildingStructure": "بيزمنت + أرضي + أول + 2 روف",
+    "buildingStructure": "بيزمنت + أرضي + أول",
     "orientation": "دبل فيس",
     "layoutNote": "الدور ينفع شقتين",
-    "totalFloors": 4,
-    "totalUnits": 8,
-    "availableUnits": 4,
+    "totalFloors": 3,
+    "totalUnits": 6,
+    "availableUnits": 6,
     "finishingStatus": "semiFinished",
     "amenities": [
-      "مصعد",
-      "جراج خاص",
-      "كاميرات مراقبة"
+      "جراج خاص"
     ],
     "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg",
     "detailImageUrls": [
-      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464781/WhatsApp_Image_2026-08-11_at_12.32.02_AM.jpg"
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464781/WhatsApp_Image_2026-08-11_at_12.32.02_AM.jpg",
+      "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464782/WhatsApp_Image_2026-08-11_at_12.32.03_AM.jpg"
     ],
     "videoUrl": null,
     "isPublished": true
