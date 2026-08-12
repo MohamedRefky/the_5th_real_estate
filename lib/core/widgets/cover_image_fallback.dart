@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
@@ -23,19 +25,29 @@ class CoverImageFallback extends StatelessWidget {
       return Image.asset(assetPath!, fit: BoxFit.cover);
     }
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.apartment_rounded,
-          size: 64,
-          color: AppColors.textPrimary.withValues(alpha: iconAlpha),
+    return ClipRRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface.withValues(alpha: 0.15),
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                AppColors.accent.withValues(alpha: 0.08),
+                Colors.black.withValues(alpha: 0.25),
+                AppColors.primaryDark.withValues(alpha: 0.35),
+              ],
+            ),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.apartment_rounded,
+              size: 54,
+              color: AppColors.accent.withValues(alpha: 0.20),
+            ),
+          ),
         ),
       ),
     );

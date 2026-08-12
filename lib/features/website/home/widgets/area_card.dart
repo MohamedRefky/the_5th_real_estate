@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -54,20 +56,24 @@ class _AreaCardState extends State<AreaCard> {
           duration: const Duration(milliseconds: 350),
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: imagePath == null
+                ? AppColors.surface.withValues(alpha: _isHovered ? 0.35 : 0.18)
+                : AppColors.surface,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: _isHovered
                   ? AppColors.accent
-                  : AppColors.divider.withValues(alpha: 0.6),
-              width: _isHovered ? 2 : 1,
+                  : (imagePath == null
+                        ? AppColors.accent.withValues(alpha: 0.25)
+                        : AppColors.divider.withValues(alpha: 0.6)),
+              width: _isHovered ? 1.8 : 1,
             ),
             boxShadow: [
               BoxShadow(
                 color: _isHovered
-                    ? AppColors.accent.withValues(alpha: 0.3)
-                    : AppColors.primary.withValues(alpha: 0.08),
-                blurRadius: _isHovered ? 28 : 12,
+                    ? AppColors.accent.withValues(alpha: 0.32)
+                    : Colors.black.withValues(alpha: 0.20),
+                blurRadius: _isHovered ? 30 : 14,
                 offset: Offset(0, _isHovered ? 10 : 4),
               ),
             ],
@@ -79,7 +85,7 @@ class _AreaCardState extends State<AreaCard> {
             borderRadius: BorderRadius.circular(24),
             child: Stack(
               children: [
-                // ── Background Image or Fallback ───────────────────────
+                // ── Background Image or Radial Gold Spotlight Backdrop ────
                 if (imagePath != null) ...[
                   Positioned.fill(
                     child: AnimatedScale(
@@ -103,12 +109,81 @@ class _AreaCardState extends State<AreaCard> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withValues(alpha: _isHovered ? 0.25 : 0.40),
-                            Colors.black.withValues(alpha: _isHovered ? 0.65 : 0.78),
+                            Colors.black.withValues(
+                              alpha: _isHovered ? 0.25 : 0.40,
+                            ),
+                            Colors.black.withValues(
+                              alpha: _isHovered ? 0.65 : 0.78,
+                            ),
                             AppColors.background.withValues(alpha: 0.92),
                           ],
                           stops: const [0.0, 0.6, 1.0],
                         ),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  // Luxury Radial Gold Spotlight Backdrop
+                  Positioned.fill(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: const Alignment(0.0, -0.6),
+                            radius: 1.15,
+                            colors: [
+                              AppColors.accent.withValues(
+                                alpha: _isHovered ? 0.22 : 0.08,
+                              ),
+                              AppColors.primaryMedium.withValues(
+                                alpha: _isHovered ? 0.45 : 0.25,
+                              ),
+                              AppColors.background.withValues(alpha: 0.88),
+                            ],
+                            stops: const [0.0, 0.55, 1.0],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Top-Right Luxury Glass Badge
+                  Positioned(
+                    top: 14,
+                    right: 14,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4.5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface.withValues(alpha: 0.70),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.3),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 12,
+                            color: AppColors.accent,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'حي متميز',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: AppColors.accent,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -121,42 +196,63 @@ class _AreaCardState extends State<AreaCard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (imagePath == null) ...[
-                        // Icon Box for areas without custom images
-                        AnimatedContainer(
+                        // Floating 3D Circular Glass Emblem Icon Box
+                        AnimatedScale(
+                          scale: _isHovered ? 1.08 : 1.0,
                           duration: const Duration(milliseconds: 300),
-                          width: 84,
-                          height: 84,
-                          decoration: BoxDecoration(
-                            gradient: _isHovered
-                                ? AppColors.accentGradient
-                                : LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomLeft,
-                                    colors: [
-                                      AppColors.primary,
-                                      AppColors.primaryDark,
-                                    ],
-                                  ),
-                            borderRadius: BorderRadius.circular(22),
-                            boxShadow: _isHovered
-                                ? [
-                                    BoxShadow(
-                                      color: AppColors.accent.withValues(alpha: 0.4),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 6),
-                                    )
-                                  ]
-                                : [],
-                          ),
-                          child: Icon(
-                            _areaIcon,
-                            size: 42,
-                            color: _isHovered
-                                ? AppColors.textOnPrimary
-                                : AppColors.textPrimary,
+                          curve: Curves.easeOutCubic,
+                          child: Container(
+                            width: 86,
+                            height: 86,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: _isHovered
+                                    ? [
+                                        AppColors.accentHighlight,
+                                        AppColors.accent,
+                                      ]
+                                    : [
+                                        AppColors.surface.withValues(
+                                          alpha: 0.9,
+                                        ),
+                                        AppColors.primaryMedium.withValues(
+                                          alpha: 0.95,
+                                        ),
+                                      ],
+                              ),
+                              border: Border.all(
+                                color: AppColors.accent.withValues(
+                                  alpha: _isHovered ? 0.9 : 0.4,
+                                ),
+                                width: 1.8,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: _isHovered
+                                      ? AppColors.accent.withValues(alpha: 0.45)
+                                      : AppColors.accent.withValues(
+                                          alpha: 0.12,
+                                        ),
+                                  blurRadius: _isHovered ? 22 : 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                _areaIcon,
+                                size: 42,
+                                color: _isHovered
+                                    ? AppColors.textOnPrimary
+                                    : AppColors.accent,
+                              ),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                       ] else ...[
                         const Spacer(),
                       ],
@@ -166,55 +262,86 @@ class _AreaCardState extends State<AreaCard> {
                         widget.areaName,
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w900,
-                          color: _isHovered ? AppColors.accent : AppColors.textPrimary,
-                          shadows: imagePath != null
-                              ? [
-                                  Shadow(
-                                    color: Colors.black.withValues(alpha: 0.8),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
+                          fontSize: 20,
+                          color: _isHovered
+                              ? AppColors.accent
+                              : AppColors.textPrimary,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.6),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         textAlign: TextAlign.center,
                       ),
 
                       const SizedBox(height: 10),
 
-                      // Count Badge
+                      // Count & Explore Badge Pill
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
-                          vertical: 7,
+                          vertical: 7.5,
                         ),
                         decoration: BoxDecoration(
-                          color: _isHovered
-                              ? AppColors.accent
-                              : (imagePath != null
-                                  ? Colors.black.withValues(alpha: 0.5)
-                                  : AppColors.accentLight),
+                          gradient: _isHovered
+                              ? AppColors.accentGradient
+                              : LinearGradient(
+                                  colors: [
+                                    AppColors.surface.withValues(alpha: 0.8),
+                                    AppColors.primaryMedium.withValues(
+                                      alpha: 0.8,
+                                    ),
+                                  ],
+                                ),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: _isHovered
-                                ? AppColors.accent
-                                : AppColors.accent.withValues(alpha: 0.3),
-                            width: 0.8,
+                            color: AppColors.accent.withValues(
+                              alpha: _isHovered ? 0.8 : 0.35,
+                            ),
+                            width: 1,
                           ),
+                          boxShadow: _isHovered
+                              ? [
+                                  BoxShadow(
+                                    color: AppColors.accent.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ]
+                              : [],
                         ),
                         child: FutureBuilder<List<Apartment>>(
                           future: _countFuture,
                           builder: (context, snapshot) {
                             final count = snapshot.data?.length ?? localCount;
-                            return Text(
-                              widget.customBadgeText ?? '$count شقة متاحة',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: _isHovered
-                                    ? AppColors.textOnPrimary
-                                    : AppColors.accent,
-                                fontWeight: FontWeight.w800,
-                              ),
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.explore_rounded,
+                                  size: 14,
+                                  color: _isHovered
+                                      ? AppColors.textOnPrimary
+                                      : AppColors.accent,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  widget.customBadgeText ?? '$count شقة متاحة',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: _isHovered
+                                        ? AppColors.textOnPrimary
+                                        : AppColors.accent,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             );
                           },
                         ),
