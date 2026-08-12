@@ -26,7 +26,7 @@ enum UnitType {
     if (trimmed == 'فيلا') return UnitType.villa;
     if (trimmed == 'استوديو') return UnitType.studio;
     return values.firstWhere(
-      (v) => v.label == trimmed,
+      (v) => v.label == trimmed || v.name == trimmed,
       orElse: () => UnitType.apartment,
     );
   }
@@ -43,7 +43,10 @@ enum PropertyOrientation {
 
   static PropertyOrientation? fromLabel(String? label) {
     if (label == null) return null;
-    return values.where((v) => v.label == label).firstOrNull;
+    final trimmed = label.trim();
+    return values
+        .where((v) => v.label == trimmed || v.name == trimmed)
+        .firstOrNull;
   }
 }
 
@@ -58,10 +61,13 @@ enum PropertyFinishing {
   final String label;
   const PropertyFinishing(this.label);
 
-  static PropertyFinishing fromLabel(String label) => values
-      .where((v) => v.label == label)
-      .firstOrNull ??
-      PropertyFinishing.shell;
+  static PropertyFinishing fromLabel(String label) {
+    final trimmed = label.trim();
+    return values
+        .where((v) => v.label == trimmed || v.name == trimmed)
+        .firstOrNull ??
+        PropertyFinishing.shell;
+  }
 }
 
 /// Payment terms for the listing price.
@@ -75,7 +81,10 @@ enum PriceNote {
 
   static PriceNote? fromLabel(String? label) {
     if (label == null) return null;
-    return values.where((v) => v.label == label).firstOrNull;
+    final trimmed = label.trim();
+    return values
+        .where((v) => v.label == trimmed || v.name == trimmed)
+        .firstOrNull;
   }
 }
 

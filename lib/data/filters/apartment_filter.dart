@@ -29,7 +29,8 @@ List<Apartment> filterApartments({
     }
     // Finishing status
     if (filters.finishingStatuses.isNotEmpty &&
-        !filters.finishingStatuses.contains(apt.finishingStatus.name)) {
+        (apt.finishingStatus == null ||
+            !filters.finishingStatuses.contains(apt.finishingStatus!.name))) {
       return false;
     }
     // Orientation (أمامي، خلفي، جانبي)

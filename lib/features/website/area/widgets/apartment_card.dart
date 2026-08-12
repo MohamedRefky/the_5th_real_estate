@@ -128,7 +128,7 @@ class ApartmentCard extends StatelessWidget {
                         top: 12,
                         right: 12,
                         child: StatusBadge(
-                          label: apt.finishingStatus.label,
+                          label: apt.finishingStatusLabel,
                           color: finishingStatusColor(apt.finishingStatus),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -212,7 +212,7 @@ class ApartmentCard extends StatelessWidget {
                         children: [
                           InfoChip(
                             icon: Icons.home_work_rounded,
-                            label: apt.unitType.label,
+                            label: apt.unitTypeLabel,
                           ),
                           InfoChip(
                             icon: Icons.bed_rounded,

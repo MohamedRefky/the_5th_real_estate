@@ -124,7 +124,10 @@ class Apartment {
   final String area;
 
   /// Unit type (شقة / دوبلكس / فيلا / عمارة / استوديو).
-  final UnitType unitType;
+  ///
+  /// Nullable on purpose: Firestore data can arrive malformed, and the UI must
+  /// never crash on a missing value — it falls back via [unitTypeLabel].
+  final UnitType? unitType;
 
   /// Price in EGP.
   final double price;
@@ -159,7 +162,10 @@ class Apartment {
   final bool hasSeparateKitchen;
 
   /// Finishing status.
-  final FinishingStatus finishingStatus;
+  ///
+  /// Nullable on purpose: Firestore data can arrive malformed, and the UI must
+  /// never crash on a missing value — it falls back via [finishingStatusLabel].
+  final FinishingStatus? finishingStatus;
 
   /// Orientation / view (أمامي، خلفي، جانبي). Optional / null if not specified.
   final ApartmentOrientation? orientation;
@@ -230,6 +236,12 @@ class Apartment {
     this.updatedAt,
   });
 
+  /// Safe label for the unit type — never throws, even on missing data.
+  String get unitTypeLabel => unitType?.label ?? 'شقة';
+
+  /// Safe label for the finishing status — never throws, even on missing data.
+  String get finishingStatusLabel => finishingStatus?.label ?? 'غير محدد';
+
   /// The first image URL, used as cover/facade. Null if no images.
   String? get coverImageUrl =>
       imageUrls.isNotEmpty ? imageUrls.first : null;
@@ -285,7 +297,7 @@ class Apartment {
         'description': description,
         'freeDescription': freeDescription,
         'area': area,
-        'unitType': unitType.name,
+        'unitType': unitType?.name,
         'price': price,
         'priceNote': priceNote,
         'priceNotes': priceNotes.map((n) => n.name).toList(),
@@ -297,7 +309,7 @@ class Apartment {
         'bathrooms': bathrooms,
         'reception': reception,
         'hasSeparateKitchen': hasSeparateKitchen,
-        'finishingStatus': finishingStatus.name,
+        'finishingStatus': finishingStatus?.name,
         'orientation': orientation?.name,
         'isUnderConstruction': isUnderConstruction,
         'deliveryDate': deliveryDate?.toIso8601String(),

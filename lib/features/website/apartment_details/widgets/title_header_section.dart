@@ -23,10 +23,10 @@ class TitleHeaderSection extends StatelessWidget {
           runSpacing: 10,
           children: [
             StatusBadge(
-              label: apartment.finishingStatus.label,
+              label: apartment.finishingStatusLabel,
               color: finishingStatusColor(apartment.finishingStatus),
             ),
-            StatusBadge(label: apartment.unitType.label, color: AppColors.accent),
+            StatusBadge(label: apartment.unitTypeLabel, color: AppColors.accent),
             StatusBadge(label: apartment.area, color: AppColors.accentLight2),
             if (apartment.isUnderConstruction)
               const StatusBadge(label: 'تحت الإنشاء', color: AppColors.warning),

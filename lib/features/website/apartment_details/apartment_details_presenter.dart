@@ -12,7 +12,7 @@ List<DetailsRow> apartmentDetailsRows(Apartment apartment) {
     (
       icon: Icons.home_work_rounded,
       label: 'نوع الوحدة',
-      value: apartment.unitType.label,
+      value: apartment.unitTypeLabel,
     ),
     (icon: Icons.location_on_rounded, label: 'الحي', value: apartment.area),
     (
@@ -52,13 +52,13 @@ List<DetailsRow> apartmentDetailsRows(Apartment apartment) {
     (
       icon: Icons.brush_rounded,
       label: 'مستوى التشطيب',
-      value: apartment.finishingStatus.label,
+      value: apartment.finishingStatusLabel,
     ),
     if (apartment.orientation != null)
       (
         icon: Icons.explore_rounded,
         label: 'واجهة الشقة',
-        value: apartment.orientation!.label,
+        value: apartment.orientation?.label ?? '',
       ),
     (
       icon: Icons.monetization_on_rounded,

@@ -116,22 +116,27 @@ void main() {
     );
     expect(
       propertyToApartment(_property(orientation: null)).orientation,
-      ApartmentOrientation.front,
+      isNull,
     );
   });
 
   test('maps price notes', () {
-    expect(
-      propertyToApartment(_property(priceNote: admin.PriceNote.meter)).priceNotes,
-      {PriceNote.installment},
+    final meter = propertyToApartment(
+      _property(priceNote: admin.PriceNote.meter),
     );
-    expect(
-      propertyToApartment(_property(priceNote: admin.PriceNote.cash)).priceNotes,
-      {PriceNote.cash},
+    expect(meter.priceNotes, isEmpty);
+    expect(meter.priceNote, 'بالعداد');
+    expect(meter.formattedPriceNotes, 'بالعداد');
+
+    final cash = propertyToApartment(
+      _property(priceNote: admin.PriceNote.cash),
     );
+    expect(cash.priceNotes, isEmpty);
+    expect(cash.formattedPriceNotes, 'كاش');
+
     expect(
-      propertyToApartment(_property(priceNote: null)).priceNotes,
-      isEmpty,
+      propertyToApartment(_property(priceNote: null)).formattedPriceNotes,
+      isNull,
     );
   });
 
