@@ -280,13 +280,18 @@ class ApartmentCard extends StatelessWidget {
                             label: apt.floorLabel,
                           ),
                           (() {
-                            final orientationLabel = apt.orientation?.label;
-                            if (orientationLabel != null && orientationLabel.isNotEmpty) {
-                              return InfoChip(
-                                icon: Icons.explore_rounded,
-                                label: orientationLabel,
-                              );
-                            }
+                            try {
+                              final orientation = apt.orientation;
+                              if (orientation != null) {
+                                final orientationLabel = orientation.label;
+                                if (orientationLabel.isNotEmpty) {
+                                  return InfoChip(
+                                    icon: Icons.explore_rounded,
+                                    label: orientationLabel,
+                                  );
+                                }
+                              }
+                            } catch (_) {}
                             return const SizedBox.shrink();
                           })(),
                           if (apt.formattedPriceNotes != null)

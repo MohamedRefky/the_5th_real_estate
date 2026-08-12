@@ -237,10 +237,22 @@ class Apartment {
   });
 
   /// Safe label for the unit type — never throws, even on missing data.
-  String get unitTypeLabel => unitType?.label ?? 'شقة';
+  String get unitTypeLabel {
+    try {
+      final label = unitType?.label;
+      if (label != null && label.isNotEmpty) return label;
+    } catch (_) {}
+    return 'شقة';
+  }
 
   /// Safe label for the finishing status — never throws, even on missing data.
-  String get finishingStatusLabel => finishingStatus?.label ?? 'غير محدد';
+  String get finishingStatusLabel {
+    try {
+      final label = finishingStatus?.label;
+      if (label != null && label.isNotEmpty) return label;
+    } catch (_) {}
+    return 'نص تشطيب';
+  }
 
   /// The first image URL, used as cover/facade. Null if no images.
   String? get coverImageUrl =>
@@ -278,11 +290,19 @@ class Apartment {
 
   /// Formatted price notes as a string.
   String? get formattedPriceNotes {
-    if (priceNote != null && priceNote!.trim().isNotEmpty) {
-      return priceNote!;
+    try {
+      if (priceNote != null && priceNote!.trim().isNotEmpty) {
+        return priceNote!;
+      }
+      if (priceNotes.isEmpty) return null;
+      final labels = priceNotes
+          .map((n) => n.label)
+          .where((l) => l.isNotEmpty);
+      if (labels.isEmpty) return null;
+      return labels.join(' • ');
+    } catch (_) {
+      return priceNote;
     }
-    if (priceNotes.isEmpty) return null;
-    return priceNotes.map((n) => n.label).join(' • ');
   }
 
   /// Delivery date formatted as Arabic month + year (e.g., "يناير 2026").

@@ -250,6 +250,15 @@
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
+    // Handle CanvasKit WebGL context loss gracefully during Hot Restarts
+    window.addEventListener('error', function (event) {
+      if (event && event.error && event.error.message && event.error.message.includes('_handledContextLostEvent')) {
+        console.warn('CanvasKit WebGL context loss detected during Hot Restart. Refreshing page...');
+        event.preventDefault();
+        window.location.reload();
+      }
+    });
+
     // Fallback safety timeout (4 seconds)
     setTimeout(removeNativeSplash, 4000);
   </script>
