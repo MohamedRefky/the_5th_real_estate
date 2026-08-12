@@ -20,10 +20,16 @@ class PublicPropertyRepository {
 
   List<Apartment>? _cache;
 
+  List<Apartment>? get cachedItems => _cache;
+
   /// All apartments (published Firestore only), newest first.
-  Future<List<Apartment>> all({bool forceRefresh = true}) async {
-    if (!forceRefresh && _cache != null) return _cache!;
-    return _load();
+  Future<List<Apartment>> all({bool forceRefresh = false}) async {
+    if (!forceRefresh && _cache != null && _cache!.isNotEmpty) return _cache!;
+    final data = await _load();
+    if (data.isNotEmpty) {
+      _cache = data;
+    }
+    return _cache ?? data;
   }
 
   /// Apartments belonging to [area].

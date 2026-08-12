@@ -30,13 +30,47 @@ class FeaturedPropertiesSection extends StatefulWidget {
 
 class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
   late final Future<List<_FeaturedItem>> _featuredFuture;
+  List<_FeaturedItem>? _initialItems;
   final ScrollController _scrollController = ScrollController();
   Timer? _scrollTimer;
   bool _isUserInteracting = false;
 
+  static List<_FeaturedItem> _combineItems(
+      List<Apartment> apartments, List<Building> buildings) {
+    final items = <_FeaturedItem>[];
+    final maxLen = apartments.length > buildings.length
+        ? apartments.length
+        : buildings.length;
+
+    for (var i = 0; i < maxLen; i++) {
+      if (i < apartments.length) {
+        items.add(_FeaturedItem.apartment(apartments[i]));
+      }
+      if (i < buildings.length) {
+        items.add(_FeaturedItem.building(buildings[i]));
+      }
+    }
+
+    if (items.isEmpty) {
+      items.addAll(apartments.map((a) => _FeaturedItem.apartment(a)));
+      items.addAll(buildings.map((b) => _FeaturedItem.building(b)));
+    }
+    return items;
+  }
+
   @override
   void initState() {
     super.initState();
+    final cachedApts = PublicPropertyRepository.instance.cachedItems;
+    final cachedBldgs = PublicBuildingRepository.instance.cachedItems;
+
+    if (cachedApts != null && cachedApts.isNotEmpty) {
+      _initialItems = _combineItems(cachedApts, cachedBldgs ?? []);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _startAutoScroll();
+      });
+    }
+
     _featuredFuture =
         Future.wait([
           PublicPropertyRepository.instance.all(),
@@ -44,25 +78,7 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
         ]).then((results) {
           final apartments = results[0] as List<Apartment>;
           final buildings = results[1] as List<Building>;
-
-          final items = <_FeaturedItem>[];
-          final maxLen = apartments.length > buildings.length
-              ? apartments.length
-              : buildings.length;
-
-          for (var i = 0; i < maxLen; i++) {
-            if (i < apartments.length) {
-              items.add(_FeaturedItem.apartment(apartments[i]));
-            }
-            if (i < buildings.length) {
-              items.add(_FeaturedItem.building(buildings[i]));
-            }
-          }
-
-          if (items.isEmpty) {
-            items.addAll(apartments.map((a) => _FeaturedItem.apartment(a)));
-            items.addAll(buildings.map((b) => _FeaturedItem.building(b)));
-          }
+          final items = _combineItems(apartments, buildings);
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _startAutoScroll();
@@ -129,17 +145,13 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
 
           // ── Horizontal Auto-Scrolling Carousel with Standard Cards ─────
           FutureBuilder<List<_FeaturedItem>>(
+            initialData: _initialItems,
             future: _featuredFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 80),
-                    child: CircularProgressIndicator(color: Colors.white),
-                  ),
-                );
-              }
               final items = snapshot.data ?? [];
+              if (items.isEmpty && snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(height: 200);
+              }
               if (items.isEmpty) {
                 return const SizedBox.shrink();
               }

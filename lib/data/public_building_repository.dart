@@ -13,10 +13,16 @@ class PublicBuildingRepository {
 
   List<Building>? _cache;
 
+  List<Building>? get cachedItems => _cache;
+
   /// All buildings (local + published Firestore), newest first.
-  Future<List<Building>> all() async {
-    if (_cache != null) return _cache!;
-    return _load();
+  Future<List<Building>> all({bool forceRefresh = false}) async {
+    if (!forceRefresh && _cache != null && _cache!.isNotEmpty) return _cache!;
+    final data = await _load();
+    if (data.isNotEmpty) {
+      _cache = data;
+    }
+    return _cache ?? data;
   }
 
   /// Buildings belonging to [area].
