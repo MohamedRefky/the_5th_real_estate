@@ -160,15 +160,32 @@ class _HeroSectionState extends State<HeroSection>
                       ),
                       borderColor: AppColors.accent.withValues(alpha: 0.5),
                       borderWidth: 0.5,
-                      child: Text(
-                        '✦  وجهتك الحصرية لكل عقارات التجمع الخامس  ✦',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 15,
-                          letterSpacing: 0.3,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.verified_rounded,
+                            size: 16,
+                            color: AppColors.accent,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'وجهتك الحصرية لكل عقارات التجمع الخامس',
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(
+                            Icons.verified_rounded,
+                            size: 16,
+                            color: AppColors.accent,
+                          ),
+                        ],
                       ),
                     ),
                   ),
