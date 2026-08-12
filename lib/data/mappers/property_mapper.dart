@@ -32,7 +32,6 @@ Apartment propertyToApartment(admin.Property p) {
     finishingStatus: _finishing(p.finishingStatus),
     orientation: _orientation(p.orientation),
     isUnderConstruction: false,
-    whatsappNumber: defaultAdminWhatsapp,
     imageUrls: p.imageUrls,
     videoUrl: p.videoUrl,
     amenities: const [],

@@ -79,10 +79,7 @@ class _BuildingDetailsScreenState extends State<BuildingDetailsScreen> {
 
       // ── Floating Side WhatsApp CTA ────────────────────────────
       floatingActionButton: WhatsAppFloatingButton(
-        phoneNumber: building.whatsappNumber,
         message: 'مرحباً، أود الاستفسار عن ${building.name} في حي ${building.area}.',
-        failureMessage:
-            'تعذر فتح واتساب على هذا الجهاز (${building.whatsappNumber.replaceAll(RegExp(r'\D'), '')})',
         variant: WhatsAppFloatingButtonVariant.fabExtended,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

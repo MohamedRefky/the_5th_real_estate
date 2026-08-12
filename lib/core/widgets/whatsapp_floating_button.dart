@@ -24,7 +24,7 @@ class WhatsAppFloatingButton extends StatelessWidget {
 
   const WhatsAppFloatingButton({
     super.key,
-    required this.phoneNumber,
+    this.phoneNumber = '',
     required this.message,
     this.failureMessage,
     this.variant = WhatsAppFloatingButtonVariant.gradientPill,

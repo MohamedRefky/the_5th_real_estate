@@ -1,3 +1,5 @@
+import 'package:the_5th_real_estate/core/utils/image_url_helper.dart';
+
 import 'apartment.dart';
 import '../core/utils/formatters.dart';
 
@@ -88,7 +90,7 @@ class Building {
     this.deliveryDate,
     this.constructionProgress = 1.0,
     this.milestones = const [],
-    required this.whatsappNumber,
+    this.whatsappNumber = '',
     this.amenities = const [],
     this.imageUrls = const [],
     this.createdAt,
@@ -156,14 +158,16 @@ class Building {
   factory Building.fromJson(Map<String, dynamic> json, {String? id}) {
     return Building(
       id: id ?? json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      name: json['name'] as String? ?? json['projectName'] as String? ?? '',
       description: json['description'] as String? ?? '',
       area: json['area'] as String? ?? '',
       areaSqm: (json['areaSqm'] as num?)?.toDouble(),
       buildingStructure: json['buildingStructure'] as String?,
       orientation: json['orientation'] as String?,
       layoutNote: json['layoutNote'] as String?,
-      startingPrice: (json['startingPrice'] as num?)?.toDouble() ?? 0,
+      startingPrice: (json['startingPrice'] as num?)?.toDouble() ??
+          (json['price'] as num?)?.toDouble() ??
+          0,
       totalFloors: json['totalFloors'] as int? ?? 1,
       totalUnits: json['totalUnits'] as int? ?? 0,
       availableUnits: json['availableUnits'] as int? ?? 0,
@@ -196,10 +200,43 @@ class Building {
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      imageUrls: (json['imageUrls'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
+      imageUrls: (() {
+        final list = <String>[];
+
+        final facade = json['facadeImageUrl'] as String?;
+        if (facade != null && facade.trim().isNotEmpty && facade != 'null') {
+          final s = sanitizeImageUrl(facade);
+          if (s.isNotEmpty) list.add(s);
+        }
+
+        final details = json['detailImageUrls'];
+        if (details is List) {
+          for (final d in details) {
+            if (d != null) {
+              final s = sanitizeImageUrl(d.toString());
+              if (s.isNotEmpty && !list.contains(s)) list.add(s);
+            }
+          }
+        }
+
+        final raw = json['imageUrls'] ??
+            json['imageUrl'] ??
+            json['images'] ??
+            json['photo'] ??
+            json['photos'];
+        if (raw is List) {
+          for (final e in raw) {
+            if (e != null) {
+              final s = sanitizeImageUrl(e.toString());
+              if (s.isNotEmpty && !list.contains(s)) list.add(s);
+            }
+          }
+        } else if (raw is String && raw.trim().isNotEmpty && raw != 'null') {
+          final s = sanitizeImageUrl(raw);
+          if (s.isNotEmpty && !list.contains(s)) list.add(s);
+        }
+        return list;
+      })(),
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'].toString())
           : null,

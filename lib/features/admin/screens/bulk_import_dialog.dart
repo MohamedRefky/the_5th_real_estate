@@ -83,7 +83,6 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     "totalUnits": 8,
     "availableUnits": 4,
     "finishingStatus": "semiFinished",
-    "whatsappNumber": "01000000000",
     "amenities": [
       "مصعد",
       "جراج خاص",

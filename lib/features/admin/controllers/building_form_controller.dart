@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/utils/image_url_helper.dart';
-import '../../../data/mappers/property_mapper.dart';
 import '../../../models/apartment.dart';
 import '../models/admin_building.dart';
 import '../services/building_service.dart';
@@ -110,7 +109,6 @@ class BuildingFormController extends ChangeNotifier {
         totalUnits: 1,
         availableUnits: 1,
         finishingStatus: FinishingStatus.semiFinished,
-        whatsappNumber: defaultAdminWhatsapp,
         amenities: const [],
         imageUrls: parsedImageUrls,
         videoUrl: parsedVideoUrl,

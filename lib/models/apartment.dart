@@ -228,7 +228,7 @@ class Apartment {
     this.deliveryDate,
     this.constructionProgress = 1.0,
     this.milestones = const [],
-    required this.whatsappNumber,
+    this.whatsappNumber = '',
     this.imageUrls = const [],
     this.videoUrl,
     this.amenities = const [],

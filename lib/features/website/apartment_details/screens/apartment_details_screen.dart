@@ -87,7 +87,6 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
 
       // ── Floating Side WhatsApp CTA ────────────────────────────
       floatingActionButton: WhatsAppFloatingButton(
-        phoneNumber: apartment.whatsappNumber,
         message: _whatsAppMessage,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
