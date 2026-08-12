@@ -34,7 +34,8 @@ List<Apartment> filterApartments({
     }
     // Orientation (أمامي، خلفي، جانبي)
     if (filters.orientations.isNotEmpty &&
-        !filters.orientations.contains(apt.orientation)) {
+        (apt.orientation == null ||
+            !filters.orientations.contains(apt.orientation))) {
       return false;
     }
     // Rooms

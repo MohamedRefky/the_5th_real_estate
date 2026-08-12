@@ -1,5 +1,5 @@
 import '../../features/admin/models/property.dart'
-    as admin show PriceNote, Property, PropertyFinishing, PropertyOrientation, UnitType;
+    as admin show Property, PropertyFinishing, PropertyOrientation, UnitType;
 import '../../models/apartment.dart';
 
 /// Converts an admin `Property` (Firestore `properties` doc) onto the public
@@ -19,9 +19,11 @@ Apartment propertyToApartment(admin.Property p) {
     area: p.area,
     unitType: _unitType(p.unitType),
     price: p.price,
-    priceNotes: p.priceNote == null ? const {} : {_priceNote(p.priceNote!)},
+    priceNote: p.priceNote?.label,
+    priceNotes: const {},
     floor: _floorIndex(p.floor),
-    totalFloors: 1,
+    floorString: p.floor,
+    totalFloors: null,
     areaSqm: p.areaSqm,
     rooms: p.bedrooms,
     bathrooms: p.bathrooms,
@@ -50,32 +52,29 @@ UnitType _unitType(admin.UnitType t) {
   return UnitType.apartment;
 }
 
-PriceNote _priceNote(admin.PriceNote n) {
-  for (final e in PriceNote.values) {
-    if (e.label == n.label) return e;
-  }
-  if (n.label == 'بالعداد') return PriceNote.installment;
-  return PriceNote.cash;
-}
-
 FinishingStatus _finishing(admin.PropertyFinishing f) {
   switch (f.label) {
     case 'سوبر لوكس':
     case 'تشطيب كامل':
       return FinishingStatus.superLux;
     case 'نص تشطيب':
+    case 'نصف تشطيب':
     case '٣_٤ تشطيب':
       return FinishingStatus.semiFinished;
+    case 'بدون تشطيب':
+    case 'تحت الإنشاء':
+      return FinishingStatus.underConstruction;
     default:
       return FinishingStatus.semiFinished;
   }
 }
 
-ApartmentOrientation _orientation(admin.PropertyOrientation? o) {
+ApartmentOrientation? _orientation(admin.PropertyOrientation? o) {
+  if (o == null) return null;
   for (final e in ApartmentOrientation.values) {
-    if (e.label == o?.label) return e;
+    if (e.label == o.label) return e;
   }
-  return ApartmentOrientation.front;
+  return null;
 }
 
 int _floorIndex(String floor) {

@@ -136,8 +136,11 @@ class Apartment {
   /// Floor number (-1 = بيزمنت, 0 = أرضي, 1 = أول, etc.).
   final int floor;
 
-  /// Total number of floors in the building.
-  final int totalFloors;
+  /// Optional floor label string (e.g., "تاني", "أرضي").
+  final String? floorString;
+
+  /// Total number of floors in the building (optional/null if not specified).
+  final int? totalFloors;
 
   /// Living area in square meters.
   final double areaSqm;
@@ -158,8 +161,11 @@ class Apartment {
   /// Finishing status.
   final FinishingStatus finishingStatus;
 
-  /// Orientation / view (أمامي، خلفي، جانبي).
-  final ApartmentOrientation orientation;
+  /// Orientation / view (أمامي، خلفي، جانبي). Optional / null if not specified.
+  final ApartmentOrientation? orientation;
+
+  /// Price note string directly from Firestore (e.g. "بالعداد").
+  final String? priceNote;
 
   /// Whether the unit is still under construction.
   final bool isUnderConstruction;
@@ -201,15 +207,17 @@ class Apartment {
     this.unitType = UnitType.apartment,
     required this.price,
     this.priceNotes = const {},
+    this.priceNote,
     required this.floor,
-    required this.totalFloors,
+    this.floorString,
+    this.totalFloors,
     required this.areaSqm,
     required this.rooms,
     required this.bathrooms,
     this.reception,
     this.hasSeparateKitchen = false,
     required this.finishingStatus,
-    this.orientation = ApartmentOrientation.front,
+    this.orientation,
     this.isUnderConstruction = false,
     this.deliveryDate,
     this.constructionProgress = 1.0,
@@ -242,6 +250,9 @@ class Apartment {
 
   /// Human-readable floor label.
   String get floorLabel {
+    if (floorString != null && floorString!.trim().isNotEmpty) {
+      return floorString!;
+    }
     if (floor == -1) return 'بيزمنت';
     if (floor == 0) return 'أرضي';
     if (floor == 1) return 'الأول';
@@ -253,8 +264,11 @@ class Apartment {
     return 'الدور $floor';
   }
 
-  /// Formatted price notes as a comma-separated string.
+  /// Formatted price notes as a string.
   String? get formattedPriceNotes {
+    if (priceNote != null && priceNote!.trim().isNotEmpty) {
+      return priceNote!;
+    }
     if (priceNotes.isEmpty) return null;
     return priceNotes.map((n) => n.label).join(' • ');
   }
@@ -273,8 +287,10 @@ class Apartment {
         'area': area,
         'unitType': unitType.name,
         'price': price,
+        'priceNote': priceNote,
         'priceNotes': priceNotes.map((n) => n.name).toList(),
         'floor': floor,
+        'floorString': floorString,
         'totalFloors': totalFloors,
         'areaSqm': areaSqm,
         'rooms': rooms,
@@ -282,7 +298,7 @@ class Apartment {
         'reception': reception,
         'hasSeparateKitchen': hasSeparateKitchen,
         'finishingStatus': finishingStatus.name,
-        'orientation': orientation.name,
+        'orientation': orientation?.name,
         'isUnderConstruction': isUnderConstruction,
         'deliveryDate': deliveryDate?.toIso8601String(),
         'constructionProgress': constructionProgress,
@@ -297,39 +313,76 @@ class Apartment {
 
   /// Deserialize from Firestore document.
   factory Apartment.fromJson(Map<String, dynamic> json, {String? id}) {
+    final rawOrientation = json['orientation'] as String?;
+    final cleanOrientation =
+        (rawOrientation == null || rawOrientation == 'null' || rawOrientation.trim().isEmpty)
+            ? null
+            : rawOrientation;
+
+    final rawFloor = json['floor'];
+    int floorInt = 0;
+    String? floorStr;
+
+    if (rawFloor is int) {
+      floorInt = rawFloor;
+    } else if (rawFloor is String) {
+      floorStr = rawFloor;
+      if (rawFloor.contains('أرضي')) {
+        floorInt = 0;
+      } else if (rawFloor.contains('أول')) {
+        floorInt = 1;
+      } else if (rawFloor.contains('تاني') || rawFloor.contains('ثاني')) {
+        floorInt = 2;
+      } else if (rawFloor.contains('تالت') || rawFloor.contains('ثالث')) {
+        floorInt = 3;
+      } else if (rawFloor.contains('رابع')) {
+        floorInt = 4;
+      } else if (rawFloor.contains('خامس')) {
+        floorInt = 5;
+      }
+    }
+
+    final rawPriceNote = json['priceNote'] as String?;
+    final cleanPriceNote = (rawPriceNote == null || rawPriceNote == 'null') ? null : rawPriceNote;
+
     return Apartment(
       id: id ?? json['id'] as String? ?? '',
-      title: json['title'] as String? ?? '',
+      title: json['projectName'] as String? ?? json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       freeDescription: json['freeDescription'] as String?,
       area: json['area'] as String? ?? '',
       unitType: UnitType.values.firstWhere(
-        (e) => e.name == json['unitType'],
+        (e) => e.name == json['unitType'] || e.label == json['unitType'],
         orElse: () => UnitType.apartment,
       ),
       price: (json['price'] as num?)?.toDouble() ?? 0,
       priceNotes: (json['priceNotes'] as List<dynamic>?)
               ?.map((n) => PriceNote.values.firstWhere(
-                    (e) => e.name == n,
+                    (e) => e.name == n || e.label == n,
                     orElse: () => PriceNote.cash,
                   ))
               .toSet() ??
           {},
-      floor: json['floor'] as int? ?? 0,
-      totalFloors: json['totalFloors'] as int? ?? 1,
+      priceNote: cleanPriceNote,
+      floor: floorInt,
+      floorString: floorStr,
+      totalFloors: json['totalFloors'] as int?,
       areaSqm: (json['areaSqm'] as num?)?.toDouble() ?? 0,
-      rooms: json['rooms'] as int? ?? 0,
+      rooms: json['bedrooms'] as int? ?? json['rooms'] as int? ?? 0,
       bathrooms: json['bathrooms'] as int? ?? 0,
-      reception: json['reception'] as String?,
-      hasSeparateKitchen: json['hasSeparateKitchen'] as bool? ?? false,
+      reception: json['hasReception'] == true
+          ? 'ريسبشن'
+          : (json['reception'] as String?),
+      hasSeparateKitchen: json['hasKitchen'] as bool? ?? json['hasSeparateKitchen'] as bool? ?? false,
       finishingStatus: FinishingStatus.values.firstWhere(
-        (e) => e.name == json['finishingStatus'],
+        (e) => e.name == json['finishingStatus'] || e.label == json['finishingStatus'],
         orElse: () => FinishingStatus.semiFinished,
       ),
-      orientation: ApartmentOrientation.values.firstWhere(
-        (e) => e.name == json['orientation'],
-        orElse: () => ApartmentOrientation.front,
-      ),
+      orientation: cleanOrientation != null
+          ? ApartmentOrientation.values
+              .where((e) => e.name == cleanOrientation || e.label == cleanOrientation)
+              .firstOrNull
+          : null,
       isUnderConstruction: json['isUnderConstruction'] as bool? ?? false,
       deliveryDate: json['deliveryDate'] != null
           ? DateTime.tryParse(json['deliveryDate'] as String)
@@ -341,7 +394,6 @@ class Apartment {
                   ConstructionMilestone.fromJson(m as Map<String, dynamic>))
               .toList() ??
           [],
-
       whatsappNumber: json['whatsappNumber'] as String? ?? '',
       imageUrls: (() {
         final raw = json['imageUrls'] ??

@@ -230,10 +230,16 @@ class ApartmentCard extends StatelessWidget {
                             icon: Icons.layers_rounded,
                             label: apt.floorLabel,
                           ),
-                          InfoChip(
-                            icon: Icons.explore_rounded,
-                            label: apt.orientation.label,
-                          ),
+                          (() {
+                            final orientationLabel = apt.orientation?.label;
+                            if (orientationLabel != null && orientationLabel.isNotEmpty) {
+                              return InfoChip(
+                                icon: Icons.explore_rounded,
+                                label: orientationLabel,
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          })(),
                           if (apt.formattedPriceNotes != null)
                             InfoChip(
                               icon: Icons.sell_rounded,

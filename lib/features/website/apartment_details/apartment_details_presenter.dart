@@ -30,33 +30,36 @@ List<DetailsRow> apartmentDetailsRows(Apartment apartment) {
       label: 'عدد الحمامات',
       value: '${apartment.bathrooms} حمام',
     ),
-    if (apartment.reception != null)
+    if (apartment.reception != null && apartment.reception!.trim().isNotEmpty)
       (
         icon: Icons.chair_rounded,
         label: 'الريسبشن',
         value: apartment.reception!,
       ),
-    (
-      icon: Icons.soup_kitchen_rounded,
-      label: 'المطبخ',
-      value: apartment.hasSeparateKitchen ? 'مطبخ منفصل' : 'مطبخ أمريكي / مفتوح',
-    ),
+    if (apartment.hasSeparateKitchen)
+      (
+        icon: Icons.soup_kitchen_rounded,
+        label: 'المطبخ',
+        value: 'مطبخ',
+      ),
     (icon: Icons.layers_rounded, label: 'الدور الحالي', value: apartment.floorLabel),
-    (
-      icon: Icons.apartment_rounded,
-      label: 'إجمالي أدوار المبنى',
-      value: '${apartment.totalFloors} أدوار',
-    ),
+    if (apartment.totalFloors != null && apartment.totalFloors! > 0)
+      (
+        icon: Icons.apartment_rounded,
+        label: 'إجمالي أدوار المبنى',
+        value: '${apartment.totalFloors} أدوار',
+      ),
     (
       icon: Icons.brush_rounded,
       label: 'مستوى التشطيب',
       value: apartment.finishingStatus.label,
     ),
-    (
-      icon: Icons.explore_rounded,
-      label: 'واجهة الشقة',
-      value: apartment.orientation.label,
-    ),
+    if (apartment.orientation != null)
+      (
+        icon: Icons.explore_rounded,
+        label: 'واجهة الشقة',
+        value: apartment.orientation!.label,
+      ),
     (
       icon: Icons.monetization_on_rounded,
       label: 'السعر الإجمالي',

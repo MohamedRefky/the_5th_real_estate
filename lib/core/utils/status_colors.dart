@@ -7,7 +7,8 @@ import '../theme/app_colors.dart';
 ///
 /// Previously duplicated in `apartment_card.dart` and the apartment details
 /// title header; centralized here so UI code stays free of color decisions.
-Color finishingStatusColor(FinishingStatus status) {
+Color finishingStatusColor(FinishingStatus? status) {
+  if (status == null) return AppColors.info;
   switch (status) {
     case FinishingStatus.superLux:
       return AppColors.success;
