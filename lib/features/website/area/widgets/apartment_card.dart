@@ -133,13 +133,15 @@ class ApartmentCard extends StatelessWidget {
                         child: StatusBadge(
                           label: apt.finishingStatusLabel,
                           color: finishingStatusColor(apt.finishingStatus),
+                          gradient: finishingStatusGradient(apt.finishingStatus),
+                          icon: finishingStatusIcon(apt.finishingStatus),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                            horizontal: 11,
+                            vertical: 5.5,
                           ),
                           fontSize: 11,
-                          shadowColor: Colors.black.withValues(alpha: 0.3),
-                          shadowBlur: 6,
+                          shadowColor: Colors.black.withValues(alpha: 0.35),
+                          shadowBlur: 8,
                         ),
                       ),
 

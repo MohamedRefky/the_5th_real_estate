@@ -25,6 +25,8 @@ class TitleHeaderSection extends StatelessWidget {
             StatusBadge(
               label: apartment.finishingStatusLabel,
               color: finishingStatusColor(apartment.finishingStatus),
+              gradient: finishingStatusGradient(apartment.finishingStatus),
+              icon: finishingStatusIcon(apartment.finishingStatus),
             ),
             StatusBadge(label: apartment.unitTypeLabel, color: AppColors.accent),
             StatusBadge(label: apartment.area, color: AppColors.accentLight2),
