@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,7 +19,9 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="The 5th Real Estate - التجمع الخامس للتطوير العقاري">
+  <meta name="theme-color" content="#0A111D">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -27,20 +30,281 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
-  <title>the_5th_real_estate</title>
+  <title>The 5th Real Estate | التجمع الخامس</title>
   <link rel="manifest" href="manifest.json">
-</head>
-<body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
+  <style>
+    :root {
+      --bg-deep: #050911;
+      --bg-navy: #0A111D;
+      --panel: #121C2B;
+      --plat-1: #FFFFFF;
+      --plat-2: #F0F2F6;
+      --plat-3: #C9CDD6;
+      --plat-4: #7D8494;
+      --text-soft: #94A0B2;
+      --border-soft: rgba(201, 205, 214, 0.28);
+    }
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      color: #F5F7FA;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(201, 205, 214, 0.08), transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(201, 205, 214, 0.05), transparent 60%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-navy) 55%, var(--bg-deep) 100%);
+    }
+
+    /* Subtle ambient glow orbs floating in the background */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      pointer-events: none;
+      opacity: 0.35;
+      z-index: 0;
+    }
+
+    .glow-orb.one {
+      width: 320px;
+      height: 320px;
+      top: -80px;
+      left: -60px;
+      background: radial-gradient(circle, rgba(201, 205, 214, 0.25), transparent 70%);
+      animation: drift1 9s ease-in-out infinite;
+    }
+
+    .glow-orb.two {
+      width: 280px;
+      height: 280px;
+      bottom: -100px;
+      right: -60px;
+      background: radial-gradient(circle, rgba(201, 205, 214, 0.18), transparent 70%);
+      animation: drift2 11s ease-in-out infinite;
+    }
+
+    @keyframes drift1 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, 20px); }
+    }
+
+    @keyframes drift2 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-25px, -15px); }
+    }
+
+    .splash-container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      padding: 32px;
+      animation: containerFadeIn 0.9s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes containerFadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .splash-logo-ring {
+      width: 96px;
+      height: 96px;
+      border-radius: 26px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, var(--plat-1), var(--plat-3) 60%, var(--plat-4));
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.55),
+        0 0 32px rgba(201, 205, 214, 0.18);
+      animation: floatLogo 3.4s ease-in-out infinite, pulseGlow 3.4s ease-in-out infinite;
+    }
+
+    .splash-logo-box {
+      width: 100%;
+      height: 100%;
+      border-radius: 24.5px;
+      background: linear-gradient(160deg, var(--panel) 0%, #0d1520 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .splash-logo-box svg {
+      width: 46px;
+      height: 46px;
+    }
+
+    .splash-title {
+      font-size: clamp(20px, 5vw, 27px);
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      background: linear-gradient(135deg, var(--plat-1) 0%, var(--plat-2) 45%, var(--plat-3) 75%, var(--plat-4) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+    }
+
+    .splash-subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-soft);
+      margin: -12px 0 0 0;
+      direction: rtl;
+      letter-spacing: 0.2px;
+    }
+
+    .splash-divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-soft), transparent);
+      margin: 2px 0;
+    }
+
+    .splash-loader {
+      width: 150px;
+      height: 3px;
+      background: rgba(201, 205, 214, 0.12);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 6px;
+    }
+
+    .splash-loader-bar {
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, var(--plat-1), var(--plat-2), transparent);
+      border-radius: 4px;
+      position: absolute;
+      animation: loadingSlide 1.7s infinite ease-in-out;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow:
+          0 18px 40px rgba(0, 0, 0, 0.55),
+          0 0 24px rgba(201, 205, 214, 0.14);
+      }
+      50% {
+        box-shadow:
+          0 22px 46px rgba(0, 0, 0, 0.6),
+          0 0 40px rgba(201, 205, 214, 0.3);
+      }
+    }
+
+    @keyframes loadingSlide {
+      0% { left: -40%; }
+      100% { left: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .splash-logo-ring,
+      .glow-orb,
+      .splash-loader-bar,
+      .splash-container {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="glow-orb one"></div>
+  <div class="glow-orb two"></div>
+
+  <div id="native-splash" class="splash-container">
+    <div class="splash-logo-ring">
+      <div class="splash-logo-box">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF" />
+              <stop offset="60%" stop-color="#C9CDD6" />
+              <stop offset="100%" stop-color="#7D8494" />
+            </linearGradient>
+          </defs>
+          <path d="M12 2.5L3 9v12.5h6.5v-7h5v7H21V9l-9-6.5z" fill="url(#logoGrad)" />
+        </svg>
+      </div>
+    </div>
+
+    <h1 class="splash-title">The 5th Real Estate</h1>
+    <p class="splash-subtitle">التجمع الخامس | وجهتك للعقارات الفاخرة</p>
+
+    <div class="splash-divider"></div>
+
+    <div class="splash-loader">
+      <div class="splash-loader-bar"></div>
+    </div>
+  </div>
+
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    function removeNativeSplash() {
+      const splash = document.getElementById('native-splash');
+      const glow1 = document.querySelector('.glow-orb.one');
+      const glow2 = document.querySelector('.glow-orb.two');
+      if (splash && !splash.classList.contains('fade-out')) {
+        splash.classList.add('fade-out');
+        splash.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        splash.style.opacity = '0';
+        splash.style.transform = 'scale(0.96)';
+        setTimeout(function() {
+          if (splash) splash.remove();
+          if (glow1) glow1.remove();
+          if (glow2) glow2.remove();
+        }, 600);
+      }
+    }
+
+    // Listen to Flutter first frame event
+    window.addEventListener('flutter-first-frame', removeNativeSplash);
+
+    // Observer: check if flutter-view or canvas is inserted into body
+    const observer = new MutationObserver(function(mutationsList) {
+      for (const mutation of mutationsList) {
+        if (mutation.addedNodes.length > 0) {
+          for (const node of mutation.addedNodes) {
+            if (node.tagName === 'FLUTTER-VIEW' || node.tagName === 'CANVAS' || (node.classList && node.classList.contains('flt-glass-pane'))) {
+              removeNativeSplash();
+              observer.disconnect();
+              return;
+            }
+          }
+        }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Fallback safety timeout (4 seconds)
+    setTimeout(removeNativeSplash, 4000);
+  </script>
 </body>
+
 </html>
