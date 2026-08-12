@@ -100,13 +100,27 @@
     }
 
     @keyframes drift1 {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(30px, 20px); }
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(30px, 20px);
+      }
     }
 
     @keyframes drift2 {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(-25px, -15px); }
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(-25px, -15px);
+      }
     }
 
     .splash-container {
@@ -123,8 +137,15 @@
     }
 
     @keyframes containerFadeIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .splash-logo-ring {
@@ -201,16 +222,26 @@
     }
 
     @keyframes floatLogo {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
     }
 
     @keyframes pulseGlow {
-      0%, 100% {
+
+      0%,
+      100% {
         box-shadow:
           0 18px 40px rgba(0, 0, 0, 0.55),
           0 0 24px rgba(201, 205, 214, 0.14);
       }
+
       50% {
         box-shadow:
           0 22px 46px rgba(0, 0, 0, 0.6),
@@ -219,11 +250,17 @@
     }
 
     @keyframes loadingSlide {
-      0% { left: -40%; }
-      100% { left: 100%; }
+      0% {
+        left: -40%;
+      }
+
+      100% {
+        left: 100%;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
+
       .splash-logo-ring,
       .glow-orb,
       .splash-loader-bar,
@@ -255,7 +292,7 @@
     </div>
 
     <h1 class="splash-title">The 5th Real Estate</h1>
-    <p class="splash-subtitle">التجمع الخامس | وجهتك للعقارات الفاخرة</p>
+    <p class="splash-subtitle">وجهتك الأولى لكل شقق وعمارات التجمع الخامس</p>
 
     <div class="splash-divider"></div>
 
@@ -275,7 +312,7 @@
         splash.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         splash.style.opacity = '0';
         splash.style.transform = 'scale(0.96)';
-        setTimeout(function() {
+        setTimeout(function () {
           if (splash) splash.remove();
           if (glow1) glow1.remove();
           if (glow2) glow2.remove();
@@ -287,7 +324,7 @@
     window.addEventListener('flutter-first-frame', removeNativeSplash);
 
     // Observer: check if flutter-view or canvas is inserted into body
-    const observer = new MutationObserver(function(mutationsList) {
+    const observer = new MutationObserver(function (mutationsList) {
       for (const mutation of mutationsList) {
         if (mutation.addedNodes.length > 0) {
           for (const node of mutation.addedNodes) {
