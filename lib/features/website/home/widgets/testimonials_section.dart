@@ -140,8 +140,8 @@ class TestimonialsSection extends StatelessWidget {
                           padding: EdgeInsets.only(left: 2),
                           child: Icon(
                             Icons.star_rounded,
-                            color: AppColors.accent,
-                            size: 18,
+                            color: Color(0xFFFFB800),
+                            size: 19,
                           ),
                         ),
                       ),
@@ -152,7 +152,7 @@ class TestimonialsSection extends StatelessWidget {
 
                 // Comment
                 Text(
-                  '"${testimonial.comment}"',
+                  testimonial.comment,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     height: 1.8,
                     color: AppColors.textPrimary,
