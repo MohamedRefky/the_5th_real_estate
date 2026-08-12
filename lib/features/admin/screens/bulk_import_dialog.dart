@@ -82,9 +82,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     "totalUnits": 6,
     "availableUnits": 6,
     "finishingStatus": "semiFinished",
-    "amenities": [
-      "جراج خاص"
-    ],
+    "amenities": [],
     "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464780/WhatsApp_Image_2026-08-11_at_12.32.01_AM.jpg",
     "detailImageUrls": [
       "https://res.cloudinary.com/pirtgu9c/image/upload/v1786464781/WhatsApp_Image_2026-08-11_at_12.32.02_AM.jpg",
