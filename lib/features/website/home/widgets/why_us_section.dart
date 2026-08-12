@@ -15,8 +15,8 @@ class WhyUsSection extends StatelessWidget {
     final items = [
       (
         icon: Icons.business_rounded,
-        value: '+50',
-        title: 'مشروع حصري',
+        value: 'مشاريع حصرية',
+        title: 'شراكات مباشرة',
         subtitle: 'شراكات مباشرة مع كبرى شركات التطوير العقاري',
       ),
       (
@@ -27,15 +27,15 @@ class WhyUsSection extends StatelessWidget {
       ),
       (
         icon: Icons.handshake_rounded,
-        value: '1000+',
-        title: 'عميل واثق بينا',
+        value: 'ثقة وأمان',
+        title: 'عملاء مستمرون',
         subtitle: 'سجل حافل من الصفقات الناجحة والثقة المتبادلة',
       ),
       (
         icon: Icons.bolt_rounded,
-        value: 'فوري',
-        title: 'استجابة ومعاينة',
-        subtitle: 'فريق متخصص لخدمتك في أي وقت',
+        value: 'استجابة سريعة',
+        title: 'معاينة فوريه',
+        subtitle: 'فريق متخصص لخدمتك في أي وقت وطوال الأسبوع',
       ),
     ];
 
@@ -59,6 +59,7 @@ class WhyUsSection extends StatelessWidget {
                   final isDesktop = constraints.maxWidth >= 800;
                   if (isDesktop) {
                     return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: items.asMap().entries.map((entry) {
                         final idx = entry.key;
                         final item = entry.value;
@@ -101,13 +102,13 @@ class WhyUsSection extends StatelessWidget {
   ) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: Container(
-            padding: const EdgeInsets.all(28),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: 0.65),
               borderRadius: BorderRadius.circular(24),
@@ -124,6 +125,7 @@ class WhyUsSection extends StatelessWidget {
               ],
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Icon with gradient
                 Container(
@@ -145,21 +147,35 @@ class WhyUsSection extends StatelessWidget {
                     color: AppColors.textOnPrimary,
                   ),
                 ),
-                const SizedBox(height: 20),
-                // Value
-                Text(
-                  item.value,
-                  style: theme.textTheme.displaySmall?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.accent,
+                const SizedBox(height: 18),
+                // Value Pill Badge
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.35),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    item.value,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.accent,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 14),
                 Text(
                   item.title,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
+                    fontSize: 16.5,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -169,6 +185,7 @@ class WhyUsSection extends StatelessWidget {
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
                     height: 1.5,
+                    fontSize: 13,
                   ),
                   textAlign: TextAlign.center,
                 ),

@@ -207,7 +207,10 @@ class _HeroSectionState extends State<HeroSection>
                       children: [
                         _GlassHeroStat(value: '+50', label: 'مشروع فاخر'),
                         _GlassHeroStat(value: '5', label: 'أحياء راقية'),
-                        _GlassHeroStat(value: '+1000', label: 'عميل سعيد'),
+                        _GlassHeroStat(
+                          value: 'ثقة وأمان',
+                          label: 'خدمة واستشارات',
+                        ),
                         _GlassHeroStat(
                           value: '100%',
                           label: 'تعاقدات رسمية موثقة',
