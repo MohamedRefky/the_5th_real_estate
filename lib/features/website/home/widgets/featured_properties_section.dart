@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 
 import '../../../../data/public_building_repository.dart';
 import '../../../../data/public_property_repository.dart';
@@ -150,7 +151,7 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
             builder: (context, snapshot) {
               final items = snapshot.data ?? [];
               if (items.isEmpty && snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(height: 200);
+                return _buildSkeletonPlaceholder();
               }
               if (items.isEmpty) {
                 return const SizedBox.shrink();
@@ -204,6 +205,102 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
                 ),
               );
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonPlaceholder() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var i = 0; i < 3; i++) ...[
+            if (i > 0) const SizedBox(width: 24),
+            _buildSkeletonCard(),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonCard() {
+    return Container(
+      width: 350,
+      decoration: BoxDecoration(
+        color: AppColors.surface.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.15),
+          width: 0.8,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 235,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.primaryMedium.withValues(alpha: 0.35),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 18,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  height: 14,
+                  width: 280,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: List.generate(
+                    3,
+                    (i) => Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Container(
+                        height: 24,
+                        width: 70,
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Container(
+                  height: 42,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

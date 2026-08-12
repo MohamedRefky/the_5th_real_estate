@@ -76,7 +76,17 @@ class AppConstants {
   /// Resolves the bundled cover image for [area], or `null` if unknown.
   static String? areaImageAssetFor(String? area) {
     if (area == null) return null;
-    return areaImageAssets[area];
+    if (areaImageAssets.containsKey(area)) {
+      return areaImageAssets[area];
+    }
+    final clean = area.trim();
+    if (clean.contains('جارد')) {
+      return 'assets/image/gardenia.webp';
+    }
+    if (clean.contains('الوطن')) {
+      return 'assets/image/bait_elwatan.webp';
+    }
+    return null;
   }
 
   /// Mapping from area name to its representative icon.

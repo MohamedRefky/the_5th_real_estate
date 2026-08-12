@@ -58,7 +58,13 @@ List<DetailsRow> apartmentDetailsRows(Apartment apartment) {
       (
         icon: Icons.explore_rounded,
         label: 'واجهة الشقة',
-        value: apartment.orientation?.label ?? '',
+        value: (() {
+          try {
+            return apartment.orientation?.label ?? '';
+          } catch (_) {
+            return '';
+          }
+        })(),
       ),
     (
       icon: Icons.monetization_on_rounded,

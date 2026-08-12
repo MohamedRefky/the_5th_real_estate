@@ -239,8 +239,11 @@ class Apartment {
   /// Safe label for the unit type — never throws, even on missing data.
   String get unitTypeLabel {
     try {
-      final label = unitType?.label;
-      if (label != null && label.isNotEmpty) return label;
+      final ut = unitType;
+      if (ut != null) {
+        final label = ut.label;
+        if (label.isNotEmpty) return label;
+      }
     } catch (_) {}
     return 'شقة';
   }
@@ -248,8 +251,11 @@ class Apartment {
   /// Safe label for the finishing status — never throws, even on missing data.
   String get finishingStatusLabel {
     try {
-      final label = finishingStatus?.label;
-      if (label != null && label.isNotEmpty) return label;
+      final fs = finishingStatus;
+      if (fs != null) {
+        final label = fs.label;
+        if (label.isNotEmpty) return label;
+      }
     } catch (_) {}
     return 'نص تشطيب';
   }
@@ -440,22 +446,41 @@ class Apartment {
           [],
       whatsappNumber: json['whatsappNumber'] as String? ?? '',
       imageUrls: (() {
+        final list = <String>[];
+
+        final facade = json['facadeImageUrl'] as String?;
+        if (facade != null && facade.trim().isNotEmpty && facade != 'null') {
+          final s = sanitizeImageUrl(facade);
+          if (s.isNotEmpty) list.add(s);
+        }
+
+        final details = json['detailImageUrls'];
+        if (details is List) {
+          for (final d in details) {
+            if (d != null) {
+              final s = sanitizeImageUrl(d.toString());
+              if (s.isNotEmpty && !list.contains(s)) list.add(s);
+            }
+          }
+        }
+
         final raw = json['imageUrls'] ??
             json['imageUrl'] ??
             json['images'] ??
             json['photo'] ??
             json['photos'];
         if (raw is List) {
-          return raw
-              .map((e) => sanitizeImageUrl(e.toString()))
-              .where((s) => s.isNotEmpty)
-              .toList();
+          for (final e in raw) {
+            if (e != null) {
+              final s = sanitizeImageUrl(e.toString());
+              if (s.isNotEmpty && !list.contains(s)) list.add(s);
+            }
+          }
+        } else if (raw is String && raw.trim().isNotEmpty && raw != 'null') {
+          final s = sanitizeImageUrl(raw);
+          if (s.isNotEmpty && !list.contains(s)) list.add(s);
         }
-        if (raw is String && raw.trim().isNotEmpty) {
-          final cleaned = sanitizeImageUrl(raw);
-          return cleaned.isNotEmpty ? [cleaned] : <String>[];
-        }
-        return <String>[];
+        return list;
       })(),
       videoUrl: json['videoUrl'] as String?,
       amenities: (json['amenities'] as List<dynamic>?)
