@@ -24,6 +24,9 @@ class StatusBadge extends StatelessWidget {
   /// When `null` default size is used.
   final double? fontSize;
 
+  /// Custom text & icon color. If null, automatically computes high contrast color.
+  final Color? textColor;
+
   /// Fully-resolved shadow color. Defaults to a soft tint of [color].
   final Color? shadowColor;
 
@@ -40,6 +43,7 @@ class StatusBadge extends StatelessWidget {
     this.icon,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     this.fontSize,
+    this.textColor,
     this.shadowColor,
     this.shadowBlur = 10,
     this.showShadow = true,
@@ -48,6 +52,15 @@ class StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    final effectiveTextColor = textColor ??
+        (filled
+            ? (gradient != null
+                ? Colors.white
+                : (color.computeLuminance() > 0.45
+                    ? const Color(0xFF0F1724)
+                    : Colors.white))
+            : Colors.white);
 
     if (!filled) {
       return ClipRRect(
@@ -68,13 +81,13 @@ class StatusBadge extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (icon != null) ...[
-                  Icon(icon, size: (fontSize ?? 12) + 2, color: color),
+                  Icon(icon, size: (fontSize ?? 12) + 2, color: effectiveTextColor),
                   const SizedBox(width: 5),
                 ],
                 Text(
                   label,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: effectiveTextColor,
                     fontWeight: FontWeight.w800,
                     fontSize: fontSize ?? 12,
                   ),
@@ -87,7 +100,7 @@ class StatusBadge extends StatelessWidget {
     }
 
     final textStyle = theme.textTheme.bodySmall?.copyWith(
-      color: Colors.white,
+      color: effectiveTextColor,
       fontWeight: FontWeight.w800,
       fontSize: fontSize ?? 11.5,
       letterSpacing: 0.2,
@@ -119,7 +132,7 @@ class StatusBadge extends StatelessWidget {
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: (fontSize ?? 11.5) + 2, color: Colors.white),
+                Icon(icon, size: (fontSize ?? 11.5) + 2, color: effectiveTextColor),
                 const SizedBox(width: 5),
                 labelWidget,
               ],

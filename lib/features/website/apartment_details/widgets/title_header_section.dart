@@ -28,8 +28,18 @@ class TitleHeaderSection extends StatelessWidget {
               gradient: finishingStatusGradient(apartment.finishingStatus),
               icon: finishingStatusIcon(apartment.finishingStatus),
             ),
-            StatusBadge(label: apartment.unitTypeLabel, color: AppColors.accent),
-            StatusBadge(label: apartment.area, color: AppColors.accentLight2),
+            StatusBadge(
+              label: apartment.unitTypeLabel,
+              color: AppColors.primaryMedium,
+              textColor: AppColors.accent,
+              shadowColor: Colors.black26,
+            ),
+            StatusBadge(
+              label: apartment.area,
+              color: AppColors.surface,
+              textColor: AppColors.textPrimary,
+              shadowColor: Colors.black26,
+            ),
             if (apartment.isUnderConstruction)
               const StatusBadge(label: 'تحت الإنشاء', color: AppColors.warning),
           ],
