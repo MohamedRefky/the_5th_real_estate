@@ -1,5 +1,9 @@
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/image_url_helper.dart';
 import '../../../../core/widgets/cover_image_fallback.dart';
 import '../../../../core/widgets/price_tag_pill.dart';
@@ -64,6 +68,49 @@ class BuildingCoverHeader extends StatelessWidget {
                     Colors.black.withValues(alpha: 0.2),
                     Colors.black.withValues(alpha: 0.75),
                   ],
+                ),
+              ),
+            ),
+          ),
+
+          // Property Category Badge ("عمارة") on Top-Left
+          Positioned(
+            top: 12,
+            left: 12,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.60),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.6),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(
+                        Icons.domain_rounded,
+                        size: 13,
+                        color: AppColors.accent,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        'عمارة',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11.5,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

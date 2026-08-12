@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
@@ -29,7 +31,7 @@ class ApartmentCard extends StatelessWidget {
     final areaImage = AppConstants.areaImageAssetFor(apt.area);
 
     return HoverCard(
-      radius: 18,
+      radius: 24,
       color: AppColors.surface,
       borderColor: AppColors.divider,
       hoverBorderColor: AppColors.accent,
@@ -47,12 +49,12 @@ class ApartmentCard extends StatelessWidget {
               arguments: apt.id,
             );
           },
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(24),
           hoverColor: Colors.transparent,
           highlightColor: AppColors.accent.withValues(alpha: 0.1),
           splashColor: AppColors.accent.withValues(alpha: 0.15),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -141,23 +143,67 @@ class ApartmentCard extends StatelessWidget {
                         ),
                       ),
 
-                      // Under construction badge
-                      if (apt.isUnderConstruction)
-                        Positioned(
-                          top: 12,
-                          left: 12,
-                          child: StatusBadge(
-                            label: 'تحت الإنشاء',
-                            color: AppColors.warning,
-                            icon: Icons.construction_rounded,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                      // Property Category Badge ("شقة") + Under Construction Badge on Top-Left
+                      Positioned(
+                        top: 12,
+                        left: 12,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.60),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: AppColors.accent.withValues(alpha: 0.6),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const [
+                                      Icon(
+                                        Icons.home_work_rounded,
+                                        size: 13,
+                                        color: AppColors.accent,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        'شقة',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 11.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
-                            fontSize: 11,
-                            showShadow: false,
-                          ),
+                            if (apt.isUnderConstruction) ...[
+                              const SizedBox(width: 6),
+                              StatusBadge(
+                                label: 'تحت الإنشاء',
+                                color: AppColors.warning,
+                                icon: Icons.construction_rounded,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                fontSize: 11,
+                                showShadow: false,
+                              ),
+                            ],
+                          ],
                         ),
+                      ),
 
                       // Price Tag Floating on Image
                       Positioned(
@@ -171,7 +217,7 @@ class ApartmentCard extends StatelessWidget {
 
                 // ── 2. Compact Card Body (Tight & No Empty Space) ──────
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(18),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
