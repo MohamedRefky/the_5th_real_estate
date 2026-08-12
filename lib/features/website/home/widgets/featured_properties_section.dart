@@ -128,61 +128,70 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
           const SizedBox(height: 20),
 
           // ── Horizontal Auto-Scrolling Carousel with Standard Cards ─────
-          SizedBox(
-            height: 520,
-            width: double.infinity,
-            child: FutureBuilder<List<_FeaturedItem>>(
-              future: _featuredFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
+          FutureBuilder<List<_FeaturedItem>>(
+            future: _featuredFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 80),
                     child: CircularProgressIndicator(color: Colors.white),
-                  );
-                }
-                final items = snapshot.data ?? [];
-                if (items.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                final displayItems = items.length > 2
-                    ? [...items, ...items, ...items, ...items]
-                    : items;
-
-                return MouseRegion(
-                  onEnter: (_) => setState(() => _isUserInteracting = true),
-                  onExit: (_) => setState(() => _isUserInteracting = false),
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (notification) {
-                      if (notification is ScrollStartNotification) {
-                        _isUserInteracting = true;
-                      } else if (notification is ScrollEndNotification) {
-                        _isUserInteracting = false;
-                      }
-                      return false;
-                    },
-                    child: ListView.separated(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 8,
-                      ),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: displayItems.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 24),
-                      itemBuilder: (context, index) {
-                        final item = displayItems[index];
-                        return SizedBox(
-                          width: 350,
-                          child: item.apartment != null
-                              ? ApartmentCard(apartment: item.apartment!)
-                              : BuildingCard(building: item.building!),
-                        );
-                      },
-                    ),
                   ),
                 );
-              },
-            ),
+              }
+              final items = snapshot.data ?? [];
+              if (items.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              final displayItems = items.length > 2
+                  ? [...items, ...items, ...items, ...items]
+                  : items;
+
+              return MouseRegion(
+                onEnter: (_) => setState(() => _isUserInteracting = true),
+                onExit: (_) => setState(() => _isUserInteracting = false),
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollStartNotification) {
+                      _isUserInteracting = true;
+                    } else if (notification is ScrollEndNotification) {
+                      _isUserInteracting = false;
+                    }
+                    return false;
+                  },
+                  // No fixed-height box: the carousel hugs the tallest card
+                  // and every card keeps its own content height, so there is
+                  // no empty space below the data.
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 20,
+                    ),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (var i = 0; i < displayItems.length; i++) ...[
+                          if (i > 0) const SizedBox(width: 24),
+                          SizedBox(
+                            width: 350,
+                            child: displayItems[i].apartment != null
+                                ? ApartmentCard(
+                                    apartment: displayItems[i].apartment!,
+                                  )
+                                : BuildingCard(
+                                    building: displayItems[i].building!,
+                                  ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
