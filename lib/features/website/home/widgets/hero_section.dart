@@ -214,7 +214,7 @@ class _HeroSectionState extends State<HeroSection>
                         ),
                         _GlassHeroStat(
                           value: 'أحياء راقية',
-                          label: 'تغطي أكثر من 12 حيّ',
+                          label: 'تغطي أكثر من 12 حى',
                           icon: Icons.map_rounded,
                         ),
                         _GlassHeroStat(
@@ -359,11 +359,7 @@ class _GlassHeroStat extends StatelessWidget {
   final String label;
   final IconData? icon;
 
-  const _GlassHeroStat({
-    required this.value,
-    required this.label,
-    this.icon,
-  });
+  const _GlassHeroStat({required this.value, required this.label, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -408,11 +404,7 @@ class _GlassHeroStat extends StatelessWidget {
                       width: 1,
                     ),
                   ),
-                  child: Icon(
-                    icon,
-                    size: 18,
-                    color: AppColors.accent,
-                  ),
+                  child: Icon(icon, size: 18, color: AppColors.accent),
                 ),
                 const SizedBox(width: 12),
               ],
