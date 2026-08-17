@@ -32,6 +32,7 @@ class PropertyFormController extends ChangeNotifier {
   late final TextEditingController bathrooms;
   late final TextEditingController price;
   late final TextEditingController priceUsd;
+  late final TextEditingController priceNote;
   late final TextEditingController description;
   late final TextEditingController mainImageUrl;
   final List<TextEditingController> extraImageControllers = [];
@@ -43,7 +44,6 @@ class PropertyFormController extends ChangeNotifier {
   late String area;
   PropertyOrientation? orientation;
   PropertyFinishing? finishingStatus;
-  PriceNote? priceNote;
   late bool hasReception;
   late bool hasKitchen;
   late bool isPublished;
@@ -74,6 +74,9 @@ class PropertyFormController extends ChangeNotifier {
           ? _fmtNum(p.priceUsd!)
           : '',
     );
+    priceNote = TextEditingController(
+      text: isEdit ? (p?.priceNote ?? '') : '',
+    );
     description = TextEditingController(
       text: isEdit ? (p?.description ?? '') : '',
     );
@@ -94,7 +97,6 @@ class PropertyFormController extends ChangeNotifier {
     area = p?.area ?? _initialArea ?? areaOptions.first;
     orientation = p?.orientation;
     finishingStatus = isEdit ? p?.finishingStatus : null;
-    priceNote = p?.priceNote;
     hasReception = p?.hasReception ?? true;
     hasKitchen = p?.hasKitchen ?? true;
     isPublished = p?.isPublished ?? true;
@@ -174,8 +176,8 @@ class PropertyFormController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setPriceNote(PriceNote? v) {
-    priceNote = v;
+  void setPriceNote(String v) {
+    priceNote.text = v;
     notifyListeners();
   }
 
@@ -242,7 +244,7 @@ class PropertyFormController extends ChangeNotifier {
         hasKitchen: hasKitchen,
         finishingStatus: finishingStatus ?? PropertyFinishing.shell,
         price: _safeParseDouble(price.text),
-        priceNote: priceNote,
+        priceNote: priceNote.text.trim().isEmpty ? null : priceNote.text.trim(),
         priceUsd: _parseOptionalDouble(priceUsd.text),
         description: description.text.trim().isEmpty
             ? null
@@ -273,6 +275,7 @@ class PropertyFormController extends ChangeNotifier {
     bathrooms.dispose();
     price.dispose();
     priceUsd.dispose();
+    priceNote.dispose();
     description.dispose();
     mainImageUrl.dispose();
     for (final ctrl in extraImageControllers) {

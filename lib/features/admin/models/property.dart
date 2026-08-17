@@ -74,7 +74,8 @@ enum PropertyFinishing {
 enum PriceNote {
   cash('كاش'),
   meter('كاش بالعداد'),
-  negotiable('كاش وقابل للتفاوض');
+  negotiable('كاش وقابل للتفاوض'),
+  installment('تقسيط');
 
   final String label;
   const PriceNote(this.label);
@@ -84,11 +85,20 @@ enum PriceNote {
     final trimmed = label.trim();
     if (trimmed == 'بالعداد' || trimmed == 'كاش بالعداد') return PriceNote.meter;
     if (trimmed == 'قابل للتفاوض' || trimmed == 'كاش وقابل للتفاوض') return PriceNote.negotiable;
+    if (trimmed == 'تقسيط' || trimmed.contains('تقسيط')) return PriceNote.installment;
     return values
         .where((v) => v.label == trimmed || v.name == trimmed)
         .firstOrNull;
   }
 }
+
+/// Standard preset options for payment methods (طريقة الدفع).
+const List<String> defaultPriceNotes = [
+  'كاش',
+  'كاش بالعداد',
+  'كاش وقابل للتفاوض',
+  'تقسيط',
+];
 
 /// Floor options offered in the dropdown (each floor is its own document).
 const List<String> floorOptions = [
@@ -132,7 +142,7 @@ class Property {
   final bool hasKitchen;
   final PropertyFinishing finishingStatus;
   final double price;
-  final PriceNote? priceNote;
+  final String? priceNote;
 
   /// Optional asking price in US Dollars, separate from the EGP [price].
   final double? priceUsd;
@@ -184,7 +194,7 @@ class Property {
     bool? hasKitchen,
     PropertyFinishing? finishingStatus,
     double? price,
-    PriceNote? priceNote,
+    String? priceNote,
     double? priceUsd,
     String? description,
     List<String>? imageUrls,
@@ -257,7 +267,7 @@ class Property {
       'hasKitchen': hasKitchen,
       'finishingStatus': finishingStatus.label,
       'price': price,
-      'priceNote': priceNote?.label,
+      'priceNote': priceNote,
       'priceUsd': priceUsd,
       'description': description,
       'imageUrls': imageUrls,
@@ -355,7 +365,7 @@ class Property {
       finishingStatus:
           PropertyFinishing.fromLabel(data['finishingStatus'] as String? ?? ''),
       price: rawPrice,
-      priceNote: PriceNote.fromLabel(data['priceNote'] as String?),
+      priceNote: (data['priceNote'] as String?)?.trim(),
       priceUsd: (data['priceUsd'] as num?)?.toDouble(),
       description: rawDesc,
       imageUrls: parsedImages,

@@ -18,7 +18,7 @@ admin.Property _property({
   bool hasKitchen = true,
   admin.PropertyFinishing finishingStatus = admin.PropertyFinishing.superLux,
   double price = 1000000,
-  admin.PriceNote? priceNote = admin.PriceNote.cash,
+  String? priceNote = 'كاش',
   String? description = 'شقة فاخرة',
   List<String> imageUrls = const ['https://img/1.jpg'],
   String area = 'المستثمرين',
@@ -120,17 +120,22 @@ void main() {
 
   test('maps price notes', () {
     final meter = propertyToApartment(
-      _property(priceNote: admin.PriceNote.meter),
+      _property(priceNote: 'كاش بالعداد'),
     );
     expect(meter.priceNotes, isEmpty);
     expect(meter.priceNote, 'كاش بالعداد');
     expect(meter.formattedPriceNotes, 'كاش بالعداد');
 
     final cash = propertyToApartment(
-      _property(priceNote: admin.PriceNote.cash),
+      _property(priceNote: 'كاش'),
     );
     expect(cash.priceNotes, isEmpty);
     expect(cash.formattedPriceNotes, 'كاش');
+
+    final custom = propertyToApartment(
+      _property(priceNote: 'تقسيط على سنتين'),
+    );
+    expect(custom.formattedPriceNotes, 'تقسيط على سنتين');
 
     expect(
       propertyToApartment(_property(priceNote: null)).formattedPriceNotes,

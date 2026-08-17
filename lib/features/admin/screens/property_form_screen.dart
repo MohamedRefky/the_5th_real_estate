@@ -162,14 +162,48 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                               v == null ? 'يرجى اختيار حالة التشطيب' : null,
                           onChanged: c.setFinishingStatus,
                         ),
-                        const SizedBox(height: 12),
-                        FormDropdown<PriceNote?>(
-                          label: 'نوع السعر (اختياري)',
-                          value: c.priceNote,
-                          items: PriceNote.values,
-                          labelOf: (v) => v?.label ?? 'بدون',
-                          hint: 'بدون',
-                          onChanged: c.setPriceNote,
+                        FormTextField(
+                          c.priceNote,
+                          'طريقة الدفع (اختياري - كاش / تقسيط / تفاصيل حرّة)',
+                          prefixIcon: Icons.payments_rounded,
+                        ),
+                        const SizedBox(height: 8),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: defaultPriceNotes.map((preset) {
+                              final isSelected =
+                                  c.priceNote.text.trim() == preset;
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: ChoiceChip(
+                                  label: Text(preset),
+                                  selected: isSelected,
+                                  selectedColor: AppColors.accent,
+                                  backgroundColor: AppColors.surface,
+                                  side: BorderSide(
+                                    color: isSelected
+                                        ? AppColors.accent
+                                        : AppColors.divider,
+                                  ),
+                                  labelStyle: TextStyle(
+                                    color: isSelected
+                                        ? AppColors.textOnPrimary
+                                        : AppColors.textPrimary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  onSelected: (selected) {
+                                    if (selected) {
+                                      c.setPriceNote(preset);
+                                    } else {
+                                      c.setPriceNote('');
+                                    }
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Row(

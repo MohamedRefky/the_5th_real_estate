@@ -17,7 +17,7 @@ Apartment propertyToApartment(admin.Property p) {
     area: p.area,
     unitType: _unitType(p.unitType),
     price: p.price,
-    priceNote: p.priceNote?.label,
+    priceNote: p.priceNote,
     priceNotes: const {},
     floor: _floorIndex(p.floor),
     floorString: p.floor,
