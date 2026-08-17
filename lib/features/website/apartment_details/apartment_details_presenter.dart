@@ -74,7 +74,7 @@ List<DetailsRow> apartmentDetailsRows(Apartment apartment) {
     if (apartment.formattedPriceNotes != null)
       (
         icon: Icons.sell_rounded,
-        label: 'ملاحظات السعر والدفع',
+        label: 'طريقة الدفع',
         value: apartment.formattedPriceNotes!,
       ),
     if (apartment.formattedDeliveryDate != null)
