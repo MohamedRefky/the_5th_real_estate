@@ -48,8 +48,8 @@ enum UnitType {
 /// ─── Price note / payment method ─────────────────────────────────
 enum PriceNote {
   cash('كاش'),
-  installment('بالعداد (تقسيط)'),
-  negotiable('قابل للتفاوض');
+  installment('كاش بالعداد'),
+  negotiable('كاش وقابل للتفاوض');
 
   final String label;
   const PriceNote(this.label);

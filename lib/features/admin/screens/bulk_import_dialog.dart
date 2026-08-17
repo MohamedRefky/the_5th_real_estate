@@ -55,7 +55,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
     "hasKitchen": true,
     "finishingStatus": "نص تشطيب",
     "price": 2675000,
-    "priceNote": "بالعداد",
+    "priceNote": "كاش بالعداد",
     "priceUsd": null,
     "description": "شقة دور تاني، غرفتين وريسبشن وحمام ومطبخ",
     "facadeImageUrl": "https://res.cloudinary.com/pirtgu9c/image/upload/v1786371432/WhatsApp_Image_2026-08-07_at_9.42.15_PM.jpg",

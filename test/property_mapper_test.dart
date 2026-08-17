@@ -123,8 +123,8 @@ void main() {
       _property(priceNote: admin.PriceNote.meter),
     );
     expect(meter.priceNotes, isEmpty);
-    expect(meter.priceNote, 'بالعداد');
-    expect(meter.formattedPriceNotes, 'بالعداد');
+    expect(meter.priceNote, 'كاش بالعداد');
+    expect(meter.formattedPriceNotes, 'كاش بالعداد');
 
     final cash = propertyToApartment(
       _property(priceNote: admin.PriceNote.cash),

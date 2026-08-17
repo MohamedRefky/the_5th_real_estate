@@ -73,8 +73,8 @@ enum PropertyFinishing {
 /// Payment terms for the listing price.
 enum PriceNote {
   cash('كاش'),
-  meter('بالعداد'),
-  negotiable('قابل للتفاوض');
+  meter('كاش بالعداد'),
+  negotiable('كاش وقابل للتفاوض');
 
   final String label;
   const PriceNote(this.label);
@@ -82,6 +82,8 @@ enum PriceNote {
   static PriceNote? fromLabel(String? label) {
     if (label == null) return null;
     final trimmed = label.trim();
+    if (trimmed == 'بالعداد' || trimmed == 'كاش بالعداد') return PriceNote.meter;
+    if (trimmed == 'قابل للتفاوض' || trimmed == 'كاش وقابل للتفاوض') return PriceNote.negotiable;
     return values
         .where((v) => v.label == trimmed || v.name == trimmed)
         .firstOrNull;
