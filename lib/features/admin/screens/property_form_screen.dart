@@ -162,6 +162,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                               v == null ? 'يرجى اختيار حالة التشطيب' : null,
                           onChanged: c.setFinishingStatus,
                         ),
+                        const SizedBox(height: 12),
                         FormTextField(
                           c.priceNote,
                           'طريقة الدفع (اختياري - كاش / تقسيط / تفاصيل حرّة)',
