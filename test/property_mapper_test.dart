@@ -7,8 +7,7 @@ import 'package:the_5th_real_estate/models/apartment.dart';
 
 admin.Property _property({
   String? id = 'doc1',
-  String projectName = 'جاردنيا هايتس',
-  String? buildingLabel = 'حرف ت',
+  String projectName = 'جاردنيا هايتس حرف ت',
   admin.UnitType unitType = admin.UnitType.apartment,
   String floor = 'أول',
   admin.PropertyOrientation? orientation = admin.PropertyOrientation.front,
@@ -27,7 +26,6 @@ admin.Property _property({
   return admin.Property(
     id: id,
     projectName: projectName,
-    buildingLabel: buildingLabel,
     unitType: unitType,
     floor: floor,
     orientation: orientation,
@@ -50,7 +48,7 @@ void main() {
     final apt = propertyToApartment(_property());
 
     expect(apt.id, 'doc1');
-    expect(apt.title, 'جاردنيا هايتس — حرف ت');
+    expect(apt.title, 'جاردنيا هايتس حرف ت');
     expect(apt.area, 'المستثمرين');
     expect(apt.price, 1000000);
     expect(apt.areaSqm, 150);
@@ -62,8 +60,8 @@ void main() {
     expect(apt.whatsappNumber, defaultAdminWhatsapp);
   });
 
-  test('builds title from project name only when buildingLabel is empty', () {
-    final apt = propertyToApartment(_property(buildingLabel: null));
+  test('title comes directly from projectName', () {
+    final apt = propertyToApartment(_property(projectName: 'جاردنيا هايتس'));
     expect(apt.title, 'جاردنيا هايتس');
   });
 

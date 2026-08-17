@@ -120,7 +120,6 @@ class Property {
   final String? id;
 
   final String projectName;
-  final String? buildingLabel;
   final UnitType unitType;
   final String floor;
   final PropertyOrientation? orientation;
@@ -149,7 +148,6 @@ class Property {
   const Property({
     this.id,
     required this.projectName,
-    this.buildingLabel,
     required this.unitType,
     required this.floor,
     this.orientation,
@@ -174,7 +172,6 @@ class Property {
   Property copyWith({
     String? id,
     String? projectName,
-    String? buildingLabel,
     UnitType? unitType,
     String? floor,
     PropertyOrientation? orientation,
@@ -198,7 +195,6 @@ class Property {
     return Property(
       id: id ?? this.id,
       projectName: projectName ?? this.projectName,
-      buildingLabel: buildingLabel ?? this.buildingLabel,
       unitType: unitType ?? this.unitType,
       floor: floor ?? this.floor,
       orientation: orientation ?? this.orientation,
@@ -249,7 +245,6 @@ class Property {
     final now = DateTime.now();
     return {
       'projectName': projectName,
-      'buildingLabel': buildingLabel,
       'unitType': unitType.label,
       'floor': floor,
       'orientation': orientation?.label,
@@ -318,8 +313,7 @@ class Property {
 
     final nameVal = (data['projectName'] as String?)?.trim() ??
         (data['name'] as String?)?.trim() ??
-        (data['title'] as String?)?.trim() ??
-        (data['buildingLabel'] as String?)?.trim();
+        (data['title'] as String?)?.trim();
     final rawName = (nameVal != null && nameVal.isNotEmpty) ? nameVal : 'شقة جديدة';
 
     final rawPrice = ((data['price'] as num?) ??
@@ -348,7 +342,6 @@ class Property {
     return Property(
       id: docId,
       projectName: rawName,
-      buildingLabel: data['buildingLabel'] as String?,
       unitType: UnitType.fromLabel(data['unitType'] as String? ?? ''),
       floor: _normalizeFloor(data['floor'] as String?),
       orientation: PropertyOrientation.fromLabel(data['orientation'] as String?),

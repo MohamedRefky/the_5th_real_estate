@@ -82,7 +82,7 @@ class _BuildingFormScreenState extends State<BuildingFormScreen> {
                         const FormSectionTitle('بيانات أساسية'),
                         FormTextField(
                           c.name,
-                          'اسم العمارة / المشروع',
+                          'اسم العمارة والحرف (مثال: عمارة جاردنيا هايتس 3 حرف أ)',
                           validator: c.requiredValidator,
                         ),
                         const SizedBox(height: 12),

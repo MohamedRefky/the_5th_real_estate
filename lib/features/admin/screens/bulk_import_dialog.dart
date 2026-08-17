@@ -43,9 +43,8 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
 
   static const String _samplePropertyJson = '''[
   {
-    "projectName": "شقة 125م جاردنيا هايتس 2",
+    "projectName": "شقة 125م جاردنيا هايتس 2 حرف ج",
     "area": "جاردينيا",
-    "buildingLabel": null,
     "unitType": "شقة",
     "floor": "تاني",
     "orientation": null,
@@ -70,7 +69,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
 
   static const String _sampleBuildingJson = '''[
   {
-    "name": "عمارة جاردنيا هايتس 3 - حرف أ",
+    "name": "عمارة جاردنيا هايتس 3 حرف أ",
     "area": "جاردينيا",
     "description": "عمارة كاملة، مبنية بيزمنت وأرضي وأول، دبل فيس، الدور ينفع شقتين.",
     "startingPrice": 18500000,

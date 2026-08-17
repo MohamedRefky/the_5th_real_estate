@@ -27,7 +27,6 @@ class PropertyFormController extends ChangeNotifier {
 
   // Text controllers
   late final TextEditingController projectName;
-  late final TextEditingController buildingLabel;
   late final TextEditingController areaSqm;
   late final TextEditingController bedrooms;
   late final TextEditingController bathrooms;
@@ -57,9 +56,6 @@ class PropertyFormController extends ChangeNotifier {
 
     projectName = TextEditingController(
       text: isEdit ? (p?.projectName ?? '') : '',
-    );
-    buildingLabel = TextEditingController(
-      text: isEdit ? (p?.buildingLabel ?? '') : '',
     );
     areaSqm = TextEditingController(
       text: (isEdit && p != null) ? _fmtNum(p.areaSqm) : '',
@@ -235,9 +231,6 @@ class PropertyFormController extends ChangeNotifier {
       final prop = Property(
         id: property?.id,
         projectName: projectName.text.trim(),
-        buildingLabel: buildingLabel.text.trim().isEmpty
-            ? null
-            : buildingLabel.text.trim(),
         unitType: unitType,
         floor: floor ?? 'أرضي',
         area: area,
@@ -275,7 +268,6 @@ class PropertyFormController extends ChangeNotifier {
   @override
   void dispose() {
     projectName.dispose();
-    buildingLabel.dispose();
     areaSqm.dispose();
     bedrooms.dispose();
     bathrooms.dispose();

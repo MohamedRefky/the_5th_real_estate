@@ -109,7 +109,7 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                         const FormSectionTitle('بيانات أساسية'),
                         FormTextField(
                           c.projectName,
-                          'اسم المشروع',
+                          'اسم المشروع والعمارة (مثال: شقة 125م جاردنيا هايتس 2 حرف ج)',
                           validator: c.requiredValidator,
                         ),
                         const SizedBox(height: 12),
@@ -120,8 +120,6 @@ class _PropertyFormScreenState extends State<PropertyFormScreen> {
                           labelOf: (v) => v,
                           onChanged: c.setArea,
                         ),
-                        const SizedBox(height: 12),
-                        FormTextField(c.buildingLabel, 'رقم العمارة (اختياري)'),
                         const SizedBox(height: 20),
                         const FormSectionTitle('تفاصيل الوحدة'),
                         const SizedBox(height: 12),

@@ -10,9 +10,7 @@ import '../../models/apartment.dart';
 Apartment propertyToApartment(admin.Property p) {
   return Apartment(
     id: p.id ?? '',
-    title: p.buildingLabel != null && p.buildingLabel!.isNotEmpty
-        ? '${p.projectName} — ${p.buildingLabel}'
-        : p.projectName,
+    title: p.projectName,
     description:
         p.description ?? '${p.projectName} — ${p.unitType.label} ${p.floor}',
     freeDescription: null,
