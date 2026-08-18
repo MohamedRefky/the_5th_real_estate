@@ -62,7 +62,6 @@ class WhatsAppFloatingButton extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
-                fontFamily: 'Cairo',
               ),
             ),
           ),

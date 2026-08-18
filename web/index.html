@@ -22,6 +22,11 @@
 
   <title>The 5th Real Estate | التجمع الخامس</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Google Fonts Preload: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-deep: #050911;
@@ -222,33 +227,24 @@
       const splash = document.getElementById('native-splash');
       if (splash && !splash.classList.contains('fade-out')) {
         splash.classList.add('fade-out');
-        splash.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        splash.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
         splash.style.opacity = '0';
-        splash.style.transform = 'scale(0.97)';
+        splash.style.transform = 'scale(0.98)';
         setTimeout(function () {
-          if (splash) splash.remove();
-        }, 500);
+          if (splash && splash.parentNode) {
+            splash.parentNode.removeChild(splash);
+          }
+        }, 420);
       }
     }
 
-    // Listen to Flutter first frame event
-    window.addEventListener('flutter-first-frame', removeNativeSplash);
-
-    // Observer: check if flutter-view or canvas is inserted into body
-    const observer = new MutationObserver(function (mutationsList) {
-      for (const mutation of mutationsList) {
-        if (mutation.addedNodes.length > 0) {
-          for (const node of mutation.addedNodes) {
-            if (node.tagName === 'FLUTTER-VIEW' || node.tagName === 'CANVAS' || (node.classList && node.classList.contains('flt-glass-pane'))) {
-              removeNativeSplash();
-              observer.disconnect();
-              return;
-            }
-          }
-        }
-      }
+    // Listen to Flutter first frame event when the app actually draws its UI
+    window.addEventListener('flutter-first-frame', function () {
+      // Small tick ensures CanvasKit has flushed the first rendered frame with loaded fonts
+      requestAnimationFrame(function () {
+        setTimeout(removeNativeSplash, 80);
+      });
     });
-    observer.observe(document.body, { childList: true, subtree: true });
 
     // Handle CanvasKit WebGL context loss gracefully during Hot Restarts
     window.addEventListener('error', function (event) {
@@ -259,8 +255,8 @@
       }
     });
 
-    // Fallback safety timeout (4 seconds)
-    setTimeout(removeNativeSplash, 4000);
+    // Fallback safety timeout
+    setTimeout(removeNativeSplash, 5000);
   </script>
 </body>
 
