@@ -501,6 +501,19 @@ class _ParallaxHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDesktop = MediaQuery.of(context).size.width >= 900;
+
+    // On mobile & tablet screens, render directly without any scroll drift or fade
+    // so users can comfortably scroll and read everything with 100% crisp visibility.
+    if (!isDesktop) {
+      return HeroSection(
+        theme: theme,
+        onBrowseAll: onBrowseAll,
+        onContact: onContact,
+      );
+    }
+
+    // On desktop, keep a subtle parallax drift but maintain 100% text opacity.
     return AnimatedBuilder(
       animation: controller,
       child: HeroSection(
@@ -511,12 +524,11 @@ class _ParallaxHero extends StatelessWidget {
       builder: (context, child) {
         final offset = controller.hasClients ? controller.offset : 0.0;
         final height = MediaQuery.of(context).size.height;
-        final ratio = (offset / (height * 0.65)).clamp(0.0, 1.0);
-        final opacity = (1.0 - ratio).clamp(0.0, 1.0);
-        final driftY = ratio * -60;
+        final ratio = (offset / (height * 1.5)).clamp(0.0, 1.0);
+        final driftY = ratio * -30;
         return Transform.translate(
           offset: Offset(0, driftY),
-          child: Opacity(opacity: opacity, child: child),
+          child: child,
         );
       },
     );

@@ -97,8 +97,9 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     final dimension = position.viewportDimension;
     final distance = revealOffset - scrollOffset;
 
-    // Trigger animation when item reaches eye-level in lower viewport (180px above bottom edge)
-    if (distance < (dimension - 180) && (distance + renderObject.size.height) > 0) {
+    // Trigger animation as soon as item nears viewport (100px lookahead margin)
+    // so elements on mobile and desktop are already revealed before the user scrolls directly onto them.
+    if (distance < (dimension + 100) && (distance + renderObject.size.height) > -100) {
       _position?.removeListener(_checkVisibility);
       _trigger();
     }
@@ -134,6 +135,8 @@ class _RevealOnScrollState extends State<RevealOnScroll>
       builder: (context, child) {
         final progress = _animation.value;
         final invProgress = (1.0 - progress).clamp(0.0, 1.0);
+        final isMobile = MediaQuery.of(context).size.width < 768;
+        final effectiveOffset = isMobile ? (widget.offset * 0.35).clamp(10.0, 20.0) : widget.offset;
 
         double dx = 0;
         double dy = 0;
@@ -142,42 +145,46 @@ class _RevealOnScrollState extends State<RevealOnScroll>
 
         switch (widget.direction) {
           case RevealDirection.fromRight:
-            dx = invProgress * widget.offset;
+            dx = invProgress * effectiveOffset;
             break;
 
           case RevealDirection.fromLeft:
-            dx = -invProgress * widget.offset;
+            dx = -invProgress * effectiveOffset;
             break;
 
           case RevealDirection.fromBottom:
-            dy = invProgress * widget.offset;
+            dy = invProgress * effectiveOffset;
             break;
 
           case RevealDirection.fromTop:
-            dy = -invProgress * widget.offset;
+            dy = -invProgress * effectiveOffset;
             break;
 
           case RevealDirection.scale:
-            scale = 0.85 + (0.15 * progress);
-            dy = invProgress * (widget.offset * 0.4);
+            scale = (isMobile ? 0.94 : 0.85) + ((isMobile ? 0.06 : 0.15) * progress);
+            dy = invProgress * (effectiveOffset * 0.4);
             break;
 
           case RevealDirection.flip3D:
-            matrix.setEntry(3, 2, 0.0012);
-            matrix.rotateX(0.35 * invProgress);
-            dy = invProgress * 40;
-            scale = 0.90 + (0.10 * progress);
+            if (!isMobile) {
+              matrix.setEntry(3, 2, 0.0012);
+              matrix.rotateX(0.35 * invProgress);
+            }
+            dy = invProgress * (isMobile ? 15 : 40);
+            scale = (isMobile ? 0.96 : 0.90) + ((isMobile ? 0.04 : 0.10) * progress);
             break;
 
           case RevealDirection.polaroidTilt:
-            matrix.rotateZ(-0.06 * invProgress);
-            dy = invProgress * 45;
-            scale = 0.92 + (0.08 * progress);
+            if (!isMobile) {
+              matrix.rotateZ(-0.06 * invProgress);
+            }
+            dy = invProgress * (isMobile ? 15 : 45);
+            scale = (isMobile ? 0.96 : 0.92) + ((isMobile ? 0.04 : 0.08) * progress);
             break;
 
           case RevealDirection.elasticPop:
-            scale = 0.70 + (0.30 * progress.clamp(0.0, 1.2));
-            dy = invProgress * 30;
+            scale = (isMobile ? 0.90 : 0.70) + ((isMobile ? 0.10 : 0.30) * progress.clamp(0.0, 1.2));
+            dy = invProgress * (isMobile ? 12 : 30);
             break;
         }
 
