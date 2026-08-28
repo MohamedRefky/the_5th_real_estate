@@ -371,11 +371,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 SizedBox(height: sectionSpacing),
 
-                // ── Footer (From Bottom) ──────────────────────────────
-                const RevealOnScroll(
-                  direction: RevealDirection.fromBottom,
-                  child: HomeFooter(),
-                ),
+                // ── Footer ───────────────────────────────────────────
+                const HomeFooter(),
               ],
             ),
           ),

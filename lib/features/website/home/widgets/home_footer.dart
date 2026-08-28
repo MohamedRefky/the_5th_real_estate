@@ -9,10 +9,14 @@ class HomeFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 40),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 32 : 44,
+        horizontal: 16,
+      ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         border: Border(top: BorderSide(color: AppColors.divider, width: 0.5)),
@@ -41,17 +45,19 @@ class HomeFooter extends StatelessWidget {
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
-                    fontSize: 18,
+                    fontSize: isMobile ? 16.5 : 18,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             Text(
               '© 2026 The 5th Real Estate — جميع الحقوق محفوظة',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.textSecondary,
+                fontSize: isMobile ? 11.5 : 13,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
