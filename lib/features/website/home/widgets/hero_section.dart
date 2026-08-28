@@ -362,9 +362,9 @@ class _HeroEntrance extends StatelessWidget {
   }
 }
 
-/// Compact glass console showing 4 stats in one unified card.
-/// Mobile: 2×2 micro-grid inside one glass card.
-/// Desktop: single horizontal row with vertical dividers.
+/// Premium floating glass stats panel for the Hero Section.
+/// Desktop: 4 vertical stat columns in a wide floating glass bar.
+/// Mobile: 2×2 grid with centered vertical stat cells.
 class _HeroStatsConsole extends StatelessWidget {
   final bool isMobile;
 
@@ -380,26 +380,39 @@ class _HeroStatsConsole extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(isMobile ? 16 : 22),
+      borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 12 : 24,
-            vertical: isMobile ? 12 : 13,
+            horizontal: isMobile ? 16 : 36,
+            vertical: isMobile ? 16 : 20,
           ),
           decoration: BoxDecoration(
-            color: AppColors.surface.withValues(alpha: 0.6),
-            borderRadius: BorderRadius.circular(isMobile ? 16 : 22),
+            borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.surface.withValues(alpha: 0.7),
+                AppColors.surface.withValues(alpha: 0.5),
+                AppColors.surface.withValues(alpha: 0.65),
+              ],
+            ),
             border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.3),
-              width: 0.8,
+              color: AppColors.accent.withValues(alpha: 0.25),
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 28,
+                offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.08),
+                blurRadius: 40,
+                spreadRadius: -4,
               ),
             ],
           ),
@@ -410,19 +423,36 @@ class _HeroStatsConsole extends StatelessWidget {
   }
 
   Widget _buildDesktopRow() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (int i = 0; i < _stats.length; i++) ...[
-          if (i > 0) _divider(vertical: true),
-          _StatCell(
-            icon: _stats[i].icon,
-            value: _stats[i].value,
-            label: _stats[i].label,
-            isMobile: false,
-          ),
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int i = 0; i < _stats.length; i++) ...[
+            if (i > 0)
+              Container(
+                width: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 4),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.accent.withValues(alpha: 0.0),
+                      AppColors.accent.withValues(alpha: 0.4),
+                      AppColors.accent.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+            _LuxuryStatColumn(
+              icon: _stats[i].icon,
+              value: _stats[i].value,
+              label: _stats[i].label,
+              isMobile: false,
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 
@@ -430,91 +460,109 @@ class _HeroStatsConsole extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _StatCell(
-                icon: _stats[0].icon,
-                value: _stats[0].value,
-                label: _stats[0].label,
-                isMobile: true,
+        IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: _LuxuryStatColumn(
+                  icon: _stats[0].icon,
+                  value: _stats[0].value,
+                  label: _stats[0].label,
+                  isMobile: true,
+                ),
               ),
-            ),
-            _divider(vertical: true),
-            Expanded(
-              child: _StatCell(
-                icon: _stats[1].icon,
-                value: _stats[1].value,
-                label: _stats[1].label,
-                isMobile: true,
+              Container(
+                width: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.accent.withValues(alpha: 0.0),
+                      AppColors.accent.withValues(alpha: 0.35),
+                      AppColors.accent.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: _LuxuryStatColumn(
+                  icon: _stats[1].icon,
+                  value: _stats[1].value,
+                  label: _stats[1].label,
+                  isMobile: true,
+                ),
+              ),
+            ],
+          ),
         ),
-        _divider(vertical: false),
-        Row(
-          children: [
-            Expanded(
-              child: _StatCell(
-                icon: _stats[2].icon,
-                value: _stats[2].value,
-                label: _stats[2].label,
-                isMobile: true,
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: Container(
+            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.accent.withValues(alpha: 0.0),
+                  AppColors.accent.withValues(alpha: 0.25),
+                  AppColors.accent.withValues(alpha: 0.0),
+                ],
               ),
             ),
-            _divider(vertical: true),
-            Expanded(
-              child: _StatCell(
-                icon: _stats[3].icon,
-                value: _stats[3].value,
-                label: _stats[3].label,
-                isMobile: true,
+          ),
+        ),
+        IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: _LuxuryStatColumn(
+                  icon: _stats[2].icon,
+                  value: _stats[2].value,
+                  label: _stats[2].label,
+                  isMobile: true,
+                ),
               ),
-            ),
-          ],
+              Container(
+                width: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.accent.withValues(alpha: 0.0),
+                      AppColors.accent.withValues(alpha: 0.35),
+                      AppColors.accent.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: _LuxuryStatColumn(
+                  icon: _stats[3].icon,
+                  value: _stats[3].value,
+                  label: _stats[3].label,
+                  isMobile: true,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
-
-  Widget _divider({required bool vertical}) {
-    if (vertical) {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: isMobile ? 6 : 18),
-        width: 1,
-        height: isMobile ? 28 : 32,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.accent.withValues(alpha: 0.05),
-              AppColors.accent.withValues(alpha: 0.4),
-              AppColors.accent.withValues(alpha: 0.05),
-            ],
-          ),
-        ),
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Divider(
-        height: 1,
-        thickness: 0.6,
-        color: AppColors.accent.withValues(alpha: 0.15),
-      ),
-    );
-  }
 }
 
-/// A single stat cell used inside [_HeroStatsConsole].
-class _StatCell extends StatelessWidget {
+/// A single vertical stat column: icon → number → label.
+/// Designed for luxury real estate hero sections.
+class _LuxuryStatColumn extends StatelessWidget {
   final IconData icon;
   final String value;
   final String label;
   final bool isMobile;
 
-  const _StatCell({
+  const _LuxuryStatColumn({
     required this.icon,
     required this.value,
     required this.label,
@@ -523,50 +571,82 @@ class _StatCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: isMobile ? MainAxisSize.max : MainAxisSize.min,
-      mainAxisAlignment: isMobile ? MainAxisAlignment.center : MainAxisAlignment.start,
-      children: [
-        Container(
-          width: isMobile ? 28 : 34,
-          height: isMobile ? 28 : 34,
-          decoration: BoxDecoration(
-            color: AppColors.accent.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(isMobile ? 8 : 10),
-            border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.3),
-              width: 0.7,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 4 : 8,
+        vertical: isMobile ? 2 : 4,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icon with radial glow
+          Container(
+            width: isMobile ? 34 : 42,
+            height: isMobile ? 34 : 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.accent.withValues(alpha: 0.2),
+                  AppColors.accent.withValues(alpha: 0.06),
+                ],
+              ),
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.35),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.accent.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  spreadRadius: 1,
+                ),
+              ],
             ),
-          ),
-          child: Center(
-            child: Icon(icon, size: isMobile ? 14 : 17, color: AppColors.accent),
-          ),
-        ),
-        SizedBox(width: isMobile ? 6 : 10),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              value,
-              style: TextStyle(
+            child: Center(
+              child: Icon(
+                icon,
+                size: isMobile ? 16 : 20,
                 color: AppColors.accent,
-                fontWeight: FontWeight.w900,
-                fontSize: isMobile ? 13 : 16,
-                letterSpacing: 0.2,
               ),
             ),
-            Text(
-              label,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
-                fontSize: isMobile ? 10 : 12,
-              ),
+          ),
+
+          SizedBox(height: isMobile ? 6 : 10),
+
+          // Large prominent number with text shadow glow
+          Text(
+            value,
+            style: TextStyle(
+              color: AppColors.accent,
+              fontWeight: FontWeight.w900,
+              fontSize: isMobile ? 18 : 24,
+              letterSpacing: 0.5,
+              height: 1.1,
+              shadows: [
+                Shadow(
+                  color: AppColors.accent.withValues(alpha: 0.5),
+                  blurRadius: 12,
+                ),
+              ],
             ),
-          ],
-        ),
-      ],
+          ),
+
+          SizedBox(height: isMobile ? 2 : 4),
+
+          // Subtle label
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.75),
+              fontWeight: FontWeight.w600,
+              fontSize: isMobile ? 10.5 : 12.5,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
+
