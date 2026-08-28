@@ -121,9 +121,23 @@ class ContactSection extends StatelessWidget {
 
                   return Column(
                     children: [
-                      _buildOption(options[0], RevealDirection.fromRight, 0),
+                      _ContactCard(
+                        title: options[0].title,
+                        subtitle: options[0].subtitle,
+                        iconWidget: options[0].iconWidget,
+                        badgeText: options[0].badgeText,
+                        accentColor: options[0].accentColor,
+                        onTap: options[0].onTap,
+                      ),
                       const SizedBox(height: 10),
-                      _buildOption(options[1], RevealDirection.fromLeft, 80),
+                      _ContactCard(
+                        title: options[1].title,
+                        subtitle: options[1].subtitle,
+                        iconWidget: options[1].iconWidget,
+                        badgeText: options[1].badgeText,
+                        accentColor: options[1].accentColor,
+                        onTap: options[1].onTap,
+                      ),
                     ],
                   );
                 },

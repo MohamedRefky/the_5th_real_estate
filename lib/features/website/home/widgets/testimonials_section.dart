@@ -75,14 +75,10 @@ class TestimonialsSection extends StatelessWidget {
                     );
                   }
                   return Column(
-                    children: testimonials.asMap().entries
-                        .map((entry) => Padding(
+                    children: testimonials
+                        .map((t) => Padding(
                               padding: const EdgeInsets.only(bottom: 10),
-                              child: RevealOnScroll(
-                                direction: RevealDirection.polaroidTilt,
-                                delayMilliseconds: entry.key * 90,
-                                child: _buildCard(context, entry.value, isMobile),
-                              ),
+                              child: _buildCard(context, t, isMobile),
                             ))
                         .toList(),
                   );

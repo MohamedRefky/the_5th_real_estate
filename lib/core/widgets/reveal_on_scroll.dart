@@ -62,6 +62,14 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     );
     _animation = CurvedAnimation(parent: _controller, curve: effectiveCurve);
     WidgetsBinding.instance.addPostFrameCallback((_) => _attachListener());
+
+    // Safety fallback: if viewport metrics fail to attach or calculate on mobile/web,
+    // automatically trigger the animation so content is NEVER stuck at opacity 0.
+    Future.delayed(Duration(milliseconds: 450 + widget.delayMilliseconds), () {
+      if (mounted && !_started) {
+        _trigger();
+      }
+    });
   }
 
   void _attachListener() {

@@ -90,18 +90,12 @@ class HowItWorksSection extends StatelessWidget {
 
                   // Mobile & Tablet: Streamlined Step Cards
                   return Column(
-                    children: steps.asMap().entries.map((entry) {
-                      final idx = entry.key;
-                      final s = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: RevealOnScroll(
-                          direction: RevealDirection.fromBottom,
-                          delayMilliseconds: idx * 90,
-                          child: _buildMobileStepCard(context, s),
-                        ),
-                      );
-                    }).toList(),
+                    children: steps
+                        .map((s) => Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: _buildMobileStepCard(context, s),
+                            ))
+                        .toList(),
                   );
                 },
               ),
