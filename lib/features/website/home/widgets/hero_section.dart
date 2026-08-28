@@ -66,9 +66,11 @@ class _HeroSectionState extends State<HeroSection>
       color: Colors.transparent,
       child: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 16 : 24,
-            vertical: isMobile ? 36 : 80,
+          padding: EdgeInsets.only(
+            left: isMobile ? 16 : 24,
+            right: isMobile ? 16 : 24,
+            top: isMobile ? 78 : 88,
+            bottom: isMobile ? 32 : 55,
           ),
           child: Center(
             child: ConstrainedBox(
