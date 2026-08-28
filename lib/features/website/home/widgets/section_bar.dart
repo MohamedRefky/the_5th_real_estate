@@ -25,6 +25,8 @@ class SectionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final isMobile = width < 600;
 
     return Center(
       child: Column(
@@ -32,14 +34,14 @@ class SectionBar extends StatelessWidget {
         children: [
           // ── 1. Glowing Translucent Glass Icon Badge ──────────────────
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(isMobile ? 16 : 20),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
               child: Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(isMobile ? 11 : 16),
                 decoration: BoxDecoration(
                   color: AppColors.accentLight,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(isMobile ? 16 : 20),
                   border: Border.all(
                     color: AppColors.accent.withValues(alpha: 0.4),
                     width: 0.8,
@@ -47,8 +49,8 @@ class SectionBar extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.accent.withValues(alpha: 0.25),
-                      blurRadius: 20,
-                      spreadRadius: 2,
+                      blurRadius: isMobile ? 12 : 20,
+                      spreadRadius: isMobile ? 1 : 2,
                       offset: const Offset(0, 4),
                     ),
                   ],
@@ -59,12 +61,12 @@ class SectionBar extends StatelessWidget {
                     Icon(
                       icon,
                       color: AppColors.accent,
-                      size: 28,
+                      size: isMobile ? 20 : 28,
                     ),
                     Positioned.fill(
                       child: IgnorePointer(
                         child: MetallicGloss(
-                          borderRadius: 20,
+                          borderRadius: isMobile ? 16 : 20,
                           strength: 0.75,
                         ),
                       ),
@@ -75,7 +77,7 @@ class SectionBar extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: isMobile ? 10 : 16),
 
           // ── 2. Gold Title ──────────────────────────────────────────
           Text(
@@ -84,7 +86,7 @@ class SectionBar extends StatelessWidget {
             style: theme.textTheme.headlineLarge?.copyWith(
               color: AppColors.accent,
               fontWeight: FontWeight.w900,
-              fontSize: 26,
+              fontSize: isMobile ? 20 : 26,
               letterSpacing: 0.5,
               shadows: [
                 Shadow(
@@ -102,29 +104,29 @@ class SectionBar extends StatelessWidget {
           ),
 
           if (subtitle.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: isMobile ? 5 : 8),
             ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 550),
+              constraints: BoxConstraints(maxWidth: isMobile ? 320 : 550),
               child: Text(
                 subtitle,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
-                  height: 1.5,
-                  fontSize: 14,
+                  height: 1.45,
+                  fontSize: isMobile ? 12.5 : 14,
                 ),
               ),
             ),
           ],
 
-          const SizedBox(height: 16),
+          SizedBox(height: isMobile ? 10 : 16),
 
           // ── 3. Sparkling Accent Underline ───────────────────────────
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 32,
+                width: isMobile ? 22 : 32,
                 height: 2,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -136,10 +138,10 @@ class SectionBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(1),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Container(
-                width: 7,
-                height: 7,
+                width: isMobile ? 5 : 7,
+                height: isMobile ? 5 : 7,
                 decoration: BoxDecoration(
                   gradient: AppColors.accentGradient,
                   shape: BoxShape.circle,
@@ -151,9 +153,9 @@ class SectionBar extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Container(
-                width: 32,
+                width: isMobile ? 22 : 32,
                 height: 2,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(

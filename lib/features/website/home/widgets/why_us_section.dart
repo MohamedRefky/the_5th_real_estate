@@ -41,7 +41,7 @@ class WhyUsSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(color: Colors.transparent),
       child: Center(
         child: ConstrainedBox(
@@ -53,10 +53,12 @@ class WhyUsSection extends StatelessWidget {
                 title: 'لماذا The 5th Real Estate؟',
                 subtitle: 'نلتزم بتقديم أفضل خدمة عقارية بتجربة استثنائية',
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 24),
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isDesktop = constraints.maxWidth >= 800;
+                  final isMobile = constraints.maxWidth < 600;
+
                   if (isDesktop) {
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,25 +69,53 @@ class WhyUsSection extends StatelessWidget {
                           child: RevealOnScroll(
                             direction: RevealDirection.flip3D,
                             delayMilliseconds: idx * 90,
-                            child: _buildItem(context, item),
+                            child: _buildItem(context, item, false),
                           ),
                         );
                       }).toList(),
                     );
                   }
-                  return Column(
-                    children: items.asMap().entries.map((entry) {
-                      final idx = entry.key;
-                      final item = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: RevealOnScroll(
-                          direction: RevealDirection.flip3D,
-                          delayMilliseconds: idx * 90,
-                          child: _buildItem(context, item),
+
+                  // 2-Column Responsive Layout for Mobile & Tablet
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            RevealOnScroll(
+                              direction: RevealDirection.flip3D,
+                              delayMilliseconds: 0,
+                              child: _buildItem(context, items[0], isMobile),
+                            ),
+                            const SizedBox(height: 10),
+                            RevealOnScroll(
+                              direction: RevealDirection.flip3D,
+                              delayMilliseconds: 160,
+                              child: _buildItem(context, items[2], isMobile),
+                            ),
+                          ],
                         ),
-                      );
-                    }).toList(),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            RevealOnScroll(
+                              direction: RevealDirection.flip3D,
+                              delayMilliseconds: 80,
+                              child: _buildItem(context, items[1], isMobile),
+                            ),
+                            const SizedBox(height: 10),
+                            RevealOnScroll(
+                              direction: RevealDirection.flip3D,
+                              delayMilliseconds: 240,
+                              child: _buildItem(context, items[3], isMobile),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
@@ -99,101 +129,113 @@ class WhyUsSection extends StatelessWidget {
   Widget _buildItem(
     BuildContext context,
     ({IconData icon, String value, String title, String subtitle}) item,
+    bool isMobile,
   ) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
-            decoration: BoxDecoration(
-              color: AppColors.surface.withValues(alpha: 0.65),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: AppColors.accent.withValues(alpha: 0.25),
-                width: 0.8,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 10 : 20,
+            vertical: isMobile ? 16 : 26,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.surface.withValues(alpha: 0.65),
+            borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.25),
+              width: 0.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: isMobile ? 12 : 24,
+                offset: const Offset(0, 4),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Icon with gradient
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.accentGradient,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.accent.withValues(alpha: 0.35),
-                        blurRadius: 14,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    item.icon,
-                    size: 28,
-                    color: AppColors.textOnPrimary,
-                  ),
-                ),
-                const SizedBox(height: 18),
-                // Value Pill Badge
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Icon with gradient
+              Container(
+                padding: EdgeInsets.all(isMobile ? 10 : 16),
+                decoration: BoxDecoration(
+                  gradient: AppColors.accentGradient,
+                  borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
+                  boxShadow: [
+                    BoxShadow(
                       color: AppColors.accent.withValues(alpha: 0.35),
-                      width: 1,
+                      blurRadius: isMobile ? 8 : 14,
+                      offset: const Offset(0, 3),
                     ),
-                  ),
-                  child: Text(
-                    item.value,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.accent,
-                      fontSize: 15,
-                    ),
+                  ],
+                ),
+                child: Icon(
+                  item.icon,
+                  size: isMobile ? 20 : 28,
+                  color: AppColors.textOnPrimary,
+                ),
+              ),
+              SizedBox(height: isMobile ? 10 : 18),
+              // Value Pill Badge
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 8 : 14,
+                  vertical: isMobile ? 4 : 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(isMobile ? 8 : 12),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.35),
+                    width: 1,
                   ),
                 ),
-                const SizedBox(height: 14),
-                Text(
-                  item.title,
+                child: Text(
+                  item.value,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                    fontSize: 16.5,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.accent,
+                    fontSize: isMobile ? 11.5 : 15,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  item.subtitle,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                    height: 1.5,
-                    fontSize: 13,
-                  ),
-                  textAlign: TextAlign.center,
+              ),
+              SizedBox(height: isMobile ? 8 : 14),
+              Text(
+                item.title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  fontSize: isMobile ? 13 : 16.5,
                 ),
-              ],
-            ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: isMobile ? 4 : 8),
+              Text(
+                item.subtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
+                  height: 1.4,
+                  fontSize: isMobile ? 11 : 13,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: isMobile ? 3 : 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
   }
 }

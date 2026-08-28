@@ -135,6 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+    final sectionSpacing = isMobile ? 38.0 : 64.0;
+    final headerSpacing = isMobile ? 22.0 : 36.0;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
@@ -165,12 +169,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   onContact: () => _scrollTo(_contactKey),
                 ),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Why Choose Us ─────────────────────────────────────
                 SizedBox(key: _whyKey, child: const WhyUsSection()),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Featured Properties ───────────────────────────────
                 SizedBox(
@@ -178,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const FeaturedPropertiesSection(),
                 ),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Apartments Neighborhood Grid Header (3D Scale Reveal) ─
                 const RevealOnScroll(
@@ -191,12 +195,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 36),
+                SizedBox(height: headerSpacing),
 
                 // ── Apartments Neighborhood Grid ──────────────────────
                 Padding(
                   key: _neighborhoodKey,
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 16 : 24,
+                  ),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1200),
@@ -205,15 +211,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           final crossAxisCount = _getCrossAxisCount(
                             constraints.maxWidth,
                           );
+                          final spacing = isMobile ? 12.0 : 24.0;
                           return GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 24,
-                                  mainAxisSpacing: 24,
-                                  childAspectRatio: 1.05,
+                                  crossAxisSpacing: spacing,
+                                  mainAxisSpacing: spacing,
+                                  childAspectRatio: isMobile ? 0.98 : 1.05,
                                 ),
                             itemCount: DummyData.areas.length,
                             itemBuilder: (context, index) {
@@ -240,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Buildings Neighborhood Grid Header ────────────────
                 const RevealOnScroll(
@@ -254,12 +261,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 36),
+                SizedBox(height: headerSpacing),
 
                 // ── Buildings Neighborhood Grid ───────────────────────
                 Padding(
                   key: _buildingsKey,
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 16 : 24,
+                  ),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1200),
@@ -272,6 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               final crossAxisCount = _getCrossAxisCount(
                                 constraints.maxWidth,
                               );
+                              final spacing = isMobile ? 12.0 : 24.0;
                               final totalItems = buildingMainAreas.length + 1;
                               return GridView.builder(
                                 shrinkWrap: true,
@@ -279,9 +289,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: 24,
-                                      mainAxisSpacing: 24,
-                                      childAspectRatio: 1.05,
+                                      crossAxisSpacing: spacing,
+                                      mainAxisSpacing: spacing,
+                                      childAspectRatio: isMobile ? 0.98 : 1.05,
                                     ),
                                 itemCount: totalItems,
                                 itemBuilder: (context, index) {
@@ -333,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Recently Added ────────────────────────────────────
                 SizedBox(
@@ -341,12 +351,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const RecentPropertiesSection(),
                 ),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── How It Works ──────────────────────────────────────
                 SizedBox(key: _howKey, child: const HowItWorksSection()),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Testimonials ──────────────────────────────────────
                 SizedBox(
@@ -354,12 +364,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const TestimonialsSection(),
                 ),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Contact Us ────────────────────────────────────────
                 SizedBox(key: _contactKey, child: const ContactSection()),
 
-                const SizedBox(height: 64),
+                SizedBox(height: sectionSpacing),
 
                 // ── Footer (From Bottom) ──────────────────────────────
                 const RevealOnScroll(
@@ -399,8 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _getCrossAxisCount(double width) {
     if (width >= 900) return 3;
-    if (width >= 550) return 2;
-    return 1;
+    return 2;
   }
 }
 

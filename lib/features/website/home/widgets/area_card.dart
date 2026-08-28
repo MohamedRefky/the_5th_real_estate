@@ -45,6 +45,7 @@ class _AreaCardState extends State<AreaCard> {
     final theme = Theme.of(context);
     final localCount = DummyData.getByArea(widget.areaName).length;
     final imagePath = _areaImage;
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -59,7 +60,7 @@ class _AreaCardState extends State<AreaCard> {
             color: imagePath == null
                 ? AppColors.surface.withValues(alpha: _isHovered ? 0.35 : 0.18)
                 : AppColors.surface,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
             border: Border.all(
               color: _isHovered
                   ? AppColors.accent
@@ -82,7 +83,7 @@ class _AreaCardState extends State<AreaCard> {
               ? (Matrix4.identity()..setTranslationRaw(0.0, -6.0, 0.0))
               : Matrix4.identity(),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
             child: Stack(
               children: [
                 // ── Background Image or Radial Gold Spotlight Backdrop ────
@@ -151,16 +152,16 @@ class _AreaCardState extends State<AreaCard> {
 
                   // Top-Right Luxury Glass Badge
                   Positioned(
-                    top: 14,
-                    right: 14,
+                    top: isMobile ? 8 : 14,
+                    right: isMobile ? 8 : 14,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4.5,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 7 : 10,
+                        vertical: isMobile ? 3 : 4.5,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.surface.withValues(alpha: 0.70),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(isMobile ? 8 : 12),
                         border: Border.all(
                           color: AppColors.accent.withValues(alpha: 0.3),
                           width: 0.8,
@@ -169,17 +170,17 @@ class _AreaCardState extends State<AreaCard> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.star_rounded,
-                            size: 12,
+                            size: isMobile ? 10 : 12,
                             color: AppColors.accent,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 3),
                           Text(
                             'حي متميز',
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: AppColors.accent,
-                              fontSize: 10.5,
+                              fontSize: isMobile ? 9 : 10.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -191,7 +192,7 @@ class _AreaCardState extends State<AreaCard> {
 
                 // ── Card Content ──────────────────────────────────────
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(isMobile ? 12 : 24),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -202,8 +203,8 @@ class _AreaCardState extends State<AreaCard> {
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeOutCubic,
                           child: Container(
-                            width: 86,
-                            height: 86,
+                            width: isMobile ? 48 : 86,
+                            height: isMobile ? 48 : 86,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
@@ -227,7 +228,7 @@ class _AreaCardState extends State<AreaCard> {
                                 color: AppColors.accent.withValues(
                                   alpha: _isHovered ? 0.9 : 0.4,
                                 ),
-                                width: 1.8,
+                                width: isMobile ? 1.2 : 1.8,
                               ),
                               boxShadow: [
                                 BoxShadow(
@@ -244,7 +245,7 @@ class _AreaCardState extends State<AreaCard> {
                             child: Center(
                               child: Icon(
                                 _areaIcon,
-                                size: 42,
+                                size: isMobile ? 24 : 42,
                                 color: _isHovered
                                     ? AppColors.textOnPrimary
                                     : AppColors.accent,
@@ -252,7 +253,7 @@ class _AreaCardState extends State<AreaCard> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 18),
+                        SizedBox(height: isMobile ? 8 : 18),
                       ] else ...[
                         const Spacer(),
                       ],
@@ -262,7 +263,7 @@ class _AreaCardState extends State<AreaCard> {
                         widget.areaName,
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w900,
-                          fontSize: 20,
+                          fontSize: isMobile ? 14.5 : 20,
                           color: _isHovered
                               ? AppColors.accent
                               : AppColors.textPrimary,
@@ -275,16 +276,18 @@ class _AreaCardState extends State<AreaCard> {
                           ],
                         ),
                         textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
 
-                      const SizedBox(height: 10),
+                      SizedBox(height: isMobile ? 5 : 10),
 
                       // Count & Explore Badge Pill
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 7.5,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 8 : 16,
+                          vertical: isMobile ? 4 : 7.5,
                         ),
                         decoration: BoxDecoration(
                           gradient: _isHovered
@@ -297,7 +300,7 @@ class _AreaCardState extends State<AreaCard> {
                                     ),
                                   ],
                                 ),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(isMobile ? 14 : 20),
                           border: Border.all(
                             color: AppColors.accent.withValues(
                               alpha: _isHovered ? 0.8 : 0.35,
@@ -325,12 +328,12 @@ class _AreaCardState extends State<AreaCard> {
                               children: [
                                 Icon(
                                   Icons.explore_rounded,
-                                  size: 14,
+                                  size: isMobile ? 11 : 14,
                                   color: _isHovered
                                       ? AppColors.textOnPrimary
                                       : AppColors.accent,
                                 ),
-                                const SizedBox(width: 6),
+                                const SizedBox(width: 4),
                                 Text(
                                   widget.customBadgeText ?? '$count شقة متاحة',
                                   style: theme.textTheme.bodySmall?.copyWith(
@@ -338,7 +341,7 @@ class _AreaCardState extends State<AreaCard> {
                                         ? AppColors.textOnPrimary
                                         : AppColors.accent,
                                     fontWeight: FontWeight.w800,
-                                    fontSize: 12,
+                                    fontSize: isMobile ? 10 : 12,
                                   ),
                                 ),
                               ],
@@ -347,7 +350,7 @@ class _AreaCardState extends State<AreaCard> {
                         ),
                       ),
 
-                      if (imagePath != null) const SizedBox(height: 8),
+                      if (imagePath != null) SizedBox(height: isMobile ? 4 : 8),
                     ],
                   ),
                 ),

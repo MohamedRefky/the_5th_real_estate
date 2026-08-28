@@ -121,8 +121,13 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isMobile = screenWidth < 600;
+    final cardWidth = isMobile ? (screenWidth * 0.82).clamp(260.0, 310.0) : 350.0;
+    final spacing = isMobile ? 14.0 : 24.0;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 24),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -130,9 +135,11 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
           Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1200),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: SectionBar(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 16 : 24,
+                ),
+                child: const SectionBar(
                   index: 2,
                   icon: Icons.star_rounded,
                   title: 'عقارات مميزة',
@@ -142,7 +149,7 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: isMobile ? 12 : 20),
 
           // ── Horizontal Auto-Scrolling Carousel with Standard Cards ─────
           FutureBuilder<List<_FeaturedItem>>(
@@ -151,7 +158,7 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
             builder: (context, snapshot) {
               final items = snapshot.data ?? [];
               if (items.isEmpty && snapshot.connectionState == ConnectionState.waiting) {
-                return _buildSkeletonPlaceholder();
+                return _buildSkeletonPlaceholder(cardWidth, spacing, isMobile);
               }
               if (items.isEmpty) {
                 return const SizedBox.shrink();
@@ -173,23 +180,20 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
                     }
                     return false;
                   },
-                  // No fixed-height box: the carousel hugs the tallest card
-                  // and every card keeps its own content height, so there is
-                  // no empty space below the data.
                   child: SingleChildScrollView(
                     controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 20,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 16 : 24,
+                      vertical: isMobile ? 10 : 20,
                     ),
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         for (var i = 0; i < displayItems.length; i++) ...[
-                          if (i > 0) const SizedBox(width: 24),
+                          if (i > 0) SizedBox(width: spacing),
                           SizedBox(
-                            width: 350,
+                            width: cardWidth,
                             child: displayItems[i].apartment != null
                                 ? ApartmentCard(
                                     apartment: displayItems[i].apartment!,
@@ -211,26 +215,33 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
     );
   }
 
-  Widget _buildSkeletonPlaceholder() {
+  Widget _buildSkeletonPlaceholder(
+    double cardWidth,
+    double spacing,
+    bool isMobile,
+  ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 10 : 20,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var i = 0; i < 3; i++) ...[
-            if (i > 0) const SizedBox(width: 24),
-            _buildSkeletonCard(),
+            if (i > 0) SizedBox(width: spacing),
+            _buildSkeletonCard(cardWidth),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildSkeletonCard() {
+  Widget _buildSkeletonCard(double cardWidth) {
     return Container(
-      width: 350,
+      width: cardWidth,
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.45),
         borderRadius: BorderRadius.circular(24),

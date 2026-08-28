@@ -59,12 +59,17 @@ class _HeroSectionState extends State<HeroSection>
   @override
   Widget build(BuildContext context) {
     final theme = widget.theme;
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     return Container(
       width: double.infinity,
       color: Colors.transparent,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 16 : 24,
+            vertical: isMobile ? 36 : 80,
+          ),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 850),
@@ -74,7 +79,7 @@ class _HeroSectionState extends State<HeroSection>
                   _HeroEntrance(
                     animation: _steps[0],
                     child: Container(
-                      width: 90,
+                      width: isMobile ? 60 : 90,
                       height: 3,
                       decoration: BoxDecoration(
                         gradient: AppColors.accentGradient,
@@ -83,34 +88,34 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  const SizedBox(height: 26),
+                  SizedBox(height: isMobile ? 18 : 26),
 
                   // Brand Chip
                   _HeroEntrance(
                     animation: _steps[1],
                     child: GlassContainer(
                       borderRadius: 30,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 9,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 14 : 20,
+                        vertical: isMobile ? 6.5 : 9,
                       ),
                       borderColor: AppColors.accent.withValues(alpha: 0.4),
                       borderWidth: 0.5,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.workspace_premium_rounded,
                             color: AppColors.accent,
-                            size: 18,
+                            size: isMobile ? 15 : 18,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           Text(
                             'The 5th Real Estate',
                             style: theme.textTheme.titleSmall?.copyWith(
                               color: AppColors.accent,
                               fontWeight: FontWeight.w800,
-                              fontSize: 15,
+                              fontSize: isMobile ? 12.5 : 15,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -119,70 +124,67 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  const SizedBox(height: 26),
+                  SizedBox(height: isMobile ? 18 : 26),
 
                   // Main Title — Ultra-Bright Luminous Font Color (Sharp & Pure)
                   _HeroEntrance(
                     animation: _steps[2],
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        'عقارات\nالتجمع الخامس',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.displayLarge?.copyWith(
-                          fontSize: 58,
-                          height: 1.12,
-                          color: const Color(0xFFFFF6DF),
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.5,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withValues(alpha: 0.90),
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
+                    child: Text(
+                      'عقارات\nالتجمع الخامس',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.displayLarge?.copyWith(
+                        fontSize: isMobile ? 36 : 58,
+                        height: 1.15,
+                        color: const Color(0xFFFFF6DF),
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.90),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 18),
+                  SizedBox(height: isMobile ? 14 : 18),
 
                   // Glass Tagline Pill
                   _HeroEntrance(
                     animation: _steps[3],
                     child: GlassContainer(
                       borderRadius: 30,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 26,
-                        vertical: 10,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 14 : 26,
+                        vertical: isMobile ? 7 : 10,
                       ),
                       borderColor: AppColors.accent.withValues(alpha: 0.5),
                       borderWidth: 0.5,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.verified_rounded,
-                            size: 16,
+                            size: isMobile ? 13 : 16,
                             color: AppColors.accent,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           Text(
                             'وجهتك الحصرية لكل عقارات التجمع الخامس',
                             textAlign: TextAlign.center,
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: AppColors.accent,
                               fontWeight: FontWeight.w800,
-                              fontSize: 15,
+                              fontSize: isMobile ? 12 : 15,
                               letterSpacing: 0.3,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          const Icon(
+                          const SizedBox(width: 6),
+                          Icon(
                             Icons.verified_rounded,
-                            size: 16,
+                            size: isMobile ? 13 : 16,
                             color: AppColors.accent,
                           ),
                         ],
@@ -190,19 +192,19 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  const SizedBox(height: 22),
+                  SizedBox(height: isMobile ? 16 : 22),
 
                   // Subtitle Description — Calm, Soft, Crystal-Clear & Elegant
                   _HeroEntrance(
                     animation: _steps[4],
                     child: Text(
-                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والعمارات والفيلات\nبأسعار محدثة لحظة بلحظة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
+                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والعمارات والفيلات بأسعار محدثة لحظة بلحظة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: Colors.white.withValues(alpha: 0.88),
                         fontWeight: FontWeight.w500,
-                        height: 1.85,
-                        fontSize: 16,
+                        height: 1.65,
+                        fontSize: isMobile ? 13.5 : 16,
                         shadows: [
                           Shadow(
                             color: Colors.black.withValues(alpha: 0.75),
@@ -214,59 +216,99 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  const SizedBox(height: 34),
+                  SizedBox(height: isMobile ? 22 : 34),
 
-                  // Stats Row with Glassmorphism Cards
+                  // Stats Row with Glassmorphism Cards (2x2 on Mobile)
                   _HeroEntrance(
                     animation: _steps[5],
-                    child: Wrap(
-                      spacing: 16,
-                      runSpacing: 12,
-                      alignment: WrapAlignment.center,
-                      children: const [
-                        _GlassHeroStat(
-                          value: '+50',
-                          label: 'مشاريع فاخرة',
-                          icon: Icons.location_city_rounded,
-                        ),
-                        _GlassHeroStat(
-                          value: 'أحياء راقية',
-                          label: 'تغطي أكثر من 12 حى',
-                          icon: Icons.map_rounded,
-                        ),
-                        _GlassHeroStat(
-                          value: 'ثقة وأمان',
-                          label: 'خدمات واستشارات',
-                          icon: Icons.verified_user_rounded,
-                        ),
-                        _GlassHeroStat(
-                          value: '100%',
-                          label: 'تعاقدات رسمية موثقة',
-                          icon: Icons.assignment_turned_in_rounded,
-                        ),
-                      ],
-                    ),
+                    child: isMobile
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: const [
+                                    _GlassHeroStat(
+                                      value: '+50',
+                                      label: 'مشاريع فاخرة',
+                                      icon: Icons.location_city_rounded,
+                                    ),
+                                    SizedBox(height: 10),
+                                    _GlassHeroStat(
+                                      value: 'أحياء راقية',
+                                      label: 'أكثر من 12 حى',
+                                      icon: Icons.map_rounded,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  children: const [
+                                    _GlassHeroStat(
+                                      value: 'ثقة وأمان',
+                                      label: 'خدمات واستشارات',
+                                      icon: Icons.verified_user_rounded,
+                                    ),
+                                    SizedBox(height: 10),
+                                    _GlassHeroStat(
+                                      value: '100%',
+                                      label: 'عقود موثقة',
+                                      icon: Icons.assignment_turned_in_rounded,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : Wrap(
+                            spacing: 16,
+                            runSpacing: 12,
+                            alignment: WrapAlignment.center,
+                            children: const [
+                              _GlassHeroStat(
+                                value: '+50',
+                                label: 'مشاريع فاخرة',
+                                icon: Icons.location_city_rounded,
+                              ),
+                              _GlassHeroStat(
+                                value: 'أحياء راقية',
+                                label: 'تغطي أكثر من 12 حى',
+                                icon: Icons.map_rounded,
+                              ),
+                              _GlassHeroStat(
+                                value: 'ثقة وأمان',
+                                label: 'خدمات واستشارات',
+                                icon: Icons.verified_user_rounded,
+                              ),
+                              _GlassHeroStat(
+                                value: '100%',
+                                label: 'تعاقدات رسمية موثقة',
+                                icon: Icons.assignment_turned_in_rounded,
+                              ),
+                            ],
+                          ),
                   ),
 
-                  const SizedBox(height: 36),
+                  SizedBox(height: isMobile ? 24 : 36),
 
                   // CTA Buttons
                   _HeroEntrance(
                     animation: _steps[6],
                     child: Wrap(
-                      spacing: 14,
-                      runSpacing: 14,
+                      spacing: 12,
+                      runSpacing: 12,
                       alignment: WrapAlignment.center,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
                                 color: AppColors.accent.withValues(alpha: 0.4),
-                                blurRadius: 24,
-                                offset: const Offset(0, 6),
+                                blurRadius: isMobile ? 14 : 24,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
@@ -274,20 +316,26 @@ class _HeroSectionState extends State<HeroSection>
                             children: [
                               ElevatedButton.icon(
                                 onPressed: widget.onBrowseAll,
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.explore_rounded,
-                                  size: 22,
+                                  size: isMobile ? 18 : 22,
                                 ),
-                                label: const Text('تصفح جميع العقارات'),
+                                label: Text(
+                                  'تصفح جميع العقارات',
+                                  style: TextStyle(
+                                    fontSize: isMobile ? 13 : 15,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.accent,
                                   foregroundColor: AppColors.textOnPrimary,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 34,
-                                    vertical: 18,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isMobile ? 22 : 34,
+                                    vertical: isMobile ? 13 : 18,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
                                   elevation: 0,
                                 ),
@@ -295,7 +343,7 @@ class _HeroSectionState extends State<HeroSection>
                               Positioned.fill(
                                 child: IgnorePointer(
                                   child: MetallicGloss(
-                                    borderRadius: 18,
+                                    borderRadius: 16,
                                     strength: 0.9,
                                   ),
                                 ),
@@ -305,20 +353,29 @@ class _HeroSectionState extends State<HeroSection>
                         ),
                         OutlinedButton.icon(
                           onPressed: widget.onContact,
-                          icon: const Icon(Icons.chat_rounded, size: 20),
-                          label: const Text('تواصل معنا'),
+                          icon: Icon(
+                            Icons.chat_rounded,
+                            size: isMobile ? 16 : 20,
+                          ),
+                          label: Text(
+                            'تواصل معنا',
+                            style: TextStyle(
+                              fontSize: isMobile ? 13 : 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.accent,
                             side: BorderSide(
                               color: AppColors.accent.withValues(alpha: 0.55),
                               width: 1.2,
                             ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30,
-                              vertical: 18,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 20 : 30,
+                              vertical: isMobile ? 13 : 18,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
                         ),
@@ -326,10 +383,10 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  const SizedBox(height: 36),
+                  SizedBox(height: isMobile ? 24 : 36),
 
                   Container(
-                    width: 90,
+                    width: isMobile ? 60 : 90,
                     height: 3,
                     decoration: BoxDecoration(
                       gradient: AppColors.accentGradient,
@@ -381,38 +438,43 @@ class _GlassHeroStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(isMobile ? 14 : 20),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 10 : 22,
+            vertical: isMobile ? 10 : 15,
+          ),
           decoration: BoxDecoration(
             color: AppColors.surface.withValues(alpha: 0.65),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(isMobile ? 14 : 20),
             border: Border.all(
               color: AppColors.accent.withValues(alpha: 0.35),
-              width: 1,
+              width: 0.8,
             ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
+                blurRadius: isMobile ? 10 : 16,
+                offset: const Offset(0, 3),
               ),
               BoxShadow(
                 color: AppColors.accent.withValues(alpha: 0.12),
-                blurRadius: 12,
+                blurRadius: isMobile ? 8 : 12,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: isMobile ? MainAxisSize.max : MainAxisSize.min,
             children: [
               if (icon != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(9),
+                  padding: EdgeInsets.all(isMobile ? 7 : 9),
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
@@ -421,33 +483,41 @@ class _GlassHeroStat extends StatelessWidget {
                       width: 1,
                     ),
                   ),
-                  child: Icon(icon, size: 18, color: AppColors.accent),
+                  child: Icon(
+                    icon,
+                    size: isMobile ? 14 : 18,
+                    color: AppColors.accent,
+                  ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: isMobile ? 8 : 12),
               ],
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: AppColors.accent,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 18,
-                      letterSpacing: 0.2,
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      value,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w900,
+                        fontSize: isMobile ? 14 : 18,
+                        letterSpacing: 0.2,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    label,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
+                    const SizedBox(height: 1),
+                    Text(
+                      label,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: isMobile ? 10.5 : 12,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
