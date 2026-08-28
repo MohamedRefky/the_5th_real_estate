@@ -33,43 +33,26 @@ class WhatsAppFloatingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     switch (variant) {
       case WhatsAppFloatingButtonVariant.fabExtended:
         return Container(
+          margin: EdgeInsets.only(
+            bottom: isMobile ? 6 : 12,
+            left: isMobile ? 6 : 12,
+            right: isMobile ? 6 : 12,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF25D366).withValues(alpha: 0.45),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
+                blurRadius: isMobile ? 12 : 20,
+                offset: Offset(0, isMobile ? 3 : 6),
               ),
             ],
           ),
-          child: FloatingActionButton.extended(
-            onPressed: () => showContactChooserModal(
-              context,
-              message: message,
-              platform: ContactPlatform.whatsapp,
-            ),
-            backgroundColor: const Color(0xFF25D366),
-            foregroundColor: Colors.white,
-            elevation: 0,
-            highlightElevation: 0,
-            icon: const Icon(Icons.chat_rounded, size: 24),
-            label: Text(
-              fabLabel,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-            ),
-          ),
-        );
-
-      case WhatsAppFloatingButtonVariant.gradientPill:
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
@@ -80,9 +63,9 @@ class WhatsAppFloatingButton extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(30),
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 14,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 14 : 20,
+                  vertical: isMobile ? 9 : 13,
                 ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
@@ -93,32 +76,90 @@ class WhatsAppFloatingButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.35),
-                    width: 1.2,
+                    width: 1.0,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.whatsapp,
+                      color: Colors.white,
+                      size: isMobile ? 18 : 22,
+                    ),
+                    SizedBox(width: isMobile ? 7 : 10),
+                    Text(
+                      fabLabel,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: isMobile ? 13 : 15,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+      case WhatsAppFloatingButtonVariant.gradientPill:
+        return Container(
+          margin: EdgeInsets.only(
+            bottom: isMobile ? 6 : 12,
+            left: isMobile ? 6 : 12,
+            right: isMobile ? 6 : 12,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => showContactChooserModal(
+                context,
+                message: message,
+                platform: ContactPlatform.whatsapp,
+              ),
+              borderRadius: BorderRadius.circular(30),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 14 : 20,
+                  vertical: isMobile ? 9 : 13,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF25D366), Color(0xFF128C7E)],
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.35),
+                    width: 1.0,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF25D366).withValues(alpha: 0.5),
-                      blurRadius: 20,
-                      offset: const Offset(0, 6),
+                      color: const Color(0xFF25D366).withValues(alpha: 0.45),
+                      blurRadius: isMobile ? 12 : 20,
+                      offset: Offset(0, isMobile ? 3 : 6),
                     ),
                   ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     FaIcon(
                       FontAwesomeIcons.whatsapp,
                       color: Colors.white,
-                      size: 24,
+                      size: isMobile ? 18 : 22,
                     ),
-                    SizedBox(width: 10),
+                    SizedBox(width: isMobile ? 7 : 10),
                     Text(
                       'تواصل معنا',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
-                        fontSize: 15,
-                        letterSpacing: 0.3,
+                        fontSize: isMobile ? 13 : 15,
+                        letterSpacing: 0.2,
                       ),
                     ),
                   ],
