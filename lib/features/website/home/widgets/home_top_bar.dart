@@ -23,26 +23,48 @@ class HomeTopBar extends StatefulWidget {
     required this.onHomeTap,
   });
 
-  static IconData _iconForSection(String label) {
+  static ({IconData icon, String subtitle}) _sectionMeta(String label) {
     switch (label) {
       case 'لماذا نحن':
-        return Icons.verified_rounded;
+        return (
+          icon: Icons.verified_rounded,
+          subtitle: 'المصداقية وسابقة الأعمال',
+        );
       case 'المميزة':
-        return Icons.auto_awesome_rounded;
+        return (
+          icon: Icons.auto_awesome_rounded,
+          subtitle: 'أرقى الفرص العقارية الحصرية',
+        );
       case 'شقق':
-        return Icons.apartment_rounded;
+        return (
+          icon: Icons.apartment_rounded,
+          subtitle: 'شقق سكنية في أرقى الأحياء',
+        );
       case 'عمارات':
-        return Icons.location_city_rounded;
+        return (
+          icon: Icons.location_city_rounded,
+          subtitle: 'مشروعات وعمارات متكاملة',
+        );
       case 'أحدث العقارات':
-        return Icons.access_time_filled_rounded;
-      case 'خطوات الشراء':
-        return Icons.rocket_launch_rounded;
+        return (
+          icon: Icons.access_time_filled_rounded,
+          subtitle: 'عقارات مضافة حديثاً',
+        );
       case 'آراء العملاء':
-        return Icons.star_rate_rounded;
+        return (
+          icon: Icons.star_rate_rounded,
+          subtitle: 'تجارب وثقة عملائنا',
+        );
       case 'تواصل معنا':
-        return Icons.headset_mic_rounded;
+        return (
+          icon: Icons.headset_mic_rounded,
+          subtitle: 'فريق المبيعات والمعاينة الفورية',
+        );
       default:
-        return Icons.navigate_next_rounded;
+        return (
+          icon: Icons.navigate_next_rounded,
+          subtitle: 'استكشف القسم',
+        );
     }
   }
 
@@ -50,12 +72,40 @@ class HomeTopBar extends StatefulWidget {
   State<HomeTopBar> createState() => _HomeTopBarState();
 }
 
-class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateMixin {
+class _HomeTopBarState extends State<HomeTopBar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animController;
+  late Animation<double> _expandAnimation;
   bool _isMenuOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
 
   void _toggleMenu() {
     setState(() {
       _isMenuOpen = !_isMenuOpen;
+      if (_isMenuOpen) {
+        _animController.forward();
+      } else {
+        _animController.reverse();
+      }
     });
   }
 
@@ -63,6 +113,7 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
     if (_isMenuOpen) {
       setState(() {
         _isMenuOpen = false;
+        _animController.reverse();
       });
     }
   }
@@ -82,21 +133,21 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
           // ── Main Glass Bar ──────────────────────────────────────────
           ClipRect(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
               child: Container(
                 height: 60,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.background.withValues(alpha: 0.75),
+                  color: AppColors.background.withValues(alpha: 0.80),
                   border: Border(
                     bottom: BorderSide(
-                      color: Colors.white.withValues(alpha: 0.12),
+                      color: AppColors.accent.withValues(alpha: 0.20),
                       width: 0.8,
                     ),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.35),
+                      color: Colors.black.withValues(alpha: 0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 6),
                     ),
@@ -110,7 +161,7 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
                         _closeMenu();
                         widget.onHomeTap();
                       },
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,
@@ -126,7 +177,8 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
                                 borderRadius: BorderRadius.circular(11),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.accent.withValues(alpha: 0.35),
+                                    color: AppColors.accent
+                                        .withValues(alpha: 0.35),
                                     blurRadius: 10,
                                     offset: const Offset(0, 3),
                                   ),
@@ -140,11 +192,12 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'The 5th',
+                              'The 5th Real Estate',
                               style: theme.textTheme.titleSmall?.copyWith(
                                 color: AppColors.accentLight2,
                                 fontWeight: FontWeight.w800,
-                                fontSize: 15.5,
+                                fontSize: 14.5,
+                                letterSpacing: 0.3,
                               ),
                             ),
                           ],
@@ -170,7 +223,7 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
                         ),
                       ),
                     ] else ...[
-                      // ── Mobile / Tablet Hamburger Button ─────────────────
+                      // ── Mobile Hamburger Button ─────────────────
                       const Spacer(),
                       Material(
                         color: Colors.transparent,
@@ -179,11 +232,14 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
                           borderRadius: BorderRadius.circular(12),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 7,
+                            ),
                             decoration: BoxDecoration(
                               color: _isMenuOpen
-                                  ? AppColors.accent.withValues(alpha: 0.2)
-                                  : AppColors.surface.withValues(alpha: 0.8),
+                                  ? AppColors.accent.withValues(alpha: 0.22)
+                                  : AppColors.surface.withValues(alpha: 0.85),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: _isMenuOpen
@@ -192,10 +248,26 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
                                 width: 1,
                               ),
                             ),
-                            child: Icon(
-                              _isMenuOpen ? Icons.close_rounded : Icons.menu_rounded,
-                              color: AppColors.accentLight2,
-                              size: 22,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _isMenuOpen ? 'إغلاق' : 'الأقسام',
+                                  style: TextStyle(
+                                    color: AppColors.accentLight2,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Icon(
+                                  _isMenuOpen
+                                      ? Icons.close_rounded
+                                      : Icons.menu_rounded,
+                                  color: AppColors.accentLight2,
+                                  size: 19,
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -207,133 +279,203 @@ class _HomeTopBarState extends State<HomeTopBar> with SingleTickerProviderStateM
             ),
           ),
 
-          // ── Mobile Compact Dropdown Menu ────────────────────────────
-          if (!isDesktop && _isMenuOpen) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.background.withValues(alpha: 0.94),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.accent.withValues(alpha: 0.35),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.6),
-                          blurRadius: 28,
-                          offset: const Offset(0, 10),
+          // ── Mobile Luxury Glass Sheet Navigation ────────────────────
+          if (!isDesktop)
+            SizeTransition(
+              sizeFactor: _expandAnimation,
+              axisAlignment: -1.0,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 8, 14, 16),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface.withValues(alpha: 0.92),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.35),
+                          width: 1,
                         ),
-                      ],
-                    ),
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 10,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.65),
+                            blurRadius: 32,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
                       ),
-                      itemCount: widget.labels.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: 4),
-                      itemBuilder: (context, index) {
-                        final label = widget.labels[index];
-                        final isActive = label == widget.activeSection;
-                        final icon = HomeTopBar._iconForSection(label);
-
-                        return Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              _closeMenu();
-                              widget.onSelect(label);
-                            },
-                            borderRadius: BorderRadius.circular(14),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 180),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isActive
-                                    ? AppColors.accent.withValues(alpha: 0.18)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(
-                                  color: isActive
-                                      ? AppColors.accent.withValues(alpha: 0.5)
-                                      : Colors.transparent,
-                                  width: 1,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Header label
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10, top: 4),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.explore_rounded,
+                                  size: 16,
+                                  color: AppColors.accent,
                                 ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: isActive
-                                          ? AppColors.accent.withValues(alpha: 0.25)
-                                          : Colors.white.withValues(alpha: 0.06),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Icon(
-                                        icon,
-                                        color: isActive
-                                            ? AppColors.accentLight2
-                                            : AppColors.textSecondary,
-                                        size: 17,
-                                      ),
-                                    ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'تصفح أقسام الموقع',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 12,
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      label,
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: isActive
-                                            ? AppColors.accentLight2
-                                            : AppColors.textPrimary,
-                                        fontWeight: isActive
-                                            ? FontWeight.w800
-                                            : FontWeight.w600,
-                                        fontSize: 13.5,
-                                      ),
-                                    ),
-                                  ),
-                                  if (isActive)
-                                    Container(
-                                      width: 7,
-                                      height: 7,
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.accentLight2,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    )
-                                  else
-                                    const Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      color: AppColors.textSecondary,
-                                      size: 12,
-                                    ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      },
+
+                          // Section Cards List
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: widget.labels.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 6),
+                            itemBuilder: (context, index) {
+                              final label = widget.labels[index];
+                              final isActive = label == widget.activeSection;
+                              final meta = HomeTopBar._sectionMeta(label);
+
+                              return Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () {
+                                    _closeMenu();
+                                    widget.onSelect(label);
+                                  },
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 180),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 9,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isActive
+                                          ? AppColors.accent
+                                              .withValues(alpha: 0.18)
+                                          : Colors.white
+                                              .withValues(alpha: 0.04),
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: isActive
+                                            ? AppColors.accent
+                                                .withValues(alpha: 0.55)
+                                            : Colors.white
+                                                .withValues(alpha: 0.08),
+                                        width: 0.8,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 36,
+                                          height: 36,
+                                          decoration: BoxDecoration(
+                                            color: isActive
+                                                ? AppColors.accent
+                                                    .withValues(alpha: 0.25)
+                                                : AppColors.accent
+                                                    .withValues(alpha: 0.10),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            border: Border.all(
+                                              color: AppColors.accent
+                                                  .withValues(alpha: 0.3),
+                                              width: 0.8,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Icon(
+                                              meta.icon,
+                                              color: AppColors.accent,
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                label,
+                                                style: theme
+                                                    .textTheme.titleSmall
+                                                    ?.copyWith(
+                                                  color: isActive
+                                                      ? AppColors.accentLight2
+                                                      : AppColors.textPrimary,
+                                                  fontWeight: isActive
+                                                      ? FontWeight.w900
+                                                      : FontWeight.w700,
+                                                  fontSize: 13.5,
+                                                ),
+                                              ),
+                                              Text(
+                                                meta.subtitle,
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                  color:
+                                                      AppColors.textSecondary,
+                                                  fontSize: 10.5,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        if (isActive)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 3,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.accent
+                                                  .withValues(alpha: 0.2),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: const Text(
+                                              'الحالي',
+                                              style: TextStyle(
+                                                color: AppColors.accent,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          )
+                                        else
+                                          const Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            color: AppColors.textSecondary,
+                                            size: 13,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ],
         ],
       ),
     );
