@@ -216,78 +216,12 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  SizedBox(height: isMobile ? 22 : 34),
+                  SizedBox(height: isMobile ? 18 : 28),
 
-                  // Stats Row with Glassmorphism Cards (2x2 on Mobile)
+                  // Stats — Compact Inline Glass Console
                   _HeroEntrance(
                     animation: _steps[5],
-                    child: isMobile
-                        ? Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: const [
-                                    _GlassHeroStat(
-                                      value: '+50',
-                                      label: 'مشاريع فاخرة',
-                                      icon: Icons.location_city_rounded,
-                                    ),
-                                    SizedBox(height: 10),
-                                    _GlassHeroStat(
-                                      value: 'أحياء راقية',
-                                      label: 'أكثر من 12 حى',
-                                      icon: Icons.map_rounded,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  children: const [
-                                    _GlassHeroStat(
-                                      value: 'ثقة وأمان',
-                                      label: 'خدمات واستشارات',
-                                      icon: Icons.verified_user_rounded,
-                                    ),
-                                    SizedBox(height: 10),
-                                    _GlassHeroStat(
-                                      value: '100%',
-                                      label: 'عقود موثقة',
-                                      icon: Icons.assignment_turned_in_rounded,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
-                        : Wrap(
-                            spacing: 16,
-                            runSpacing: 12,
-                            alignment: WrapAlignment.center,
-                            children: const [
-                              _GlassHeroStat(
-                                value: '+50',
-                                label: 'مشاريع فاخرة',
-                                icon: Icons.location_city_rounded,
-                              ),
-                              _GlassHeroStat(
-                                value: 'أحياء راقية',
-                                label: 'تغطي أكثر من 12 حى',
-                                icon: Icons.map_rounded,
-                              ),
-                              _GlassHeroStat(
-                                value: 'ثقة وأمان',
-                                label: 'خدمات واستشارات',
-                                icon: Icons.verified_user_rounded,
-                              ),
-                              _GlassHeroStat(
-                                value: '100%',
-                                label: 'تعاقدات رسمية موثقة',
-                                icon: Icons.assignment_turned_in_rounded,
-                              ),
-                            ],
-                          ),
+                    child: _HeroStatsConsole(isMobile: isMobile),
                   ),
 
                   SizedBox(height: isMobile ? 24 : 36),
@@ -428,101 +362,211 @@ class _HeroEntrance extends StatelessWidget {
   }
 }
 
-class _GlassHeroStat extends StatelessWidget {
-  final String value;
-  final String label;
-  final IconData? icon;
+/// Compact glass console showing 4 stats in one unified card.
+/// Mobile: 2×2 micro-grid inside one glass card.
+/// Desktop: single horizontal row with vertical dividers.
+class _HeroStatsConsole extends StatelessWidget {
+  final bool isMobile;
 
-  const _GlassHeroStat({required this.value, required this.label, this.icon});
+  const _HeroStatsConsole({required this.isMobile});
+
+  static const _stats = [
+    (icon: Icons.location_city_rounded, value: '+50', label: 'مشروع فاخر'),
+    (icon: Icons.map_rounded, value: '12+', label: 'حي راقي'),
+    (icon: Icons.verified_user_rounded, value: '100%', label: 'عقود موثقة'),
+    (icon: Icons.bolt_rounded, value: 'فورية', label: 'معاينة مجانية'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isMobile = MediaQuery.sizeOf(context).width < 600;
-
     return ClipRRect(
-      borderRadius: BorderRadius.circular(isMobile ? 14 : 20),
+      borderRadius: BorderRadius.circular(isMobile ? 16 : 22),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 10 : 22,
-            vertical: isMobile ? 10 : 15,
+            horizontal: isMobile ? 12 : 24,
+            vertical: isMobile ? 12 : 13,
           ),
           decoration: BoxDecoration(
-            color: AppColors.surface.withValues(alpha: 0.65),
-            borderRadius: BorderRadius.circular(isMobile ? 14 : 20),
+            color: AppColors.surface.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(isMobile ? 16 : 22),
             border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.35),
+              color: AppColors.accent.withValues(alpha: 0.3),
               width: 0.8,
             ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.3),
-                blurRadius: isMobile ? 10 : 16,
-                offset: const Offset(0, 3),
-              ),
-              BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.12),
-                blurRadius: isMobile ? 8 : 12,
-                offset: const Offset(0, 2),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Row(
-            mainAxisSize: isMobile ? MainAxisSize.max : MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Container(
-                  padding: EdgeInsets.all(isMobile ? 7 : 9),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.accent.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Icon(
-                    icon,
-                    size: isMobile ? 14 : 18,
-                    color: AppColors.accent,
-                  ),
-                ),
-                SizedBox(width: isMobile ? 8 : 12),
-              ],
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      value,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.w900,
-                        fontSize: isMobile ? 14 : 18,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      label,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: isMobile ? 10.5 : 12,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
+          child: isMobile ? _buildMobileGrid() : _buildDesktopRow(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopRow() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (int i = 0; i < _stats.length; i++) ...[
+          if (i > 0) _divider(vertical: true),
+          _StatCell(
+            icon: _stats[i].icon,
+            value: _stats[i].value,
+            label: _stats[i].label,
+            isMobile: false,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildMobileGrid() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _StatCell(
+                icon: _stats[0].icon,
+                value: _stats[0].value,
+                label: _stats[0].label,
+                isMobile: true,
               ),
+            ),
+            _divider(vertical: true),
+            Expanded(
+              child: _StatCell(
+                icon: _stats[1].icon,
+                value: _stats[1].value,
+                label: _stats[1].label,
+                isMobile: true,
+              ),
+            ),
+          ],
+        ),
+        _divider(vertical: false),
+        Row(
+          children: [
+            Expanded(
+              child: _StatCell(
+                icon: _stats[2].icon,
+                value: _stats[2].value,
+                label: _stats[2].label,
+                isMobile: true,
+              ),
+            ),
+            _divider(vertical: true),
+            Expanded(
+              child: _StatCell(
+                icon: _stats[3].icon,
+                value: _stats[3].value,
+                label: _stats[3].label,
+                isMobile: true,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _divider({required bool vertical}) {
+    if (vertical) {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: isMobile ? 6 : 18),
+        width: 1,
+        height: isMobile ? 28 : 32,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppColors.accent.withValues(alpha: 0.05),
+              AppColors.accent.withValues(alpha: 0.4),
+              AppColors.accent.withValues(alpha: 0.05),
             ],
           ),
         ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Divider(
+        height: 1,
+        thickness: 0.6,
+        color: AppColors.accent.withValues(alpha: 0.15),
       ),
+    );
+  }
+}
+
+/// A single stat cell used inside [_HeroStatsConsole].
+class _StatCell extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+  final bool isMobile;
+
+  const _StatCell({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.isMobile,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: isMobile ? MainAxisSize.max : MainAxisSize.min,
+      mainAxisAlignment: isMobile ? MainAxisAlignment.center : MainAxisAlignment.start,
+      children: [
+        Container(
+          width: isMobile ? 28 : 34,
+          height: isMobile ? 28 : 34,
+          decoration: BoxDecoration(
+            color: AppColors.accent.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(isMobile ? 8 : 10),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.3),
+              width: 0.7,
+            ),
+          ),
+          child: Center(
+            child: Icon(icon, size: isMobile ? 14 : 17, color: AppColors.accent),
+          ),
+        ),
+        SizedBox(width: isMobile ? 6 : 10),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                color: AppColors.accent,
+                fontWeight: FontWeight.w900,
+                fontSize: isMobile ? 13 : 16,
+                letterSpacing: 0.2,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+                fontSize: isMobile ? 10 : 12,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
