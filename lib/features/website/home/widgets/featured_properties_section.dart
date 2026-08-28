@@ -232,19 +232,19 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
         children: [
           for (var i = 0; i < 3; i++) ...[
             if (i > 0) SizedBox(width: spacing),
-            _buildSkeletonCard(cardWidth),
+            _buildSkeletonCard(cardWidth, isMobile),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildSkeletonCard(double cardWidth) {
+  Widget _buildSkeletonCard(double cardWidth, bool isMobile) {
     return Container(
       width: cardWidth,
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.45),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
         border: Border.all(
           color: AppColors.accent.withValues(alpha: 0.15),
           width: 0.8,
@@ -252,62 +252,74 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            height: 235,
+            height: isMobile ? 150 : 235,
             width: double.infinity,
             decoration: BoxDecoration(
               color: AppColors.primaryMedium.withValues(alpha: 0.35),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(isMobile ? 18 : 24),
+              ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(isMobile ? 11 : 18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  height: 18,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
+                // Title line
+                FractionallySizedBox(
+                  widthFactor: 0.70,
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    height: isMobile ? 14 : 18,
+                    decoration: BoxDecoration(
+                      color: AppColors.accent.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 14,
-                  width: 280,
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(4),
+                SizedBox(height: isMobile ? 6 : 10),
+                // Subtitle line
+                FractionallySizedBox(
+                  widthFactor: 0.90,
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    height: isMobile ? 11 : 14,
+                    decoration: BoxDecoration(
+                      color: AppColors.accent.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Row(
+                SizedBox(height: isMobile ? 10 : 16),
+                // Chips
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
                   children: List.generate(
                     3,
-                    (i) => Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Container(
-                        height: 24,
-                        width: 70,
-                        decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                    (i) => Container(
+                      height: isMobile ? 20 : 24,
+                      width: isMobile ? 55 : 70,
+                      decoration: BoxDecoration(
+                        color: AppColors.accent.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 18),
+                SizedBox(height: isMobile ? 12 : 18),
+                // Action button placeholder
                 Container(
-                  height: 42,
+                  height: isMobile ? 32 : 42,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(isMobile ? 10 : 14),
                   ),
                 ),
               ],
