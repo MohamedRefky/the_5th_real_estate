@@ -56,27 +56,31 @@ class WhyUsSection extends StatelessWidget {
               const SizedBox(height: 24),
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final isDesktop = constraints.maxWidth >= 800;
+                  final isWideDesktop = constraints.maxWidth >= 960;
                   final isMobile = constraints.maxWidth < 600;
 
-                  if (isDesktop) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: items.asMap().entries.map((entry) {
-                        final idx = entry.key;
-                        final item = entry.value;
-                        return Expanded(
-                          child: RevealOnScroll(
-                            direction: RevealDirection.flip3D,
-                            delayMilliseconds: idx * 90,
-                            child: _buildItem(context, item, false),
-                          ),
-                        );
-                      }).toList(),
+                  if (isWideDesktop) {
+                    return IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (int i = 0; i < items.length; i++) ...[
+                            if (i > 0) const SizedBox(width: 18),
+                            Expanded(
+                              child: RevealOnScroll(
+                                direction: RevealDirection.flip3D,
+                                delayMilliseconds: i * 90,
+                                child: _buildItem(context, items[i], false),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     );
                   }
 
-                  // 2-Column Responsive Layout for Mobile & Tablet
+                  // 2-Column Responsive Layout for Mobile, Tablet & Medium Screens
+                  final gap = isMobile ? 12.0 : 16.0;
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -88,7 +92,7 @@ class WhyUsSection extends StatelessWidget {
                               delayMilliseconds: 0,
                               child: _buildItem(context, items[0], isMobile),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: gap),
                             RevealOnScroll(
                               direction: RevealDirection.flip3D,
                               delayMilliseconds: 160,
@@ -97,7 +101,7 @@ class WhyUsSection extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: gap),
                       Expanded(
                         child: Column(
                           children: [
@@ -106,7 +110,7 @@ class WhyUsSection extends StatelessWidget {
                               delayMilliseconds: 80,
                               child: _buildItem(context, items[1], isMobile),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: gap),
                             RevealOnScroll(
                               direction: RevealDirection.flip3D,
                               delayMilliseconds: 240,

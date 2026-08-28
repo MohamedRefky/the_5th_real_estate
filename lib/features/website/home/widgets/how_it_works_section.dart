@@ -60,7 +60,7 @@ class HowItWorksSection extends StatelessWidget {
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isDesktop = constraints.maxWidth >= 800;
-                  final isMobile = constraints.maxWidth < 600;
+              
 
                   if (isDesktop) {
                     return Row(
