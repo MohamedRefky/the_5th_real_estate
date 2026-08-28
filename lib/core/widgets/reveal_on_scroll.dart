@@ -97,9 +97,9 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     final dimension = position.viewportDimension;
     final distance = revealOffset - scrollOffset;
 
-    // Trigger animation as soon as item nears viewport (100px lookahead margin)
+    // Trigger animation as soon as item nears viewport (350px lookahead margin)
     // so elements on mobile and desktop are already revealed before the user scrolls directly onto them.
-    if (distance < (dimension + 100) && (distance + renderObject.size.height) > -100) {
+    if (distance < (dimension + 350) && (distance + renderObject.size.height) > -350) {
       _position?.removeListener(_checkVisibility);
       _trigger();
     }

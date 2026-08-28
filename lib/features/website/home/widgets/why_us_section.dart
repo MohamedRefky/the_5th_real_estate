@@ -87,17 +87,9 @@ class WhyUsSection extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            RevealOnScroll(
-                              direction: RevealDirection.flip3D,
-                              delayMilliseconds: 0,
-                              child: _buildItem(context, items[0], isMobile),
-                            ),
+                            _buildItem(context, items[0], isMobile),
                             SizedBox(height: gap),
-                            RevealOnScroll(
-                              direction: RevealDirection.flip3D,
-                              delayMilliseconds: 160,
-                              child: _buildItem(context, items[2], isMobile),
-                            ),
+                            _buildItem(context, items[2], isMobile),
                           ],
                         ),
                       ),
@@ -105,17 +97,9 @@ class WhyUsSection extends StatelessWidget {
                       Expanded(
                         child: Column(
                           children: [
-                            RevealOnScroll(
-                              direction: RevealDirection.flip3D,
-                              delayMilliseconds: 80,
-                              child: _buildItem(context, items[1], isMobile),
-                            ),
+                            _buildItem(context, items[1], isMobile),
                             SizedBox(height: gap),
-                            RevealOnScroll(
-                              direction: RevealDirection.flip3D,
-                              delayMilliseconds: 240,
-                              child: _buildItem(context, items[3], isMobile),
-                            ),
+                            _buildItem(context, items[3], isMobile),
                           ],
                         ),
                       ),
