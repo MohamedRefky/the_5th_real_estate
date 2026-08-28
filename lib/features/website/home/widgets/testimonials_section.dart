@@ -37,7 +37,6 @@ class TestimonialsSection extends StatelessWidget {
     ];
 
     return Container(
-    return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(
@@ -239,6 +238,5 @@ class TestimonialsSection extends StatelessWidget {
         ),
       ),
     );
-  }
   }
 }
