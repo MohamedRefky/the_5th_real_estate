@@ -27,8 +27,13 @@ class _RecentPropertiesSectionState extends State<RecentPropertiesSection> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      padding: EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: isMobile ? 16 : 24,
+      ),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
@@ -41,12 +46,14 @@ class _RecentPropertiesSectionState extends State<RecentPropertiesSection> {
                 title: 'أحدث العقارات المضافة',
                 subtitle: 'وحدات جديدة تم إضافتها مؤخراً لقائمتنا',
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               FutureBuilder<List<Apartment>>(
                 future: _recentFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator(color: Colors.white));
+                    return const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    );
                   }
                   final recentApartments = snapshot.data ?? [];
                   if (recentApartments.isEmpty) {
@@ -59,7 +66,7 @@ class _RecentPropertiesSectionState extends State<RecentPropertiesSection> {
                       final isTablet = constraints.maxWidth >= 600;
 
                       final count = isDesktop ? 3 : (isTablet ? 2 : 1);
-                      final spacing = 20.0;
+                      final spacing = isMobile ? 14.0 : 20.0;
                       final cardWidth =
                           (constraints.maxWidth - (spacing * (count - 1))) /
                               count;
