@@ -374,7 +374,7 @@ class _HeroStatsConsole extends StatelessWidget {
     (icon: Icons.location_city_rounded, value: '+50', label: 'مشروع فاخر'),
     (icon: Icons.map_rounded, value: '12+', label: 'حي راقي'),
     (icon: Icons.verified_user_rounded, value: '100%', label: 'عقود موثقة'),
-    (icon: Icons.bolt_rounded, value: 'فورية', label: 'معاينة مجانية'),
+    (icon: Icons.support_agent_rounded, value: 'متاح', label: 'معاينة فورية'),
   ];
 
   @override
