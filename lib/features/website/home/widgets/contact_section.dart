@@ -68,10 +68,14 @@ class ContactSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final options = _getOptions(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+      padding: EdgeInsets.symmetric(
+        vertical: 24,
+        horizontal: isMobile ? 16 : 24,
+      ),
       decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
@@ -87,7 +91,7 @@ class ContactSection extends StatelessWidget {
                     'يسعدنا تواصلك المباشر لمساعدتك في اختيار وتحديد معاينة وحدتك العقارية المثالية',
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 24),
 
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -103,7 +107,7 @@ class ContactSection extends StatelessWidget {
                             0,
                           ),
                         ),
-                        const SizedBox(width: 24),
+                        const SizedBox(width: 20),
                         Expanded(
                           child: _buildOption(
                             options[1],
@@ -118,7 +122,7 @@ class ContactSection extends StatelessWidget {
                   return Column(
                     children: [
                       _buildOption(options[0], RevealDirection.fromRight, 0),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       _buildOption(options[1], RevealDirection.fromLeft, 80),
                     ],
                   );
@@ -171,19 +175,20 @@ class _ContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: Container(
-            padding: const EdgeInsets.all(28),
+            padding: EdgeInsets.all(isMobile ? 14 : 28),
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: 0.65),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
               border: Border.all(
                 color: accentColor.withValues(alpha: 0.4),
                 width: 0.8,
@@ -191,8 +196,8 @@ class _ContactCard extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: accentColor.withValues(alpha: 0.15),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
+                  blurRadius: isMobile ? 12 : 24,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -200,26 +205,26 @@ class _ContactCard extends StatelessWidget {
               children: [
                 // Glowing Platform Icon Badge
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: isMobile ? 46 : 60,
+                  height: isMobile ? 46 : 60,
                   decoration: BoxDecoration(
                     color: accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(isMobile ? 14 : 18),
                     border: Border.all(
                       color: accentColor.withValues(alpha: 0.5),
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: accentColor.withValues(alpha: 0.3),
-                        blurRadius: 14,
-                        offset: const Offset(0, 4),
+                        blurRadius: isMobile ? 8 : 14,
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
                   child: Center(child: iconWidget),
                 ),
 
-                const SizedBox(width: 18),
+                SizedBox(width: isMobile ? 12 : 18),
 
                 // Text Content
                 Expanded(
@@ -234,14 +239,14 @@ class _ContactCard extends StatelessWidget {
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w800,
                               color: AppColors.textPrimary,
-                              fontSize: 18,
+                              fontSize: isMobile ? 14.5 : 18,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 6),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 3,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 7 : 10,
+                              vertical: isMobile ? 2 : 3,
                             ),
                             decoration: BoxDecoration(
                               color: accentColor.withValues(alpha: 0.2),
@@ -251,31 +256,32 @@ class _ContactCard extends StatelessWidget {
                               badgeText,
                               style: TextStyle(
                                 color: accentColor,
-                                fontSize: 11,
+                                fontSize: isMobile ? 10 : 11,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Text(
                         subtitle,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: AppColors.textSecondary,
-                          height: 1.5,
+                          height: 1.4,
+                          fontSize: isMobile ? 11.5 : 12.5,
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
 
                 // Arrow indicator icon
                 Icon(
                   Icons.arrow_forward_ios_rounded,
-                  size: 18,
+                  size: isMobile ? 14 : 18,
                   color: AppColors.textSecondary.withValues(alpha: 0.7),
                 ),
               ],
