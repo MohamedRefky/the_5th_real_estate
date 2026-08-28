@@ -123,8 +123,8 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isMobile = screenWidth < 600;
-    final cardWidth = isMobile ? (screenWidth * 0.82).clamp(260.0, 310.0) : 350.0;
-    final spacing = isMobile ? 14.0 : 24.0;
+    final cardWidth = isMobile ? 255.0 : 350.0;
+    final spacing = isMobile ? 12.0 : 24.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),

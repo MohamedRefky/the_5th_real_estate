@@ -31,6 +31,8 @@ class ApartmentActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     return Row(
       children: [
         // WhatsApp Button
@@ -39,9 +41,9 @@ class ApartmentActionButtons extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () => _openWhatsapp(context),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 11),
+                padding: EdgeInsets.symmetric(vertical: isMobile ? 8 : 11),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [
@@ -49,10 +51,10 @@ class ApartmentActionButtons extends StatelessWidget {
                       Color(0x10121C2B),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: const Color(0xFF25D366).withValues(alpha: 0.55),
-                    width: 1.2,
+                    width: 1.1,
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -64,19 +66,19 @@ class ApartmentActionButtons extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     FaIcon(
                       FontAwesomeIcons.whatsapp,
-                      color: Color(0xFF25D366),
-                      size: 16,
+                      color: const Color(0xFF25D366),
+                      size: isMobile ? 14 : 16,
                     ),
-                    SizedBox(width: 7),
+                    SizedBox(width: isMobile ? 5 : 7),
                     Text(
-                      'تواصل واتساب',
+                      'واتساب',
                       style: TextStyle(
-                        color: Color(0xFF25D366),
+                        color: const Color(0xFF25D366),
                         fontWeight: FontWeight.w800,
-                        fontSize: 12.5,
+                        fontSize: isMobile ? 11.5 : 12.5,
                       ),
                     ),
                   ],
@@ -86,7 +88,7 @@ class ApartmentActionButtons extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(width: 10),
+        SizedBox(width: isMobile ? 7 : 10),
 
         // View Details Button
         Expanded(
@@ -94,12 +96,12 @@ class ApartmentActionButtons extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () => _openDetails(context),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 11),
+                padding: EdgeInsets.symmetric(vertical: isMobile ? 8 : 11),
                 decoration: BoxDecoration(
                   gradient: AppColors.accentGradient,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
                       color: AppColors.accentGlow,
@@ -110,20 +112,20 @@ class ApartmentActionButtons extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Text(
-                      'تفاصيل الشقة',
+                      'التفاصيل',
                       style: TextStyle(
                         color: AppColors.textOnPrimary,
                         fontWeight: FontWeight.w900,
-                        fontSize: 12.5,
+                        fontSize: isMobile ? 11.5 : 12.5,
                       ),
                     ),
-                    SizedBox(width: 6),
+                    SizedBox(width: isMobile ? 4 : 6),
                     Icon(
                       Icons.arrow_back_rounded,
                       color: AppColors.textOnPrimary,
-                      size: 15,
+                      size: isMobile ? 13 : 15,
                     ),
                   ],
                 ),

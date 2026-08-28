@@ -62,7 +62,7 @@ class ApartmentCard extends StatelessWidget {
               children: [
                 // ── 1. Dominant Image Box ──────────────────
                 SizedBox(
-                  height: isMobile ? 190 : 235,
+                  height: isMobile ? 150 : 235,
                   width: double.infinity,
                   child: Stack(
                     children: [
@@ -129,18 +129,18 @@ class ApartmentCard extends StatelessWidget {
 
                       // Finishing status badge
                       Positioned(
-                        top: 12,
-                        right: 12,
+                        top: 10,
+                        right: 10,
                         child: StatusBadge(
                           label: apt.finishingStatusLabel,
                           color: finishingStatusColor(apt.finishingStatus),
                           gradient: finishingStatusGradient(apt.finishingStatus),
                           icon: finishingStatusIcon(apt.finishingStatus),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 11,
-                            vertical: 5.5,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 8 : 11,
+                            vertical: isMobile ? 4 : 5.5,
                           ),
-                          fontSize: 11,
+                          fontSize: isMobile ? 10 : 11,
                           shadowColor: Colors.black.withValues(alpha: 0.35),
                           shadowBlur: 8,
                         ),
@@ -148,21 +148,23 @@ class ApartmentCard extends StatelessWidget {
 
                       // Property Category Badge ("شقة") + Under Construction Badge on Top-Left
                       Positioned(
-                        top: 12,
-                        left: 12,
+                        top: 10,
+                        left: 10,
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                               child: BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isMobile ? 8 : 10,
+                                    vertical: isMobile ? 3.5 : 5,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withValues(alpha: 0.60),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
                                       color: AppColors.accent.withValues(alpha: 0.6),
                                       width: 1,
@@ -170,19 +172,19 @@ class ApartmentCard extends StatelessWidget {
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
-                                    children: const [
+                                    children: [
                                       Icon(
                                         Icons.home_work_rounded,
-                                        size: 13,
+                                        size: isMobile ? 11 : 13,
                                         color: AppColors.accent,
                                       ),
-                                      SizedBox(width: 5),
+                                      const SizedBox(width: 4),
                                       Text(
                                         'شقة',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 11.5,
+                                          fontSize: isMobile ? 10 : 11.5,
                                         ),
                                       ),
                                     ],
@@ -191,16 +193,16 @@ class ApartmentCard extends StatelessWidget {
                               ),
                             ),
                             if (apt.isUnderConstruction) ...[
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 5),
                               StatusBadge(
                                 label: 'تحت الإنشاء',
                                 color: AppColors.warning,
                                 icon: Icons.construction_rounded,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isMobile ? 7 : 10,
+                                  vertical: isMobile ? 3.5 : 5,
                                 ),
-                                fontSize: 11,
+                                fontSize: isMobile ? 9.5 : 11,
                                 showShadow: false,
                               ),
                             ],
@@ -210,8 +212,8 @@ class ApartmentCard extends StatelessWidget {
 
                       // Price Tag Floating on Image
                       Positioned(
-                        bottom: 12,
-                        right: 12,
+                        bottom: 10,
+                        right: 10,
                         child: PriceTagPill(price: apt.formattedPrice),
                       ),
                     ],
@@ -220,7 +222,7 @@ class ApartmentCard extends StatelessWidget {
 
                 // ── 2. Compact Card Body (Tight & No Empty Space) ──────
                 Padding(
-                  padding: EdgeInsets.all(isMobile ? 14 : 18),
+                  padding: EdgeInsets.all(isMobile ? 11 : 18),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -230,6 +232,7 @@ class ApartmentCard extends StatelessWidget {
                         apt.title,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w800,
+                          fontSize: isMobile ? 14.5 : 16.5,
                           color: isHovered
                               ? AppColors.accent
                               : AppColors.textPrimary,
@@ -238,27 +241,27 @@ class ApartmentCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 4),
 
                       // Description directly below title
                       Text(
                         apt.description,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
-                          fontSize: 15,
+                          fontSize: isMobile ? 12 : 14.5,
                           fontWeight: FontWeight.w500,
-                          height: 1.5,
+                          height: 1.4,
                         ),
-                        maxLines: 2,
+                        maxLines: isMobile ? 1 : 2,
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      const SizedBox(height: 10),
+                      SizedBox(height: isMobile ? 6 : 10),
 
                       // Info Chips Row
                       Wrap(
-                        spacing: 6,
-                        runSpacing: 6,
+                        spacing: isMobile ? 4 : 6,
+                        runSpacing: isMobile ? 4 : 6,
                         children: [
                           InfoChip(
                             icon: Icons.home_work_rounded,
@@ -307,12 +310,12 @@ class ApartmentCard extends StatelessWidget {
                       // Delivery Date if applicable
                       if (apt.isUnderConstruction &&
                           apt.formattedDeliveryDate != null) ...[
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         Row(
                           children: [
                             const Icon(
                               Icons.calendar_today_rounded,
-                              size: 13,
+                              size: 12,
                               color: AppColors.accent,
                             ),
                             const SizedBox(width: 4),
@@ -321,14 +324,14 @@ class ApartmentCard extends StatelessWidget {
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: AppColors.accent,
                                 fontWeight: FontWeight.w700,
-                                fontSize: 11,
+                                fontSize: 10.5,
                               ),
                             ),
                           ],
                         ),
                       ],
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: isMobile ? 10 : 16),
 
                       // Action buttons (WhatsApp + details)
                       ApartmentActionButtons(apartment: apt),

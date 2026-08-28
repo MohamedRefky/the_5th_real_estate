@@ -29,7 +29,7 @@ class BuildingCoverHeader extends StatelessWidget {
     final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return SizedBox(
-      height: isMobile ? 190 : 235,
+      height: isMobile ? 150 : 235,
       width: double.infinity,
       child: Stack(
         children: [
