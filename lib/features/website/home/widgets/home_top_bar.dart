@@ -9,7 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 /// Automatically adapts between:
 /// - Desktop: Full horizontal row of section pills.
 /// - Mobile / Tablet: Brand + sleek 3-line hamburger menu that expands a compact dropdown list.
-class HomeTopBar extends StatefulWidget {
+class HomeTopBar extends StatelessWidget {
   final String? activeSection;
   final List<String> labels;
   final ValueChanged<String> onSelect;
@@ -69,56 +69,6 @@ class HomeTopBar extends StatefulWidget {
   }
 
   @override
-  State<HomeTopBar> createState() => _HomeTopBarState();
-}
-
-class _HomeTopBarState extends State<HomeTopBar>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<double> _expandAnimation;
-  bool _isMenuOpen = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-    _expandAnimation = CurvedAnimation(
-      parent: _animController,
-      curve: Curves.easeOutCubic,
-      reverseCurve: Curves.easeInCubic,
-    );
-  }
-
-  @override
-  void dispose() {
-    _animController.dispose();
-    super.dispose();
-  }
-
-  void _toggleMenu() {
-    setState(() {
-      _isMenuOpen = !_isMenuOpen;
-      if (_isMenuOpen) {
-        _animController.forward();
-      } else {
-        _animController.reverse();
-      }
-    });
-  }
-
-  void _closeMenu() {
-    if (_isMenuOpen) {
-      setState(() {
-        _isMenuOpen = false;
-        _animController.reverse();
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final width = MediaQuery.of(context).size.width;
@@ -157,7 +107,7 @@ class _HomeTopBarState extends State<HomeTopBar>
                   children: [
                     // ── Brand Logo ────────────────────────────────────────
                     InkWell(
-                      onTap: widget.onHomeTap,
+                      onTap: onHomeTap,
                       borderRadius: BorderRadius.circular(14),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -210,11 +160,11 @@ class _HomeTopBarState extends State<HomeTopBar>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            for (final label in widget.labels)
+                            for (final label in labels)
                               _NavPill(
                                 label: label,
-                                active: label == widget.activeSection,
-                                onTap: () => widget.onSelect(label),
+                                active: label == activeSection,
+                                onTap: () => onSelect(label),
                               ),
                           ],
                         ),
@@ -307,11 +257,11 @@ class _HomeTopBarState extends State<HomeTopBar>
                   child: Material(
                     color: Colors.transparent,
                     child: _MobileMenuCard(
-                      labels: widget.labels,
-                      activeSection: widget.activeSection,
+                      labels: labels,
+                      activeSection: activeSection,
                       onSelect: (label) {
                         Navigator.pop(dialogContext);
-                        widget.onSelect(label);
+                        onSelect(label);
                       },
                       onClose: () => Navigator.pop(dialogContext),
                     ),
