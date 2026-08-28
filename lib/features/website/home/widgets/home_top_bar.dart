@@ -9,8 +9,8 @@ import '../../../../core/widgets/contact_chooser_modal.dart';
 /// Floating glass top navigation bar for the home screen.
 ///
 /// Automatically adapts between:
-/// - Desktop: Full horizontal row of section links + quick contact button.
-/// - Mobile / Tablet: Brand + quick WhatsApp CTA + premium glass drawer menu with all sections.
+/// - Desktop: Full horizontal row of section links.
+/// - Mobile / Tablet: Brand + premium glass drawer menu with all sections.
 class HomeTopBar extends StatelessWidget {
   final String? activeSection;
   final List<String> labels;
@@ -178,85 +178,9 @@ class HomeTopBar extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // Desktop Quick WhatsApp CTA Button
-                  InkWell(
-                    onTap: () => showContactChooserModal(
-                      context,
-                      message: 'مرحباً، أود الاستفسار عن عقارات التجمع الخامس',
-                      platform: ContactPlatform.whatsapp,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 7,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF25D366), Color(0xFF128C7E)],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF25D366).withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          FaIcon(
-                            FontAwesomeIcons.whatsapp,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'تواصل معنا',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ] else ...[
                   // ── Mobile / Tablet Navigation ────────────────────────
                   const Spacer(),
-
-                  // Quick WhatsApp Icon
-                  IconButton(
-                    tooltip: 'تواصل عبر واتساب',
-                    onPressed: () => showContactChooserModal(
-                      context,
-                      message: 'مرحباً، أود الاستفسار عن عقارات التجمع الخامس',
-                      platform: ContactPlatform.whatsapp,
-                    ),
-                    icon: Container(
-                      padding: const EdgeInsets.all(7),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF25D366).withValues(alpha: 0.15),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFF25D366).withValues(alpha: 0.4),
-                          width: 1,
-                        ),
-                      ),
-                      child: const FaIcon(
-                        FontAwesomeIcons.whatsapp,
-                        color: Color(0xFF25D366),
-                        size: 16,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(width: 4),
 
                   // Mobile Menu Hamburger Button
                   InkWell(
