@@ -184,15 +184,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 SizedBox(height: sectionSpacing),
 
-                // ── Apartments Neighborhood Grid Header (3D Scale Reveal) ─
-                const RevealOnScroll(
-                  direction: RevealDirection.scale,
-                  child: SectionBar(
-                    index: 4,
-                    icon: Icons.location_city_rounded,
-                    title: 'شقق',
-                    subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
-                  ),
+                // ── Apartments Neighborhood Grid Header ───────────────
+                const SectionBar(
+                  index: 4,
+                  icon: Icons.location_city_rounded,
+                  title: 'شقق',
+                  subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
                 ),
 
                 SizedBox(height: headerSpacing),
@@ -225,19 +222,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemCount: DummyData.areas.length,
                             itemBuilder: (context, index) {
                               final area = DummyData.areas[index];
+                              final card = AreaCard(
+                                areaName: area,
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    RoutesNames.area,
+                                    arguments: area,
+                                  );
+                                },
+                              );
+
+                              if (isMobile) return card;
+
                               return RevealOnScroll(
                                 direction: RevealDirection.elasticPop,
                                 delayMilliseconds: index * 80,
-                                child: AreaCard(
-                                  areaName: area,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      RoutesNames.area,
-                                      arguments: area,
-                                    );
-                                  },
-                                ),
+                                child: card,
                               );
                             },
                           );
@@ -250,15 +251,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: sectionSpacing),
 
                 // ── Buildings Neighborhood Grid Header ────────────────
-                const RevealOnScroll(
-                  direction: RevealDirection.scale,
-                  child: SectionBar(
-                    index: 5,
-                    icon: Icons.apartment_rounded,
-                    title: 'عمارات',
-                    subtitle:
-                        'استكشف المشروعات والعمارات السكنية في أحياء التجمع الخامس',
-                  ),
+                const SectionBar(
+                  index: 5,
+                  icon: Icons.apartment_rounded,
+                  title: 'عمارات',
+                  subtitle:
+                      'استكشف المشروعات والعمارات السكنية في أحياء التجمع الخامس',
                 ),
 
                 SizedBox(height: headerSpacing),
@@ -296,42 +294,50 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemCount: totalItems,
                                 itemBuilder: (context, index) {
                                   if (index == buildingMainAreas.length) {
-                                    return RevealOnScroll(
-                                      direction: RevealDirection.elasticPop,
-                                      delayMilliseconds: index * 80,
-                                      child: AreaCard(
-                                        areaName: buildingOtherAreasLabel,
-                                        customBadgeText:
-                                            'عمارات بأماكن متنوعة',
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                            context,
-                                            RoutesNames.buildingsArea,
-                                            arguments: {
-                                              'label': buildingOtherAreasLabel,
-                                              'areas': buildingOtherAreas,
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  }
-                                  final area = buildingMainAreas[index];
-                                  final bldCount = counts[area] ?? 0;
-                                  return RevealOnScroll(
-                                    direction: RevealDirection.elasticPop,
-                                    delayMilliseconds: index * 80,
-                                    child: AreaCard(
-                                      areaName: area,
-                                      customBadgeText: '$bldCount عمارة متاحة',
+                                    final card = AreaCard(
+                                      areaName: buildingOtherAreasLabel,
+                                      customBadgeText:
+                                          'عمارات بأماكن متنوعة',
                                       onTap: () {
                                         Navigator.pushNamed(
                                           context,
                                           RoutesNames.buildingsArea,
-                                          arguments: area,
+                                          arguments: {
+                                            'label': buildingOtherAreasLabel,
+                                            'areas': buildingOtherAreas,
+                                          },
                                         );
                                       },
-                                    ),
+                                    );
+
+                                    if (isMobile) return card;
+
+                                    return RevealOnScroll(
+                                      direction: RevealDirection.elasticPop,
+                                      delayMilliseconds: index * 80,
+                                      child: card,
+                                    );
+                                  }
+                                  final area = buildingMainAreas[index];
+                                  final bldCount = counts[area] ?? 0;
+                                  final card = AreaCard(
+                                    areaName: area,
+                                    customBadgeText: '$bldCount عمارة متاحة',
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesNames.buildingsArea,
+                                        arguments: area,
+                                      );
+                                    },
+                                  );
+
+                                  if (isMobile) return card;
+
+                                  return RevealOnScroll(
+                                    direction: RevealDirection.elasticPop,
+                                    delayMilliseconds: index * 80,
+                                    child: card,
                                   );
                                 },
                               );
