@@ -157,10 +157,7 @@ class _HomeTopBarState extends State<HomeTopBar>
                   children: [
                     // ── Brand Logo ────────────────────────────────────────
                     InkWell(
-                      onTap: () {
-                        _closeMenu();
-                        widget.onHomeTap();
-                      },
+                      onTap: widget.onHomeTap,
                       borderRadius: BorderRadius.circular(14),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -228,42 +225,42 @@ class _HomeTopBarState extends State<HomeTopBar>
                       Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap: _toggleMenu,
+                          onTap: () => _openMobileMenuModal(context),
                           borderRadius: BorderRadius.circular(12),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
+                          child: Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
+                              horizontal: 11,
                               vertical: 7,
                             ),
                             decoration: BoxDecoration(
-                              color: _isMenuOpen
-                                  ? AppColors.accent.withValues(alpha: 0.22)
-                                  : AppColors.surface.withValues(alpha: 0.85),
+                              color: AppColors.surface.withValues(alpha: 0.85),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: _isMenuOpen
-                                    ? AppColors.accent
-                                    : AppColors.accent.withValues(alpha: 0.35),
+                                color: AppColors.accent.withValues(alpha: 0.35),
                                 width: 1,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.accent.withValues(alpha: 0.15),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
-                              children: [
+                              children: const [
                                 Text(
-                                  _isMenuOpen ? 'إغلاق' : 'الأقسام',
+                                  'الأقسام',
                                   style: TextStyle(
                                     color: AppColors.accentLight2,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 12.5,
                                   ),
                                 ),
-                                const SizedBox(width: 5),
+                                SizedBox(width: 6),
                                 Icon(
-                                  _isMenuOpen
-                                      ? Icons.close_rounded
-                                      : Icons.menu_rounded,
+                                  Icons.menu_rounded,
                                   color: AppColors.accentLight2,
                                   size: 19,
                                 ),
@@ -278,205 +275,292 @@ class _HomeTopBarState extends State<HomeTopBar>
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
 
-          // ── Mobile Luxury Glass Sheet Navigation ────────────────────
-          if (!isDesktop)
-            SizeTransition(
-              sizeFactor: _expandAnimation,
-              axisAlignment: -1.0,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 8, 14, 16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface.withValues(alpha: 0.92),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.35),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.65),
-                            blurRadius: 32,
-                            offset: const Offset(0, 12),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Header label
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10, top: 4),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.explore_rounded,
-                                  size: 16,
-                                  color: AppColors.accent,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'تصفح أقسام الموقع',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: AppColors.accent,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+  void _openMobileMenuModal(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'إغلاق القائمة',
+      barrierColor: Colors.black.withValues(alpha: 0.60),
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (dialogContext, anim1, anim2) {
+        return Stack(
+          children: [
+            // ── Full-screen background blur ──
+            Positioned.fill(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: const SizedBox.expand(),
+              ),
+            ),
 
-                          // Section Cards List
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: widget.labels.length,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 6),
-                            itemBuilder: (context, index) {
-                              final label = widget.labels[index];
-                              final isActive = label == widget.activeSection;
-                              final meta = HomeTopBar._sectionMeta(label);
-
-                              return Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {
-                                    _closeMenu();
-                                    widget.onSelect(label);
-                                  },
-                                  borderRadius: BorderRadius.circular(14),
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 180),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 9,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isActive
-                                          ? AppColors.accent
-                                              .withValues(alpha: 0.18)
-                                          : Colors.white
-                                              .withValues(alpha: 0.04),
-                                      borderRadius: BorderRadius.circular(14),
-                                      border: Border.all(
-                                        color: isActive
-                                            ? AppColors.accent
-                                                .withValues(alpha: 0.55)
-                                            : Colors.white
-                                                .withValues(alpha: 0.08),
-                                        width: 0.8,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 36,
-                                          height: 36,
-                                          decoration: BoxDecoration(
-                                            color: isActive
-                                                ? AppColors.accent
-                                                    .withValues(alpha: 0.25)
-                                                : AppColors.accent
-                                                    .withValues(alpha: 0.10),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                              color: AppColors.accent
-                                                  .withValues(alpha: 0.3),
-                                              width: 0.8,
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Icon(
-                                              meta.icon,
-                                              color: AppColors.accent,
-                                              size: 18,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                label,
-                                                style: theme
-                                                    .textTheme.titleSmall
-                                                    ?.copyWith(
-                                                  color: isActive
-                                                      ? AppColors.accentLight2
-                                                      : AppColors.textPrimary,
-                                                  fontWeight: isActive
-                                                      ? FontWeight.w900
-                                                      : FontWeight.w700,
-                                                  fontSize: 13.5,
-                                                ),
-                                              ),
-                                              Text(
-                                                meta.subtitle,
-                                                style: theme.textTheme.bodySmall
-                                                    ?.copyWith(
-                                                  color:
-                                                      AppColors.textSecondary,
-                                                  fontSize: 10.5,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        if (isActive)
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 3,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.accent
-                                                  .withValues(alpha: 0.2),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: const Text(
-                                              'الحالي',
-                                              style: TextStyle(
-                                                color: AppColors.accent,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 10,
-                                              ),
-                                            ),
-                                          )
-                                        else
-                                          const Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: AppColors.textSecondary,
-                                            size: 13,
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+            // ── Modal Glass Content ──
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 10, 14, 20),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: _MobileMenuCard(
+                      labels: widget.labels,
+                      activeSection: widget.activeSection,
+                      onSelect: (label) {
+                        Navigator.pop(dialogContext);
+                        widget.onSelect(label);
+                      },
+                      onClose: () => Navigator.pop(dialogContext),
                     ),
                   ),
                 ),
               ),
             ),
-        ],
+          ],
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return FadeTransition(
+          opacity: anim1,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, -0.05),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(
+                parent: anim1,
+                curve: Curves.easeOutCubic,
+              ),
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Floating glass modal card containing all sections with rich meta info.
+class _MobileMenuCard extends StatelessWidget {
+  final List<String> labels;
+  final String? activeSection;
+  final ValueChanged<String> onSelect;
+  final VoidCallback onClose;
+
+  const _MobileMenuCard({
+    required this.labels,
+    required this.activeSection,
+    required this.onSelect,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.surface.withValues(alpha: 0.94),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.40),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.70),
+                blurRadius: 36,
+                offset: const Offset(0, 14),
+              ),
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.12),
+                blurRadius: 24,
+                spreadRadius: -2,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with Title & Close button
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12, top: 4, left: 4, right: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.explore_rounded,
+                        size: 16,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'تصفح أقسام الموقع',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: AppColors.accentLight2,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const Spacer(),
+                    InkWell(
+                      onTap: onClose,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Section Cards List
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: labels.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 6),
+                itemBuilder: (context, index) {
+                  final label = labels[index];
+                  final isActive = label == activeSection;
+                  final meta = HomeTopBar._sectionMeta(label);
+
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onSelect(label),
+                      borderRadius: BorderRadius.circular(14),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 9,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isActive
+                              ? AppColors.accent.withValues(alpha: 0.20)
+                              : Colors.white.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isActive
+                                ? AppColors.accent.withValues(alpha: 0.60)
+                                : Colors.white.withValues(alpha: 0.08),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: isActive
+                                    ? AppColors.accent.withValues(alpha: 0.25)
+                                    : AppColors.accent.withValues(alpha: 0.10),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: AppColors.accent.withValues(alpha: 0.35),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  meta.icon,
+                                  color: AppColors.accent,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    label,
+                                    style: theme.textTheme.titleSmall?.copyWith(
+                                      color: isActive
+                                          ? AppColors.accentLight2
+                                          : AppColors.textPrimary,
+                                      fontWeight: isActive
+                                          ? FontWeight.w900
+                                          : FontWeight.w700,
+                                      fontSize: 13.5,
+                                    ),
+                                  ),
+                                  Text(
+                                    meta.subtitle,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 10.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (isActive)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accent.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Text(
+                                  'الحالي',
+                                  style: TextStyle(
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              )
+                            else
+                              const Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: AppColors.textSecondary,
+                                size: 13,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
