@@ -85,23 +85,36 @@ class ContactChooserModal extends StatelessWidget {
         ? const Color(0xFF25D366)
         : (isFacebookOnly ? const Color(0xFF1877F2) : AppColors.accent);
 
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 12 : 16,
+          vertical: isMobile ? 16 : 24,
+        ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: BoxConstraints(
+            maxWidth: 500,
+            maxHeight: MediaQuery.sizeOf(context).height * 0.88,
+          ),
           child: ClipRRect(
             // Fully rounded corners for floating modal sheet look
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(isMobile ? 24 : 32),
             child: BackdropFilter(
               // Smooth balanced blur effect
               filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
               child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                padding: EdgeInsets.fromLTRB(
+                  isMobile ? 14 : 20,
+                  14,
+                  isMobile ? 14 : 20,
+                  16,
+                ),
                 decoration: BoxDecoration(
                   // Rich dark translucent steel glass container
-                  color: AppColors.surface.withValues(alpha: 0.70),
-                  borderRadius: BorderRadius.circular(32),
+                  color: AppColors.surface.withValues(alpha: 0.75),
+                  borderRadius: BorderRadius.circular(isMobile ? 24 : 32),
                   border: Border.all(
                     color: primaryPlatformColor.withValues(alpha: 0.30),
                     width: 1.2,
@@ -119,127 +132,130 @@ class ContactChooserModal extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Top Drag Indicator
-                    Container(
-                      width: 44,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.35),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Glowing Platform Header Icon (Matching Home Page Contact Section Style)
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: primaryPlatformColor.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: primaryPlatformColor.withValues(alpha: 0.5),
-                          width: 1.2,
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Top Drag Indicator
+                      Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.35),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: primaryPlatformColor.withValues(alpha: 0.35),
-                            blurRadius: 18,
-                            offset: const Offset(0, 4),
+                      ),
+
+                      SizedBox(height: isMobile ? 14 : 18),
+
+                      // Glowing Platform Header Icon
+                      Container(
+                        width: isMobile ? 54 : 64,
+                        height: isMobile ? 54 : 64,
+                        decoration: BoxDecoration(
+                          color: primaryPlatformColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(isMobile ? 16 : 20),
+                          border: Border.all(
+                            color: primaryPlatformColor.withValues(alpha: 0.5),
+                            width: 1.2,
                           ),
-                        ],
+                          boxShadow: [
+                            BoxShadow(
+                              color: primaryPlatformColor.withValues(alpha: 0.35),
+                              blurRadius: 18,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: isWhatsAppOnly
+                              ? FaIcon(
+                                  FontAwesomeIcons.whatsapp,
+                                  color: const Color(0xFF25D366),
+                                  size: isMobile ? 28 : 34,
+                                )
+                              : (isFacebookOnly
+                                  ? FaIcon(
+                                      FontAwesomeIcons.facebookF,
+                                      color: const Color(0xFF1877F2),
+                                      size: isMobile ? 24 : 30,
+                                    )
+                                  : Icon(
+                                      Icons.support_agent_rounded,
+                                      color: AppColors.accent,
+                                      size: isMobile ? 28 : 34,
+                                    )),
+                        ),
                       ),
-                      child: Center(
-                        child: isWhatsAppOnly
-                            ? const FaIcon(
-                                FontAwesomeIcons.whatsapp,
-                                color: Color(0xFF25D366),
-                                size: 34,
-                              )
-                            : (isFacebookOnly
-                                ? const FaIcon(
-                                    FontAwesomeIcons.facebookF,
-                                    color: Color(0xFF1877F2),
-                                    size: 30,
-                                  )
-                                : const Icon(
-                                    Icons.support_agent_rounded,
-                                    color: AppColors.accent,
-                                    size: 34,
-                                  )),
-                      ),
-                    ),
 
-                    const SizedBox(height: 16),
+                      SizedBox(height: isMobile ? 12 : 16),
 
-                    // Title
-                    Text(
-                      titleText,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary,
-                        fontSize: 22,
-                        letterSpacing: 0.2,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: 6),
-
-                    // Subtitle
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        subtitleText,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 13.5,
-                          height: 1.45,
+                      // Title
+                      Text(
+                        titleText,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.textPrimary,
+                          fontSize: isMobile ? 18.5 : 22,
+                          letterSpacing: 0.2,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                    ),
 
-                    const SizedBox(height: 22),
+                      const SizedBox(height: 5),
 
-                    // Team Representative Cards
-                    Column(
-                      children: contacts.map((contact) {
-                        return _GlassRepresentativeCard(
-                          contact: contact,
-                          message: message,
-                          platform: platform,
-                          onFacebookTap: () =>
-                              _launchFacebook(context, contact.facebookUrl),
-                        );
-                      }).toList(),
-                    ),
-
-                    const SizedBox(height: 4),
-
-                    // Cancel Button
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 10,
+                      // Subtitle
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          subtitleText,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                            fontSize: isMobile ? 12 : 13.5,
+                            height: 1.4,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      child: Text(
-                        'إلغاء',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textHint,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+
+                      SizedBox(height: isMobile ? 16 : 20),
+
+                      // Team Representative Cards
+                      Column(
+                        children: contacts.map((contact) {
+                          return _GlassRepresentativeCard(
+                            contact: contact,
+                            message: message,
+                            platform: platform,
+                            onFacebookTap: () =>
+                                _launchFacebook(context, contact.facebookUrl),
+                          );
+                        }).toList(),
+                      ),
+
+                      const SizedBox(height: 2),
+
+                      // Cancel Button
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 8,
+                          ),
+                        ),
+                        child: Text(
+                          'إلغاء',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textHint,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.5,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -277,12 +293,14 @@ class _GlassRepresentativeCard extends StatelessWidget {
         ? const Color(0xFF25D366)
         : (isFacebookOnly ? const Color(0xFF1877F2) : AppColors.accent);
 
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: EdgeInsets.only(bottom: isMobile ? 10 : 14),
       decoration: BoxDecoration(
         // Translucent rich slate card background
         color: Colors.white.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(isMobile ? 18 : 22),
         border: Border.all(
           color: accentColor.withValues(alpha: 0.30),
           width: 1.0,
@@ -296,11 +314,11 @@ class _GlassRepresentativeCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(isMobile ? 18 : 22),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: Padding(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(isMobile ? 12 : 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -309,8 +327,8 @@ class _GlassRepresentativeCard extends StatelessWidget {
                   children: [
                     // Sleek Agent Profile Icon Badge
                     Container(
-                      width: 52,
-                      height: 52,
+                      width: isMobile ? 44 : 50,
+                      height: isMobile ? 44 : 50,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
@@ -330,7 +348,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                                       AppColors.primaryDark,
                                     ]),
                         ),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(isMobile ? 13 : 16),
                         border: Border.all(
                           color: Colors.white.withValues(alpha: 0.45),
                           width: 1.5,
@@ -343,16 +361,16 @@ class _GlassRepresentativeCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: FaIcon(
                           FontAwesomeIcons.userTie,
                           color: Colors.white,
-                          size: 22,
+                          size: isMobile ? 18 : 22,
                         ),
                       ),
                     ),
 
-                    const SizedBox(width: 14),
+                    SizedBox(width: isMobile ? 10 : 14),
 
                     // Name + Verified Badge + Title
                     Expanded(
@@ -361,31 +379,37 @@ class _GlassRepresentativeCard extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                contact.nameEn,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w900,
-                                  color: AppColors.textPrimary,
-                                  fontSize: 17,
+                              Flexible(
+                                child: Text(
+                                  contact.nameEn,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.textPrimary,
+                                    fontSize: isMobile ? 15 : 17,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 5),
                               // Official Facebook Blue Verified Badge Icon
                               const Icon(
                                 Icons.verified_rounded,
                                 color: Color(0xFF1877F2),
-                                size: 19,
+                                size: 17,
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             contact.title,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: AppColors.textSecondary,
-                              fontSize: 12,
+                              fontSize: isMobile ? 11 : 12,
                               fontWeight: FontWeight.w500,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -393,12 +417,12 @@ class _GlassRepresentativeCard extends StatelessWidget {
                   ],
                 ),
 
-                const SizedBox(height: 18),
+                SizedBox(height: isMobile ? 12 : 16),
 
                 // Action Buttons
                 if (isWhatsAppOnly) ...[
                   _ActionButton(
-                    label: 'مراسلة ${contact.nameEn} عبر واتساب',
+                    label: 'مراسلة عبر واتساب',
                     icon: FontAwesomeIcons.whatsapp,
                     gradient: const LinearGradient(
                       colors: [Color(0xFF25D366), Color(0xFF128C7E)],
@@ -415,7 +439,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                   ),
                 ] else if (isFacebookOnly) ...[
                   _ActionButton(
-                    label: 'زيارة بروفايل ${contact.nameEn} على فيسبوك',
+                    label: 'زيارة صفحة فيسبوك',
                     icon: FontAwesomeIcons.facebookF,
                     gradient: const LinearGradient(
                       colors: [Color(0xFF1877F2), Color(0xFF0F52AC)],
@@ -446,7 +470,7 @@ class _GlassRepresentativeCard extends StatelessWidget {
                           },
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: _ActionButton(
                           label: 'فيسبوك',
@@ -495,35 +519,40 @@ class _ActionButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
           decoration: BoxDecoration(
             gradient: gradient,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: gradient.colors.first.withValues(alpha: 0.35),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               FaIcon(
                 icon,
                 color: Colors.white,
-                size: 17,
+                size: 16,
               ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 14,
+              const SizedBox(width: 7),
+              Flexible(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 13.5,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
