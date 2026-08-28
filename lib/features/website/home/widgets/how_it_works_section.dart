@@ -41,7 +41,7 @@ class HowItWorksSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
@@ -53,12 +53,14 @@ class HowItWorksSection extends StatelessWidget {
               const SectionBar(
                 icon: Icons.rocket_launch_rounded,
                 title: 'خطوات الشراء',
-                subtitle: 'امتلك وحدتك العقارية في 3 خطوات واضحة — من الاختيار حتى استلام المفتاح',
+                subtitle:
+                    'امتلك وحدتك العقارية في 3 خطوات واضحة — من الاختيار حتى استلام المفتاح',
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 24),
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isDesktop = constraints.maxWidth >= 800;
+                  final isMobile = constraints.maxWidth < 600;
 
                   if (isDesktop) {
                     return Row(
@@ -69,12 +71,12 @@ class HowItWorksSection extends StatelessWidget {
                             child: RevealOnScroll(
                               direction: RevealDirection.scale,
                               delayMilliseconds: i * 90,
-                              child: _buildStepCard(context, steps[i]),
+                              child: _buildDesktopStepCard(context, steps[i]),
                             ),
                           ),
                           if (i < steps.length - 1)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 70),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 70),
                               child: Icon(
                                 Icons.arrow_forward_rounded,
                                 color: AppColors.accent,
@@ -86,21 +88,20 @@ class HowItWorksSection extends StatelessWidget {
                     );
                   }
 
+                  // Mobile & Tablet: Streamlined Step Cards
                   return Column(
-                    children: steps.asMap().entries
-                        .map((entry) {
-                          final idx = entry.key;
-                          final s = entry.value;
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: RevealOnScroll(
-                              direction: RevealDirection.scale,
-                              delayMilliseconds: idx * 90,
-                              child: _buildStepCard(context, s),
-                            ),
-                          );
-                        })
-                        .toList(),
+                    children: steps.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final s = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: RevealOnScroll(
+                          direction: RevealDirection.fromBottom,
+                          delayMilliseconds: idx * 90,
+                          child: _buildMobileStepCard(context, s),
+                        ),
+                      );
+                    }).toList(),
                   );
                 },
               ),
@@ -111,7 +112,115 @@ class HowItWorksSection extends StatelessWidget {
     );
   }
 
-  Widget _buildStepCard(
+  Widget _buildMobileStepCard(
+    BuildContext context,
+    ({String stepNumber, IconData icon, String title, String desc}) step,
+  ) {
+    final theme = Theme.of(context);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColors.surface.withValues(alpha: 0.65),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.accent.withValues(alpha: 0.25),
+              width: 0.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Step number badge + icon
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.accentLight,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: Center(
+                  child: Icon(
+                    step.icon,
+                    size: 22,
+                    color: AppColors.accent,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 1.5,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.accentGradient,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'خطوة ${step.stepNumber}',
+                            style: const TextStyle(
+                              color: AppColors.textOnPrimary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            step.title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      step.desc,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        height: 1.45,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopStepCard(
     BuildContext context,
     ({String stepNumber, IconData icon, String title, String desc}) step,
   ) {

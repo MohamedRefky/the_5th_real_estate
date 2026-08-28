@@ -37,8 +37,9 @@ class TestimonialsSection extends StatelessWidget {
     ];
 
     return Container(
+    return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: const BoxDecoration(
         color: Colors.transparent,
       ),
@@ -52,33 +53,36 @@ class TestimonialsSection extends StatelessWidget {
                 title: 'آراء العملاء',
                 subtitle: 'ماذا يقول عملاؤنا عن تجربتهم مع The 5th Real Estate',
               ),
-              const SizedBox(height: 44),
+              const SizedBox(height: 24),
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isDesktop = constraints.maxWidth >= 900;
+                  final isMobile = constraints.maxWidth < 600;
+
                   if (isDesktop) {
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: testimonials.asMap().entries
                           .map(
-                              (entry) => Expanded(
-                                child: RevealOnScroll(
-                                  direction: RevealDirection.polaroidTilt,
-                                  delayMilliseconds: entry.key * 90,
-                                  child: _buildCard(context, entry.value),
-                                ),
-                              ))
+                            (entry) => Expanded(
+                              child: RevealOnScroll(
+                                direction: RevealDirection.polaroidTilt,
+                                delayMilliseconds: entry.key * 90,
+                                child: _buildCard(context, entry.value, false),
+                              ),
+                            ),
+                          )
                           .toList(),
                     );
                   }
                   return Column(
                     children: testimonials.asMap().entries
                         .map((entry) => Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.only(bottom: 10),
                               child: RevealOnScroll(
                                 direction: RevealDirection.polaroidTilt,
                                 delayMilliseconds: entry.key * 90,
-                                child: _buildCard(context, entry.value),
+                                child: _buildCard(context, entry.value, isMobile),
                               ),
                             ))
                         .toList(),
@@ -95,20 +99,21 @@ class TestimonialsSection extends StatelessWidget {
   Widget _buildCard(
     BuildContext context,
     ({String name, String role, String comment, int rating}) testimonial,
+    bool isMobile,
   ) {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 0 : 10),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: Container(
-            padding: const EdgeInsets.all(28),
+            padding: EdgeInsets.all(isMobile ? 16 : 28),
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: 0.65),
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
               border: Border.all(
                 color: AppColors.accent.withValues(alpha: 0.25),
                 width: 0.8,
@@ -116,8 +121,8 @@ class TestimonialsSection extends StatelessWidget {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.25),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
+                  blurRadius: isMobile ? 12 : 24,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -131,34 +136,35 @@ class TestimonialsSection extends StatelessWidget {
                     Icon(
                       Icons.format_quote_rounded,
                       color: AppColors.accent.withValues(alpha: 0.7),
-                      size: 32,
+                      size: isMobile ? 22 : 32,
                     ),
                     Row(
                       children: List.generate(
                         testimonial.rating,
-                        (i) => const Padding(
-                          padding: EdgeInsets.only(left: 2),
+                        (i) => Padding(
+                          padding: const EdgeInsets.only(left: 2),
                           child: Icon(
                             Icons.star_rounded,
-                            color: Color(0xFFFFB800),
-                            size: 19,
+                            color: const Color(0xFFFFB800),
+                            size: isMobile ? 15 : 19,
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: isMobile ? 10 : 16),
 
                 // Comment
                 Text(
                   testimonial.comment,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    height: 1.8,
+                    height: 1.55,
+                    fontSize: isMobile ? 13 : 14.5,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: isMobile ? 14 : 24),
 
                 // Divider
                 Container(
@@ -172,17 +178,17 @@ class TestimonialsSection extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: isMobile ? 10 : 16),
 
                 // Author
                 Row(
                   children: [
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: isMobile ? 36 : 44,
+                      height: isMobile ? 36 : 44,
                       decoration: BoxDecoration(
                         gradient: AppColors.accentGradient,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(isMobile ? 10 : 14),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.accent.withValues(alpha: 0.3),
@@ -194,32 +200,36 @@ class TestimonialsSection extends StatelessWidget {
                       child: Center(
                         child: Text(
                           testimonial.name[0],
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.textOnPrimary,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontSize: isMobile ? 14 : 18,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          testimonial.name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            testimonial.name,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: isMobile ? 13.5 : 15,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        ),
-                        Text(
-                          testimonial.role,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
+                          Text(
+                            testimonial.role,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: AppColors.textSecondary,
+                              fontSize: isMobile ? 11 : 12,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -229,5 +239,6 @@ class TestimonialsSection extends StatelessWidget {
         ),
       ),
     );
+  }
   }
 }
