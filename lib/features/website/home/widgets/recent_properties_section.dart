@@ -60,13 +60,33 @@ class _RecentPropertiesSectionState extends State<RecentPropertiesSection> {
                     return const SizedBox.shrink();
                   }
 
+                  if (isMobile) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      clipBehavior: Clip.none,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var i = 0; i < recentApartments.length; i++) ...[
+                            if (i > 0) const SizedBox(width: 12),
+                            SizedBox(
+                              width: 255,
+                              child: ApartmentCard(
+                                apartment: recentApartments[i],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    );
+                  }
+
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       final isDesktop = constraints.maxWidth >= 900;
-                      final isTablet = constraints.maxWidth >= 600;
-
-                      final count = isDesktop ? 3 : (isTablet ? 2 : 1);
-                      final spacing = isMobile ? 14.0 : 20.0;
+                      final count = isDesktop ? 3 : 2;
+                      const spacing = 20.0;
                       final cardWidth =
                           (constraints.maxWidth - (spacing * (count - 1))) /
                               count;
