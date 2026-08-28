@@ -65,41 +65,26 @@ class _HeroSectionState extends State<HeroSection>
       child: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            left: isMobile ? 16 : 24,
-            right: isMobile ? 16 : 24,
-            top: isMobile ? 78 : 88,
-            bottom: isMobile ? 32 : 55,
+            left: isMobile ? 20 : 32,
+            right: isMobile ? 20 : 32,
+            top: isMobile ? 72 : 90,
+            bottom: isMobile ? 36 : 60,
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 850),
+              constraints: const BoxConstraints(maxWidth: 820),
               child: Column(
                 children: [
-                  // Decorative Line
-                  _HeroEntrance(
-                    animation: _steps[0],
-                    child: Container(
-                      width: isMobile ? 60 : 90,
-                      height: 3,
-                      decoration: BoxDecoration(
-                        gradient: AppColors.accentGradient,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: isMobile ? 18 : 26),
-
                   // Brand Chip
                   _HeroEntrance(
-                    animation: _steps[1],
+                    animation: _steps[0],
                     child: GlassContainer(
                       borderRadius: 30,
                       padding: EdgeInsets.symmetric(
                         horizontal: isMobile ? 14 : 20,
-                        vertical: isMobile ? 6.5 : 9,
+                        vertical: isMobile ? 6 : 8,
                       ),
-                      borderColor: AppColors.accent.withValues(alpha: 0.4),
+                      borderColor: AppColors.accent.withValues(alpha: 0.45),
                       borderWidth: 0.5,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -107,7 +92,7 @@ class _HeroSectionState extends State<HeroSection>
                           Icon(
                             Icons.workspace_premium_rounded,
                             color: AppColors.accent,
-                            size: isMobile ? 15 : 18,
+                            size: isMobile ? 14 : 17,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -115,8 +100,8 @@ class _HeroSectionState extends State<HeroSection>
                             style: theme.textTheme.titleSmall?.copyWith(
                               color: AppColors.accent,
                               fontWeight: FontWeight.w800,
-                              fontSize: isMobile ? 12.5 : 15,
-                              letterSpacing: 0.5,
+                              fontSize: isMobile ? 12 : 14,
+                              letterSpacing: 0.6,
                             ),
                           ),
                         ],
@@ -124,24 +109,24 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  SizedBox(height: isMobile ? 18 : 26),
+                  SizedBox(height: isMobile ? 20 : 28),
 
-                  // Main Title — Ultra-Bright Luminous Font Color (Sharp & Pure)
+                  // Main Title
                   _HeroEntrance(
-                    animation: _steps[2],
+                    animation: _steps[1],
                     child: Text(
                       'عقارات\nالتجمع الخامس',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.displayLarge?.copyWith(
-                        fontSize: isMobile ? 36 : 58,
-                        height: 1.15,
+                        fontSize: isMobile ? 38 : 62,
+                        height: 1.12,
                         color: const Color(0xFFFFF6DF),
                         fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.3,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withValues(alpha: 0.90),
-                            blurRadius: 10,
+                            color: Colors.black.withValues(alpha: 0.88),
+                            blurRadius: 12,
                             offset: const Offset(0, 3),
                           ),
                         ],
@@ -151,40 +136,40 @@ class _HeroSectionState extends State<HeroSection>
 
                   SizedBox(height: isMobile ? 14 : 18),
 
-                  // Glass Tagline Pill
+                  // Tagline Pill
                   _HeroEntrance(
-                    animation: _steps[3],
+                    animation: _steps[2],
                     child: GlassContainer(
                       borderRadius: 30,
                       padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 14 : 26,
-                        vertical: isMobile ? 7 : 10,
+                        horizontal: isMobile ? 14 : 24,
+                        vertical: isMobile ? 6 : 9,
                       ),
-                      borderColor: AppColors.accent.withValues(alpha: 0.5),
+                      borderColor: AppColors.accent.withValues(alpha: 0.45),
                       borderWidth: 0.5,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.verified_rounded,
-                            size: isMobile ? 13 : 16,
+                            size: isMobile ? 13 : 15,
                             color: AppColors.accent,
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 7),
                           Text(
                             'وجهتك الحصرية لكل عقارات التجمع الخامس',
                             textAlign: TextAlign.center,
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: AppColors.accent,
-                              fontWeight: FontWeight.w800,
-                              fontSize: isMobile ? 12 : 15,
+                              fontWeight: FontWeight.w700,
+                              fontSize: isMobile ? 11.5 : 14,
                               letterSpacing: 0.3,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 7),
                           Icon(
                             Icons.verified_rounded,
-                            size: isMobile ? 13 : 16,
+                            size: isMobile ? 13 : 15,
                             color: AppColors.accent,
                           ),
                         ],
@@ -194,20 +179,20 @@ class _HeroSectionState extends State<HeroSection>
 
                   SizedBox(height: isMobile ? 16 : 22),
 
-                  // Subtitle Description — Calm, Soft, Crystal-Clear & Elegant
+                  // Subtitle
                   _HeroEntrance(
-                    animation: _steps[4],
+                    animation: _steps[3],
                     child: Text(
-                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والعمارات والفيلات بأسعار محدثة لحظة بلحظة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
+                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والعمارات والفيلات بأسعار محدثة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.88),
-                        fontWeight: FontWeight.w500,
-                        height: 1.65,
-                        fontSize: isMobile ? 13.5 : 16,
+                        color: Colors.white.withValues(alpha: 0.82),
+                        fontWeight: FontWeight.w400,
+                        height: 1.70,
+                        fontSize: isMobile ? 13 : 15.5,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withValues(alpha: 0.75),
+                            color: Colors.black.withValues(alpha: 0.70),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -216,21 +201,21 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  SizedBox(height: isMobile ? 18 : 28),
+                  SizedBox(height: isMobile ? 24 : 36),
 
-                  // Stats — Compact Inline Glass Console
+                  // Stats Strip
                   _HeroEntrance(
-                    animation: _steps[5],
+                    animation: _steps[4],
                     child: _HeroStatsConsole(isMobile: isMobile),
                   ),
 
-                  SizedBox(height: isMobile ? 24 : 36),
+                  SizedBox(height: isMobile ? 28 : 40),
 
                   // CTA Buttons
                   _HeroEntrance(
-                    animation: _steps[6],
+                    animation: _steps[5],
                     child: Wrap(
-                      spacing: 12,
+                      spacing: 14,
                       runSpacing: 12,
                       alignment: WrapAlignment.center,
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -240,9 +225,9 @@ class _HeroSectionState extends State<HeroSection>
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.accent.withValues(alpha: 0.4),
-                                blurRadius: isMobile ? 14 : 24,
-                                offset: const Offset(0, 4),
+                                color: AppColors.accent.withValues(alpha: 0.45),
+                                blurRadius: isMobile ? 16 : 28,
+                                offset: const Offset(0, 5),
                               ),
                             ],
                           ),
@@ -252,12 +237,12 @@ class _HeroSectionState extends State<HeroSection>
                                 onPressed: widget.onBrowseAll,
                                 icon: Icon(
                                   Icons.explore_rounded,
-                                  size: isMobile ? 18 : 22,
+                                  size: isMobile ? 18 : 21,
                                 ),
                                 label: Text(
                                   'تصفح جميع العقارات',
                                   style: TextStyle(
-                                    fontSize: isMobile ? 13 : 15,
+                                    fontSize: isMobile ? 13.5 : 15,
                                     fontWeight: FontWeight.w800,
                                   ),
                                 ),
@@ -265,8 +250,8 @@ class _HeroSectionState extends State<HeroSection>
                                   backgroundColor: AppColors.accent,
                                   foregroundColor: AppColors.textOnPrimary,
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: isMobile ? 22 : 34,
-                                    vertical: isMobile ? 13 : 18,
+                                    horizontal: isMobile ? 24 : 36,
+                                    vertical: isMobile ? 14 : 18,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
@@ -289,12 +274,12 @@ class _HeroSectionState extends State<HeroSection>
                           onPressed: widget.onContact,
                           icon: Icon(
                             Icons.chat_rounded,
-                            size: isMobile ? 16 : 20,
+                            size: isMobile ? 16 : 19,
                           ),
                           label: Text(
                             'تواصل معنا',
                             style: TextStyle(
-                              fontSize: isMobile ? 13 : 15,
+                              fontSize: isMobile ? 13.5 : 15,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -305,8 +290,8 @@ class _HeroSectionState extends State<HeroSection>
                               width: 1.2,
                             ),
                             padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 20 : 30,
-                              vertical: isMobile ? 13 : 18,
+                              horizontal: isMobile ? 22 : 32,
+                              vertical: isMobile ? 14 : 18,
                             ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -317,14 +302,18 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  SizedBox(height: isMobile ? 24 : 36),
+                  SizedBox(height: isMobile ? 28 : 44),
 
-                  Container(
-                    width: isMobile ? 60 : 90,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.accentGradient,
-                      borderRadius: BorderRadius.circular(2),
+                  // Decorative bottom line
+                  _HeroEntrance(
+                    animation: _steps[6],
+                    child: Container(
+                      width: isMobile ? 48 : 72,
+                      height: 2.5,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.accentGradient,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
                 ],
