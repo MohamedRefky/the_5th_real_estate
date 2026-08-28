@@ -23,14 +23,16 @@ class BuildingCard extends StatelessWidget {
     final theme = Theme.of(context);
     final areaImage = AppConstants.areaImageAssetFor(building.area);
 
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
     return HoverCard(
-      radius: 24,
+      radius: isMobile ? 18 : 24,
       borderColor: AppColors.accent.withValues(alpha: 0.25),
       hoverBorderColor: AppColors.accent,
       shadowColor: Colors.black.withValues(alpha: 0.35),
       hoverShadowColor: AppColors.accent.withValues(alpha: 0.22),
       builder: (context, isHovered) => ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: Material(
@@ -43,7 +45,7 @@ class BuildingCard extends StatelessWidget {
                   arguments: building.id,
                 );
               },
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -69,7 +71,7 @@ class BuildingCard extends StatelessWidget {
 
                         // ── Card Body ────────────────────────────────────
                         Padding(
-                          padding: const EdgeInsets.all(18),
+                          padding: EdgeInsets.all(isMobile ? 14 : 18),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

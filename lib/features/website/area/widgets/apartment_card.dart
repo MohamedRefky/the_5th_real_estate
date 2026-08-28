@@ -29,9 +29,10 @@ class ApartmentCard extends StatelessWidget {
     final theme = Theme.of(context);
     final apt = apartment;
     final areaImage = AppConstants.areaImageAssetFor(apt.area);
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return HoverCard(
-      radius: 24,
+      radius: isMobile ? 18 : 24,
       color: AppColors.surface,
       borderColor: AppColors.divider,
       hoverBorderColor: AppColors.accent,
@@ -49,19 +50,19 @@ class ApartmentCard extends StatelessWidget {
               arguments: apt.id,
             );
           },
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
           hoverColor: Colors.transparent,
           highlightColor: AppColors.accent.withValues(alpha: 0.1),
           splashColor: AppColors.accent.withValues(alpha: 0.15),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ── 1. Dominant Image Box (235px Height) ──────────────────
+                // ── 1. Dominant Image Box ──────────────────
                 SizedBox(
-                  height: 235,
+                  height: isMobile ? 190 : 235,
                   width: double.infinity,
                   child: Stack(
                     children: [
@@ -219,7 +220,7 @@ class ApartmentCard extends StatelessWidget {
 
                 // ── 2. Compact Card Body (Tight & No Empty Space) ──────
                 Padding(
-                  padding: const EdgeInsets.all(18),
+                  padding: EdgeInsets.all(isMobile ? 14 : 18),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,

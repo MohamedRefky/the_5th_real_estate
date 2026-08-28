@@ -26,9 +26,10 @@ class BuildingCoverHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final coverUrl = building.coverImageUrl;
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return SizedBox(
-      height: 235,
+      height: isMobile ? 190 : 235,
       width: double.infinity,
       child: Stack(
         children: [
