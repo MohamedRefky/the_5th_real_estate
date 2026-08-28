@@ -1,7 +1,5 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-
 import '../../../../core/theme/app_colors.dart';
 
 /// Floating glass top navigation bar for the home screen.
