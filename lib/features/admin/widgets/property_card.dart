@@ -28,8 +28,8 @@ class PropertyCard extends StatelessWidget {
         final imageBox = ClipRRect(
           borderRadius: BorderRadius.circular(12),
           child: SizedBox(
-            width: isMobile ? 100 : 140,
-            height: isMobile ? 90 : 102,
+            width: isMobile ? 96 : 140,
+            height: isMobile ? 86 : 102,
             child: Stack(
               fit: StackFit.expand,
               children: [
