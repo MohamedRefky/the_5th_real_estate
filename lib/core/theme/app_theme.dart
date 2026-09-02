@@ -211,6 +211,13 @@ class AppTheme {
           fontFamily: fontFamily,
         ),
       ),
+
+      // Text Selection & Cursor Theme
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: AppColors.accentLight2,
+        selectionColor: AppColors.accent.withValues(alpha: 0.35),
+        selectionHandleColor: AppColors.accentLight2,
+      ),
     );
   }
 }

@@ -74,6 +74,9 @@ class SearchableHeroBanner extends StatelessWidget {
                   ),
                   child: TextField(
                     onChanged: onSearchChanged,
+                    cursorColor: AppColors.accentLight2,
+                    cursorWidth: 2.2,
+                    cursorRadius: const Radius.circular(2),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.textPrimary,
                     ),
