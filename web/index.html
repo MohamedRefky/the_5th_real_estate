@@ -2,6 +2,28 @@
 <html>
 
 <head>
+  <!-- ── In-App Browser (Facebook/Instagram/Messenger) Detection & Redirect ── -->
+  <script>
+    (function () {
+      var ua = navigator.userAgent || navigator.vendor || window.opera || '';
+      var isInApp = /FBAN|FBAV|Instagram|Messenger/i.test(ua);
+      if (!isInApp) return;
+
+      var currentUrl = window.location.href;
+      var isAndroid = /Android/i.test(ua);
+      var isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+      if (isAndroid) {
+        // Redirect to Chrome using Android Intent Scheme
+        var cleanUrl = currentUrl.replace(/^https?:\/\//i, '');
+        window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end';
+      } else if (isIOS) {
+        // Signal immediate iOS prompt mode
+        document.documentElement.classList.add('in-app-ios');
+        window.__showInAppPrompt = true;
+      }
+    })();
+  </script>
 
   <base href="$FLUTTER_BASE_HREF">
 
@@ -60,11 +82,141 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: #F5F7FA;
       background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-navy) 50%, var(--bg-deep) 100%);
     }
 
+    /* ── iOS In-App Browser Prompt ─────────────────────────────── */
+    .in-app-ios #inapp-browser-prompt {
+      display: flex !important;
+    }
+
+    .in-app-ios #native-splash,
+    .in-app-ios flutter-view {
+      display: none !important;
+    }
+
+    #inapp-browser-prompt {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-navy) 50%, var(--bg-deep) 100%);
+      color: #F5F7FA;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      direction: rtl;
+    }
+
+    .inapp-top-hint {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      color: #E2E6EE;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .inapp-top-hint svg {
+      animation: bounceArrow 1.5s infinite ease-in-out;
+    }
+
+    @keyframes bounceArrow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .inapp-card {
+      max-width: 360px;
+      width: 100%;
+      background: rgba(18, 28, 43, 0.85);
+      border: 1px solid rgba(201, 205, 214, 0.25);
+      border-radius: 24px;
+      padding: 30px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .inapp-icon-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, var(--plat-1), var(--plat-2) 60%, var(--plat-3));
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+      margin-bottom: 18px;
+    }
+
+    .inapp-icon-box {
+      width: 100%;
+      height: 100%;
+      border-radius: 18.5px;
+      background: linear-gradient(160deg, var(--panel) 0%, #0d1520 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .inapp-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin: 0 0 10px 0;
+      background: linear-gradient(135deg, var(--plat-1) 0%, var(--plat-2) 55%, var(--plat-3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .inapp-desc {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-soft);
+      margin: 0 0 22px 0;
+    }
+
+    .inapp-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #E2E6EE 0%, #C9CDD6 60%, #94A0B2 100%);
+      color: #0A111D;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(201, 205, 214, 0.25);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .inapp-button:active {
+      transform: scale(0.98);
+    }
+
+    .inapp-hint {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    /* ── Native Splash Screen ─────────────────────────────────── */
     .splash-container {
       position: relative;
       z-index: 1;
@@ -195,6 +347,46 @@
 </head>
 
 <body>
+  <!-- ── In-App Browser Prompt Screen (iOS) ─────────────────────── -->
+  <div id="inapp-browser-prompt">
+    <div class="inapp-top-hint">
+      <span>اضغط على (•••) بالأعلى ثم "فتح في Safari"</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 17l9.2-9.2M17 17V8H8"/>
+      </svg>
+    </div>
+
+    <div class="inapp-card">
+      <div class="inapp-icon-ring">
+        <div class="inapp-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#E2E6EE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="38" height="38">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="rgba(226, 230, 238, 0.25)"></polygon>
+          </svg>
+        </div>
+      </div>
+
+      <h2 class="inapp-title">The 5th Real Estate</h2>
+      <p class="inapp-desc">
+        للحصول على أفضل تجربة وتصفح سلس لجميع الشقق والعمارات، يرجى فتح الموقع في متصفح <strong>Safari</strong> الخارجي.
+      </p>
+
+      <a id="open-safari-btn" href="#" target="_blank" rel="noopener noreferrer" class="inapp-button">
+        <span>افتح في Safari</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+
+      <p class="inapp-hint">
+        أو اضغط على زر المشاركة أو الثلاث نقاط <strong>(•••)</strong> بأعلى الشاشة واختر <strong>"فتح في المتصفح الخارجي"</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Native Splash Screen ─────────────────────────────────── -->
   <div id="native-splash" class="splash-container">
     <div class="splash-logo-ring">
       <div class="splash-logo-box">
@@ -223,6 +415,14 @@
 
   <script src="flutter_bootstrap.js" async></script>
   <script>
+    // Wire up Safari URL link if In-App prompt is active
+    if (window.__showInAppPrompt) {
+      var safariBtn = document.getElementById('open-safari-btn');
+      if (safariBtn) {
+        safariBtn.href = window.location.href;
+      }
+    }
+
     function removeNativeSplash() {
       const splash = document.getElementById('native-splash');
       if (splash && !splash.classList.contains('fade-out')) {
@@ -240,7 +440,6 @@
 
     // Listen to Flutter first frame event when the app actually draws its UI
     window.addEventListener('flutter-first-frame', function () {
-      // Small tick ensures CanvasKit has flushed the first rendered frame with loaded fonts
       requestAnimationFrame(function () {
         setTimeout(removeNativeSplash, 80);
       });
