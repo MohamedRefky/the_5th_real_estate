@@ -102,7 +102,7 @@ class _OtherUnitsInAreaSectionState extends State<OtherUnitsInAreaSection> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'الدور: ${apt.floorLabel} • ${apt.areaSqm.toInt()} م² • ${apt.rooms} غرف',
+                                    '${apt.floorLabel} • ${apt.areaSqm.toInt()} م² • ${apt.rooms} غرف',
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: AppColors.textSecondary,
                                     ),

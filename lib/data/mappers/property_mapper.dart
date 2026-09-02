@@ -12,7 +12,7 @@ Apartment propertyToApartment(admin.Property p) {
     id: p.id ?? '',
     title: p.projectName,
     description:
-        p.description ?? '${p.projectName} — ${p.unitType.label} ${p.floor}',
+        p.description ?? '${p.projectName} — ${p.unitType.label} ${p.floorLabel}',
     freeDescription: null,
     area: p.area,
     unitType: _unitType(p.unitType),

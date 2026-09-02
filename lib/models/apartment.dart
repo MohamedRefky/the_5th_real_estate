@@ -279,19 +279,29 @@ class Apartment {
     return '$thousands ألف جنيه';
   }
 
-  /// Human-readable floor label.
+  /// Human-readable floor label (e.g. 'الدور الأول', 'دور أرضي', 'روف').
   String get floorLabel {
-    if (floorString != null && floorString!.trim().isNotEmpty) {
-      return floorString!;
+    final str = floorString?.trim();
+    if (str != null && str.isNotEmpty) {
+      if (str.startsWith('دور') || str.startsWith('الدور')) return str;
+      if (str == 'أول' || str == 'اول') return 'الدور الأول';
+      if (str == 'تاني' || str == 'ثاني') return 'الدور الثاني';
+      if (str == 'تالت' || str == 'ثالث') return 'الدور الثالث';
+      if (str == 'رابع') return 'الدور الرابع';
+      if (str == 'خامس') return 'الدور الخامس';
+      if (str == 'أرضي' || str == 'ارضي') return 'دور أرضي';
+      if (str == 'بيزمنت') return 'بيزمنت';
+      if (str == 'روف') return 'روف';
+      return 'دور $str';
     }
     if (floor == -1) return 'بيزمنت';
-    if (floor == 0) return 'أرضي';
-    if (floor == 1) return 'الأول';
-    if (floor == 2) return 'الثاني';
-    if (floor == 3) return 'الثالث';
-    if (floor == 4) return 'الرابع';
-    if (floor == 5) return 'الخامس';
-    if (floor == 6) return 'الروف';
+    if (floor == 0) return 'دور أرضي';
+    if (floor == 1) return 'الدور الأول';
+    if (floor == 2) return 'الدور الثاني';
+    if (floor == 3) return 'الدور الثالث';
+    if (floor == 4) return 'الدور الرابع';
+    if (floor == 5) return 'الدور الخامس';
+    if (floor == 6) return 'روف';
     return 'الدور $floor';
   }
 

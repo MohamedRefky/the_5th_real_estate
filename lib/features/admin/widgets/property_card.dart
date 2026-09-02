@@ -184,7 +184,7 @@ class PropertyCard extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
-                  '${property.floor} — ${property.formattedPrice}',
+                  '${property.floorLabel} — ${property.formattedPrice}',
                   style: const TextStyle(
                     color: AppColors.accent,
                     fontSize: 14,

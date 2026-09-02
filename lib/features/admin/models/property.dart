@@ -229,6 +229,21 @@ class Property {
     );
   }
 
+  /// Human-readable floor label with 'الدور' prefix when needed.
+  String get floorLabel {
+    final f = floor.trim();
+    if (f.startsWith('دور') || f.startsWith('الدور')) return f;
+    if (f == 'أول' || f == 'اول') return 'الدور الأول';
+    if (f == 'تاني' || f == 'ثاني') return 'الدور الثاني';
+    if (f == 'تالت' || f == 'ثالث') return 'الدور الثالث';
+    if (f == 'رابع') return 'الدور الرابع';
+    if (f == 'خامس') return 'الدور الخامس';
+    if (f == 'أرضي' || f == 'ارضي') return 'دور أرضي';
+    if (f == 'بيزمنت') return 'بيزمنت';
+    if (f == 'روف') return 'روف';
+    return 'دور $f';
+  }
+
   /// Formatted EGP price for display.
   String get formattedPrice {
     if (price >= 1000000) {
