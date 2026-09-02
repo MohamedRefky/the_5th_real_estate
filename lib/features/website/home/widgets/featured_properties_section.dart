@@ -195,7 +195,7 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
                       ),
                       scrollDirection: Axis.horizontal,
                       itemCount: displayItems.length,
-                      separatorBuilder: (_, _) => SizedBox(width: spacing),
+                      separatorBuilder: (_,_) => SizedBox(width: spacing),
                       itemBuilder: (context, i) {
                         final item = displayItems[i];
                         return Align(
