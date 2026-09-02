@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
@@ -31,13 +29,9 @@ class BuildingCard extends StatelessWidget {
       hoverBorderColor: AppColors.accent,
       shadowColor: Colors.black.withValues(alpha: 0.35),
       hoverShadowColor: AppColors.accent.withValues(alpha: 0.22),
-      builder: (context, isHovered) => ClipRRect(
-        borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
+      builder: (context, isHovered) => Material(
+        color: Colors.transparent,
+        child: InkWell(
               onTap: () {
                 Navigator.pushNamed(
                   context,
@@ -146,8 +140,6 @@ class BuildingCard extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
     );
   }
 }

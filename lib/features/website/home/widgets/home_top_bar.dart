@@ -80,28 +80,41 @@ class HomeTopBar extends StatelessWidget {
         children: [
           // ── Main Glass Bar ──────────────────────────────────────────
           ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-              child: Container(
-                height: 60,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.background.withValues(alpha: 0.80),
-                  border: Border(
-                    bottom: BorderSide(
-                      color: AppColors.accent.withValues(alpha: 0.20),
-                      width: 0.8,
-                    ),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
+            child: isDesktop
+                ? BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                    child: _buildBar(context, theme, isDesktop),
+                  )
+                : _buildBar(context, theme, isDesktop),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBar(BuildContext context, ThemeData theme, bool isDesktop) {
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: isDesktop
+            ? AppColors.background.withValues(alpha: 0.80)
+            : AppColors.background.withValues(alpha: 0.95),
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.accent.withValues(alpha: 0.20),
+            width: 0.8,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
                   children: [
                     // ── Brand Logo ────────────────────────────────────────
                     InkWell(
@@ -220,12 +233,7 @@ class HomeTopBar extends StatelessWidget {
                     ],
                   ],
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+              );
   }
 
   void _openMobileMenuModal(BuildContext context) {

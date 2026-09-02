@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -126,25 +124,22 @@ class _AreaCardState extends State<AreaCard> {
                 ] else ...[
                   // Luxury Radial Gold Spotlight Backdrop
                   Positioned.fill(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            center: const Alignment(0.0, -0.6),
-                            radius: 1.15,
-                            colors: [
-                              AppColors.accent.withValues(
-                                alpha: _isHovered ? 0.22 : 0.08,
-                              ),
-                              AppColors.primaryMedium.withValues(
-                                alpha: _isHovered ? 0.45 : 0.25,
-                              ),
-                              AppColors.background.withValues(alpha: 0.88),
-                            ],
-                            stops: const [0.0, 0.55, 1.0],
-                          ),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(0.0, -0.6),
+                          radius: 1.15,
+                          colors: [
+                            AppColors.accent.withValues(
+                              alpha: _isHovered ? 0.22 : 0.08,
+                            ),
+                            AppColors.primaryMedium.withValues(
+                              alpha: _isHovered ? 0.45 : 0.25,
+                            ),
+                            AppColors.background.withValues(alpha: 0.88),
+                          ],
+                          stops: const [0.0, 0.55, 1.0],
                         ),
                       ),
                     ),

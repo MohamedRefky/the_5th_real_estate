@@ -141,6 +141,10 @@ class _RevealOnScrollState extends State<RevealOnScroll>
       animation: _animation,
       child: RepaintBoundary(child: widget.child),
       builder: (context, child) {
+        if (_animation.isCompleted) {
+          return child!;
+        }
+
         final progress = _animation.value;
         final invProgress = (1.0 - progress).clamp(0.0, 1.0);
         final isMobile = MediaQuery.of(context).size.width < 768;

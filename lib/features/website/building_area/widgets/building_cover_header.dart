@@ -1,6 +1,3 @@
-
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -37,9 +34,11 @@ class BuildingCoverHeader extends StatelessWidget {
               child: _HoverImage(
                 isHovered: isHovered,
                 child: Image.network(
-                  sanitizeImageUrl(coverUrl),
+                  optimizeImageUrl(coverUrl, maxWidth: 650),
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
+                  filterQuality: FilterQuality.medium,
+                  cacheWidth: 650,
                   errorBuilder: (context, error, stackTrace) =>
                       CoverImageFallback(assetPath: areaImage, iconAlpha: 0.15),
                 ),
@@ -77,21 +76,17 @@ class BuildingCoverHeader extends StatelessWidget {
           Positioned(
             top: 12,
             left: 12,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.60),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.accent.withValues(alpha: 0.6),
-                      width: 1,
-                    ),
-                  ),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: const Color(0xDC0A111D),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.accent.withValues(alpha: 0.6),
+                  width: 1,
+                ),
+              ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
@@ -113,8 +108,6 @@ class BuildingCoverHeader extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-          ),
 
           // Price tag floating on image (bottom right)
           if (building.startingPrice > 0)

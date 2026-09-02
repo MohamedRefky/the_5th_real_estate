@@ -68,24 +68,40 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
           }
           final buildings = _controller.filteredBuildings;
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                // ── Hero Banner ──────────────────────────────────────
-                SearchableHeroBanner(
+          final screenWidth = MediaQuery.sizeOf(context).width;
+          final isMobile = screenWidth < 600;
+          final double spacing = isMobile ? 14.0 : 20.0;
+          int count = 1;
+          if (screenWidth >= 950) {
+            count = 3;
+          } else if (screenWidth >= 640) {
+            count = 2;
+          }
+
+          return CustomScrollView(
+            slivers: [
+              // ── Hero Banner ──────────────────────────────────────
+              SliverToBoxAdapter(
+                child: SearchableHeroBanner(
                   title: 'عمارات ${widget.areaName}',
-                  subtitle: 'استكشف العمارات والمشاريع السكنية المتاحة في ${widget.areaName} وتفاصيل نسبة التنفيذ والوحدات المتاحة',
+                  subtitle:
+                      'استكشف العمارات والمشاريع السكنية المتاحة في ${widget.areaName} وتفاصيل نسبة التنفيذ والوحدات المتاحة',
                   searchHint: 'ابحث باسم العمارة أو تفاصيل المشروع...',
                   onSearchChanged: _controller.onSearchChanged,
                 ),
+              ),
 
-                // ── Main Content Area ─────────────────────────────────
-                Center(
+              // ── Filters & Count Header ────────────────────────────
+              SliverToBoxAdapter(
+                child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1200),
                     child: Padding(
-                      padding: EdgeInsets.all(
-                        MediaQuery.sizeOf(context).width < 600 ? 14 : 24,
+                      padding: EdgeInsets.fromLTRB(
+                        isMobile ? 14 : 24,
+                        isMobile ? 14 : 24,
+                        isMobile ? 14 : 24,
+                        16,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,64 +162,78 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
                             icon: Icons.apartment_rounded,
                             text: 'تم العثور على ${buildings.length} عمارة متاحة',
                           ),
-
-                          const SizedBox(height: 28),
-
-                          // Building Grid / List
-                          if (buildings.isEmpty)
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 64),
-                                child: Text(
-                                  'لا توجد عمارات مطابقة للبحث حالياً',
-                                  style: TextStyle(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            )
-                          else
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                final isSmall = constraints.maxWidth < 600;
-                                final double spacing = isSmall ? 14.0 : 20.0;
-                                int count = 1;
-                                if (constraints.maxWidth >= 950) {
-                                  count = 3;
-                                } else if (constraints.maxWidth >= 640) {
-                                  count = 2;
-                                }
-                                final cardWidth =
-                                    (constraints.maxWidth - (spacing * (count - 1))) /
-                                        count;
-
-                                return Wrap(
-                                  spacing: spacing,
-                                  runSpacing: spacing,
-                                  children: buildings.asMap().entries.map((entry) {
-                                    final index = entry.key;
-                                    final bld = entry.value;
-                                    return SizedBox(
-                                      width: cardWidth,
-                                      child: RevealOnScroll(
-                                        delayMilliseconds: (index % 4) * 80,
-                                        child: BuildingCard(building: bld),
-                                      ),
-                                    );
-                                  }).toList(),
-                                );
-                              },
-                            ),
-
-                          const SizedBox(height: 48),
                         ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              // ── Building Grid / Empty State ───────────────────────
+              if (buildings.isEmpty)
+                const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 64),
+                      child: Text(
+                        'لا توجد عمارات مطابقة للبحث حالياً',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 14 : 24,
+                        ),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final rawWidth =
+                                (constraints.maxWidth - (spacing * (count - 1))) /
+                                    count;
+                            final cardWidth = (count == 1 && constraints.maxWidth > 420)
+                                ? 360.0
+                                : rawWidth;
+
+                            return Wrap(
+                              spacing: spacing,
+                              runSpacing: spacing,
+                              alignment: (count == 1 && constraints.maxWidth > 420)
+                                  ? WrapAlignment.center
+                                  : WrapAlignment.start,
+                              children: buildings.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final bld = entry.value;
+                                return SizedBox(
+                                  width: cardWidth,
+                                  child: isMobile
+                                      ? BuildingCard(building: bld)
+                                      : RevealOnScroll(
+                                          delayMilliseconds: (index % 4) * 70,
+                                          child: BuildingCard(building: bld),
+                                        ),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 48),
+              ),
+            ],
           );
         },
       ),

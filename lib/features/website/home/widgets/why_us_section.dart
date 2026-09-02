@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -120,16 +118,12 @@ class WhyUsSection extends StatelessWidget {
     bool isMobile,
   ) {
     final theme = Theme.of(context);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 10 : 20,
-            vertical: isMobile ? 16 : 26,
-          ),
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 10 : 20,
+        vertical: isMobile ? 16 : 26,
+      ),
           decoration: BoxDecoration(
             color: AppColors.surface.withValues(alpha: 0.65),
             borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
@@ -221,8 +215,6 @@ class WhyUsSection extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
+        );
   }
 }

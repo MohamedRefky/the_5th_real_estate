@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -100,12 +98,8 @@ class TestimonialsSection extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: isMobile ? 0 : 10),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Container(
-            padding: EdgeInsets.all(isMobile ? 16 : 28),
+      child: Container(
+        padding: EdgeInsets.all(isMobile ? 16 : 28),
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: 0.65),
               borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
@@ -231,8 +225,6 @@ class TestimonialsSection extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:the_5th_real_estate/core/theme/app_colors.dart';
@@ -194,12 +192,8 @@ class _ContactCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Container(
-            padding: EdgeInsets.all(isMobile ? 14 : 28),
+      child: Container(
+        padding: EdgeInsets.all(isMobile ? 14 : 28),
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: 0.65),
               borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
@@ -301,8 +295,6 @@ class _ContactCard extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 }

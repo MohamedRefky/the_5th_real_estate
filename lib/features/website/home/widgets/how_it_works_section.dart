@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:the_5th_real_estate/core/widgets/reveal_on_scroll.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -112,12 +111,8 @@ class HowItWorksSection extends StatelessWidget {
   ) {
     final theme = Theme.of(context);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
             color: AppColors.surface.withValues(alpha: 0.65),
             borderRadius: BorderRadius.circular(16),
@@ -209,9 +204,7 @@ class HowItWorksSection extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildDesktopStepCard(
@@ -222,12 +215,8 @@ class HowItWorksSection extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-          child: Container(
-            padding: const EdgeInsets.all(28),
+      child: Container(
+        padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               color: AppColors.surface.withValues(alpha: 0.65),
               borderRadius: BorderRadius.circular(24),
@@ -293,8 +282,6 @@ class HowItWorksSection extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 }

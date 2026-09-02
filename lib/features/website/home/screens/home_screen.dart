@@ -146,14 +146,18 @@ class _HomeScreenState extends State<HomeScreen> {
           // ── 1. Full-Page 3D Zoom Background ─────────────────────────
           Positioned.fill(
             child: IgnorePointer(
-              child: _ZoomingBackground(controller: _scrollController),
+              child: RepaintBoundary(
+                child: _ZoomingBackground(controller: _scrollController),
+              ),
             ),
           ),
 
           // ── 2. Dynamic Gradient Overlay (darkens on scroll) ─────────
           Positioned.fill(
             child: IgnorePointer(
-              child: _GradientOverlay(controller: _scrollController),
+              child: RepaintBoundary(
+                child: _GradientOverlay(controller: _scrollController),
+              ),
             ),
           ),
 

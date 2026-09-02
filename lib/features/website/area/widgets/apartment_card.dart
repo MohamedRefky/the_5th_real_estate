@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
@@ -62,7 +60,7 @@ class ApartmentCard extends StatelessWidget {
               children: [
                 // ── 1. Dominant Image Box ──────────────────
                 AspectRatio(
-                  aspectRatio: 16 / 11,
+                  aspectRatio: 16 / 10.5,
                   child: Stack(
                     children: [
                       // Background Image (Cover URL > Area Asset > Fallback)
@@ -74,10 +72,11 @@ class ApartmentCard extends StatelessWidget {
                             duration: const Duration(milliseconds: 350),
                             curve: Curves.easeOutCubic,
                             child: Image.network(
-                              sanitizeImageUrl(apt.coverImageUrl!),
+                              optimizeImageUrl(apt.coverImageUrl!, maxWidth: 650),
                               fit: BoxFit.cover,
                               alignment: const Alignment(0.0, -0.15),
-                              filterQuality: FilterQuality.high,
+                              filterQuality: FilterQuality.medium,
+                              cacheWidth: 650,
                               errorBuilder: (_, _, _) => areaImage != null
                                   ? Image.asset(areaImage, fit: BoxFit.cover)
                                   : const CoverImageFallback(),
@@ -154,45 +153,39 @@ class ApartmentCard extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isMobile ? 8 : 10,
-                                    vertical: isMobile ? 3.5 : 5,
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isMobile ? 8 : 10,
+                                vertical: isMobile ? 3.5 : 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xDC0A111D),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.6,
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.60),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: AppColors.accent.withValues(
-                                        alpha: 0.6,
-                                      ),
-                                      width: 1,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.home_work_rounded,
+                                    size: isMobile ? 11 : 13,
+                                    color: AppColors.accent,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'شقة',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: isMobile ? 10 : 11.5,
                                     ),
                                   ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.home_work_rounded,
-                                        size: isMobile ? 11 : 13,
-                                        color: AppColors.accent,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'شقة',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: isMobile ? 10 : 11.5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                ],
                               ),
                             ),
                             if (apt.isUnderConstruction) ...[
@@ -225,7 +218,10 @@ class ApartmentCard extends StatelessWidget {
 
                 // ── 2. Compact Card Body (Tight & No Empty Space) ──────
                 Padding(
-                  padding: EdgeInsets.all(isMobile ? 11 : 18),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 11 : 16,
+                    vertical: isMobile ? 10 : 13,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -255,16 +251,16 @@ class ApartmentCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           height: 1.4,
                         ),
-                        maxLines: isMobile ? 1 : 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      SizedBox(height: isMobile ? 6 : 10),
+                      SizedBox(height: isMobile ? 6 : 8),
 
                       // Info Chips Row
                       Wrap(
                         spacing: isMobile ? 4 : 6,
-                        runSpacing: isMobile ? 4 : 6,
+                        runSpacing: isMobile ? 4 : 5,
                         children: [
                           InfoChip(
                             icon: Icons.home_work_rounded,
@@ -334,7 +330,7 @@ class ApartmentCard extends StatelessWidget {
                         ),
                       ],
 
-                      SizedBox(height: isMobile ? 10 : 16),
+                      SizedBox(height: isMobile ? 8 : 10),
 
                       // Action buttons (WhatsApp + details)
                       ApartmentActionButtons(apartment: apt),

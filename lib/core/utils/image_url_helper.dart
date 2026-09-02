@@ -76,3 +76,25 @@ String sanitizeImageUrl(String rawUrl) {
 
   return url;
 }
+
+/// Downsamples and optimizes image URLs for high-performance rendering.
+///
+/// For Cloudinary URLs, automatically applies `f_auto,q_auto,w_$maxWidth,c_limit`
+/// so mobile browsers download a ~40KB WebP/AVIF thumbnail instead of a 4MB 4K photo.
+String optimizeImageUrl(String rawUrl, {int maxWidth = 650}) {
+  final url = sanitizeImageUrl(rawUrl);
+  if (url.isEmpty) return '';
+
+  if (url.contains('res.cloudinary.com') && url.contains('/upload/')) {
+    // Avoid double-inserting transformations if already present
+    if (!url.contains('/upload/f_auto') && !url.contains('/upload/w_')) {
+      return url.replaceFirst(
+        '/upload/',
+        '/upload/f_auto,q_auto,w_$maxWidth,c_limit/',
+      );
+    }
+  }
+
+  return url;
+}
+

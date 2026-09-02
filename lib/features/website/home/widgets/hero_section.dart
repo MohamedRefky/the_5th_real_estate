@@ -402,34 +402,28 @@ class _HeroStatsConsole extends StatelessWidget {
   }
 
   Widget _buildMobile() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.28),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _stats
-                .map((s) => Expanded(
-                      child: _StatChip(
-                        icon: s.icon,
-                        value: s.value,
-                        label: s.label,
-                        isMobile: true,
-                      ),
-                    ))
-                .toList(),
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.surface.withValues(alpha: 0.75),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.28),
+          width: 1,
         ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: _stats
+            .map((s) => Expanded(
+                  child: _StatChip(
+                    icon: s.icon,
+                    value: s.value,
+                    label: s.label,
+                    isMobile: true,
+                  ),
+                ))
+            .toList(),
       ),
     );
   }

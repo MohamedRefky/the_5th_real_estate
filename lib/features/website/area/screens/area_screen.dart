@@ -48,40 +48,51 @@ class _AreaScreenState extends State<AreaScreen> {
         listenable: _controller,
         builder: (context, _) {
           final apartments = _controller.filteredApartments;
+          final screenWidth = MediaQuery.sizeOf(context).width;
+          final isMobile = screenWidth < 600;
+          final double spacing = isMobile ? 14.0 : 20.0;
+          int count = 1;
+          if (screenWidth >= 950) {
+            count = 3;
+          } else if (screenWidth >= 640) {
+            count = 2;
+          }
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                // ── Animated Header Banner ────────────────────────────
-                SearchableHeroBanner(
+          return CustomScrollView(
+            slivers: [
+              // ── Animated Header Banner ────────────────────────────
+              SliverToBoxAdapter(
+                child: SearchableHeroBanner(
                   title: 'شقق ${widget.areaName}',
-                  subtitle: 'تصفح أرقى الوحدات السكنية المتاحة واستخدم أدوات الفلترة للوصول لطلبك',
+                  subtitle:
+                      'تصفح أرقى الوحدات السكنية المتاحة واستخدم أدوات الفلترة للوصول لطلبك',
                   searchHint: 'ابحث بعنوان الشقة أو السعر...',
                   onSearchChanged: _controller.onSearchChanged,
                 ),
+              ),
 
-                // ── Main Content Area ─────────────────────────────────
-                Center(
+              // ── Filters & Count Header ────────────────────────────
+              SliverToBoxAdapter(
+                child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1200),
                     child: Padding(
-                      padding: EdgeInsets.all(
-                        MediaQuery.sizeOf(context).width < 600 ? 14 : 24,
+                      padding: EdgeInsets.fromLTRB(
+                        isMobile ? 14 : 24,
+                        isMobile ? 14 : 24,
+                        isMobile ? 14 : 24,
+                        16,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // ── Filters Section ──────────────────────────────
                           RevealOnScroll(
                             child: FilterSection(
                               onFiltersChanged: _controller.applyFilters,
                               onReset: _controller.resetFilters,
                             ),
                           ),
-
-                          const SizedBox(height: 28),
-
-                          // ── Result Count Badge ───────────────────────────
+                          const SizedBox(height: 24),
                           RevealOnScroll(
                             delayMilliseconds: 100,
                             child: ResultCountBadge(
@@ -90,72 +101,86 @@ class _AreaScreenState extends State<AreaScreen> {
                                   'تم العثور على ${apartments.length} شقة متاحة',
                             ),
                           ),
-
-                          const SizedBox(height: 28),
-
-                          // ── Apartment Grid ───────────────────────────────
-                          if (_controller.loading)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 64),
-                              child: Center(
-                                child: CircularProgressIndicator(color: Colors.white),
-                              ),
-                            )
-                          else if (apartments.isEmpty)
-                            const RevealOnScroll(
-                              child: EmptyStateView(
-                                icon: Icons.search_off_rounded,
-                                title: 'لا توجد شقق مطابقة للبحث',
-                                subtitle: 'جرب تغيير الفلاتر أو إعادة تعيين البحث للحصول على نتائج أخرى',
-                              ),
-                            )
-                          else
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                final isSmall = constraints.maxWidth < 600;
-                                final double spacing = isSmall ? 14.0 : 20.0;
-                                int count = 1;
-                                if (constraints.maxWidth >= 950) {
-                                  count = 3;
-                                } else if (constraints.maxWidth >= 640) {
-                                  count = 2;
-                                }
-                                final rawWidth =
-                                    (constraints.maxWidth - (spacing * (count - 1))) /
-                                        count;
-                                final cardWidth = (count == 1 && constraints.maxWidth > 420)
-                                    ? 360.0
-                                    : rawWidth;
-
-                                return Wrap(
-                                  spacing: spacing,
-                                  runSpacing: spacing,
-                                  alignment: (count == 1 && constraints.maxWidth > 420)
-                                      ? WrapAlignment.center
-                                      : WrapAlignment.start,
-                                  children: apartments.asMap().entries.map((entry) {
-                                    final index = entry.key;
-                                    final apt = entry.value;
-                                    return SizedBox(
-                                      width: cardWidth,
-                                      child: RevealOnScroll(
-                                        delayMilliseconds: (index % 4) * 80,
-                                        child: ApartmentCard(apartment: apt),
-                                      ),
-                                    );
-                                  }).toList(),
-                                );
-                              },
-                            ),
-
-                          const SizedBox(height: 48),
                         ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              // ── Apartment Grid or Empty / Loading States ─────────
+              if (_controller.loading)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 64),
+                    child: Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                  ),
+                )
+              else if (apartments.isEmpty)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 48),
+                    child: RevealOnScroll(
+                      child: EmptyStateView(
+                        icon: Icons.search_off_rounded,
+                        title: 'لا توجد شقق مطابقة للبحث',
+                        subtitle:
+                            'جرب تغيير الفلاتر أو إعادة تعيين البحث للحصول على نتائج أخرى',
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1200),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 14 : 24,
+                        ),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final rawWidth =
+                                (constraints.maxWidth - (spacing * (count - 1))) /
+                                    count;
+                            final cardWidth = (count == 1 && constraints.maxWidth > 420)
+                                ? 360.0
+                                : rawWidth;
+
+                            return Wrap(
+                              spacing: spacing,
+                              runSpacing: spacing,
+                              alignment: (count == 1 && constraints.maxWidth > 420)
+                                  ? WrapAlignment.center
+                                  : WrapAlignment.start,
+                              children: apartments.asMap().entries.map((entry) {
+                                final index = entry.key;
+                                final apt = entry.value;
+                                return SizedBox(
+                                  width: cardWidth,
+                                  child: isMobile
+                                      ? ApartmentCard(apartment: apt)
+                                      : RevealOnScroll(
+                                          delayMilliseconds: (index % 4) * 70,
+                                          child: ApartmentCard(apartment: apt),
+                                        ),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 48),
+              ),
+            ],
           );
         },
       ),

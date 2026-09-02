@@ -91,11 +91,16 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
 
   void _startAutoScroll() {
     _scrollTimer?.cancel();
-    _scrollTimer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
+    _scrollTimer = Timer.periodic(const Duration(milliseconds: 32), (timer) {
       if (!mounted ||
           _isUserInteracting ||
           !_scrollController.hasClients ||
           !_scrollController.position.hasContentDimensions) {
+        return;
+      }
+      final width = MediaQuery.maybeSizeOf(context)?.width ?? 1000;
+      if (width < 600) {
+        // On mobile touch screens, let user swipe smoothly without timer contention
         return;
       }
       final maxScroll = _scrollController.position.maxScrollExtent;
@@ -180,30 +185,33 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
                     }
                     return false;
                   },
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 16 : 24,
-                      vertical: isMobile ? 10 : 20,
-                    ),
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var i = 0; i < displayItems.length; i++) ...[
-                          if (i > 0) SizedBox(width: spacing),
-                          SizedBox(
+                  child: SizedBox(
+                    height: isMobile ? 420 : 455,
+                    child: ListView.separated(
+                      controller: _scrollController,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16 : 24,
+                        vertical: isMobile ? 4 : 8,
+                      ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: displayItems.length,
+                      separatorBuilder: (_, _) => SizedBox(width: spacing),
+                      itemBuilder: (context, i) {
+                        final item = displayItems[i];
+                        return Align(
+                          alignment: Alignment.topCenter,
+                          child: SizedBox(
                             width: cardWidth,
-                            child: displayItems[i].apartment != null
+                            child: item.apartment != null
                                 ? ApartmentCard(
-                                    apartment: displayItems[i].apartment!,
+                                    apartment: item.apartment!,
                                   )
                                 : BuildingCard(
-                                    building: displayItems[i].building!,
+                                    building: item.building!,
                                   ),
                           ),
-                        ],
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ),

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -33,12 +31,8 @@ class SectionBar extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // ── 1. Glowing Translucent Glass Icon Badge ──────────────────
-          ClipRRect(
-            borderRadius: BorderRadius.circular(isMobile ? 16 : 20),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: Container(
-                padding: EdgeInsets.all(isMobile ? 11 : 16),
+          Container(
+            padding: EdgeInsets.all(isMobile ? 11 : 16),
                 decoration: BoxDecoration(
                   color: AppColors.accentLight,
                   borderRadius: BorderRadius.circular(isMobile ? 16 : 20),
@@ -74,8 +68,6 @@ class SectionBar extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          ),
 
           SizedBox(height: isMobile ? 10 : 16),
 
