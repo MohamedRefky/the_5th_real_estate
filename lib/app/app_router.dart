@@ -29,6 +29,16 @@ class AppRouter {
   AppRouter._();
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    final routeName = settings.name ?? '';
+
+    // Automatically guard all admin routes other than the login page
+    if (routeName.startsWith('/admin') && routeName != RoutesNames.adminLogin) {
+      return _buildRoute(
+        const AdminRouteGuard(child: AdminDashboardScreen()),
+        settings,
+      );
+    }
+
     switch (settings.name) {
       case RoutesNames.home:
         return _buildRoute(const HomeScreen(), settings);
