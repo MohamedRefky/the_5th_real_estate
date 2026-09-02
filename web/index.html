@@ -218,12 +218,17 @@
 
     /* ── Native Splash Screen ─────────────────────────────────── */
     .splash-container {
-      position: relative;
-      z-index: 1;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 99998;
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-navy) 50%, var(--bg-deep) 100%);
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 22px;
       padding: 32px;
       animation: containerFadeIn 0.8s ease-out;
@@ -437,8 +442,9 @@
         }, 420);
       }
     }
+    window.removeNativeSplash = removeNativeSplash;
 
-    // Listen to Flutter first frame event when the app actually draws its UI
+    // Listen to Flutter first frame event as additional fallback
     window.addEventListener('flutter-first-frame', function () {
       requestAnimationFrame(function () {
         setTimeout(removeNativeSplash, 80);
@@ -454,8 +460,8 @@
       }
     });
 
-    // Fallback safety timeout
-    setTimeout(removeNativeSplash, 5000);
+    // Generous fallback safety timeout (30 seconds) in case of fatal network crash
+    setTimeout(removeNativeSplash, 30000);
   </script>
 </body>
 
