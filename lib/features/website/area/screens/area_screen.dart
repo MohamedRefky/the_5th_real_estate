@@ -120,13 +120,19 @@ class _AreaScreenState extends State<AreaScreen> {
                                 } else if (constraints.maxWidth >= 640) {
                                   count = 2;
                                 }
-                                final cardWidth =
+                                final rawWidth =
                                     (constraints.maxWidth - (spacing * (count - 1))) /
                                         count;
+                                final cardWidth = (count == 1 && constraints.maxWidth > 420)
+                                    ? 360.0
+                                    : rawWidth;
 
                                 return Wrap(
                                   spacing: spacing,
                                   runSpacing: spacing,
+                                  alignment: (count == 1 && constraints.maxWidth > 420)
+                                      ? WrapAlignment.center
+                                      : WrapAlignment.start,
                                   children: apartments.asMap().entries.map((entry) {
                                     final index = entry.key;
                                     final apt = entry.value;

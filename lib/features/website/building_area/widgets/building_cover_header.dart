@@ -29,7 +29,7 @@ class BuildingCoverHeader extends StatelessWidget {
     final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return AspectRatio(
-      aspectRatio: 16 / 10.5,
+      aspectRatio: 16 / 11,
       child: Stack(
         children: [
           if (coverUrl != null && coverUrl.isNotEmpty) ...[

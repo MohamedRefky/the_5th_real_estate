@@ -61,9 +61,8 @@ class ApartmentCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // ── 1. Dominant Image Box ──────────────────
-                SizedBox(
-                  height: isMobile ? 150 : 235,
-                  width: double.infinity,
+                AspectRatio(
+                  aspectRatio: 16 / 11,
                   child: Stack(
                     children: [
                       // Background Image (Cover URL > Area Asset > Fallback)
@@ -77,7 +76,7 @@ class ApartmentCard extends StatelessWidget {
                             child: Image.network(
                               sanitizeImageUrl(apt.coverImageUrl!),
                               fit: BoxFit.cover,
-                              alignment: Alignment.center,
+                              alignment: const Alignment(0.0, -0.15),
                               filterQuality: FilterQuality.high,
                               errorBuilder: (_, _, _) => areaImage != null
                                   ? Image.asset(areaImage, fit: BoxFit.cover)
@@ -92,9 +91,9 @@ class ApartmentCard extends StatelessWidget {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Colors.black.withValues(alpha: 0.25),
+                                  Colors.black.withValues(alpha: 0.18),
                                   Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.55),
+                                  Colors.black.withValues(alpha: 0.45),
                                 ],
                               ),
                             ),
