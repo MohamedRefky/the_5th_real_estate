@@ -1,7 +1,7 @@
 library;
 
-import '../../../models/apartment.dart';
 import '../../../core/utils/image_url_helper.dart';
+import '../../../models/apartment.dart';
 import 'property.dart' show normalizeArea;
 
 /// Structured building listing model matching the Firestore
@@ -122,8 +122,7 @@ class AdminBuilding {
 
   /// Facade / main image — always the first image in [imageUrls].
   /// Stored separately in Firestore so facade and interior photos never mix.
-  String? get facadeImageUrl =>
-      imageUrls.isNotEmpty ? imageUrls.first : null;
+  String? get facadeImageUrl => imageUrls.isNotEmpty ? imageUrls.first : null;
 
   /// The rest of the building images (interior, floors, amenities, ...).
   List<String> get detailImageUrls =>
@@ -253,11 +252,13 @@ class AdminBuilding {
 
     return AdminBuilding(
       id: docId,
-      name: (data['name'] as String?)?.trim() ??
+      name:
+          (data['name'] as String?)?.trim() ??
           (data['projectName'] as String?)?.trim() ??
           (data['title'] as String?)?.trim() ??
           '',
-      description: (data['description'] as String?)?.trim() ??
+      description:
+          (data['description'] as String?)?.trim() ??
           (data['details'] as String?)?.trim() ??
           '',
       area: normalizeArea(rawArea),

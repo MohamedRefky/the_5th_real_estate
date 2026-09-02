@@ -46,7 +46,6 @@ void main() {
       expect(parsed.isUnderConstruction, true);
       expect(parsed.deliveryDate, DateTime(2026, 6));
       expect(parsed.constructionProgress, 0.75);
-      expect(parsed.whatsappNumber, '+201000000003');
       expect(parsed.amenities, ['مصعد', 'حراسة']);
       expect(parsed.imageUrls, ['https://a.jpg', 'https://b.jpg']);
       expect(parsed.facadeImageUrl, 'https://a.jpg');

@@ -26,7 +26,7 @@ class BuildingCoverHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final coverUrl = building.coverImageUrl;
-    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
 
     return AspectRatio(
       aspectRatio: 16 / 11,

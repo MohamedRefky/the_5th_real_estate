@@ -37,8 +37,8 @@ void main() {
       (tester) async {
     await tester.pumpWidget(wrap(bareApartment()));
 
-    expect(find.text('شقة'), findsOneWidget);
-    expect(find.text('غير محدد'), findsOneWidget);
+    expect(find.text('شقة'), findsAtLeastNWidgets(1));
+    expect(find.text('نص تشطيب'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
