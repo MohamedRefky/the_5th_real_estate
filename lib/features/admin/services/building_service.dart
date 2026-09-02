@@ -162,12 +162,23 @@ class BuildingService {
         .where((url) => !removedImageUrls.contains(url))
         .toList();
     final docRef = await _resolveDocumentRef(id, building.area);
-    await docRef.set(
-      building
-          .copyWith(imageUrls: [...keptUrls, ...urls])
-          .toFirestore(isUpdate: true),
-      SetOptions(merge: true),
-    );
+    final targetRef = _units(building.area).doc(id);
+    final updatedData = building
+        .copyWith(imageUrls: [...keptUrls, ...urls])
+        .toFirestore(isUpdate: true);
+
+    if (docRef.path != targetRef.path) {
+      await targetRef.set(updatedData, SetOptions(merge: true));
+      try {
+        await docRef.delete();
+      } catch (e) {
+        if (kDebugMode) {
+          print('Failed to delete old building doc after relocation: $e');
+        }
+      }
+    } else {
+      await docRef.set(updatedData, SetOptions(merge: true));
+    }
 
     try {
       final legacyRef = FirebaseFirestore.instance
@@ -175,12 +186,7 @@ class BuildingService {
           .doc(id);
       final legacySnap = await legacyRef.get();
       if (legacySnap.exists) {
-        await legacyRef.set(
-          building
-              .copyWith(imageUrls: [...keptUrls, ...urls])
-              .toFirestore(isUpdate: true),
-          SetOptions(merge: true),
-        );
+        await legacyRef.delete();
       }
     } catch (_) {}
 
@@ -202,16 +208,22 @@ class BuildingService {
   }
 
   /// Deletes the building document (from every location it may live in) and
-  /// its images from Storage.
+  /// its images from Storage. Does not silently suppress primary deletion failure.
   Future<void> delete(String id, AdminBuilding building) async {
     if (building.imageUrls.isNotEmpty) {
       await _deleteStorageFiles(building.imageUrls);
     }
 
-    // 1. Primary per-area subcollection.
+    final docRef = await _resolveDocumentRef(id, building.area);
+    await docRef.delete();
+
+    // 1. Primary per-area subcollection (clean up if different from docRef).
     if (building.area.trim().isNotEmpty) {
       try {
-        await _units(building.area).doc(id).delete();
+        final ref = _units(building.area).doc(id);
+        if (ref.path != docRef.path) {
+          await ref.delete();
+        }
       } catch (_) {}
     }
 
@@ -232,7 +244,8 @@ class BuildingService {
           .collectionGroup('units')
           .get();
       for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
-        if (doc.reference.path.contains('/buildings/')) {
+        if (doc.reference.path.contains('/buildings/') &&
+            doc.reference.path != docRef.path) {
           await doc.reference.delete();
         }
       }

@@ -104,8 +104,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       message: 'سيتم حذف "${property.projectName}" نهائياً.',
     );
     if (confirmed != true) return;
-    await PropertyService.instance.delete(property.id!, property);
-    _reload();
+    try {
+      await PropertyService.instance.delete(property.id!, property);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم حذف الوحدة بنجاح'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+      _reload();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('فشل الحذف: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   Future<void> _confirmDeleteBuilding(AdminBuilding building) async {
@@ -114,8 +131,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       message: 'سيتم حذف "${building.name}" نهائياً.',
     );
     if (confirmed != true) return;
-    await BuildingService.instance.delete(building.id!, building);
-    _reload();
+    try {
+      await BuildingService.instance.delete(building.id!, building);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم حذف العمارة بنجاح'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+      _reload();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('فشل الحذف: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   Future<bool?> _confirm({required String title, required String message}) {

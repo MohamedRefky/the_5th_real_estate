@@ -150,22 +150,36 @@ class PropertyService {
     return fallbackRef ?? primaryRef;
   }
 
-  /// Updates an existing property.
+  /// Updates an existing property. Handles moving the document if area changed.
   Future<void> update(String id, Property property) async {
     final docRef = await _resolveDocumentRef(id, property.area);
-    await docRef.set(
-      property.toFirestore(isUpdate: true),
-      SetOptions(merge: true),
-    );
+    final targetRef = _units(property.area).doc(id);
+
+    // If neighborhood changed, write to new path and delete old path to prevent orphaning
+    if (docRef.path != targetRef.path) {
+      await targetRef.set(
+        property.toFirestore(isUpdate: true),
+        SetOptions(merge: true),
+      );
+      try {
+        await docRef.delete();
+      } catch (e) {
+        if (kDebugMode) {
+          print('Failed to delete old doc after relocation: $e');
+        }
+      }
+    } else {
+      await docRef.set(
+        property.toFirestore(isUpdate: true),
+        SetOptions(merge: true),
+      );
+    }
 
     try {
       final legacyRef = _legacyCollection.doc(id);
       final legacySnap = await legacyRef.get();
       if (legacySnap.exists) {
-        await legacyRef.set(
-          property.toFirestore(isUpdate: true),
-          SetOptions(merge: true),
-        );
+        await legacyRef.delete();
       }
     } catch (_) {}
 
@@ -183,21 +197,22 @@ class PropertyService {
   }
 
   /// Deletes the property document (from every location it may live in) and
-  /// its images from Storage.
+  /// its images from Storage. Does not silently suppress primary deletion failure.
   Future<void> delete(String id, Property property) async {
     if (property.imageUrls.isNotEmpty) {
       await _deleteStorageFiles(property.imageUrls);
     }
 
-    try {
-      final docRef = await _resolveDocumentRef(id, property.area);
-      await docRef.delete();
-    } catch (_) {}
+    final docRef = await _resolveDocumentRef(id, property.area);
+    await docRef.delete();
 
-    // 1. Primary per-area subcollection.
+    // 1. Primary per-area subcollection (clean up if different from docRef).
     if (property.area.trim().isNotEmpty) {
       try {
-        await _units(property.area).doc(id).delete();
+        final ref = _units(property.area).doc(id);
+        if (ref.path != docRef.path) {
+          await ref.delete();
+        }
       } catch (_) {}
     }
 
@@ -216,7 +231,8 @@ class PropertyService {
           .collectionGroup('units')
           .get();
       for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
-        if (doc.reference.path.contains('/properties/')) {
+        if (doc.reference.path.contains('/properties/') &&
+            doc.reference.path != docRef.path) {
           await doc.reference.delete();
         }
       }

@@ -1,13 +1,14 @@
 rules_version = '2';
 
-// ─── Firebase Storage Security Rules — The 5th Real Estate ──────────
-// Full read and write permissions for uploading property images.
-
 service firebase.storage {
   match /b/{bucket}/o {
-
     match /{allPaths=**} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email != null && (
+        request.auth.token.email.lower() == 'mohamedrifky9765@gmail.com' ||
+        request.auth.token.email.lower() == 'mohamedeldamen342@gmail.com' ||
+        request.auth.token.email.lower() == 'badeaakarat@gmail.com'
+      );
     }
   }
 }
