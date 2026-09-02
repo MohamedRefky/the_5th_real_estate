@@ -80,7 +80,9 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1200),
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: EdgeInsets.all(
+                        MediaQuery.sizeOf(context).width < 600 ? 14 : 24,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -122,11 +124,12 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
                           else
                             LayoutBuilder(
                               builder: (context, constraints) {
-                                final double spacing = 20.0;
+                                final isSmall = constraints.maxWidth < 600;
+                                final double spacing = isSmall ? 14.0 : 20.0;
                                 int count = 1;
-                                if (constraints.maxWidth >= 900) {
+                                if (constraints.maxWidth >= 950) {
                                   count = 3;
-                                } else if (constraints.maxWidth >= 600) {
+                                } else if (constraints.maxWidth >= 640) {
                                   count = 2;
                                 }
                                 final cardWidth =

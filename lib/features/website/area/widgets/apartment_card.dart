@@ -134,7 +134,9 @@ class ApartmentCard extends StatelessWidget {
                         child: StatusBadge(
                           label: apt.finishingStatusLabel,
                           color: finishingStatusColor(apt.finishingStatus),
-                          gradient: finishingStatusGradient(apt.finishingStatus),
+                          gradient: finishingStatusGradient(
+                            apt.finishingStatus,
+                          ),
                           icon: finishingStatusIcon(apt.finishingStatus),
                           padding: EdgeInsets.symmetric(
                             horizontal: isMobile ? 8 : 11,
@@ -166,7 +168,9 @@ class ApartmentCard extends StatelessWidget {
                                     color: Colors.black.withValues(alpha: 0.60),
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
-                                      color: AppColors.accent.withValues(alpha: 0.6),
+                                      color: AppColors.accent.withValues(
+                                        alpha: 0.6,
+                                      ),
                                       width: 1,
                                     ),
                                   ),

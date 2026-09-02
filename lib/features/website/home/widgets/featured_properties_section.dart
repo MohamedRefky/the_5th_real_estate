@@ -254,13 +254,15 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            height: isMobile ? 150 : 235,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.primaryMedium.withValues(alpha: 0.35),
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(isMobile ? 18 : 24),
+          AspectRatio(
+            aspectRatio: 16 / 10.5,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.primaryMedium.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(isMobile ? 18 : 24),
+                ),
               ),
             ),
           ),
