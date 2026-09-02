@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
-import '../features/admin/models/property.dart' as admin show Property, areaOptions;
+import '../features/admin/models/property.dart' as admin show Property;
 import '../models/apartment.dart';
 import 'dummy_data.dart';
 import 'mappers/property_mapper.dart';
@@ -65,35 +65,12 @@ class PublicPropertyRepository {
       if (Firebase.apps.isNotEmpty) {
         final byId = <String, Apartment>{};
 
-        final targetAreas = {
-          ...DummyData.areas,
-          ...admin.areaOptions,
-          'جاردينيا',
-          'بيت الوطن',
-          'الأندلس',
-          'المستثمرين',
-          'النرجس الجديدة',
-          'النرجس',
-        };
-
-        // 1. Launch ALL queries simultaneously in parallel
+        // 1. Launch queries simultaneously in parallel
         final List<Future<dynamic>> futures = [
           FirebaseFirestore.instance.collection('properties').get(),
           FirebaseFirestore.instance.collection('buildings').get(),
           FirebaseFirestore.instance.collectionGroup('units').get(),
         ];
-
-        for (final rootCol in ['properties', 'buildings']) {
-          for (final area in targetAreas) {
-            futures.add(
-              FirebaseFirestore.instance
-                  .collection(rootCol)
-                  .doc(area)
-                  .collection('units')
-                  .get(),
-            );
-          }
-        }
 
         final results = await Future.wait(futures, eagerError: false);
 

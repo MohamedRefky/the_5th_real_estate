@@ -210,48 +210,55 @@ class BuildingService {
   /// Deletes the building document (from every location it may live in) and
   /// its images from Storage. Does not silently suppress primary deletion failure.
   Future<void> delete(String id, AdminBuilding building) async {
-    if (building.imageUrls.isNotEmpty) {
-      await _deleteStorageFiles(building.imageUrls);
-    }
+    try {
+      if (building.imageUrls.isNotEmpty) {
+        await _deleteStorageFiles(building.imageUrls);
+      }
 
-    final docRef = await _resolveDocumentRef(id, building.area);
-    await docRef.delete();
+      final docRef = await _resolveDocumentRef(id, building.area);
+      await docRef.delete();
 
-    // 1. Primary per-area subcollection (clean up if different from docRef).
-    if (building.area.trim().isNotEmpty) {
+      // 1. Primary per-area subcollection (clean up if different from docRef).
+      if (building.area.trim().isNotEmpty) {
+        try {
+          final ref = _units(building.area).doc(id);
+          if (ref.path != docRef.path) {
+            await ref.delete();
+          }
+        } catch (_) {}
+      }
+
+      // 2. Legacy root collection.
       try {
-        final ref = _units(building.area).doc(id);
-        if (ref.path != docRef.path) {
-          await ref.delete();
+        final legacyRef = FirebaseFirestore.instance
+            .collection('buildings')
+            .doc(id);
+        final legacySnap = await legacyRef.get();
+        if (legacySnap.exists) {
+          await legacyRef.delete();
         }
       } catch (_) {}
-    }
 
-    // 2. Legacy root collection.
-    try {
-      final legacyRef = FirebaseFirestore.instance
-          .collection('buildings')
-          .doc(id);
-      final legacySnap = await legacyRef.get();
-      if (legacySnap.exists) {
-        await legacyRef.delete();
-      }
-    } catch (_) {}
-
-    // 3. Any other subcollection path holding this document id.
-    try {
-      final groupSnap = await FirebaseFirestore.instance
-          .collectionGroup('units')
-          .get();
-      for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
-        if (doc.reference.path.contains('/buildings/') &&
-            doc.reference.path != docRef.path) {
-          await doc.reference.delete();
+      // 3. Any other subcollection path holding this document id.
+      try {
+        final groupSnap = await FirebaseFirestore.instance
+            .collectionGroup('units')
+            .get();
+        for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
+          if (doc.reference.path.contains('/buildings/') &&
+              doc.reference.path != docRef.path) {
+            await doc.reference.delete();
+          }
         }
-      }
-    } catch (_) {}
+      } catch (_) {}
 
-    PublicBuildingRepository.instance.invalidate();
+      PublicBuildingRepository.instance.invalidate();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error deleting building $id: $e');
+      }
+      rethrow;
+    }
   }
 
   Future<List<String>> _upload(List<XFile> files) async {

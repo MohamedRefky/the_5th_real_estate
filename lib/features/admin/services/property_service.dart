@@ -199,46 +199,53 @@ class PropertyService {
   /// Deletes the property document (from every location it may live in) and
   /// its images from Storage. Does not silently suppress primary deletion failure.
   Future<void> delete(String id, Property property) async {
-    if (property.imageUrls.isNotEmpty) {
-      await _deleteStorageFiles(property.imageUrls);
-    }
+    try {
+      if (property.imageUrls.isNotEmpty) {
+        await _deleteStorageFiles(property.imageUrls);
+      }
 
-    final docRef = await _resolveDocumentRef(id, property.area);
-    await docRef.delete();
+      final docRef = await _resolveDocumentRef(id, property.area);
+      await docRef.delete();
 
-    // 1. Primary per-area subcollection (clean up if different from docRef).
-    if (property.area.trim().isNotEmpty) {
+      // 1. Primary per-area subcollection (clean up if different from docRef).
+      if (property.area.trim().isNotEmpty) {
+        try {
+          final ref = _units(property.area).doc(id);
+          if (ref.path != docRef.path) {
+            await ref.delete();
+          }
+        } catch (_) {}
+      }
+
+      // 2. Legacy root collection.
       try {
-        final ref = _units(property.area).doc(id);
-        if (ref.path != docRef.path) {
-          await ref.delete();
+        final legacyRef = _legacyCollection.doc(id);
+        final legacySnap = await legacyRef.get();
+        if (legacySnap.exists) {
+          await legacyRef.delete();
         }
       } catch (_) {}
-    }
 
-    // 2. Legacy root collection.
-    try {
-      final legacyRef = _legacyCollection.doc(id);
-      final legacySnap = await legacyRef.get();
-      if (legacySnap.exists) {
-        await legacyRef.delete();
-      }
-    } catch (_) {}
-
-    // 3. Any other subcollection path holding this document id.
-    try {
-      final groupSnap = await FirebaseFirestore.instance
-          .collectionGroup('units')
-          .get();
-      for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
-        if (doc.reference.path.contains('/properties/') &&
-            doc.reference.path != docRef.path) {
-          await doc.reference.delete();
+      // 3. Any other subcollection path holding this document id.
+      try {
+        final groupSnap = await FirebaseFirestore.instance
+            .collectionGroup('units')
+            .get();
+        for (final doc in groupSnap.docs.where((doc) => doc.id == id)) {
+          if (doc.reference.path.contains('/properties/') &&
+              doc.reference.path != docRef.path) {
+            await doc.reference.delete();
+          }
         }
-      }
-    } catch (_) {}
+      } catch (_) {}
 
-    PublicPropertyRepository.instance.invalidate();
+      PublicPropertyRepository.instance.invalidate();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error deleting property $id: $e');
+      }
+      rethrow;
+    }
   }
 
   Future<void> _deleteStorageFiles(List<String> urls) async {
