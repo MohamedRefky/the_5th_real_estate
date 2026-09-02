@@ -74,19 +74,38 @@ String sanitizeImageUrl(String rawUrl) {
     }
   }
 
+  // 6. Cloudinary optimization
+  // Automatically apply safe dimension cap (1600px) so phone camera raw uploads (e.g. 13MP / 4160px)
+  // never exceed mobile WebGL texture size limits (which causes black textures on mobile).
+  if (url.contains('res.cloudinary.com') && url.contains('/upload/')) {
+    if (!url.contains('/upload/f_auto') && !url.contains('/upload/w_')) {
+      url = url.replaceFirst(
+        '/upload/',
+        '/upload/f_auto,q_auto,w_1600,c_limit/',
+      );
+    }
+  }
+
   return url;
 }
 
 /// Downsamples and optimizes image URLs for high-performance rendering.
 ///
-/// For Cloudinary URLs, automatically applies `f_auto,q_auto,w_$maxWidth,c_limit`
-/// so mobile browsers download a ~40KB WebP/AVIF thumbnail instead of a 4MB 4K photo.
+/// For Cloudinary URLs, adjusts width transformation (e.g. w_650 for thumbnails, w_1600 for full preview)
+/// so mobile browsers download lightweight WebP/AVIF images and stay well within GPU WebGL texture limits.
 String optimizeImageUrl(String rawUrl, {int maxWidth = 650}) {
   final url = sanitizeImageUrl(rawUrl);
   if (url.isEmpty) return '';
 
   if (url.contains('res.cloudinary.com') && url.contains('/upload/')) {
-    // Avoid double-inserting transformations if already present
+    // If it already has our transformation, update width to the requested maxWidth
+    final regex = RegExp(r'\/upload\/f_auto,q_auto,w_\d+,c_limit\/');
+    if (regex.hasMatch(url)) {
+      return url.replaceFirst(
+        regex,
+        '/upload/f_auto,q_auto,w_$maxWidth,c_limit/',
+      );
+    }
     if (!url.contains('/upload/f_auto') && !url.contains('/upload/w_')) {
       return url.replaceFirst(
         '/upload/',

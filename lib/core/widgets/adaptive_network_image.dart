@@ -52,7 +52,10 @@ class _AdaptiveNetworkImageState extends State<AdaptiveNetworkImage> {
   }
 
   void _resolveImageDimensions() {
-    final cleanUrl = sanitizeImageUrl(widget.url);
+    final cleanUrl = optimizeImageUrl(
+      widget.url,
+      maxWidth: widget.targetHeight != null ? 800 : 1600,
+    );
     if (cleanUrl.isEmpty) return;
 
     final imageProvider = NetworkImage(cleanUrl);
@@ -94,7 +97,10 @@ class _AdaptiveNetworkImageState extends State<AdaptiveNetworkImage> {
 
   @override
   Widget build(BuildContext context) {
-    final cleanUrl = sanitizeImageUrl(widget.url);
+    final cleanUrl = optimizeImageUrl(
+      widget.url,
+      maxWidth: widget.targetHeight != null ? 800 : 1600,
+    );
     final theme = Theme.of(context);
     final radius = widget.borderRadius ?? BorderRadius.circular(24);
 
@@ -104,7 +110,7 @@ class _AdaptiveNetworkImageState extends State<AdaptiveNetworkImage> {
     final imageWidget = Image.network(
       cleanUrl,
       fit: BoxFit.contain,
-      filterQuality: FilterQuality.high,
+      filterQuality: FilterQuality.medium,
       errorBuilder: widget.errorBuilder ??
           (_, _, _) => Container(
                 color: AppColors.surface,

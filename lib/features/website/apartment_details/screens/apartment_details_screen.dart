@@ -268,9 +268,9 @@ class _ApartmentDetailsScreenState extends State<ApartmentDetailsScreen> {
             Center(
               child: InteractiveViewer(
                 child: Image.network(
-                  cleanUrl,
+                  optimizeImageUrl(cleanUrl, maxWidth: 1600),
                   fit: BoxFit.contain,
-                  filterQuality: FilterQuality.high,
+                  filterQuality: FilterQuality.medium,
                 ),
               ),
             ),

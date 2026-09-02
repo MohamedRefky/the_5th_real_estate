@@ -79,9 +79,9 @@ class FacadeCoverPlaceholder extends StatelessWidget {
             Center(
               child: InteractiveViewer(
                 child: Image.network(
-                  url,
+                  optimizeImageUrl(url, maxWidth: 1600),
                   fit: BoxFit.contain,
-                  filterQuality: FilterQuality.high,
+                  filterQuality: FilterQuality.medium,
                 ),
               ),
             ),
