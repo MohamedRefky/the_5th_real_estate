@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../data/filters/building_filter.dart';
 import '../../../../data/public_building_repository.dart';
@@ -26,11 +26,13 @@ class BuildingsAreaController extends ChangeNotifier {
   bool _loading = true;
   String _searchQuery = '';
   String _selectedStatus = BuildingStatus.all;
+  RangeValues _priceRange = const RangeValues(0, 40000000);
 
   List<Building> get filteredBuildings => _filteredBuildings;
   bool get loading => _loading;
   String get searchQuery => _searchQuery;
   String get selectedStatus => _selectedStatus;
+  RangeValues get priceRange => _priceRange;
 
   /// Loads the area's buildings (Firestore + local fallback) and applies the
   /// current filters.
@@ -70,11 +72,27 @@ class BuildingsAreaController extends ChangeNotifier {
     _applyFilter();
   }
 
+  /// Sets price range (0 to 40,000,000).
+  void setPriceRange(RangeValues values) {
+    _priceRange = values;
+    _applyFilter();
+  }
+
+  /// Resets all filters.
+  void resetFilters() {
+    _searchQuery = '';
+    _selectedStatus = BuildingStatus.all;
+    _priceRange = const RangeValues(0, 40000000);
+    _applyFilter();
+  }
+
   void _applyFilter() {
     _filteredBuildings = filterBuildings(
       source: _allBuildings,
       searchQuery: _searchQuery,
       status: _selectedStatus,
+      minPrice: _priceRange.start,
+      maxPrice: _priceRange.end,
     );
     notifyListeners();
   }

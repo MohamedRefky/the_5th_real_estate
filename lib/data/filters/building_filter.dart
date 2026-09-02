@@ -17,6 +17,8 @@ List<Building> filterBuildings({
   required List<Building> source,
   String searchQuery = '',
   String status = BuildingStatus.all,
+  double minPrice = 0,
+  double maxPrice = 40000000,
 }) {
   return source.where((bld) {
     // Search query keyword filter
@@ -25,6 +27,13 @@ List<Building> filterBuildings({
       final nameMatch = bld.name.toLowerCase().contains(query);
       final descMatch = bld.description.toLowerCase().contains(query);
       if (!nameMatch && !descMatch) return false;
+    }
+
+    // Price range filter
+    if (bld.startingPrice > 0) {
+      if (bld.startingPrice < minPrice || bld.startingPrice > maxPrice) {
+        return false;
+      }
     }
 
     // Status filter

@@ -68,15 +68,18 @@ String formatAreaRange((double, double) range) {
 
 /// Compacts a price to "1.2M" / "350K" style.
 String formatPriceShort(double price) {
+  if (price <= 0) return '0';
   if (price >= 1000000) {
-    return '${(price / 1000000).toStringAsFixed(1)}M';
+    final m = price / 1000000;
+    final text = (m == m.roundToDouble()) ? m.toInt().toString() : m.toStringAsFixed(1);
+    return '${text}M';
   }
   return '${(price / 1000).toStringAsFixed(0)}K';
 }
 
 /// Selected price range → pill label, or "السعر" when inactive.
 String priceFilterLabel({required double min, required double max}) {
-  final hasPriceFilter = min > 0 || max < 10000000;
+  final hasPriceFilter = min > 0 || max < 40000000;
   if (!hasPriceFilter) return 'السعر';
-  return 'السعر: ${formatPriceShort(min)}-${formatPriceShort(max)}';
+  return 'السعر: ${formatPriceShort(min)} - ${formatPriceShort(max)}';
 }

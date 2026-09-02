@@ -7,7 +7,7 @@ import 'apartment.dart';
 class FilterValues {
   /// Default price bounds used when no price filter is active.
   static const double defaultMinPrice = 0;
-  static const double defaultMaxPrice = 100000000;
+  static const double defaultMaxPrice = 40000000;
 
   final double minPrice;
   final double maxPrice;

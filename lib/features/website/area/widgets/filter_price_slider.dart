@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/filters/filter_formatters.dart';
 
@@ -18,7 +17,7 @@ class FilterPriceSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const double minVal = 0;
-    const double maxVal = 100000000;
+    const double maxVal = 40000000;
 
     final clampedStart = values.start.clamp(minVal, maxVal);
     final clampedEnd = values.end.clamp(minVal, maxVal);
@@ -60,7 +59,7 @@ class FilterPriceSlider extends StatelessWidget {
             values: RangeValues(clampedStart, clampedEnd),
             min: minVal,
             max: maxVal,
-            divisions: 100,
+            divisions: 80,
             onChanged: onChanged,
           ),
         ),

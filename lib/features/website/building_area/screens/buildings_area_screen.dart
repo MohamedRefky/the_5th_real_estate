@@ -5,6 +5,9 @@ import '../../../../core/widgets/result_count_badge.dart';
 import '../../../../core/widgets/reveal_on_scroll.dart';
 import '../../../../core/widgets/searchable_hero_banner.dart';
 import '../../../../data/filters/building_filter.dart';
+import '../../../../data/filters/filter_formatters.dart';
+import '../../area/widgets/filter_popover_panel.dart';
+import '../../area/widgets/filter_price_slider.dart';
 import '../controllers/buildings_area_controller.dart';
 import '../widgets/building_card.dart';
 
@@ -27,6 +30,7 @@ class BuildingsAreaScreen extends StatefulWidget {
 
 class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
   late final BuildingsAreaController _controller;
+  bool _isPriceOpen = false;
 
   @override
   void initState() {
@@ -86,16 +90,54 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Status Filter Pills Row
-                          Row(
+                          // Filter Pills Row (Status + Price)
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               _statusPill(BuildingStatus.all),
-                              const SizedBox(width: 10),
                               _statusPill(BuildingStatus.ready),
-                              const SizedBox(width: 10),
                               _statusPill(BuildingStatus.underConstruction),
+                              _pricePill(),
+                              if (_controller.selectedStatus != BuildingStatus.all ||
+                                  _controller.priceRange.start > 0 ||
+                                  _controller.priceRange.end < 40000000)
+                                TextButton.icon(
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPriceOpen = false;
+                                      _controller.resetFilters();
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.refresh_rounded,
+                                    size: 16,
+                                    color: AppColors.accent,
+                                  ),
+                                  label: const Text(
+                                    'إعادة ضبط',
+                                    style: TextStyle(
+                                      color: AppColors.accent,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
+
+                          if (_isPriceOpen) ...[
+                            const SizedBox(height: 14),
+                            FilterPopoverPanel(
+                              onDone: () => setState(() => _isPriceOpen = false),
+                              child: FilterPriceSlider(
+                                values: _controller.priceRange,
+                                onChanged: (v) {
+                                  setState(() => _controller.setPriceRange(v));
+                                },
+                              ),
+                            ),
+                          ],
 
                           const SizedBox(height: 24),
 
@@ -175,16 +217,33 @@ class _BuildingsAreaScreenState extends State<BuildingsAreaScreen> {
       onTap: () => _controller.selectStatus(status),
     );
   }
+
+  Widget _pricePill() {
+    final hasPriceFilter =
+        _controller.priceRange.start > 0 || _controller.priceRange.end < 40000000;
+    final label = priceFilterLabel(
+      min: _controller.priceRange.start,
+      max: _controller.priceRange.end,
+    );
+    return _FilterPill(
+      label: label,
+      isSelected: hasPriceFilter || _isPriceOpen,
+      icon: Icons.payments_outlined,
+      onTap: () => setState(() => _isPriceOpen = !_isPriceOpen),
+    );
+  }
 }
 
 class _FilterPill extends StatelessWidget {
   final String label;
   final bool isSelected;
+  final IconData? icon;
   final VoidCallback onTap;
 
   const _FilterPill({
     required this.label,
     required this.isSelected,
+    this.icon,
     required this.onTap,
   });
 
@@ -194,7 +253,7 @@ class _FilterPill extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.accent
@@ -206,13 +265,26 @@ class _FilterPill extends StatelessWidget {
                 : AppColors.accent.withValues(alpha: 0.3),
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? AppColors.textOnPrimary : AppColors.textPrimary,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            fontSize: 13.5,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                size: 15,
+                color: isSelected ? AppColors.textOnPrimary : AppColors.accent,
+              ),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? AppColors.textOnPrimary : AppColors.textPrimary,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                fontSize: 13.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
