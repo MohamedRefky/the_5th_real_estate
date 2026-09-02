@@ -186,7 +186,7 @@ class _FeaturedPropertiesSectionState extends State<FeaturedPropertiesSection> {
                     return false;
                   },
                   child: SizedBox(
-                    height: isMobile ? 420 : 455,
+                    height: isMobile ? 475 : 490,
                     child: ListView.separated(
                       controller: _scrollController,
                       padding: EdgeInsets.symmetric(
