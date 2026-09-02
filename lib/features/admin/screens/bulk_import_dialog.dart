@@ -288,8 +288,15 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
         ? (_propertyReport?.totalParsed ?? 0)
         : (_buildingReport?.totalParsed ?? 0);
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
+
     return Dialog(
       backgroundColor: AppColors.surface,
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 24,
+        vertical: isMobile ? 16 : 24,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: const BorderSide(color: AppColors.divider),
@@ -297,9 +304,9 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
       child: Container(
         width: 720,
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.88,
+          maxHeight: MediaQuery.of(context).size.height * 0.90,
         ),
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(isMobile ? 16 : 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -308,26 +315,26 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(isMobile ? 8 : 10),
                   decoration: BoxDecoration(
                     color: AppColors.accentLight,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.upload_file_rounded,
                     color: AppColors.accent,
-                    size: 26,
+                    size: isMobile ? 22 : 26,
                   ),
                 ),
-                const SizedBox(width: 14),
+                SizedBox(width: isMobile ? 10 : 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'الرفع الجماعي من كود JSON 📄',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: isMobile ? 16 : 18,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
@@ -336,7 +343,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                       Text(
                         'ارفع مئات الشقق أو العمارات دفعة واحدة إلى الداتا بيز',
                         style: TextStyle(
-                          fontSize: 12.5,
+                          fontSize: isMobile ? 11.5 : 12.5,
                           color: AppColors.textSecondary.withValues(alpha: 0.9),
                         ),
                       ),
@@ -351,7 +358,7 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                   ),
               ],
             ),
-            const SizedBox(height: 18),
+            SizedBox(height: isMobile ? 12 : 18),
 
             // ── Import Type Segment Selector ────────────────────────
             Row(
@@ -359,7 +366,10 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                 Expanded(
                   child: ChoiceChip(
                     label: const Center(
-                      child: Text('شقق ووحدات (Properties)'),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('شقق ووحدات (Properties)'),
+                      ),
                     ),
                     selected: _importType == ImportType.properties,
                     selectedColor: AppColors.accent,
@@ -380,11 +390,14 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: ChoiceChip(
                     label: const Center(
-                      child: Text('عمارات بالكامل (Buildings)'),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('عمارات بالكامل (Buildings)'),
+                      ),
                     ),
                     selected: _importType == ImportType.buildings,
                     selectedColor: const Color(0xFF7C3AED),
@@ -639,17 +652,10 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
             ],
 
             // ── Dialog Bottom Action Buttons ────────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: _isUploading
-                      ? null
-                      : () => Navigator.of(context).pop(false),
-                  child: const Text('إلغاء'),
-                ),
-                const SizedBox(width: 12),
-                FilledButton.icon(
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 460;
+                final uploadButton = FilledButton.icon(
                   onPressed: (_isUploading || validCount == 0)
                       ? null
                       : _startImport,
@@ -660,8 +666,10 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                     foregroundColor: _importType == ImportType.properties
                         ? AppColors.textOnPrimary
                         : Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isNarrow ? 12 : 20,
+                      vertical: 14,
+                    ),
                   ),
                   icon: _isUploading
                       ? const SizedBox(
@@ -673,14 +681,48 @@ class _BulkImportDialogState extends State<BulkImportDialog> {
                           ),
                         )
                       : const Icon(Icons.cloud_upload_rounded, size: 20),
-                  label: Text(
-                    _isUploading
-                        ? 'جاري الرفع...'
-                        : 'رفع $validCount ${_importType == ImportType.properties ? "شقة" : "عمارة"} إلى الفايربيز 🚀',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  label: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      _isUploading
+                          ? 'جاري الرفع...'
+                          : 'رفع $validCount ${_importType == ImportType.properties ? "شقة" : "عمارة"} إلى الفايربيز 🚀',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-              ],
+                );
+
+                if (isNarrow) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      uploadButton,
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: _isUploading
+                            ? null
+                            : () => Navigator.of(context).pop(false),
+                        child: const Text('إلغاء'),
+                      ),
+                    ],
+                  );
+                }
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: _isUploading
+                          ? null
+                          : () => Navigator.of(context).pop(false),
+                      child: const Text('إلغاء'),
+                    ),
+                    const SizedBox(width: 12),
+                    Flexible(child: uploadButton),
+                  ],
+                );
+              },
             ),
           ],
         ),
