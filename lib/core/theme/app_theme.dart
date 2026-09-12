@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import 'app_colors.dart';
 
 /// Centralised theme configuration for "The 5th Estate".
 class AppTheme {
   AppTheme._();
 
-  static String? get cairoFontFamily {
-    try {
-      return GoogleFonts.cairo().fontFamily;
-    } catch (_) {
-      return null;
-    }
-  }
+  static const String cairoFontFamily = 'Cairo';
 
   static final TextTheme _textTheme = TextTheme(
     displayLarge: TextStyle(
