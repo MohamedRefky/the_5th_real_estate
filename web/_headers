@@ -1,5 +1,21 @@
 # Cloudflare Pages Headers Configuration
-# Ensures WebAssembly and module scripts have proper MIME types, compression, and caching
+# Enables WebAssembly/skwasm multi-threading and maximum caching
+
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: credentialless
+
+/canvaskit/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
 
 /*.wasm
   Content-Type: application/wasm
@@ -16,10 +32,6 @@
 
 /*.ttf
   Content-Type: font/ttf
-  Cache-Control: public, max-age=31536000, immutable
-  Access-Control-Allow-Origin: *
-
-/assets/*
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
 
