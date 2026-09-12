@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisCount: crossAxisCount,
                                   crossAxisSpacing: spacing,
                                   mainAxisSpacing: spacing,
-                                  childAspectRatio: isMobile ? 0.98 : 1.05,
+                                  childAspectRatio: isMobile ? 0.94 : 1.05,
                                 ),
                             itemCount: DummyData.areas.length,
                             itemBuilder: (context, index) {
@@ -291,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       crossAxisCount: crossAxisCount,
                                       crossAxisSpacing: spacing,
                                       mainAxisSpacing: spacing,
-                                      childAspectRatio: isMobile ? 0.98 : 1.05,
+                                      childAspectRatio: isMobile ? 0.94 : 1.05,
                                     ),
                                 itemCount: totalItems,
                                 itemBuilder: (context, index) {

@@ -25,6 +25,7 @@ class AreaCard extends StatefulWidget {
 
 class _AreaCardState extends State<AreaCard> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   Future<List<Apartment>>? _countFuture;
 
@@ -51,14 +52,17 @@ class _AreaCardState extends State<AreaCard> {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 350),
+          duration: const Duration(milliseconds: 250),
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(isMobile ? 14 : 18),
             border: Border.all(
-              color: _isHovered
+              color: (_isHovered || _isPressed)
                   ? AppColors.accent.withValues(alpha: 0.7)
                   : AppColors.divider,
               width: 1,
@@ -71,9 +75,11 @@ class _AreaCardState extends State<AreaCard> {
               ),
             ],
           ),
-          transform: _isHovered
-              ? (Matrix4.identity()..setTranslationRaw(0.0, -4.0, 0.0))
-              : Matrix4.identity(),
+          transform: _isPressed
+              ? Matrix4.diagonal3Values(0.96, 0.96, 1.0)
+              : (_isHovered
+                  ? (Matrix4.identity()..setTranslationRaw(0.0, -4.0, 0.0))
+                  : Matrix4.identity()),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(isMobile ? 14 : 18),
             child: Stack(
@@ -120,14 +126,14 @@ class _AreaCardState extends State<AreaCard> {
 
                 // ── Card Content ──────────────────────────────────────
                 Padding(
-                  padding: EdgeInsets.all(isMobile ? 12 : 20),
+                  padding: EdgeInsets.all(isMobile ? 10 : 20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (imagePath == null) ...[
                         Container(
-                          width: isMobile ? 44 : 64,
-                          height: isMobile ? 44 : 64,
+                          width: isMobile ? 40 : 64,
+                          height: isMobile ? 40 : 64,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: AppColors.background,
@@ -139,12 +145,12 @@ class _AreaCardState extends State<AreaCard> {
                           child: Center(
                             child: Icon(
                               _areaIcon,
-                              size: isMobile ? 22 : 32,
+                              size: isMobile ? 20 : 32,
                               color: AppColors.accent,
                             ),
                           ),
                         ),
-                        SizedBox(height: isMobile ? 8 : 14),
+                        SizedBox(height: isMobile ? 6 : 14),
                       ] else ...[
                         const Spacer(),
                       ],
@@ -154,18 +160,19 @@ class _AreaCardState extends State<AreaCard> {
                         widget.areaName,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w800,
-                          fontSize: isMobile ? 14 : 18,
+                          fontSize: isMobile ? 13 : 18,
+                          height: 1.25,
                           color: _isHovered
                               ? AppColors.accent
                               : AppColors.textPrimary,
                           letterSpacing: 0.2,
                         ),
                         textAlign: TextAlign.center,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      SizedBox(height: isMobile ? 6 : 8),
+                      SizedBox(height: isMobile ? 4 : 8),
 
                       // Count & Explore Badge Pill
                       Container(
