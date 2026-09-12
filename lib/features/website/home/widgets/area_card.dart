@@ -55,40 +55,34 @@ class _AreaCardState extends State<AreaCard> {
           duration: const Duration(milliseconds: 350),
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
-            color: imagePath == null
-                ? AppColors.surface.withValues(alpha: _isHovered ? 0.35 : 0.18)
-                : AppColors.surface,
-            borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(isMobile ? 14 : 18),
             border: Border.all(
               color: _isHovered
-                  ? AppColors.accent
-                  : (imagePath == null
-                        ? AppColors.accent.withValues(alpha: 0.25)
-                        : AppColors.divider.withValues(alpha: 0.6)),
-              width: _isHovered ? 1.8 : 1,
+                  ? AppColors.accent.withValues(alpha: 0.7)
+                  : AppColors.divider,
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: _isHovered
-                    ? AppColors.accent.withValues(alpha: 0.32)
-                    : Colors.black.withValues(alpha: 0.20),
-                blurRadius: _isHovered ? 30 : 14,
-                offset: Offset(0, _isHovered ? 10 : 4),
+                color: Colors.black.withValues(alpha: _isHovered ? 0.35 : 0.15),
+                blurRadius: _isHovered ? 16 : 8,
+                offset: Offset(0, _isHovered ? 6 : 2),
               ),
             ],
           ),
           transform: _isHovered
-              ? (Matrix4.identity()..setTranslationRaw(0.0, -6.0, 0.0))
+              ? (Matrix4.identity()..setTranslationRaw(0.0, -4.0, 0.0))
               : Matrix4.identity(),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(isMobile ? 18 : 24),
+            borderRadius: BorderRadius.circular(isMobile ? 14 : 18),
             child: Stack(
               children: [
-                // ── Background Image or Radial Gold Spotlight Backdrop ────
+                // ── Background Image or Architectural Dark Backdrop ───────
                 if (imagePath != null) ...[
                   Positioned.fill(
                     child: AnimatedScale(
-                      scale: _isHovered ? 1.08 : 1.0,
+                      scale: _isHovered ? 1.05 : 1.0,
                       duration: const Duration(milliseconds: 400),
                       curve: Curves.easeOutCubic,
                       child: Image.asset(
@@ -101,154 +95,56 @@ class _AreaCardState extends State<AreaCard> {
                   ),
                   // Dark Gradient Overlay for readability
                   Positioned.fill(
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
+                    child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withValues(
-                              alpha: _isHovered ? 0.25 : 0.40,
-                            ),
-                            Colors.black.withValues(
-                              alpha: _isHovered ? 0.65 : 0.78,
-                            ),
-                            AppColors.background.withValues(alpha: 0.92),
-                          ],
-                          stops: const [0.0, 0.6, 1.0],
-                        ),
-                      ),
-                    ),
-                  ),
-                ] else ...[
-                  // Luxury Radial Gold Spotlight Backdrop
-                  Positioned.fill(
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      decoration: BoxDecoration(
-                        gradient: RadialGradient(
-                          center: const Alignment(0.0, -0.6),
-                          radius: 1.15,
-                          colors: [
-                            AppColors.accent.withValues(
-                              alpha: _isHovered ? 0.22 : 0.08,
-                            ),
-                            AppColors.primaryMedium.withValues(
-                              alpha: _isHovered ? 0.45 : 0.25,
-                            ),
-                            AppColors.background.withValues(alpha: 0.88),
+                            Colors.black.withValues(alpha: 0.25),
+                            Colors.black.withValues(alpha: 0.65),
+                            AppColors.background.withValues(alpha: 0.94),
                           ],
                           stops: const [0.0, 0.55, 1.0],
                         ),
                       ),
                     ),
                   ),
-
-                  // Top-Right Luxury Glass Badge
-                  Positioned(
-                    top: isMobile ? 8 : 14,
-                    right: isMobile ? 8 : 14,
+                ] else ...[
+                  Positioned.fill(
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 7 : 10,
-                        vertical: isMobile ? 3 : 4.5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface.withValues(alpha: 0.70),
-                        borderRadius: BorderRadius.circular(isMobile ? 8 : 12),
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.3),
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.star_rounded,
-                            size: isMobile ? 10 : 12,
-                            color: AppColors.accent,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            'حي متميز',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: AppColors.accent,
-                              fontSize: isMobile ? 9 : 10.5,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                      color: AppColors.surface,
                     ),
                   ),
                 ],
 
                 // ── Card Content ──────────────────────────────────────
                 Padding(
-                  padding: EdgeInsets.all(isMobile ? 12 : 24),
+                  padding: EdgeInsets.all(isMobile ? 12 : 20),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (imagePath == null) ...[
-                        // Floating 3D Circular Glass Emblem Icon Box
-                        AnimatedScale(
-                          scale: _isHovered ? 1.08 : 1.0,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOutCubic,
-                          child: Container(
-                            width: isMobile ? 48 : 86,
-                            height: isMobile ? 48 : 86,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: _isHovered
-                                    ? [
-                                        AppColors.accentHighlight,
-                                        AppColors.accent,
-                                      ]
-                                    : [
-                                        AppColors.surface.withValues(
-                                          alpha: 0.9,
-                                        ),
-                                        AppColors.primaryMedium.withValues(
-                                          alpha: 0.95,
-                                        ),
-                                      ],
-                              ),
-                              border: Border.all(
-                                color: AppColors.accent.withValues(
-                                  alpha: _isHovered ? 0.9 : 0.4,
-                                ),
-                                width: isMobile ? 1.2 : 1.8,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: _isHovered
-                                      ? AppColors.accent.withValues(alpha: 0.45)
-                                      : AppColors.accent.withValues(
-                                          alpha: 0.12,
-                                        ),
-                                  blurRadius: _isHovered ? 22 : 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+                        Container(
+                          width: isMobile ? 44 : 64,
+                          height: isMobile ? 44 : 64,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.background,
+                            border: Border.all(
+                              color: AppColors.divider,
+                              width: 1,
                             ),
-                            child: Center(
-                              child: Icon(
-                                _areaIcon,
-                                size: isMobile ? 24 : 42,
-                                color: _isHovered
-                                    ? AppColors.textOnPrimary
-                                    : AppColors.accent,
-                              ),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              _areaIcon,
+                              size: isMobile ? 22 : 32,
+                              color: AppColors.accent,
                             ),
                           ),
                         ),
-                        SizedBox(height: isMobile ? 8 : 18),
+                        SizedBox(height: isMobile ? 8 : 14),
                       ] else ...[
                         const Spacer(),
                       ],
@@ -256,96 +152,58 @@ class _AreaCardState extends State<AreaCard> {
                       // Area Name
                       Text(
                         widget.areaName,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          fontSize: isMobile ? 14.5 : 20,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          fontSize: isMobile ? 14 : 18,
                           color: _isHovered
                               ? AppColors.accent
                               : AppColors.textPrimary,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withValues(alpha: 0.6),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                          letterSpacing: 0.2,
                         ),
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
 
-                      SizedBox(height: isMobile ? 5 : 10),
+                      SizedBox(height: isMobile ? 6 : 8),
 
                       // Count & Explore Badge Pill
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
+                      Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: isMobile ? 8 : 16,
-                          vertical: isMobile ? 4 : 7.5,
+                          horizontal: isMobile ? 10 : 14,
+                          vertical: isMobile ? 4 : 6,
                         ),
                         decoration: BoxDecoration(
-                          gradient: _isHovered
-                              ? AppColors.accentGradient
-                              : LinearGradient(
-                                  colors: [
-                                    AppColors.surface.withValues(alpha: 0.8),
-                                    AppColors.primaryMedium.withValues(
-                                      alpha: 0.8,
-                                    ),
-                                  ],
-                                ),
-                          borderRadius: BorderRadius.circular(isMobile ? 14 : 20),
+                          color: _isHovered
+                              ? AppColors.accent
+                              : AppColors.background.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: AppColors.accent.withValues(
-                              alpha: _isHovered ? 0.8 : 0.35,
-                            ),
+                            color: _isHovered
+                                ? AppColors.accent
+                                : AppColors.divider,
                             width: 1,
                           ),
-                          boxShadow: _isHovered
-                              ? [
-                                  BoxShadow(
-                                    color: AppColors.accent.withValues(
-                                      alpha: 0.3,
-                                    ),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ]
-                              : [],
                         ),
                         child: FutureBuilder<List<Apartment>>(
                           future: _countFuture,
                           builder: (context, snapshot) {
                             final count = snapshot.data?.length ?? localCount;
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.explore_rounded,
-                                  size: isMobile ? 11 : 14,
-                                  color: _isHovered
-                                      ? AppColors.textOnPrimary
-                                      : AppColors.accent,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  widget.customBadgeText ?? '$count شقة متاحة',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: _isHovered
-                                        ? AppColors.textOnPrimary
-                                        : AppColors.accent,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: isMobile ? 10 : 12,
-                                  ),
-                                ),
-                              ],
+                            return Text(
+                              widget.customBadgeText ?? '$count شقة متاحة',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: _isHovered
+                                    ? AppColors.textOnPrimary
+                                    : AppColors.textSecondary,
+                                fontWeight: FontWeight.w700,
+                                fontSize: isMobile ? 10 : 12,
+                              ),
                             );
                           },
                         ),
                       ),
 
-                      if (imagePath != null) SizedBox(height: isMobile ? 4 : 8),
+                      if (imagePath != null) SizedBox(height: isMobile ? 4 : 6),
                     ],
                   ),
                 ),

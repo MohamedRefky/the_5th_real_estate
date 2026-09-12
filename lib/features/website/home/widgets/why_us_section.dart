@@ -66,8 +66,9 @@ class WhyUsSection extends StatelessWidget {
                             if (i > 0) const SizedBox(width: 18),
                             Expanded(
                               child: RevealOnScroll(
-                                direction: RevealDirection.flip3D,
-                                delayMilliseconds: i * 90,
+                                direction: RevealDirection.fromBottom,
+                                delayMilliseconds: i * 60,
+                                offset: 25,
                                 child: _buildItem(context, items[i], false),
                               ),
                             ),
@@ -121,100 +122,71 @@ class WhyUsSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 10 : 20,
-        vertical: isMobile ? 16 : 26,
+        horizontal: isMobile ? 14 : 22,
+        vertical: isMobile ? 18 : 28,
       ),
-          decoration: BoxDecoration(
-            color: AppColors.surface.withValues(alpha: 0.65),
-            borderRadius: BorderRadius.circular(isMobile ? 16 : 24),
-            border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.25),
-              width: 0.8,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.divider,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Architectural Monogram Icon
+          Container(
+            width: isMobile ? 44 : 52,
+            height: isMobile ? 44 : 52,
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppColors.divider,
+                width: 1,
+              ),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.25),
-                blurRadius: isMobile ? 12 : 24,
-                offset: const Offset(0, 4),
+            child: Center(
+              child: Icon(
+                item.icon,
+                size: isMobile ? 20 : 24,
+                color: AppColors.accent,
               ),
-            ],
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon with gradient
-              Container(
-                padding: EdgeInsets.all(isMobile ? 10 : 16),
-                decoration: BoxDecoration(
-                  gradient: AppColors.accentGradient,
-                  borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.accent.withValues(alpha: 0.35),
-                      blurRadius: isMobile ? 8 : 14,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  item.icon,
-                  size: isMobile ? 20 : 28,
-                  color: AppColors.textOnPrimary,
-                ),
-              ),
-              SizedBox(height: isMobile ? 10 : 18),
-              // Value Pill Badge
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isMobile ? 8 : 14,
-                  vertical: isMobile ? 4 : 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(isMobile ? 8 : 12),
-                  border: Border.all(
-                    color: AppColors.accent.withValues(alpha: 0.35),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  item.value,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.accent,
-                    fontSize: isMobile ? 11.5 : 15,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(height: isMobile ? 8 : 14),
-              Text(
-                item.title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: isMobile ? 13 : 16.5,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: isMobile ? 4 : 8),
-              Text(
-                item.subtitle,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                  fontSize: isMobile ? 11 : 13,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: isMobile ? 3 : 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+          SizedBox(height: isMobile ? 14 : 18),
+
+          // Title
+          Text(
+            item.title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+              fontSize: isMobile ? 14 : 16.5,
+              letterSpacing: 0.2,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-        );
+          SizedBox(height: isMobile ? 6 : 8),
+
+          // Subtitle / Description
+          Text(
+            item.subtitle,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.textSecondary,
+              height: 1.55,
+              fontSize: isMobile ? 11.5 : 13,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: isMobile ? 3 : 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
   }
 }

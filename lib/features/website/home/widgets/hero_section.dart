@@ -1,8 +1,5 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/glass_container.dart';
-import '../../../../core/widgets/metallic_gloss.dart';
 
 /// Massive full-width hero section with a one-shot staggered entrance.
 class HeroSection extends StatefulWidget {
@@ -67,234 +64,157 @@ class _HeroSectionState extends State<HeroSection>
           padding: EdgeInsets.only(
             left: isMobile ? 20 : 32,
             right: isMobile ? 20 : 32,
-            top: isMobile ? 72 : 90,
-            bottom: isMobile ? 36 : 60,
+            top: isMobile ? 64 : 84,
+            bottom: isMobile ? 32 : 52,
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 820),
+              constraints: const BoxConstraints(maxWidth: 860),
               child: Column(
                 children: [
-                  // Brand Chip
+                  // Architectural Location Tag
                   _HeroEntrance(
                     animation: _steps[0],
-                    child: GlassContainer(
-                      borderRadius: 30,
+                    child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 14 : 20,
-                        vertical: isMobile ? 6 : 8,
+                        horizontal: isMobile ? 12 : 16,
+                        vertical: isMobile ? 5 : 7,
                       ),
-                      borderColor: AppColors.accent.withValues(alpha: 0.45),
-                      borderWidth: 0.5,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          color: AppColors.divider,
+                          width: 1,
+                        ),
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.workspace_premium_rounded,
-                            color: AppColors.accent,
-                            size: isMobile ? 14 : 17,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'The 5th Real Estate',
-                            style: theme.textTheme.titleSmall?.copyWith(
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
                               color: AppColors.accent,
-                              fontWeight: FontWeight.w800,
-                              fontSize: isMobile ? 12 : 14,
-                              letterSpacing: 0.6,
+                              shape: BoxShape.circle,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: isMobile ? 20 : 28),
-
-                  // Main Title
-                  _HeroEntrance(
-                    animation: _steps[1],
-                    child: Text(
-                      'عقارات\nالتجمع الخامس',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.displayLarge?.copyWith(
-                        fontSize: isMobile ? 38 : 62,
-                        height: 1.12,
-                        color: const Color(0xFFFFF6DF),
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.3,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withValues(alpha: 0.88),
-                            blurRadius: 12,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: isMobile ? 14 : 18),
-
-                  // Tagline Pill
-                  _HeroEntrance(
-                    animation: _steps[2],
-                    child: GlassContainer(
-                      borderRadius: 30,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 14 : 24,
-                        vertical: isMobile ? 6 : 9,
-                      ),
-                      borderColor: AppColors.accent.withValues(alpha: 0.45),
-                      borderWidth: 0.5,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.verified_rounded,
-                            size: isMobile ? 13 : 15,
-                            color: AppColors.accent,
-                          ),
-                          const SizedBox(width: 7),
+                          const SizedBox(width: 8),
                           Text(
-                            'وجهتك الحصرية لكل عقارات التجمع الخامس',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.titleMedium?.copyWith(
+                            'التجمع الخامس • القاهرة الجديدة',
+                            style: TextStyle(
                               color: AppColors.accent,
                               fontWeight: FontWeight.w700,
-                              fontSize: isMobile ? 11.5 : 14,
+                              fontSize: isMobile ? 11.5 : 13,
                               letterSpacing: 0.3,
                             ),
                           ),
-                          const SizedBox(width: 7),
-                          Icon(
-                            Icons.verified_rounded,
-                            size: isMobile ? 13 : 15,
-                            color: AppColors.accent,
-                          ),
                         ],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: isMobile ? 18 : 26),
+
+                  // Grand Architectural Title
+                  _HeroEntrance(
+                    animation: _steps[1],
+                    child: Text(
+                      'عقارات التجمع الخامس\nبأعلى معايير الدقة والتميز',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.displayLarge?.copyWith(
+                        fontSize: isMobile ? 32 : 56,
+                        height: 1.18,
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
                       ),
                     ),
                   ),
 
                   SizedBox(height: isMobile ? 16 : 22),
 
-                  // Subtitle
+                  // Subtitle (Clear, Active, Authoritative)
                   _HeroEntrance(
-                    animation: _steps[3],
-                    child: Text(
-                      'كل عقارات التجمع الخامس في مكان واحد — اختر من بين مئات الشقق والعمارات والفيلات بأسعار محدثة، صور واقعية موثقة، ومعاينة فورية بضغطة واحدة',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.82),
-                        fontWeight: FontWeight.w400,
-                        height: 1.70,
-                        fontSize: isMobile ? 13 : 15.5,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withValues(alpha: 0.70),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                    animation: _steps[2],
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 680),
+                      child: Text(
+                        'منصة عقارية متخصصة تمنحك الوصول المباشر لأرقى الشقق والعمارات في التجمع الخامس، بأسعار واقعية محدثة وبيانات موثقة ميدانياً.',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w400,
+                          height: 1.65,
+                          fontSize: isMobile ? 13.5 : 16,
+                        ),
                       ),
                     ),
                   ),
 
-                  SizedBox(height: isMobile ? 24 : 36),
+                  SizedBox(height: isMobile ? 26 : 38),
 
-                  // Stats Strip
+                  // CTA Buttons (Tactile & Clean)
                   _HeroEntrance(
-                    animation: _steps[4],
-                    child: _HeroStatsConsole(isMobile: isMobile),
-                  ),
-
-                  SizedBox(height: isMobile ? 28 : 40),
-
-                  // CTA Buttons
-                  _HeroEntrance(
-                    animation: _steps[5],
+                    animation: _steps[3],
                     child: Wrap(
                       spacing: 14,
                       runSpacing: 12,
                       alignment: WrapAlignment.center,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.accent.withValues(alpha: 0.45),
-                                blurRadius: isMobile ? 16 : 28,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed: widget.onBrowseAll,
-                                icon: Icon(
-                                  Icons.explore_rounded,
-                                  size: isMobile ? 18 : 21,
-                                ),
-                                label: Text(
-                                  'تصفح جميع العقارات',
-                                  style: TextStyle(
-                                    fontSize: isMobile ? 13.5 : 15,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.accent,
-                                  foregroundColor: AppColors.textOnPrimary,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isMobile ? 24 : 36,
-                                    vertical: isMobile ? 14 : 18,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  elevation: 0,
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: IgnorePointer(
-                                  child: MetallicGloss(
-                                    borderRadius: 16,
-                                    strength: 0.9,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        OutlinedButton.icon(
-                          onPressed: widget.onContact,
+                        ElevatedButton.icon(
+                          onPressed: widget.onBrowseAll,
                           icon: Icon(
-                            Icons.chat_rounded,
-                            size: isMobile ? 16 : 19,
+                            Icons.explore_rounded,
+                            size: isMobile ? 18 : 20,
                           ),
                           label: Text(
-                            'تواصل معنا',
+                            'تصفح جميع العقارات',
                             style: TextStyle(
                               fontSize: isMobile ? 13.5 : 15,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.accent,
-                            side: BorderSide(
-                              color: AppColors.accent.withValues(alpha: 0.55),
-                              width: 1.2,
-                            ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accent,
+                            foregroundColor: AppColors.textOnPrimary,
                             padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 22 : 32,
-                              vertical: isMobile ? 14 : 18,
+                              horizontal: isMobile ? 24 : 32,
+                              vertical: isMobile ? 14 : 17,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: widget.onContact,
+                          icon: Icon(
+                            Icons.chat_bubble_outline_rounded,
+                            size: isMobile ? 16 : 18,
+                          ),
+                          label: Text(
+                            'تواصل معنا',
+                            style: TextStyle(
+                              fontSize: isMobile ? 13.5 : 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.textPrimary,
+                            side: const BorderSide(
+                              color: AppColors.divider,
+                              width: 1,
+                            ),
+                            backgroundColor: AppColors.surface.withValues(alpha: 0.5),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 22 : 28,
+                              vertical: isMobile ? 14 : 17,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
@@ -302,19 +222,12 @@ class _HeroSectionState extends State<HeroSection>
                     ),
                   ),
 
-                  SizedBox(height: isMobile ? 28 : 44),
+                  SizedBox(height: isMobile ? 28 : 42),
 
-                  // Decorative bottom line
+                  // Stats Strip (Architectural & Editorial)
                   _HeroEntrance(
-                    animation: _steps[6],
-                    child: Container(
-                      width: isMobile ? 48 : 72,
-                      height: 2.5,
-                      decoration: BoxDecoration(
-                        gradient: AppColors.accentGradient,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
+                    animation: _steps[4],
+                    child: _HeroStatsConsole(isMobile: isMobile),
                   ),
                 ],
               ),
@@ -371,59 +284,69 @@ class _HeroStatsConsole extends StatelessWidget {
   }
 
   Widget _buildDesktop() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(50),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.30),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: _stats
-                .map((s) => _StatChip(
-                      icon: s.icon,
-                      value: s.value,
-                      label: s.label,
-                      isMobile: false,
-                    ))
-                .toList(),
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.divider,
+          width: 1,
         ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int i = 0; i < _stats.length; i++) ...[
+            if (i > 0)
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                height: 38,
+                width: 1,
+                color: AppColors.divider,
+              ),
+            _StatChip(
+              icon: _stats[i].icon,
+              value: _stats[i].value,
+              label: _stats[i].label,
+              isMobile: false,
+            ),
+          ],
+        ],
       ),
     );
   }
 
   Widget _buildMobile() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.75),
-        borderRadius: BorderRadius.circular(20),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.28),
+          color: AppColors.divider,
           width: 1,
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: _stats
-            .map((s) => Expanded(
-                  child: _StatChip(
-                    icon: s.icon,
-                    value: s.value,
-                    label: s.label,
-                    isMobile: true,
-                  ),
-                ))
-            .toList(),
+        children: [
+          for (int i = 0; i < _stats.length; i++) ...[
+            if (i > 0)
+              Container(
+                height: 28,
+                width: 1,
+                color: AppColors.divider,
+              ),
+            Expanded(
+              child: _StatChip(
+                icon: _stats[i].icon,
+                value: _stats[i].value,
+                label: _stats[i].label,
+                isMobile: true,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -446,33 +369,38 @@ class _StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: isMobile ? 0 : 18, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 2 : 12, vertical: 2),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: isMobile ? 17 : 20,
-            color: AppColors.accent,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: isMobile ? 14 : 16,
+                color: AppColors.accent,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                value,
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w800,
+                  fontSize: isMobile ? 15 : 18,
+                  letterSpacing: 0.3,
+                  height: 1.1,
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: isMobile ? 4 : 6),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: isMobile ? 16 : 20,
-              letterSpacing: 0.3,
-              height: 1.1,
-            ),
-          ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.60),
+              color: AppColors.textSecondary,
               fontWeight: FontWeight.w500,
-              fontSize: isMobile ? 10 : 11.5,
+              fontSize: isMobile ? 10 : 12,
               letterSpacing: 0.2,
             ),
           ),

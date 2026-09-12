@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/metallic_gloss.dart';
 import '../../../../core/widgets/reveal_on_scroll.dart';
 import '../../../../data/dummy_data.dart';
 import '../../../../data/public_building_repository.dart';
@@ -190,10 +189,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // ── Apartments Neighborhood Grid Header ───────────────
                 const SectionBar(
-                  index: 4,
                   icon: Icons.location_city_rounded,
-                  title: 'شقق',
-                  subtitle: 'تصفح الشقق المتاحة في أرقى أحياء التجمع الخامس',
+                  title: 'شقق للبيع والإيجار',
+                  subtitle: 'تصفح الشقق المتاحة في أرقى أحياء ومناطق التجمع الخامس',
                 ),
 
                 SizedBox(height: headerSpacing),
@@ -240,8 +238,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (isMobile) return card;
 
                               return RevealOnScroll(
-                                direction: RevealDirection.elasticPop,
-                                delayMilliseconds: index * 80,
+                                direction: RevealDirection.fromBottom,
+                                offset: 25,
+                                delayMilliseconds: index * 50,
                                 child: card,
                               );
                             },
@@ -256,11 +255,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // ── Buildings Neighborhood Grid Header ────────────────
                 const SectionBar(
-                  index: 5,
                   icon: Icons.apartment_rounded,
-                  title: 'عمارات',
+                  title: 'عمارات ومشاريع سكنية',
                   subtitle:
-                      'استكشف المشروعات والعمارات السكنية في أحياء التجمع الخامس',
+                      'استكشف المشروعات والعمارات السكنية في أرقى أحياء التجمع الخامس',
                 ),
 
                 SizedBox(height: headerSpacing),
@@ -317,8 +315,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     if (isMobile) return card;
 
                                     return RevealOnScroll(
-                                      direction: RevealDirection.elasticPop,
-                                      delayMilliseconds: index * 80,
+                                      direction: RevealDirection.fromBottom,
+                                      offset: 25,
+                                      delayMilliseconds: index * 50,
                                       child: card,
                                     );
                                   }
@@ -339,8 +338,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   if (isMobile) return card;
 
                                   return RevealOnScroll(
-                                    direction: RevealDirection.elasticPop,
-                                    delayMilliseconds: index * 80,
+                                    direction: RevealDirection.fromBottom,
+                                    offset: 25,
+                                    delayMilliseconds: index * 50,
                                     child: card,
                                   );
                                 },
@@ -578,37 +578,29 @@ class _ScrollTopFab extends StatelessWidget {
               child: GestureDetector(
                 onTap: onTap,
                 child: Container(
-                  width: 50,
-                  height: 50,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    gradient: AppColors.accentGradient,
-                    borderRadius: BorderRadius.circular(16),
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: AppColors.divider,
+                      width: 1,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.accent.withValues(alpha: 0.4),
-                        blurRadius: 16,
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: Stack(
-                    children: [
-                      const Center(
-                        child: Icon(
-                          Icons.keyboard_arrow_up_rounded,
-                          color: AppColors.textOnPrimary,
-                          size: 28,
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: MetallicGloss(
-                            borderRadius: 16,
-                            strength: 0.85,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: const Center(
+                    child: Icon(
+                      Icons.keyboard_arrow_up_rounded,
+                      color: AppColors.accent,
+                      size: 26,
+                    ),
                   ),
                 ),
               ),
