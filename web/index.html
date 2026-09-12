@@ -49,11 +49,33 @@
   <title>The 5th Real Estate | التجمع الخامس</title>
   <link rel="manifest" href="manifest.json">
 
-  <!-- Google Fonts Preload: Cairo -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Preload Local Cairo Font Assets (Instant Parallel Fetch from Cloudflare CDN) -->
+  <link rel="preload" href="assets/fonts/Cairo-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/Cairo-Bold.ttf" as="font" type="font/ttf" crossorigin>
+
   <style>
+    @font-face {
+      font-family: 'Cairo';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url('assets/fonts/Cairo-Regular.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'Cairo';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url('assets/fonts/Cairo-Bold.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'Cairo';
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+      src: url('assets/fonts/Cairo-ExtraBold.ttf') format('truetype');
+    }
+
     :root {
       --bg-deep: #050911;
       --bg-navy: #0A111D;
@@ -448,11 +470,19 @@
     }
     window.removeNativeSplash = removeNativeSplash;
 
-    // Listen to Flutter first frame event as additional fallback
+    // Listen to Flutter first frame event to smoothly dismiss native splash
     window.addEventListener('flutter-first-frame', function () {
-      requestAnimationFrame(function () {
-        setTimeout(removeNativeSplash, 80);
-      });
+      var dismissSplash = function () {
+        requestAnimationFrame(function () {
+          setTimeout(removeNativeSplash, 120);
+        });
+      };
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(dismissSplash);
+      } else {
+        dismissSplash();
+      }
     });
 
     // Handle CanvasKit WebGL context loss gracefully during Hot Restarts
@@ -464,8 +494,8 @@
       }
     });
 
-    // Generous fallback safety timeout (30 seconds) in case of fatal network crash
-    setTimeout(removeNativeSplash, 30000);
+    // Generous fallback safety timeout (15 seconds) in case of unexpected network crash
+    setTimeout(removeNativeSplash, 15000);
   </script>
 </body>
 
