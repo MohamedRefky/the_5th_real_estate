@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
-/// Massive full-width hero section with a one-shot staggered entrance.
-class HeroSection extends StatefulWidget {
+/// Massive full-width hero section with instant frame-1 rendering.
+class HeroSection extends StatelessWidget {
   final ThemeData theme;
   final VoidCallback? onBrowseAll;
   final VoidCallback? onContact;
@@ -15,45 +15,7 @@ class HeroSection extends StatefulWidget {
   });
 
   @override
-  State<HeroSection> createState() => _HeroSectionState();
-}
-
-class _HeroSectionState extends State<HeroSection>
-    with SingleTickerProviderStateMixin {
-  /// One-shot staggered entrance controller (completes, never repeats).
-  late final AnimationController _entrance = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1700),
-  )..forward();
-
-  late final List<Animation<double>> _steps = [
-    _step(0.00),
-    _step(0.06),
-    _step(0.13),
-    _step(0.19),
-    _step(0.25),
-    _step(0.31),
-    _step(0.37),
-  ];
-
-  Animation<double> _step(double start) => CurvedAnimation(
-    parent: _entrance,
-    curve: Interval(
-      start,
-      (start + 0.42).clamp(0.0, 1.0),
-      curve: Curves.easeOutCubic,
-    ),
-  );
-
-  @override
-  void dispose() {
-    _entrance.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final theme = widget.theme;
     final isMobile = MediaQuery.sizeOf(context).width < 600;
 
     return Container(
@@ -73,81 +35,72 @@ class _HeroSectionState extends State<HeroSection>
               child: Column(
                 children: [
                   // Architectural Location Tag
-                  _HeroEntrance(
-                    animation: _steps[0],
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 12 : 16,
-                        vertical: isMobile ? 5 : 7,
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 12 : 16,
+                      vertical: isMobile ? 5 : 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(
+                        color: AppColors.divider,
+                        width: 1,
                       ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: AppColors.divider,
-                          width: 1,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: AppColors.accent,
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: AppColors.accent,
-                              shape: BoxShape.circle,
-                            ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'التجمع الخامس • القاهرة الجديدة',
+                          style: TextStyle(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.w700,
+                            fontSize: isMobile ? 11.5 : 13,
+                            letterSpacing: 0.3,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'التجمع الخامس • القاهرة الجديدة',
-                            style: TextStyle(
-                              color: AppColors.accent,
-                              fontWeight: FontWeight.w700,
-                              fontSize: isMobile ? 11.5 : 13,
-                              letterSpacing: 0.3,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
 
                   SizedBox(height: isMobile ? 18 : 26),
 
                   // Grand Architectural Title
-                  _HeroEntrance(
-                    animation: _steps[1],
-                    child: Text(
-                      'عقارات التجمع الخامس\nبأعلى معايير الدقة والتميز',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.displayLarge?.copyWith(
-                        fontSize: isMobile ? 32 : 56,
-                        height: 1.18,
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.5,
-                      ),
+                  Text(
+                    'عقارات التجمع الخامس\nبأعلى معايير الدقة والتميز',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      fontSize: isMobile ? 32 : 56,
+                      height: 1.18,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
                     ),
                   ),
 
                   SizedBox(height: isMobile ? 16 : 22),
 
                   // Subtitle (Clear, Active, Authoritative)
-                  _HeroEntrance(
-                    animation: _steps[2],
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 680),
-                      child: Text(
-                        'منصة عقارية متخصصة تمنحك الوصول المباشر لأرقى الشقق والعمارات في التجمع الخامس، بأسعار واقعية محدثة وبيانات موثقة ميدانياً.',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w400,
-                          height: 1.65,
-                          fontSize: isMobile ? 13.5 : 16,
-                        ),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 680),
+                    child: Text(
+                      'منصة عقارية متخصصة تمنحك الوصول المباشر لأرقى الشقق والعمارات في التجمع الخامس، بأسعار واقعية محدثة وبيانات موثقة ميدانياً.',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w400,
+                        height: 1.65,
+                        fontSize: isMobile ? 13.5 : 16,
                       ),
                     ),
                   ),
@@ -155,80 +108,74 @@ class _HeroSectionState extends State<HeroSection>
                   SizedBox(height: isMobile ? 26 : 38),
 
                   // CTA Buttons (Tactile & Clean)
-                  _HeroEntrance(
-                    animation: _steps[3],
-                    child: Wrap(
-                      spacing: 14,
-                      runSpacing: 12,
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: widget.onBrowseAll,
-                          icon: Icon(
-                            Icons.explore_rounded,
-                            size: isMobile ? 18 : 20,
-                          ),
-                          label: Text(
-                            'تصفح جميع العقارات',
-                            style: TextStyle(
-                              fontSize: isMobile ? 13.5 : 15,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accent,
-                            foregroundColor: AppColors.textOnPrimary,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 24 : 32,
-                              vertical: isMobile ? 14 : 17,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
+                  Wrap(
+                    spacing: 14,
+                    runSpacing: 12,
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: onBrowseAll,
+                        icon: Icon(
+                          Icons.explore_rounded,
+                          size: isMobile ? 18 : 20,
+                        ),
+                        label: Text(
+                          'تصفح جميع العقارات',
+                          style: TextStyle(
+                            fontSize: isMobile ? 13.5 : 15,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                        OutlinedButton.icon(
-                          onPressed: widget.onContact,
-                          icon: Icon(
-                            Icons.chat_bubble_outline_rounded,
-                            size: isMobile ? 16 : 18,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accent,
+                          foregroundColor: AppColors.textOnPrimary,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 24 : 32,
+                            vertical: isMobile ? 14 : 17,
                           ),
-                          label: Text(
-                            'تواصل معنا',
-                            style: TextStyle(
-                              fontSize: isMobile ? 13.5 : 15,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.textPrimary,
-                            side: const BorderSide(
-                              color: AppColors.divider,
-                              width: 1,
-                            ),
-                            backgroundColor: AppColors.surface.withValues(alpha: 0.5),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 22 : 28,
-                              vertical: isMobile ? 14 : 17,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                          elevation: 0,
+                        ),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: onContact,
+                        icon: Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          size: isMobile ? 16 : 18,
+                        ),
+                        label: Text(
+                          'تواصل معنا',
+                          style: TextStyle(
+                            fontSize: isMobile ? 13.5 : 15,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ],
-                    ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.textPrimary,
+                          side: const BorderSide(
+                            color: AppColors.divider,
+                            width: 1,
+                          ),
+                          backgroundColor: AppColors.surface.withValues(alpha: 0.5),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 22 : 28,
+                            vertical: isMobile ? 14 : 17,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
 
                   SizedBox(height: isMobile ? 28 : 42),
 
                   // Stats Strip (Architectural & Editorial)
-                  _HeroEntrance(
-                    animation: _steps[4],
-                    child: _HeroStatsConsole(isMobile: isMobile),
-                  ),
+                  _HeroStatsConsole(isMobile: isMobile),
                 ],
               ),
             ),
@@ -239,30 +186,6 @@ class _HeroSectionState extends State<HeroSection>
   }
 }
 
-/// Fades + drifts a hero element up as its staggered [animation] progresses.
-class _HeroEntrance extends StatelessWidget {
-  final Animation<double> animation;
-  final Widget child;
-
-  const _HeroEntrance({required this.animation, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: animation,
-      child: child,
-      builder: (context, child) {
-        return Opacity(
-          opacity: animation.value,
-          child: Transform.translate(
-            offset: Offset(0, (1 - animation.value) * 26),
-            child: child,
-          ),
-        );
-      },
-    );
-  }
-}
 
 /// Clean, minimal-luxury stats strip for the Hero Section.
 class _HeroStatsConsole extends StatelessWidget {

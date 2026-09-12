@@ -81,6 +81,12 @@ class _HomeScreenState extends State<HomeScreen> {
     PublicBuildingRepository.instance.all();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(const AssetImage('assets/image/background.jpeg'), context);
+  }
+
   /// Only tracks the active nav section; scroll-driven visuals listen to the
   /// controller directly so plain scrolling never rebuilds the whole page.
   void _onScroll() {

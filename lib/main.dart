@@ -27,20 +27,8 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Pre-fetch Cairo font weights before rendering first frame to prevent FOUT / tofu glyph flash
+  // Allow runtime font fetching without blocking runApp() startup
   GoogleFonts.config.allowRuntimeFetching = true;
-  try {
-    await GoogleFonts.pendingFonts([
-      GoogleFonts.cairo(fontWeight: FontWeight.w400),
-      GoogleFonts.cairo(fontWeight: FontWeight.w500),
-      GoogleFonts.cairo(fontWeight: FontWeight.w600),
-      GoogleFonts.cairo(fontWeight: FontWeight.w700),
-      GoogleFonts.cairo(fontWeight: FontWeight.w800),
-      GoogleFonts.cairo(fontWeight: FontWeight.w900),
-    ]).timeout(const Duration(seconds: 4));
-  } catch (e) {
-    debugPrint('GoogleFonts prefetch note: $e');
-  }
 
   // Clean URLs (no `#/`) so /admin/login, /admin/dashboard work directly.
   usePathUrlStrategy();
