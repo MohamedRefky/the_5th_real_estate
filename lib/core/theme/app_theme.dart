@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'app_colors.dart';
 
 /// Centralised theme configuration for "The 5th Estate".
@@ -6,6 +7,20 @@ class AppTheme {
   AppTheme._();
 
   static const String cairoFontFamily = 'Cairo';
+
+  /// Preloads local Cairo TTF fonts directly into the Flutter engine's font manager
+  /// before the first frame is rendered, eliminating missing-glyph boxes (⌧) and font flicker.
+  static Future<void> preloadFonts() async {
+    try {
+      final fontLoader = FontLoader(cairoFontFamily);
+      fontLoader.addFont(rootBundle.load('assets/fonts/Cairo-Regular.ttf'));
+      fontLoader.addFont(rootBundle.load('assets/fonts/Cairo-Bold.ttf'));
+      fontLoader.addFont(rootBundle.load('assets/fonts/Cairo-ExtraBold.ttf'));
+      await fontLoader.load();
+    } catch (e) {
+      debugPrint('Cairo font preloading failed gracefully: $e');
+    }
+  }
 
   static final TextTheme _textTheme = TextTheme(
     displayLarge: TextStyle(

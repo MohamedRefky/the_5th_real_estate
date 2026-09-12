@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:the_5th_real_estate/core/firebase/firebase_options.dart';
+import 'package:the_5th_real_estate/core/theme/app_theme.dart';
 import 'app/app.dart';
 
 void main() async {
@@ -25,10 +25,10 @@ void main() async {
   // Failing sub-widgets degrade silently while the page stays 100% functional.
   ErrorWidget.builder = (details) => const SizedBox.shrink();
 
-  // Preload local fonts and initialize Firebase concurrently while native splash covers the screen
+  // Preload fonts and initialize Firebase in parallel while native splash is displayed
   await Future.wait([
     Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
-    _preloadCairo(),
+    AppTheme.preloadFonts(),
   ]);
 
   // Clean URLs (no `#/`) so /admin/login, /admin/dashboard work directly.
@@ -37,16 +37,3 @@ void main() async {
   runApp(const TheApp());
 }
 
-/// Preloads local Cairo TTF fonts directly into the Flutter engine's font manager
-/// before the first frame is rendered, eliminating missing-glyph boxes (⌧) and font flicker.
-Future<void> _preloadCairo() async {
-  try {
-    final fontLoader = FontLoader('Cairo');
-    fontLoader.addFont(rootBundle.load('assets/fonts/Cairo-Regular.ttf'));
-    fontLoader.addFont(rootBundle.load('assets/fonts/Cairo-Bold.ttf'));
-    fontLoader.addFont(rootBundle.load('assets/fonts/Cairo-ExtraBold.ttf'));
-    await fontLoader.load();
-  } catch (e) {
-    debugPrint('Cairo font preloading failed gracefully: $e');
-  }
-}
